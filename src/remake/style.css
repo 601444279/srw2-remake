@@ -1,0 +1,71 @@
+:root {
+  --bg: #0b0b10;
+  --panel: rgba(18, 20, 30, 0.88);
+  --panel-border: rgba(255, 255, 255, 0.12);
+  --fg: #eef0f6;
+  --muted: #9aa0b4;
+  --player: #5aa2ff;
+  --enemy: #ff6b6b;
+  --accent: #ffd257;
+  --radius: 10px;
+  --font: "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); color: var(--fg); font: 14px/1.5 var(--font); user-select: none; -webkit-user-select: none; }
+#map { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
+
+.panel, #hud, #info, #menu, #hints span { background: var(--panel); border: 1px solid var(--panel-border); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+
+#hud { position: fixed; top: 12px; left: 12px; right: 12px; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 8px 14px; border-radius: var(--radius); pointer-events: none; }
+#hud .left { display: flex; gap: 12px; font-weight: 600; }
+#phase[data-phase="player"] { color: var(--player); }
+#phase[data-phase="enemy"] { color: var(--enemy); }
+#objective { color: var(--muted); font-size: 13px; }
+
+#info { position: fixed; left: 12px; bottom: 52px; width: 300px; border-radius: var(--radius); padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+#info .unit { display: flex; gap: 10px; }
+#info .unit img { width: 48px; height: 48px; image-rendering: pixelated; background: rgba(255,255,255,0.06); border-radius: 6px; }
+#info .unit .body { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+#info .name { font-weight: 700; font-size: 15px; display: flex; align-items: center; gap: 6px; }
+#info .unit.player .name { color: var(--player); }
+#info .unit.enemy .name { color: var(--enemy); }
+#info .tag { font-size: 11px; font-weight: 500; color: var(--muted); border: 1px solid var(--panel-border); border-radius: 4px; padding: 0 4px; }
+#info .hp { display: flex; align-items: center; gap: 8px; font: 12px ui-monospace, monospace; }
+#info .bar { flex: 1; height: 6px; background: rgba(255,255,255,0.12); border-radius: 3px; overflow: hidden; }
+#info .bar i { display: block; height: 100%; background: #4cd964; }
+#info .stats { display: grid; grid-template-columns: repeat(4, auto); gap: 2px 10px; font-size: 12px; color: var(--muted); }
+#info .stats b { color: var(--fg); font-weight: 600; }
+#info .terrain { display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 13px; padding-top: 6px; border-top: 1px solid var(--panel-border); }
+#info .unit + .terrain { margin-top: 2px; }
+#info .unit:only-child + .terrain, #info .terrain:first-child { border-top: 0; padding-top: 0; }
+#info .muted { color: var(--muted); font-size: 12px; width: 100%; }
+
+#menu { position: fixed; min-width: 132px; border-radius: var(--radius); padding: 6px; display: flex; flex-direction: column; gap: 2px; animation: pop .12s ease-out; }
+#menu button { all: unset; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 7px 12px; border-radius: 6px; cursor: pointer; font-size: 15px; }
+#menu button small { color: var(--muted); font-size: 11px; }
+#menu button.focus { background: rgba(255, 210, 87, 0.18); color: var(--accent); }
+#menu button:disabled { color: rgba(255,255,255,0.3); cursor: default; }
+@keyframes pop { from { opacity: 0; transform: translateX(-6px) scale(.97); } to { opacity: 1; transform: none; } }
+
+#banner { position: fixed; left: 0; right: 0; top: 40%; text-align: center; padding: 14px 0; pointer-events: none; background: linear-gradient(90deg, transparent, rgba(10,12,20,.9) 20%, rgba(10,12,20,.9) 80%, transparent); }
+#banner .title { font-size: 34px; font-weight: 800; letter-spacing: 4px; }
+#banner .sub { color: var(--muted); font-size: 14px; letter-spacing: 2px; }
+#banner[data-tone="player"] .title { color: var(--player); }
+#banner[data-tone="enemy"] .title { color: var(--enemy); }
+#banner.show { animation: banner 1.1s ease-in-out both; }
+@keyframes banner { 0% { opacity: 0; transform: translateX(-40px); } 18%, 78% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translateX(40px); } }
+
+#toast { position: fixed; left: 50%; top: 64px; transform: translateX(-50%); background: var(--panel); border: 1px solid var(--panel-border); padding: 6px 14px; border-radius: 999px; opacity: 0; transition: opacity .2s; pointer-events: none; }
+#toast.show { opacity: 1; }
+
+#hints { position: fixed; left: 12px; right: 12px; bottom: 12px; display: flex; flex-wrap: wrap; gap: 6px; pointer-events: none; font-size: 12px; color: var(--muted); }
+#hints span { padding: 3px 8px; border-radius: 6px; }
+#hints kbd { font: 600 11px ui-monospace, monospace; color: var(--fg); margin-right: 5px; }
+
+.fatal { position: fixed; inset: 20px; background: #300; color: #fcc; padding: 16px; white-space: pre-wrap; overflow: auto; }
+
+@media (max-width: 640px) {
+  #info { width: auto; right: 12px; }
+  #objective { display: none; }
+}

@@ -2,86 +2,24 @@
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>第2次超级机器人大战</title>
-  <link rel="stylesheet" href="/src/player/style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="color-scheme" content="dark" />
+  <title>第2次超级机器人大战 重制版</title>
 </head>
 <body>
-  <div id="stage">
-    <canvas id="screen" width="256" height="240"></canvas>
-  </div>
-  <div id="fps" hidden></div>
-  <div id="toast" aria-live="polite"></div>
-  <button id="menu-button" title="菜单（Esc）" aria-label="打开菜单">☰</button>
+  <canvas id="map"></canvas>
 
-  <dialog id="menu">
-    <header>
-      <nav>
-        <button data-tab="saves" class="active">存档</button>
-        <button data-tab="keys">按键</button>
-        <button data-tab="display">画面</button>
-      </nav>
-      <button id="menu-close" aria-label="关闭菜单">✕</button>
-    </header>
+  <header id="hud">
+    <div class="left"><span id="turn"></span><span id="phase"></span></div>
+    <div id="objective"></div>
+  </header>
 
-    <section data-panel="saves">
-      <div id="slots"></div>
-      <p class="hint">快捷键：F1–F4 存档，数字 1–4 读档。游戏内的存档（DATA）会自动保存在浏览器里。</p>
-    </section>
+  <aside id="info" hidden></aside>
+  <div id="menu" role="menu" hidden></div>
+  <div id="banner" hidden></div>
+  <div id="toast"></div>
+  <footer id="hints"></footer>
 
-    <section data-panel="keys" hidden>
-      <div id="bindings"></div>
-      <p class="hint">点一个按键后，按下新的键完成绑定；按 Esc 取消。和其他功能冲突时会自动互换。</p>
-      <button id="reset-keys" class="secondary">恢复默认按键</button>
-    </section>
-
-    <section data-panel="display" hidden>
-      <label class="field">
-        <span>画面大小</span>
-        <select id="opt-scale">
-          <option value="fit">铺满窗口</option>
-          <option value="integer">整数倍放大（像素最整齐）</option>
-        </select>
-      </label>
-      <label class="field">
-        <span>画面比例</span>
-        <select id="opt-aspect">
-          <option value="tv">4:3（当年电视的样子）</option>
-          <option value="square">像素 1:1</option>
-        </select>
-      </label>
-      <label class="field">
-        <span>平滑滤镜</span>
-        <input type="checkbox" id="opt-smoothing" />
-      </label>
-      <label class="field">
-        <span>加速倍数</span>
-        <select id="opt-fast-speed">
-          <option value="2">2 倍</option>
-          <option value="4">4 倍</option>
-          <option value="8">8 倍</option>
-        </select>
-      </label>
-      <label class="field">
-        <span>加速方式</span>
-        <select id="opt-fast-mode">
-          <option value="hold">按住加速</option>
-          <option value="toggle">按一下开 / 关</option>
-        </select>
-      </label>
-      <label class="field">
-        <span>斜向移动辅助（原版不支持斜向）</span>
-        <input type="checkbox" id="opt-diagonal" />
-      </label>
-      <label class="field">
-        <span>显示帧率</span>
-        <input type="checkbox" id="opt-fps" />
-      </label>
-      <button id="fullscreen" class="secondary">全屏</button>
-      <p class="hint">模拟器按 FC 原生的 60 帧运行，跑得更快游戏本身也会变快。更流畅的动画要在重制版里实现。</p>
-    </section>
-  </dialog>
-
-  <script type="module" src="/src/player/main.js"></script>
+  <script type="module" src="/src/remake/main.ts"></script>
 </body>
 </html>

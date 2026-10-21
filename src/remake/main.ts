@@ -1,0 +1,39 @@
+import "./style.css";
+import { loadStage } from "./data.ts";
+import { Renderer } from "./render.ts";
+import { Input } from "./input.ts";
+import { UI } from "./ui.ts";
+import { Game } from "./game.ts";
+
+async function boot() {
+  const canvas = document.getElementById("map") as HTMLCanvasElement;
+  const stage = loadStage(1);
+  const renderer = new Renderer(canvas);
+  await renderer.setStage(stage);
+  const ui = new UI();
+  const game = new Game(stage, renderer, ui);
+
+  const input = new Input(canvas, {
+    onMove: (dx, dy) => game.move(dx, dy),
+    onAction: (a) => game.action(a),
+    onPointerTile: (x, y) => game.pointerTile(renderer.screenToTile(x, y)),
+    onPointerClick: (x, y, button) => game.pointerClick(renderer.screenToTile(x, y), button),
+    onWheel: (d) => game.action(d < 0 ? "zoomIn" : "zoomOut"),
+  });
+
+  let last = performance.now();
+  const frame = (now: number) => {
+    const dt = Math.min(0.1, (now - last) / 1000);
+    last = now;
+    input.update(now);
+    game.update(dt);
+    renderer.draw(game, dt);
+    requestAnimationFrame(frame);
+  };
+  requestAnimationFrame(frame);
+  await game.start();
+}
+
+boot().catch((e) => {
+  document.body.insertAdjacentHTML("beforeend", `<pre class="fatal">${String(e?.stack ?? e)}</pre>`);
+});

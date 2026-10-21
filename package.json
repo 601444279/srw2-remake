@@ -7,8 +7,9 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "vite"
+    "test": "node --test tests/*.test.ts",
+    "dev": "vite",
+    "typecheck": "tsc --noEmit -p ."
   },
   "repository": {
     "type": "git",
@@ -24,8 +25,10 @@
   "homepage": "https://github.com/601444279/srw2-remake#readme",
   "private": "true",
   "devDependencies": {
+    "@types/node": "^26.6.5",
     "jsnes": "^2.1.0",
     "pngjs": "^7.0.0",
+    "typescript": "^7.0.2",
     "vite": "^8.3.5"
   }
 }
