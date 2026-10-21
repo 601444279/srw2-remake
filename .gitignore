@@ -1,0 +1,12 @@
+# ROM 文件不进仓库
+rom/
+*.nes
+*.fds
+*.ips
+*.bps
+
+# 依赖与构建产物
+node_modules/
+dist/
+.DS_Store
+.env
