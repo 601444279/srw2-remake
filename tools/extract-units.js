@@ -231,27 +231,30 @@ function extractWeapons(prg) {
   return weapons;
 }
 
-// 精神菜单可用条件（bank 28 $9B22 跳转表），以及会设置的状态位（$7817）
+// 精神菜单可用条件（bank 28 $9B22 跳转表）和效果。
+// 状态类精神设置 $7817 的一位（bank 10 $86C1 跳转表），回复 / 伤害类走 bank 28 $8848 起的精神脚本，
+// 脚本指令 1D 07 n 回复（n: 0 = 50，1 = 100，3 = 全满），1D 0C n 伤害（n: 0 = 10–100 随机，2 = 10–255 随机）。
+// 效果文字已用发动时的游戏提示和 RAM 前后对比核对。
 const SPIRIT_RULES = [
-  { condition: "selfHpNotFull", status: null, effect: "回复自身 HP（推测）" },
-  { condition: "statusClear", status: 0xc0, effect: "移动力增加（推测）" },
-  { condition: "statusClear", status: 0x22, effect: "下一次攻击必中（推测）" },
-  { condition: "statusClear", status: 0x10, effect: "受到伤害减半（推测）" },
-  { condition: "statusClear", status: 0x0c, effect: "攻击力提升（推测）" },
-  { condition: "anyAllyDamaged", status: null, effect: "回复一名友军 HP（推测）" },
-  { condition: "statusClear", status: 0x22, effect: "下一次攻击会心（推测）" },
-  { condition: "statusClear", status: 0xc0, effect: "移动力大幅增加（推测）" },
-  { condition: "statusClear", status: 0x01, effect: "下一次敌人攻击必定回避（推测）" },
-  { condition: "selfHpNotFull", status: null, effect: "大量回复自身 HP（推测）" },
-  { condition: "statusClear", status: 0x0c, effect: "下一次攻击伤害加倍（推测）" },
-  { condition: "anyAllyDamaged", status: null, effect: "大量回复一名友军 HP（推测）" },
-  { condition: "always", status: null, effect: "未知（传真，可能是传送/转移）" },
-  { condition: "anyPlayerHpNotFull", status: null, effect: "回复友军 HP（推测）" },
-  { condition: "enemyExists", status: null, effect: "对敌人造成伤害（推测）" },
-  { condition: "anyPlayerHpNotFull", status: null, effect: "全体友军回复 HP（推测）" },
-  { condition: "enemyExists", status: null, effect: "妨碍敌人（推测）" },
-  { condition: "enemyExists", status: null, effect: "对全体敌人造成伤害（推测）" },
-  { condition: "anyPlayerHpNotFull", status: null, effect: "全体友军完全回复（推测）" },
+  { condition: "selfHpNotFull", target: "self", effect: "heal", value: 50, text: "自身 HP 回复 50" },
+  { condition: "statusClear", status: 0x80, target: "self", effect: "moveUp", value: 3, text: "机动 +3（本回合）" },
+  { condition: "statusClear", status: 0x20, target: "self", effect: "hitUp", value: 10, text: "命中率 +10%（下一次攻击）" },
+  { condition: "statusClear", status: 0x10, target: "self", effect: "damageTakenHalf", text: "受到的伤害减半" },
+  { condition: "statusClear", status: 0x08, target: "self", effect: "damageMul", value: 2, text: "攻击伤害 ×2（下一次攻击）" },
+  { condition: "anyAllyDamaged", target: "ally", effect: "heal", value: 50, text: "一名友军 HP 回复 50" },
+  { condition: "statusClear", status: 0x02, target: "self", effect: "sureHit", text: "命中率变为 100%（下一次攻击）" },
+  { condition: "statusClear", status: 0x40, target: "self", effect: "moveUp", value: 5, text: "机动 +5（本回合）" },
+  { condition: "statusClear", status: 0x01, target: "self", effect: "sureEvade", text: "敌人对自己的命中率变为 0" },
+  { condition: "selfHpNotFull", target: "self", effect: "heal", value: "full", text: "自身 HP 全满" },
+  { condition: "statusClear", status: 0x04, target: "self", effect: "damageMul", value: 3, text: "攻击伤害 ×3（下一次攻击）" },
+  { condition: "anyAllyDamaged", target: "ally", effect: "heal", value: "full", text: "一名友军 HP 全满" },
+  { condition: "always", target: "self", effect: "teleport", text: "移动到地图上任意空格（按画面推测，未细看代码）" },
+  { condition: "anyPlayerHpNotFull", target: "allAllies", effect: "heal", value: 50, text: "我方全体 HP 回复 50" },
+  { condition: "enemyExists", target: "allEnemies", effect: "damage", value: [10, 100], text: "敌方全体受到 10–100 随机伤害" },
+  { condition: "anyPlayerHpNotFull", target: "allAllies", effect: "heal", value: 100, text: "我方全体 HP 回复 100" },
+  { condition: "enemyExists", target: "allEnemies", effect: "enemyHitHalf", text: "敌人的命中率减半（$750D bit6，没看到清除，可能持续到本关结束）" },
+  { condition: "enemyExists", target: "allEnemies", effect: "damage", value: [10, 255], text: "敌方全体受到 10–255 随机伤害" },
+  { condition: "anyPlayerHpNotFull", target: "allAllies", effect: "heal", value: "full", text: "我方全体 HP 全满" },
 ];
 
 function extractSpirits(prg) {
@@ -261,8 +264,11 @@ function extractSpirits(prg) {
     ...readName(prg, names.at(0x10 + id)),
     cost: prg[SPIRIT_COSTS + id],
     condition: rule.condition,
-    statusFlag: rule.status === null ? null : hex(rule.status),
-    effectGuess: rule.effect,
+    statusFlag: rule.status === undefined ? null : hex(rule.status),
+    target: rule.target,
+    effect: rule.effect,
+    value: rule.value ?? null,
+    text: rule.text,
   }));
 }
 
