@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>第2次超级机器人大战</title>
+  <link rel="stylesheet" href="/src/player/style.css" />
+</head>
+<body>
+  <main>
+    <canvas id="screen" width="256" height="240"></canvas>
+    <div id="bar">
+      <span id="status">加载中…</span>
+      <span id="speed"></span>
+    </div>
+    <div id="slots"></div>
+    <details>
+      <summary>按键说明</summary>
+      <table>
+        <tr><td>方向键</td><td>移动</td></tr>
+        <tr><td>X / Z</td><td>A（确定）/ B（取消）</td></tr>
+        <tr><td>Enter / Shift</td><td>Start / Select</td></tr>
+        <tr><td>按住空格</td><td>4 倍速</td></tr>
+        <tr><td>F1–F4</td><td>即时存档到 1–4 号位</td></tr>
+        <tr><td>1–4</td><td>读取 1–4 号位</td></tr>
+      </table>
+      <p>游戏内的存档（DATA）会自动保存在浏览器里。</p>
+    </details>
+  </main>
+  <script type="module" src="/src/player/main.js"></script>
+</body>
+</html>

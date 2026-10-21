@@ -1,0 +1,31 @@
+{
+  "name": "srw2-remake",
+  "version": "1.0.0",
+  "description": "FC《第2次超级机器人大战》的个人网页重制版，仅供自己游玩。",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "vite"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/601444279/srw2-remake.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/601444279/srw2-remake/issues"
+  },
+  "homepage": "https://github.com/601444279/srw2-remake#readme",
+  "private": "true",
+  "devDependencies": {
+    "jsnes": "^2.1.0",
+    "pngjs": "^7.0.0",
+    "vite": "^8.3.5"
+  }
+}

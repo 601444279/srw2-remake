@@ -1,0 +1,15 @@
+:root { --bg: #111; --fg: #ddd; --muted: #888; --panel: #222; --accent: #e8b030; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 14px/1.5 system-ui, sans-serif; }
+main { max-width: 768px; margin: 0 auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+canvas { width: 100%; aspect-ratio: 256 / 240; image-rendering: pixelated; background: #000; }
+#bar { display: flex; justify-content: space-between; color: var(--muted); }
+#speed { color: var(--accent); font-weight: 600; }
+#slots { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.slot { background: var(--panel); border-radius: 6px; padding: 8px; display: flex; flex-direction: column; gap: 6px; font-size: 12px; }
+.slot img { width: 100%; image-rendering: pixelated; background: #000; aspect-ratio: 256 / 240; }
+.slot .row { display: flex; gap: 6px; }
+.slot button { flex: 1; background: #333; color: var(--fg); border: 0; border-radius: 4px; padding: 4px; cursor: pointer; }
+.slot button:disabled { opacity: .4; cursor: default; }
+details { color: var(--muted); }
+td { padding: 2px 12px 2px 0; }
