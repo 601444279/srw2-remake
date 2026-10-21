@@ -27,6 +27,7 @@ export const DEFAULTS = {
   aspect: "tv", // tv：4:3 电视比例；square：像素 1:1
   smoothing: false,
   showFps: false,
+  diagonal: true, // 斜向辅助：同时按两个方向时交替送出，让光标走斜线
 };
 
 export function loadSettings() {
