@@ -1,0 +1,173 @@
+[
+  {
+    "id": 0,
+    "name": "毅力",
+    "nameHex": "c9 1c c9 1d",
+    "cost": 10,
+    "condition": "selfHpNotFull",
+    "statusFlag": null,
+    "effectGuess": "回复自身 HP（推测）"
+  },
+  {
+    "id": 1,
+    "name": "加速",
+    "nameHex": "c9 20 c9 21",
+    "cost": 10,
+    "condition": "statusClear",
+    "statusFlag": "c0",
+    "effectGuess": "移动力增加（推测）"
+  },
+  {
+    "id": 2,
+    "name": "瞄准",
+    "nameHex": "c9 22 c9 23",
+    "cost": 10,
+    "condition": "statusClear",
+    "statusFlag": "22",
+    "effectGuess": "下一次攻击必中（推测）"
+  },
+  {
+    "id": 3,
+    "name": "防守",
+    "nameHex": "c9 24 c9 25",
+    "cost": 20,
+    "condition": "statusClear",
+    "statusFlag": "10",
+    "effectGuess": "受到伤害减半（推测）"
+  },
+  {
+    "id": 4,
+    "name": "强攻",
+    "nameHex": "c9 26 c9 07",
+    "cost": 40,
+    "condition": "statusClear",
+    "statusFlag": "0c",
+    "effectGuess": "攻击力提升（推测）"
+  },
+  {
+    "id": 5,
+    "name": "友情",
+    "nameHex": "c9 27 c9 28",
+    "cost": 30,
+    "condition": "anyAllyDamaged",
+    "statusFlag": null,
+    "effectGuess": "回复一名友军 HP（推测）"
+  },
+  {
+    "id": 6,
+    "name": "必杀",
+    "nameHex": "c9 29 c9 2a",
+    "cost": 40,
+    "condition": "statusClear",
+    "statusFlag": "22",
+    "effectGuess": "下一次攻击会心（推测）"
+  },
+  {
+    "id": 7,
+    "name": "疾风",
+    "nameHex": "c9 2b c9 2c",
+    "cost": 50,
+    "condition": "statusClear",
+    "statusFlag": "c0",
+    "effectGuess": "移动力大幅增加（推测）"
+  },
+  {
+    "id": 8,
+    "name": "回避",
+    "nameHex": "c9 2d c9 30",
+    "cost": 50,
+    "condition": "statusClear",
+    "statusFlag": "01",
+    "effectGuess": "下一次敌人攻击必定回避（推测）"
+  },
+  {
+    "id": 9,
+    "name": "潜力",
+    "nameHex": "c9 31 c9 1d",
+    "cost": 60,
+    "condition": "selfHpNotFull",
+    "statusFlag": null,
+    "effectGuess": "大量回复自身 HP（推测）"
+  },
+  {
+    "id": 10,
+    "name": "热血",
+    "nameHex": "c9 32 c9 33",
+    "cost": 80,
+    "condition": "statusClear",
+    "statusFlag": "0c",
+    "effectGuess": "下一次攻击伤害加倍（推测）"
+  },
+  {
+    "id": 11,
+    "name": "情义",
+    "nameHex": "c9 28 c9 34",
+    "cost": 70,
+    "condition": "anyAllyDamaged",
+    "statusFlag": null,
+    "effectGuess": "大量回复一名友军 HP（推测）"
+  },
+  {
+    "id": 12,
+    "name": "传真",
+    "nameHex": "c9 35 c9 36",
+    "cost": 150,
+    "condition": "always",
+    "statusFlag": null,
+    "effectGuess": "未知（传真，可能是传送/转移）"
+  },
+  {
+    "id": 13,
+    "name": "援助",
+    "nameHex": "c9 37 c9 38",
+    "cost": 80,
+    "condition": "anyPlayerHpNotFull",
+    "statusFlag": null,
+    "effectGuess": "回复友军 HP（推测）"
+  },
+  {
+    "id": 14,
+    "name": "怒",
+    "nameHex": "c9 39",
+    "cost": 100,
+    "condition": "enemyExists",
+    "statusFlag": null,
+    "effectGuess": "对敌人造成伤害（推测）"
+  },
+  {
+    "id": 15,
+    "name": "祈祷",
+    "nameHex": "c9 3a c9 3b",
+    "cost": 100,
+    "condition": "anyPlayerHpNotFull",
+    "statusFlag": null,
+    "effectGuess": "全体友军回复 HP（推测）"
+  },
+  {
+    "id": 16,
+    "name": "干扰",
+    "nameHex": "c9 3c c9 3d",
+    "cost": 100,
+    "condition": "enemyExists",
+    "statusFlag": null,
+    "effectGuess": "妨碍敌人（推测）"
+  },
+  {
+    "id": 17,
+    "name": "狂怒",
+    "nameHex": "c9 40 c9 39",
+    "cost": 150,
+    "condition": "enemyExists",
+    "statusFlag": null,
+    "effectGuess": "对全体敌人造成伤害（推测）"
+  },
+  {
+    "id": 18,
+    "name": "爱心",
+    "nameHex": "c9 41 c9 42",
+    "cost": 150,
+    "condition": "anyPlayerHpNotFull",
+    "statusFlag": null,
+    "effectGuess": "全体友军完全回复（推测）"
+  }
+]

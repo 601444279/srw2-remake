@@ -1,0 +1,3058 @@
+[
+  {
+    "id": 1,
+    "name": "光剑",
+    "nameHex": "ca 26 ca 27",
+    "romOffset": "0b28d",
+    "range": 1,
+    "kind": "normal",
+    "hit": 110,
+    "hitFalloff": 0,
+    "power": {
+      "air": 50,
+      "land": 50,
+      "sea": 40
+    },
+    "raw": "00 6e 00 32 32 28"
+  },
+  {
+    "id": 2,
+    "name": "光剑",
+    "nameHex": "ca 26 ca 27",
+    "romOffset": "0b293",
+    "range": 1,
+    "kind": "normal",
+    "hit": 110,
+    "hitFalloff": 0,
+    "power": {
+      "air": 65,
+      "land": 65,
+      "sea": 55
+    },
+    "raw": "00 6e 00 41 41 37"
+  },
+  {
+    "id": 3,
+    "name": "光剑",
+    "nameHex": "ca 26 ca 27",
+    "romOffset": "0b299",
+    "range": 1,
+    "kind": "normal",
+    "hit": 110,
+    "hitFalloff": 0,
+    "power": {
+      "air": 80,
+      "land": 80,
+      "sea": 70
+    },
+    "raw": "00 6e 00 50 50 46"
+  },
+  {
+    "id": 4,
+    "name": "光剑",
+    "nameHex": "ca 26 ca 27",
+    "romOffset": "0b29f",
+    "range": 1,
+    "kind": "normal",
+    "hit": 120,
+    "hitFalloff": 0,
+    "power": {
+      "air": 95,
+      "land": 95,
+      "sea": 85
+    },
+    "raw": "00 78 00 5f 5f 55"
+  },
+  {
+    "id": 5,
+    "name": "光剑",
+    "nameHex": "ca 26 ca 27",
+    "romOffset": "0b2a5",
+    "range": 1,
+    "kind": "normal",
+    "hit": 120,
+    "hitFalloff": 0,
+    "power": {
+      "air": 120,
+      "land": 120,
+      "sea": 105
+    },
+    "raw": "00 78 00 78 78 69"
+  },
+  {
+    "id": 6,
+    "name": "光束枪",
+    "nameHex": "ca 26 ca 28 ca 29",
+    "romOffset": "0b2ab",
+    "range": 1,
+    "kind": "normal",
+    "hit": 85,
+    "hitFalloff": 0,
+    "power": {
+      "air": 70,
+      "land": 60,
+      "sea": null
+    },
+    "raw": "00 55 00 46 3c 00"
+  },
+  {
+    "id": 7,
+    "name": "光束枪",
+    "nameHex": "ca 26 ca 28 ca 29",
+    "romOffset": "0b2b1",
+    "range": 1,
+    "kind": "normal",
+    "hit": 85,
+    "hitFalloff": 0,
+    "power": {
+      "air": 85,
+      "land": 75,
+      "sea": null
+    },
+    "raw": "00 55 00 55 4b 00"
+  },
+  {
+    "id": 8,
+    "name": "光束枪",
+    "nameHex": "ca 26 ca 28 ca 29",
+    "romOffset": "0b2b7",
+    "range": 1,
+    "kind": "normal",
+    "hit": 85,
+    "hitFalloff": 0,
+    "power": {
+      "air": 100,
+      "land": 90,
+      "sea": null
+    },
+    "raw": "00 55 00 64 5a 00"
+  },
+  {
+    "id": 9,
+    "name": "光束枪",
+    "nameHex": "ca 26 ca 28 ca 29",
+    "romOffset": "0b2bd",
+    "range": 1,
+    "kind": "normal",
+    "hit": 90,
+    "hitFalloff": 0,
+    "power": {
+      "air": 115,
+      "land": 105,
+      "sea": null
+    },
+    "raw": "00 5a 00 73 69 00"
+  },
+  {
+    "id": 10,
+    "name": "光束枪",
+    "nameHex": "ca 26 ca 28 ca 29",
+    "romOffset": "0b2c3",
+    "range": 1,
+    "kind": "normal",
+    "hit": 95,
+    "hitFalloff": 0,
+    "power": {
+      "air": 140,
+      "land": 130,
+      "sea": null
+    },
+    "raw": "00 5f 00 8c 82 00"
+  },
+  {
+    "id": 11,
+    "name": "导弹",
+    "nameHex": "ca 11 ca 12",
+    "romOffset": "0b2c9",
+    "range": 4,
+    "kind": "normal",
+    "hit": 80,
+    "hitFalloff": 1,
+    "power": {
+      "air": 50,
+      "land": 60,
+      "sea": 50
+    },
+    "raw": "03 50 01 32 3c 32"
+  },
+  {
+    "id": 12,
+    "name": "导弹",
+    "nameHex": "ca 11 ca 12",
+    "romOffset": "0b2cf",
+    "range": 4,
+    "kind": "normal",
+    "hit": 80,
+    "hitFalloff": 1,
+    "power": {
+      "air": 70,
+      "land": 80,
+      "sea": 70
+    },
+    "raw": "03 50 01 46 50 46"
+  },
+  {
+    "id": 13,
+    "name": "导弹",
+    "nameHex": "ca 11 ca 12",
+    "romOffset": "0b2d5",
+    "range": 5,
+    "kind": "normal",
+    "hit": 80,
+    "hitFalloff": 1,
+    "power": {
+      "air": 90,
+      "land": 100,
+      "sea": 90
+    },
+    "raw": "04 50 01 5a 64 5a"
+  },
+  {
+    "id": 14,
+    "name": "穿甲弹",
+    "nameHex": "ca 2a c9 5d ca 12",
+    "romOffset": "0b2db",
+    "range": 1,
+    "kind": "normal",
+    "hit": 84,
+    "hitFalloff": 0,
+    "power": {
+      "air": 50,
+      "land": 70,
+      "sea": 30
+    },
+    "raw": "00 54 00 32 46 1e"
+  },
+  {
+    "id": 15,
+    "name": "光子射线",
+    "nameHex": "ca 26 c9 69 ca 2b ca 2c",
+    "romOffset": "0b2e1",
+    "range": 1,
+    "kind": "normal",
+    "hit": 115,
+    "hitFalloff": 0,
+    "power": {
+      "air": 30,
+      "land": 30,
+      "sea": null
+    },
+    "raw": "00 73 00 1e 1e 00"
+  },
+  {
+    "id": 16,
+    "name": null,
+    "nameHex": "c9 64 ca 2d ca 30",
+    "romOffset": "0b2e7",
+    "range": 1,
+    "kind": "normal",
+    "hit": 98,
+    "hitFalloff": 0,
+    "power": {
+      "air": 65,
+      "land": 85,
+      "sea": 50
+    },
+    "raw": "00 62 00 41 55 32"
+  },
+  {
+    "id": 17,
+    "name": null,
+    "nameHex": "ca 31 ca 32 c9 62 ca 2b c9 5a",
+    "romOffset": "0b2ed",
+    "range": 1,
+    "kind": "normal",
+    "hit": 80,
+    "hitFalloff": 0,
+    "power": {
+      "air": null,
+      "land": 120,
+      "sea": null
+    },
+    "raw": "00 50 00 00 78 00"
+  },
+  {
+    "id": 18,
+    "name": null,
+    "nameHex": "ca 33 c9 69 ca 30",
+    "romOffset": "0b2f3",
+    "range": 1,
+    "kind": "normal",
+    "hit": 110,
+    "hitFalloff": 0,
+    "power": {
+      "air": 90,
+      "land": 90,
+      "sea": 90
+    },
+    "raw": "00 6e 00 5a 5a 5a"
+  },
+  {
+    "id": 19,
+    "name": null,
+    "nameHex": "ca 34 c9 69 ca 16",
+    "romOffset": "0b2f9",
+    "range": 1,
+    "kind": "normal",
+    "hit": 102,
+    "hitFalloff": 0,
+    "power": {
+      "air": 120,
+      "land": 130,
+      "sea": 50
+    },
+    "raw": "00 66 00 78 82 32"
+  },
+  {
+    "id": 20,
+    "name": null,
+    "nameHex": "ca 35 c9 68",
+    "romOffset": "0b2ff",
+    "range": 1,
+    "kind": "normal",
+    "hit": 88,
+    "hitFalloff": 0,
+    "power": {
+      "air": 100,
+      "land": 160,
+      "sea": null
+    },
+    "raw": "00 58 00 64 a0 00"
+  },
+  {
+    "id": 21,
+    "name": null,
+    "nameHex": "ca 26 c9 2d ca 36 ca 37",
+    "romOffset": "0b305",
+    "range": 1,
+    "kind": "normal",
+    "hit": 102,
+    "hitFalloff": 0,
+    "power": {
+      "air": 100,
+      "land": 100,
+      "sea": 100
+    },
+    "raw": "00 66 00 64 64 64"
+  },
+  {
+    "id": 22,
+    "name": null,
+    "nameHex": "ca 38 c9 69 ca 21",
+    "romOffset": "0b30b",
+    "range": 1,
+    "kind": "normal",
+    "hit": 90,
+    "hitFalloff": 0,
+    "power": {
+      "air": null,
+      "land": 180,
+      "sea": null
+    },
+    "raw": "00 5a 00 00 b4 00"
+  },
+  {
+    "id": 23,
+    "name": null,
+    "nameHex": "ca 39 c9 1d ca 16",
+    "romOffset": "0b311",
+    "range": 1,
+    "kind": "normal",
+    "hit": 102,
+    "hitFalloff": 0,
+    "power": {
+      "air": 110,
+      "land": 110,
+      "sea": 110
+    },
+    "raw": "00 66 00 6e 6e 6e"
+  },
+  {
+    "id": 24,
+    "name": null,
+    "nameHex": "c9 e6 c9 96 ca 3a ca 3b",
+    "romOffset": "0b317",
+    "range": 1,
+    "kind": "normal",
+    "hit": 110,
+    "hitFalloff": 0,
+    "power": {
+      "air": 50,
+      "land": 20,
+      "sea": null
+    },
+    "raw": "00 6e 00 32 14 00"
+  },
+  {
+    "id": 25,
+    "name": null,
+    "nameHex": "c9 e6 c9 96 ca 3a ca 3b",
+    "romOffset": "0b31d",
+    "range": 1,
+    "kind": "normal",
+    "hit": 110,
+    "hitFalloff": 0,
+    "power": {
+      "air": 65,
+      "land": 35,
+      "sea": null
+    },
+    "raw": "00 6e 00 41 23 00"
+  },
+  {
+    "id": 26,
+    "name": "盖塔射线",
+    "nameHex": "c9 e6 c9 96 ca 2b ca 2c",
+    "romOffset": "0b323",
+    "range": 1,
+    "kind": "normal",
+    "hit": 80,
+    "hitFalloff": 0,
+    "power": {
+      "air": 70,
+      "land": 65,
+      "sea": null
+    },
+    "raw": "00 50 00 46 41 00"
+  },
+  {
+    "id": 27,
+    "name": "盖塔射线",
+    "nameHex": "c9 e6 c9 96 ca 2b ca 2c",
+    "romOffset": "0b329",
+    "range": 1,
+    "kind": "normal",
+    "hit": 80,
+    "hitFalloff": 0,
+    "power": {
+      "air": 85,
+      "land": 80,
+      "sea": null
+    },
+    "raw": "00 50 00 55 50 00"
+  },
+  {
+    "id": 28,
+    "name": "盖塔射线",
+    "nameHex": "c9 e6 c9 96 ca 2b ca 2c",
+    "romOffset": "0b32f",
+    "range": 1,
+    "kind": "normal",
+    "hit": 80,
+    "hitFalloff": 0,
+    "power": {
+      "air": 120,
+      "land": 115,
+      "sea": null
+    },
+    "raw": "00 50 00 78 73 00"
+  },
+  {
+    "id": 29,
+    "name": null,
+    "nameHex": "c9 2d ca 36 ca 16",
+    "romOffset": "0b335",
+    "range": 1,
+    "kind": "normal",
+    "hit": 108,
+    "hitFalloff": 0,
+    "power": {
+      "air": null,
+      "land": 60,
+      "sea": 50
+    },
+    "raw": "00 6c 00 00 3c 32"
+  },
+  {
+    "id": 30,
+    "name": null,
+    "nameHex": "c9 2d ca 36 ca 16",
+    "romOffset": "0b33b",
+    "range": 1,
+    "kind": "normal",
+    "hit": 110,
+    "hitFalloff": 0,
+    "power": {
+      "air": null,
+      "land": 75,
+      "sea": 65
+    },
+    "raw": "00 6e 00 00 4b 41"
+  },
+  {
+    "id": 31,
+    "name": null,
+    "nameHex": "c9 0a c9 2c ca 16",
+    "romOffset": "0b341",
+    "range": 1,
+    "kind": "normal",
+    "hit": 82,
+    "hitFalloff": 0,
+    "power": {
+      "air": null,
+      "land": 80,
+      "sea": null
+    },
+    "raw": "00 52 00 00 50 00"
+  },
+  {
+    "id": 32,
+    "name": null,
+    "nameHex": "c9 0a c9 2c ca 16",
+    "romOffset": "0b347",
+    "range": 1,
+    "kind": "normal",
+    "hit": 84,
+    "hitFalloff": 0,
+    "power": {
+      "air": null,
+      "land": 95,
+      "sea": null
+    },
+    "raw": "00 54 00 00 5f 00"
+  },
+  {
+    "id": 33,
+    "name": null,
+    "nameHex": "ca 3c ca 3d ca 40",
+    "romOffset": "0b34d",
+    "range": 1,
+    "kind": "normal",
+    "hit": 80,
+    "hitFalloff": 0,
+    "power": {
+      "air": null,
+      "land": 55,
+      "sea": 80
+    },
+    "raw": "00 50 00 00 37 50"
+  },
+  {
+    "id": 34,
+    "name": null,
+    "nameHex": "ca 3c ca 3d ca 40",
+    "romOffset": "0b353",
+    "range": 1,
+    "kind": "normal",
+    "hit": 82,
+    "hitFalloff": 0,
+    "power": {
+      "air": null,
+      "land": 70,
+      "sea": 95
+    },
+    "raw": "00 52 00 00 46 5f"
+  },
+  {
+    "id": 35,
+    "name": "盖塔导弹",
+    "nameHex": "c9 e6 c9 96 ca 11 ca 12",
+    "romOffset": "0b359",
+    "range": 3,
+    "kind": "normal",
+    "hit": 98,
+    "hitFalloff": 0,
+    "power": {
+      "air": null,
+      "land": null,
+      "sea": 70
+    },
+    "raw": "02 62 00 00 00 46"
+  },
+  {
+    "id": 36,
+    "name": "盖塔导弹",
+    "nameHex": "c9 e6 c9 96 ca 11 ca 12",
+    "romOffset": "0b35f",
+    "range": 4,
+    "kind": "normal",
+    "hit": 100,
+    "hitFalloff": 0,
+    "power": {
+      "air": 5,
+      "land": null,
+      "sea": 85
+    },
+    "raw": "03 64 00 05 00 55"
+  },
+  {
+    "id": 37,
+    "name": null,
+    "nameHex": "ca 41 ca 42 ca 43 ca 26 ca 21",
+    "romOffset": "0b365",
+    "range": 6,
+    "kind": "normal",
+    "hit": 95,
+    "hitFalloff": 1,
+    "power": {
+      "air": 150,
+      "land": 150,
+      "sea": null
+    },
+    "raw": "05 5f 01 96 96 00"
+  },
+  {
+    "id": 38,
+    "name": null,
+    "nameHex": "ca 41 ca 42 ca 43 ca 26 ca 21",
+    "romOffset": "0b36b",
+    "range": 7,
+    "kind": "normal",
+    "hit": 98,
+    "hitFalloff": 1,
+    "power": {
+      "air": 170,
+      "land": 170,
+      "sea": null
+    },
+    "raw": "06 62 01 aa aa 00"
+  },
+  {
+    "id": 39,
+    "name": null,
+    "nameHex": "c9 46 ca 44 ca 26 ca 28 ca 29",
+    "romOffset": "0b371",
+    "range": 1,
+    "kind": "normal",
+    "hit": 100,
+    "hitFalloff": 0,
+    "power": {
+      "air": 110,
+      "land": 110,
+      "sea": null
+    },
+    "raw": "00 64 00 6e 6e 00"
+  },
+  {
+    "id": 40,
+    "name": null,
+    "nameHex": "c9 46 ca 44 ca 26 ca 27",
+    "romOffset": "0b377",
+    "range": 1,
+    "kind": "normal",
+    "hit": 120,
+    "hitFalloff": 0,
+    "power": {
+      "air": 95,
+      "land": 95,
+      "sea": 95
+    },
+    "raw": "00 78 00 5f 5f 5f"
+  },
+  {
+    "id": 41,
+    "name": null,
+    "nameHex": "c9 46 ca 44 ca 26 ca 27",
+    "romOffset": "0b37d",
+    "range": 1,
+    "kind": "normal",
+    "hit": 120,
+    "hitFalloff": 0,
+    "power": {
+      "air": 110,
+      "land": 110,
+      "sea": 110
+    },
+    "raw": "00 78 00 6e 6e 6e"
+  },
+  {
+    "id": 42,
+    "name": null,
+    "nameHex": "ca 43 ca 26 c9 69 ca 45 ca 21",
+    "romOffset": "0b383",
+    "range": 6,
+    "kind": "normal",
+    "hit": 110,
+    "hitFalloff": 0,
+    "power": {
+      "air": 118,
+      "land": 118,
+      "sea": 118
+    },
+    "raw": "05 6e 00 76 76 76"
+  },
+  {
+    "id": 43,
+    "name": null,
+    "nameHex": "ca 43 ca 26 c9 69 ca 45 ca 21",
+    "romOffset": "0b389",
+    "range": 7,
+    "kind": "normal",
+    "hit": 120,
+    "hitFalloff": 0,
+    "power": {
+      "air": 138,
+      "land": 138,
+      "sea": 138
+    },
+    "raw": "06 78 00 8a 8a 8a"
+  },
+  {
+    "id": 44,
+    "name": null,
+    "nameHex": "ca 43 ca 26 c9 69 ca 45 ca 21",
+    "romOffset": "0b38f",
+    "range": 5,
+    "kind": "normal",
+    "hit": 110,
+    "hitFalloff": 0,
+    "power": {
+      "air": 98,
+      "land": 98,
+      "sea": 98
+    },
+    "raw": "04 6e 00 62 62 62"
+  },
+  {
+    "id": 45,
+    "name": null,
+    "nameHex": "ca 33 c9 69 ca 21",
+    "romOffset": "0b395",
+    "range": 1,
+    "kind": "normal",
+    "hit": 100,
+    "hitFalloff": 0,
+    "power": {
+      "air": 125,
+      "land": 125,
+      "sea": null
+    },
+    "raw": "00 64 00 7d 7d 00"
+  },
+  {
+    "id": 46,
+    "name": null,
+    "nameHex": "ca 33 c9 69 ca 21",
+    "romOffset": "0b39b",
+    "range": 1,
+    "kind": "normal",
+    "hit": 100,
+    "hitFalloff": 0,
+    "power": {
+      "air": 150,
+      "land": 150,
+      "sea": null
+    },
+    "raw": "00 64 00 96 96 00"
+  },
+  {
+    "id": 47,
+    "name": null,
+    "nameHex": "ca 46 ca 47 ca 26 ca 28 ca 29",
+    "romOffset": "0b3a1",
+    "range": 1,
+    "kind": "normal",
+    "hit": 110,
+    "hitFalloff": 0,
+    "power": {
+      "air": 90,
+      "land": 90,
+      "sea": null
+    },
+    "raw": "00 6e 00 5a 5a 00"
+  },
+  {
+    "id": 48,
+    "name": null,
+    "nameHex": "ca 48 ca 36 ca 49 ca 4a c9 64",
+    "romOffset": "0b3a7",
+    "range": 1,
+    "kind": "normal",
+    "hit": 98,
+    "hitFalloff": 0,
+    "power": {
+      "air": 95,
+      "land": 95,
+      "sea": 80
+    },
+    "raw": "00 62 00 5f 5f 50"
+  },
+  {
+    "id": 49,
+    "name": null,
+    "nameHex": "ca 4b ca 4c c9 1d ca 4d c9 2c",
+    "romOffset": "0b3ad",
+    "range": 1,
+    "kind": "normal",
+    "hit": 110,
+    "hitFalloff": 0,
+    "power": {
+      "air": 110,
+      "land": 110,
+      "sea": null
+    },
+    "raw": "00 6e 00 6e 6e 00"
+  },
+  {
+    "id": 50,
+    "name": null,
+    "nameHex": "ca 50 ca 51 ca 37",
+    "romOffset": "0b3b3",
+    "range": 1,
+    "kind": "normal",
+    "hit": 100,
+    "hitFalloff": 0,
+    "power": {
+      "air": 80,
+      "land": 120,
+      "sea": 120
+    },
+    "raw": "00 64 00 50 78 78"
+  },
+  {
+    "id": 51,
+    "name": null,
+    "nameHex": "ca 52 ca 53 ca 35 c9 68",
+    "romOffset": "0b3b9",
+    "range": 1,
+    "kind": "normal",
+    "hit": 100,
+    "hitFalloff": 0,
+    "power": {
+      "air": 145,
+      "land": 145,
+      "sea": null
+    },
+    "raw": "00 64 00 91 91 00"
+  },
+  {
+    "id": 52,
+    "name": null,
+    "nameHex": "ca 15 ca 54 ca 55",
+    "romOffset": "0b3bf",
+    "range": 1,
+    "kind": "normal",
+    "hit": 100,
+    "hitFalloff": 0,
+    "power": {
+      "air": 50,
+      "land": 150,
+      "sea": 150
+    },
+    "raw": "00 64 00 32 96 96"
+  },
+  {
+    "id": 53,
+    "name": null,
+    "nameHex": "ca 15 ca 56 ca 3a ca 3b",
+    "romOffset": "0b3c5",
+    "range": 1,
+    "kind": "normal",
+    "hit": 110,
+    "hitFalloff": 0,
+    "power": {
+      "air": 95,
+      "land": 90,
+      "sea": null
+    },
+    "raw": "00 6e 00 5f 5a 00"
+  },
+  {
+    "id": 54,
+    "name": null,
+    "nameHex": "ca 15 ca 56 ca 3a ca 3b",
+    "romOffset": "0b3cb",
+    "range": 1,
+    "kind": "normal",
+    "hit": 110,
+    "hitFalloff": 0,
+    "power": {
+      "air": 110,
+      "land": 105,
+      "sea": null
+    },
+    "raw": "00 6e 00 6e 69 00"
+  },
+  {
+    "id": 55,
+    "name": null,
+    "nameHex": "ca 15 ca 56 ca 3a ca 3b",
+    "romOffset": "0b3d1",
+    "range": 1,
+    "kind": "normal",
+    "hit": 110,
+    "hitFalloff": 0,
+    "power": {
+      "air": 125,
+      "land": 120,
+      "sea": null
+    },
+    "raw": "00 6e 00 7d 78 00"
+  },
+  {
+    "id": 56,
+    "name": null,
+    "nameHex": "ca 57 c9 69 ca 21",
+    "romOffset": "0b3d7",
+    "range": 1,
+    "kind": "normal",
+    "hit": 100,
+    "hitFalloff": 0,
+    "power": {
+      "air": null,
+      "land": 135,
+      "sea": 105
+    },
+    "raw": "00 64 00 00 87 69"
+  },
+  {
+    "id": 57,
+    "name": null,
+    "nameHex": "ca 57 c9 69 ca 21",
+    "romOffset": "0b3dd",
+    "range": 1,
+    "kind": "normal",
+    "hit": 100,
+    "hitFalloff": 0,
+    "power": {
+      "air": null,
+      "land": 105,
+      "sea": 75
+    },
+    "raw": "00 64 00 00 69 4b"
+  },
+  {
+    "id": 58,
+    "name": null,
+    "nameHex": "ca 57 c9 69 ca 21",
+    "romOffset": "0b3e3",
+    "range": 1,
+    "kind": "normal",
+    "hit": 100,
+    "hitFalloff": 0,
+    "power": {
+      "air": null,
+      "land": 120,
+      "sea": 90
+    },
+    "raw": "00 64 00 00 78 5a"
+  },
+  {
+    "id": 59,
+    "name": null,
+    "nameHex": "c9 7d c9 c8 ca 11 ca 12",
+    "romOffset": "0b3e9",
+    "range": 3,
+    "kind": "normal",
+    "hit": 100,
+    "hitFalloff": 1,
+    "power": {
+      "air": null,
+      "land": 95,
+      "sea": null
+    },
+    "raw": "02 64 01 00 5f 00"
+  },
+  {
+    "id": 60,
+    "name": null,
+    "nameHex": "c9 7d c9 c8 ca 11 ca 12",
+    "romOffset": "0b3ef",
+    "range": 4,
+    "kind": "normal",
+    "hit": 100,
+    "hitFalloff": 1,
+    "power": {
+      "air": null,
+      "land": 115,
+      "sea": null
+    },
+    "raw": "03 64 01 00 73 00"
+  },
+  {
+    "id": 61,
+    "name": null,
+    "nameHex": "c9 63 ca 36 ca 21",
+    "romOffset": "0b3f5",
+    "range": 1,
+    "kind": "normal",
+    "hit": 90,
+    "hitFalloff": 0,
+    "power": {
+      "air": null,
+      "land": 80,
+      "sea": 135
+    },
+    "raw": "00 5a 00 00 50 87"
+  },
+  {
+    "id": 62,
+    "name": null,
+    "nameHex": "c9 63 ca 36 ca 21",
+    "romOffset": "0b3fb",
+    "range": 1,
+    "kind": "normal",
+    "hit": 90,
+    "hitFalloff": 0,
+    "power": {
+      "air": null,
+      "land": 90,
+      "sea": 150
+    },
+    "raw": "00 5a 00 00 5a 96"
+  },
+  {
+    "id": 63,
+    "name": null,
+    "nameHex": "ca 58 c9 7d",
+    "romOffset": "0b401",
+    "range": 3,
+    "kind": "normal",
+    "hit": 100,
+    "hitFalloff": 1,
+    "power": {
+      "air": null,
+      "land": null,
+      "sea": 100
+    },
+    "raw": "02 64 01 00 00 64"
+  },
+  {
+    "id": 64,
+    "name": null,
+    "nameHex": "ca 58 c9 7d",
+    "romOffset": "0b407",
+    "range": 4,
+    "kind": "normal",
+    "hit": 100,
+    "hitFalloff": 1,
+    "power": {
+      "air": null,
+      "land": null,
+      "sea": 115
+    },
+    "raw": "03 64 01 00 00 73"
+  },
+  {
+    "id": 65,
+    "name": null,
+    "nameHex": "ca 59 c9 52 ca 30",
+    "romOffset": "0b40d",
+    "range": 1,
+    "kind": "normal",
+    "hit": 100,
+    "hitFalloff": 0,
+    "power": {
+      "air": 40,
+      "land": 40,
+      "sea": 40
+    },
+    "raw": "00 64 00 28 28 28"
+  },
+  {
+    "id": 66,
+    "name": null,
+    "nameHex": "ca 5a ca 5b c9 f0",
+    "romOffset": "0b413",
+    "range": 6,
+    "kind": "moveAndFire",
+    "hit": 140,
+    "hitFalloff": 0,
+    "power": {
+      "air": 120,
+      "land": 120,
+      "sea": null
+    },
+    "raw": "e5 8c 00 78 78 00"
+  },
+  {
+    "id": 67,
+    "name": null,
+    "nameHex": "ca 59 c9 52 ca 30",
+    "romOffset": "0b419",
+    "range": 1,
+    "kind": "normal",
+    "hit": 100,
+    "hitFalloff": 0,
+    "power": {
+      "air": 60,
+      "land": 60,
+      "sea": 60
+    },
+    "raw": "00 64 00 3c 3c 3c"
+  },
+  {
+    "id": 68,
+    "name": "射线枪",
+    "nameHex": "ca 2b ca 2c ca 29",
+    "romOffset": "0b41f",
+    "range": 6,
+    "kind": "moveAndFire",
+    "hit": 140,
+    "hitFalloff": 0,
+    "power": {
+      "air": 135,
+      "land": 135,
+      "sea": null
+    },
+    "raw": "e5 8c 00 87 87 00"
+  },
+  {
+    "id": 69,
+    "name": null,
+    "nameHex": "ca 5d ca 60 ca 30",
+    "romOffset": "0b425",
+    "range": 1,
+    "kind": "normal",
+    "hit": 100,
+    "hitFalloff": 0,
+    "power": {
+      "air": 80,
+      "land": 80,
+      "sea": 80
+    },
+    "raw": "00 64 00 50 50 50"
+  },
+  {
+    "id": 70,
+    "name": "射线枪",
+    "nameHex": "ca 2b ca 2c ca 29",
+    "romOffset": "0b42b",
+    "range": 7,
+    "kind": "moveAndFire",
+    "hit": 140,
+    "hitFalloff": 0,
+    "power": {
+      "air": 150,
+      "land": 150,
+      "sea": null
+    },
+    "raw": "e6 8c 00 96 96 00"
+  },
+  {
+    "id": 71,
+    "name": "萨斯剑",
+    "nameHex": "c9 aa c9 b2 ca 27",
+    "romOffset": "0b431",
+    "range": 1,
+    "kind": "normal",
+    "hit": 100,
+    "hitFalloff": 0,
+    "power": {
+      "air": null,
+      "land": 45,
+      "sea": 45
+    },
+    "raw": "00 64 00 00 2d 2d"
+  },
+  {
+    "id": 72,
+    "name": "左轮手枪",
+    "nameHex": "ca 62 ca 63 ca 46 ca 29",
+    "romOffset": "0b437",
+    "range": 1,
+    "kind": "normal",
+    "hit": 80,
+    "hitFalloff": 0,
+    "power": {
+      "air": 60,
+      "land": 60,
+      "sea": 60
+    },
+    "raw": "00 50 00 3c 3c 3c"
+  },
+  {
+    "id": 73,
+    "name": null,
+    "nameHex": "ca 43 ca 26 ca 29",
+    "romOffset": "0b43d",
+    "range": 1,
+    "kind": "normal",
+    "hit": 120,
+    "hitFalloff": 0,
+    "power": {
+      "air": 40,
+      "land": 40,
+      "sea": 40
+    },
+    "raw": "00 78 00 28 28 28"
+  },
+  {
+    "id": 74,
+    "name": null,
+    "nameHex": "ca 43 ca 26 ca 29",
+    "romOffset": "0b443",
+    "range": 1,
+    "kind": "normal",
+    "hit": 120,
+    "hitFalloff": 0,
+    "power": {
+      "air": 60,
+      "land": 60,
+      "sea": 60
+    },
+    "raw": "00 78 00 3c 3c 3c"
+  },
+  {
+    "id": 75,
+    "name": null,
+    "nameHex": "ca 31 ca 64 ca 12",
+    "romOffset": "0b449",
+    "range": 5,
+    "kind": "normal",
+    "hit": 75,
+    "hitFalloff": 1,
+    "power": {
+      "air": 120,
+      "land": 120,
+      "sea": null
+    },
+    "raw": "04 4b 01 78 78 00"
+  },
+  {
+    "id": 76,
+    "name": null,
+    "nameHex": "ca 43 ca 26",
+    "romOffset": "0b44f",
+    "range": 1,
+    "kind": "normal",
+    "hit": 90,
+    "hitFalloff": 0,
+    "power": {
+      "air": 60,
+      "land": 30,
+      "sea": null
+    },
+    "raw": "00 5a 00 3c 1e 00"
+  },
+  {
+    "id": 77,
+    "name": null,
+    "nameHex": "ca 43 ca 26",
+    "romOffset": "0b455",
+    "range": 1,
+    "kind": "normal",
+    "hit": 90,
+    "hitFalloff": 0,
+    "power": {
+      "air": 80,
+      "land": 50,
+      "sea": null
+    },
+    "raw": "00 5a 00 50 32 00"
+  },
+  {
+    "id": 78,
+    "name": null,
+    "nameHex": "ca 43 ca 26",
+    "romOffset": "0b45b",
+    "range": 1,
+    "kind": "normal",
+    "hit": 90,
+    "hitFalloff": 0,
+    "power": {
+      "air": 100,
+      "land": 70,
+      "sea": null
+    },
+    "raw": "00 5a 00 64 46 00"
+  },
+  {
+    "id": 79,
+    "name": null,
+    "nameHex": "c9 46 ca 39 c9 68",
+    "romOffset": "0b461",
+    "range": 1,
+    "kind": "normal",
+    "hit": 95,
+    "hitFalloff": 0,
+    "power": {
+      "air": 40,
+      "land": 80,
+      "sea": null
+    },
+    "raw": "00 5f 00 28 50 00"
+  },
+  {
+    "id": 80,
+    "name": null,
+    "nameHex": "c9 46 ca 39 c9 68",
+    "romOffset": "0b467",
+    "range": 1,
+    "kind": "normal",
+    "hit": 95,
+    "hitFalloff": 0,
+    "power": {
+      "air": 50,
+      "land": 90,
+      "sea": null
+    },
+    "raw": "00 5f 00 32 5a 00"
+  },
+  {
+    "id": 81,
+    "name": null,
+    "nameHex": "ca 26 ca 30",
+    "romOffset": "0b46d",
+    "range": 1,
+    "kind": "normal",
+    "hit": 90,
+    "hitFalloff": 0,
+    "power": {
+      "air": 50,
+      "land": 60,
+      "sea": 50
+    },
+    "raw": "00 5a 00 32 3c 32"
+  },
+  {
+    "id": 82,
+    "name": null,
+    "nameHex": "ca 65",
+    "romOffset": "0b473",
+    "range": 1,
+    "kind": "normal",
+    "hit": 98,
+    "hitFalloff": 0,
+    "power": {
+      "air": 80,
+      "land": 80,
+      "sea": 80
+    },
+    "raw": "00 62 00 50 50 50"
+  },
+  {
+    "id": 83,
+    "name": null,
+    "nameHex": "ca 66 ca 29",
+    "romOffset": "0b479",
+    "range": 7,
+    "kind": "normal",
+    "hit": 120,
+    "hitFalloff": 1,
+    "power": {
+      "air": 90,
+      "land": 90,
+      "sea": 90
+    },
+    "raw": "06 78 01 5a 5a 5a"
+  },
+  {
+    "id": 84,
+    "name": "手枪",
+    "nameHex": "ca 46 ca 29",
+    "romOffset": "0b47f",
+    "range": 1,
+    "kind": "normal",
+    "hit": 100,
+    "hitFalloff": 0,
+    "power": {
+      "air": 70,
+      "land": 70,
+      "sea": null
+    },
+    "raw": "00 64 00 46 46 00"
+  },
+  {
+    "id": 85,
+    "name": null,
+    "nameHex": "ca 67 ca 68 ca 40",
+    "romOffset": "0b485",
+    "range": 1,
+    "kind": "normal",
+    "hit": 80,
+    "hitFalloff": 0,
+    "power": {
+      "air": 100,
+      "land": 110,
+      "sea": null
+    },
+    "raw": "00 50 00 64 6e 00"
+  },
+  {
+    "id": 86,
+    "name": null,
+    "nameHex": "ca 69",
+    "romOffset": "0b48b",
+    "range": 1,
+    "kind": "normal",
+    "hit": 75,
+    "hitFalloff": 0,
+    "power": {
+      "air": null,
+      "land": 90,
+      "sea": 80
+    },
+    "raw": "00 4b 00 00 5a 50"
+  },
+  {
+    "id": 87,
+    "name": null,
+    "nameHex": "ca 3a ca 3b",
+    "romOffset": "0b491",
+    "range": 1,
+    "kind": "normal",
+    "hit": 80,
+    "hitFalloff": 0,
+    "power": {
+      "air": null,
+      "land": 100,
+      "sea": 95
+    },
+    "raw": "00 50 00 00 64 5f"
+  },
+  {
+    "id": 88,
+    "name": null,
+    "nameHex": "ca 6a ca 6b ca 26 ca 2c",
+    "romOffset": "0b497",
+    "range": 1,
+    "kind": "normal",
+    "hit": 65,
+    "hitFalloff": 0,
+    "power": {
+      "air": 70,
+      "land": 70,
+      "sea": null
+    },
+    "raw": "00 41 00 46 46 00"
+  },
+  {
+    "id": 89,
+    "name": null,
+    "nameHex": "ca 6a ca 6b ca 26 ca 2c",
+    "romOffset": "0b49d",
+    "range": 1,
+    "kind": "normal",
+    "hit": 65,
+    "hitFalloff": 0,
+    "power": {
+      "air": 140,
+      "land": 140,
+      "sea": null
+    },
+    "raw": "00 41 00 8c 8c 00"
+  },
+  {
+    "id": 90,
+    "name": null,
+    "nameHex": "ca 6c",
+    "romOffset": "0b4a3",
+    "range": 1,
+    "kind": "normal",
+    "hit": 90,
+    "hitFalloff": 0,
+    "power": {
+      "air": null,
+      "land": 100,
+      "sea": 100
+    },
+    "raw": "00 5a 00 00 64 64"
+  },
+  {
+    "id": 91,
+    "name": null,
+    "nameHex": "ca 6d ca 40",
+    "romOffset": "0b4a9",
+    "range": 1,
+    "kind": "normal",
+    "hit": 95,
+    "hitFalloff": 0,
+    "power": {
+      "air": 70,
+      "land": 90,
+      "sea": null
+    },
+    "raw": "00 5f 00 46 5a 00"
+  },
+  {
+    "id": 92,
+    "name": null,
+    "nameHex": "ca 70 ca 71 ca 2c",
+    "romOffset": "0b4af",
+    "range": 1,
+    "kind": "normal",
+    "hit": 90,
+    "hitFalloff": 0,
+    "power": {
+      "air": 50,
+      "land": 50,
+      "sea": null
+    },
+    "raw": "00 5a 00 32 32 00"
+  },
+  {
+    "id": 93,
+    "name": "导弹",
+    "nameHex": "ca 11 ca 12",
+    "romOffset": "0b4b5",
+    "range": 4,
+    "kind": "normal",
+    "hit": 90,
+    "hitFalloff": 0,
+    "power": {
+      "air": 50,
+      "land": 50,
+      "sea": 50
+    },
+    "raw": "03 5a 00 32 32 32"
+  },
+  {
+    "id": 94,
+    "name": "大炮",
+    "nameHex": "c9 8b ca 21",
+    "romOffset": "0b4bb",
+    "range": 6,
+    "kind": "normal",
+    "hit": 80,
+    "hitFalloff": 1,
+    "power": {
+      "air": 50,
+      "land": 100,
+      "sea": 60
+    },
+    "raw": "05 50 01 32 64 3c"
+  },
+  {
+    "id": 95,
+    "name": null,
+    "nameHex": "ca 41 ca 42 ca 11 ca 12",
+    "romOffset": "0b4c1",
+    "range": 4,
+    "kind": "normal",
+    "hit": 100,
+    "hitFalloff": 1,
+    "power": {
+      "air": 110,
+      "land": null,
+      "sea": null
+    },
+    "raw": "03 64 01 6e 00 00"
+  },
+  {
+    "id": 96,
+    "name": null,
+    "nameHex": "ca 41 ca 42 ca 11 ca 12",
+    "romOffset": "0b4c7",
+    "range": 5,
+    "kind": "normal",
+    "hit": 100,
+    "hitFalloff": 1,
+    "power": {
+      "air": 140,
+      "land": null,
+      "sea": null
+    },
+    "raw": "04 64 01 8c 00 00"
+  },
+  {
+    "id": 97,
+    "name": null,
+    "nameHex": "ca 41 ca 42 ca 11 ca 12",
+    "romOffset": "0b4cd",
+    "range": 6,
+    "kind": "normal",
+    "hit": 100,
+    "hitFalloff": 1,
+    "power": {
+      "air": 170,
+      "land": null,
+      "sea": null
+    },
+    "raw": "05 64 01 aa 00 00"
+  },
+  {
+    "id": 98,
+    "name": null,
+    "nameHex": "c9 62 ca 31 c9 5a",
+    "romOffset": "0b4d3",
+    "range": 1,
+    "kind": "normal",
+    "hit": 100,
+    "hitFalloff": 0,
+    "power": {
+      "air": 40,
+      "land": 60,
+      "sea": null
+    },
+    "raw": "00 64 00 28 3c 00"
+  },
+  {
+    "id": 99,
+    "name": null,
+    "nameHex": "c9 62 ca 31 c9 5a",
+    "romOffset": "0b4d9",
+    "range": 1,
+    "kind": "normal",
+    "hit": 100,
+    "hitFalloff": 0,
+    "power": {
+      "air": 60,
+      "land": 80,
+      "sea": null
+    },
+    "raw": "00 64 00 3c 50 00"
+  },
+  {
+    "id": 100,
+    "name": null,
+    "nameHex": "c9 fd c9 08 c9 5a",
+    "romOffset": "0b4df",
+    "range": 1,
+    "kind": "normal",
+    "hit": 98,
+    "hitFalloff": 0,
+    "power": {
+      "air": 70,
+      "land": 70,
+      "sea": 70
+    },
+    "raw": "00 62 00 46 46 46"
+  },
+  {
+    "id": 101,
+    "name": "三指叉",
+    "nameHex": "ca 72 ca 73 ca 74",
+    "romOffset": "0b4e5",
+    "range": 1,
+    "kind": "normal",
+    "hit": 110,
+    "hitFalloff": 0,
+    "power": {
+      "air": 40,
+      "land": 40,
+      "sea": null
+    },
+    "raw": "00 6e 00 28 28 00"
+  },
+  {
+    "id": 102,
+    "name": "连发枪",
+    "nameHex": "ca 14 c9 9d ca 29",
+    "romOffset": "0b4eb",
+    "range": 1,
+    "kind": "normal",
+    "hit": 100,
+    "hitFalloff": 0,
+    "power": {
+      "air": 50,
+      "land": 50,
+      "sea": 50
+    },
+    "raw": "00 64 00 32 32 32"
+  },
+  {
+    "id": 103,
+    "name": null,
+    "nameHex": "37 35 c9 46 ca 2b ca 21",
+    "romOffset": "0b4f1",
+    "range": 1,
+    "kind": "normal",
+    "hit": 110,
+    "hitFalloff": 0,
+    "power": {
+      "air": 55,
+      "land": 55,
+      "sea": 50
+    },
+    "raw": "00 6e 00 37 37 32"
+  },
+  {
+    "id": 104,
+    "name": null,
+    "nameHex": "c9 32 ca 44 ca 27",
+    "romOffset": "0b4f7",
+    "range": 1,
+    "kind": "normal",
+    "hit": 110,
+    "hitFalloff": 0,
+    "power": {
+      "air": 65,
+      "land": 65,
+      "sea": 60
+    },
+    "raw": "00 6e 00 41 41 3c"
+  },
+  {
+    "id": 105,
+    "name": null,
+    "nameHex": "ca 70 ca 71 ca 2c ca 29",
+    "romOffset": "0b4fd",
+    "range": 1,
+    "kind": "normal",
+    "hit": 90,
+    "hitFalloff": 0,
+    "power": {
+      "air": null,
+      "land": 90,
+      "sea": null
+    },
+    "raw": "00 5a 00 00 5a 00"
+  },
+  {
+    "id": 106,
+    "name": null,
+    "nameHex": "ca 4b ca 75 c9 98 ca 21",
+    "romOffset": "0b503",
+    "range": 1,
+    "kind": "normal",
+    "hit": 80,
+    "hitFalloff": 0,
+    "power": {
+      "air": 65,
+      "land": 80,
+      "sea": 50
+    },
+    "raw": "00 50 00 41 50 32"
+  },
+  {
+    "id": 107,
+    "name": null,
+    "nameHex": "ca 76 ca 77 ca 26 ca 21",
+    "romOffset": "0b509",
+    "range": 1,
+    "kind": "normal",
+    "hit": 120,
+    "hitFalloff": 1,
+    "power": {
+      "air": 40,
+      "land": 40,
+      "sea": null
+    },
+    "raw": "00 78 01 28 28 00"
+  },
+  {
+    "id": 108,
+    "name": null,
+    "nameHex": "ca 76 ca 77 ca 26 ca 21",
+    "romOffset": "0b50f",
+    "range": 1,
+    "kind": "normal",
+    "hit": 120,
+    "hitFalloff": 1,
+    "power": {
+      "air": 60,
+      "land": 60,
+      "sea": null
+    },
+    "raw": "00 78 01 3c 3c 00"
+  },
+  {
+    "id": 109,
+    "name": null,
+    "nameHex": "ca 76 ca 77 ca 26 ca 21",
+    "romOffset": "0b515",
+    "range": 1,
+    "kind": "normal",
+    "hit": 120,
+    "hitFalloff": 1,
+    "power": {
+      "air": 100,
+      "land": 100,
+      "sea": null
+    },
+    "raw": "00 78 01 64 64 00"
+  },
+  {
+    "id": 110,
+    "name": null,
+    "nameHex": "ca 41 ca 42 c9 70 c9 69 ca 21",
+    "romOffset": "0b51b",
+    "range": 6,
+    "kind": "normal",
+    "hit": 90,
+    "hitFalloff": 1,
+    "power": {
+      "air": 150,
+      "land": 150,
+      "sea": null
+    },
+    "raw": "05 5a 01 96 96 00"
+  },
+  {
+    "id": 111,
+    "name": "防空粒子炮",
+    "nameHex": "c9 24 c9 00 c9 70 c9 69 ca 21",
+    "romOffset": "0b521",
+    "range": 1,
+    "kind": "normal",
+    "hit": 120,
+    "hitFalloff": 0,
+    "power": {
+      "air": 90,
+      "land": 90,
+      "sea": null
+    },
+    "raw": "00 78 00 5a 5a 00"
+  },
+  {
+    "id": 112,
+    "name": "粒子炮",
+    "nameHex": "c9 70 c9 69 ca 21",
+    "romOffset": "0b527",
+    "range": 1,
+    "kind": "normal",
+    "hit": 100,
+    "hitFalloff": 0,
+    "power": {
+      "air": 40,
+      "land": 40,
+      "sea": null
+    },
+    "raw": "00 64 00 28 28 00"
+  },
+  {
+    "id": 113,
+    "name": "粒子炮",
+    "nameHex": "c9 70 c9 69 ca 21",
+    "romOffset": "0b52d",
+    "range": 4,
+    "kind": "normal",
+    "hit": 95,
+    "hitFalloff": 1,
+    "power": {
+      "air": 70,
+      "land": 70,
+      "sea": null
+    },
+    "raw": "03 5f 01 46 46 00"
+  },
+  {
+    "id": 114,
+    "name": "粒子炮",
+    "nameHex": "c9 70 c9 69 ca 21",
+    "romOffset": "0b533",
+    "range": 5,
+    "kind": "normal",
+    "hit": 95,
+    "hitFalloff": 1,
+    "power": {
+      "air": 100,
+      "land": 100,
+      "sea": null
+    },
+    "raw": "04 5f 01 64 64 00"
+  },
+  {
+    "id": 115,
+    "name": null,
+    "nameHex": "c9 69 ca 45 ca 12",
+    "romOffset": "0b539",
+    "range": 6,
+    "kind": "normal",
+    "hit": 95,
+    "hitFalloff": 1,
+    "power": {
+      "air": 130,
+      "land": 130,
+      "sea": null
+    },
+    "raw": "05 5f 01 82 82 00"
+  },
+  {
+    "id": 116,
+    "name": null,
+    "nameHex": "c9 69 ca 45 ca 12",
+    "romOffset": "0b53f",
+    "range": 7,
+    "kind": "normal",
+    "hit": 95,
+    "hitFalloff": 1,
+    "power": {
+      "air": 170,
+      "land": 170,
+      "sea": null
+    },
+    "raw": "06 5f 01 aa aa 00"
+  },
+  {
+    "id": 117,
+    "name": null,
+    "nameHex": "c9 46 ca 44 ca 26 ca 21",
+    "romOffset": "0b545",
+    "range": 6,
+    "kind": "normal",
+    "hit": 120,
+    "hitFalloff": 0,
+    "power": {
+      "air": 60,
+      "land": 60,
+      "sea": 50
+    },
+    "raw": "05 78 00 3c 3c 32"
+  },
+  {
+    "id": 118,
+    "name": null,
+    "nameHex": "ca 43 ca 26 c9 20 ca 78 ca 21",
+    "romOffset": "0b54b",
+    "range": 4,
+    "kind": "normal",
+    "hit": 120,
+    "hitFalloff": 0,
+    "power": {
+      "air": 80,
+      "land": 80,
+      "sea": 80
+    },
+    "raw": "03 78 00 50 50 50"
+  },
+  {
+    "id": 119,
+    "name": null,
+    "nameHex": "ca 46 ca 47 ca 11 ca 12",
+    "romOffset": "0b551",
+    "range": 1,
+    "kind": "normal",
+    "hit": 120,
+    "hitFalloff": 0,
+    "power": {
+      "air": 40,
+      "land": 40,
+      "sea": null
+    },
+    "raw": "00 78 00 28 28 00"
+  },
+  {
+    "id": 120,
+    "name": null,
+    "nameHex": "c9 64 ca 2d ca 79",
+    "romOffset": "0b557",
+    "range": 1,
+    "kind": "normal",
+    "hit": 120,
+    "hitFalloff": 0,
+    "power": {
+      "air": 40,
+      "land": 40,
+      "sea": 40
+    },
+    "raw": "00 78 00 28 28 28"
+  },
+  {
+    "id": 121,
+    "name": null,
+    "nameHex": "ca 43 ca 26 ca 29",
+    "romOffset": "0b55d",
+    "range": 1,
+    "kind": "normal",
+    "hit": 120,
+    "hitFalloff": 0,
+    "power": {
+      "air": null,
+      "land": 40,
+      "sea": 70
+    },
+    "raw": "00 78 00 00 28 46"
+  },
+  {
+    "id": 122,
+    "name": null,
+    "nameHex": "ca 43 ca 26 c9 69 ca 45 ca 21",
+    "romOffset": "0b563",
+    "range": 1,
+    "kind": "normal",
+    "hit": 95,
+    "hitFalloff": 0,
+    "power": {
+      "air": 160,
+      "land": 160,
+      "sea": null
+    },
+    "raw": "00 5f 00 a0 a0 00"
+  },
+  {
+    "id": 123,
+    "name": null,
+    "nameHex": "ca 43 ca 26 ca 27",
+    "romOffset": "0b569",
+    "range": 7,
+    "kind": "normal",
+    "hit": 160,
+    "hitFalloff": 0,
+    "power": {
+      "air": 130,
+      "land": 130,
+      "sea": 130
+    },
+    "raw": "06 a0 00 82 82 82"
+  },
+  {
+    "id": 124,
+    "name": null,
+    "nameHex": "ca 43 ca 26 ca 27",
+    "romOffset": "0b56f",
+    "range": 7,
+    "kind": "normal",
+    "hit": 160,
+    "hitFalloff": 0,
+    "power": {
+      "air": 150,
+      "land": 150,
+      "sea": 150
+    },
+    "raw": "06 a0 00 96 96 96"
+  },
+  {
+    "id": 125,
+    "name": null,
+    "nameHex": "ca 43 ca 26 ca 27",
+    "romOffset": "0b575",
+    "range": 7,
+    "kind": "normal",
+    "hit": 160,
+    "hitFalloff": 0,
+    "power": {
+      "air": 120,
+      "land": 120,
+      "sea": 120
+    },
+    "raw": "06 a0 00 78 78 78"
+  },
+  {
+    "id": 126,
+    "name": null,
+    "nameHex": "ca 43 ca 26 ca 27",
+    "romOffset": "0b57b",
+    "range": 7,
+    "kind": "normal",
+    "hit": 160,
+    "hitFalloff": 0,
+    "power": {
+      "air": 150,
+      "land": 150,
+      "sea": 150
+    },
+    "raw": "06 a0 00 96 96 96"
+  },
+  {
+    "id": 127,
+    "name": null,
+    "nameHex": "ca 43 ca 26 ca 27",
+    "romOffset": "0b581",
+    "range": 9,
+    "kind": "normal",
+    "hit": 160,
+    "hitFalloff": 0,
+    "power": {
+      "air": 120,
+      "land": 120,
+      "sea": 120
+    },
+    "raw": "08 a0 00 78 78 78"
+  },
+  {
+    "id": 128,
+    "name": null,
+    "nameHex": "ca 76 ca 77 c9 70 c9 69 ca 21",
+    "romOffset": "0b587",
+    "range": 1,
+    "kind": "normal",
+    "hit": 120,
+    "hitFalloff": 0,
+    "power": {
+      "air": 150,
+      "land": 150,
+      "sea": 150
+    },
+    "raw": "00 78 00 96 96 96"
+  },
+  {
+    "id": 129,
+    "name": null,
+    "nameHex": "ca 43 ca 26 ca 27",
+    "romOffset": "0b58d",
+    "range": 8,
+    "kind": "normal",
+    "hit": 160,
+    "hitFalloff": 0,
+    "power": {
+      "air": 160,
+      "land": 160,
+      "sea": 160
+    },
+    "raw": "07 a0 00 a0 a0 a0"
+  },
+  {
+    "id": 130,
+    "name": null,
+    "nameHex": "ca 72 ca 7a ca 11 ca 12",
+    "romOffset": "0b593",
+    "range": 1,
+    "kind": "normal",
+    "hit": 120,
+    "hitFalloff": 1,
+    "power": {
+      "air": 80,
+      "land": 80,
+      "sea": null
+    },
+    "raw": "00 78 01 50 50 00"
+  },
+  {
+    "id": 131,
+    "name": null,
+    "nameHex": "ca 72 ca 7a ca 11 ca 12",
+    "romOffset": "0b599",
+    "range": 1,
+    "kind": "normal",
+    "hit": 130,
+    "hitFalloff": 1,
+    "power": {
+      "air": 100,
+      "land": 100,
+      "sea": null
+    },
+    "raw": "00 82 01 64 64 00"
+  },
+  {
+    "id": 132,
+    "name": null,
+    "nameHex": "ca 72 ca 7a ca 11 ca 12",
+    "romOffset": "0b59f",
+    "range": 1,
+    "kind": "normal",
+    "hit": 140,
+    "hitFalloff": 1,
+    "power": {
+      "air": 120,
+      "land": 120,
+      "sea": null
+    },
+    "raw": "00 8c 01 78 78 00"
+  },
+  {
+    "id": 133,
+    "name": null,
+    "nameHex": "ca 72 ca 7a ca 11 ca 12",
+    "romOffset": "0b5a5",
+    "range": 1,
+    "kind": "normal",
+    "hit": 150,
+    "hitFalloff": 1,
+    "power": {
+      "air": 140,
+      "land": 140,
+      "sea": null
+    },
+    "raw": "00 96 01 8c 8c 00"
+  },
+  {
+    "id": 134,
+    "name": null,
+    "nameHex": "ca 43 ca 26 ca 21",
+    "romOffset": "0b5ab",
+    "range": 6,
+    "kind": "normal",
+    "hit": 120,
+    "hitFalloff": 1,
+    "power": {
+      "air": 150,
+      "land": 150,
+      "sea": 150
+    },
+    "raw": "05 78 01 96 96 96"
+  },
+  {
+    "id": 135,
+    "name": null,
+    "nameHex": "ca 43 ca 26 ca 30",
+    "romOffset": "0b5b1",
+    "range": 1,
+    "kind": "normal",
+    "hit": 120,
+    "hitFalloff": 0,
+    "power": {
+      "air": 40,
+      "land": 40,
+      "sea": null
+    },
+    "raw": "00 78 00 28 28 00"
+  },
+  {
+    "id": 136,
+    "name": null,
+    "nameHex": "ca 43 ca 26 ca 3a ca 3b",
+    "romOffset": "0b5b7",
+    "range": 1,
+    "kind": "normal",
+    "hit": 120,
+    "hitFalloff": 0,
+    "power": {
+      "air": 80,
+      "land": 80,
+      "sea": 70
+    },
+    "raw": "00 78 00 50 50 46"
+  },
+  {
+    "id": 137,
+    "name": null,
+    "nameHex": "c9 69 ca 45 ca 21",
+    "romOffset": "0b5bd",
+    "range": 1,
+    "kind": "normal",
+    "hit": 120,
+    "hitFalloff": 0,
+    "power": {
+      "air": null,
+      "land": 40,
+      "sea": 40
+    },
+    "raw": "00 78 00 00 28 28"
+  },
+  {
+    "id": 138,
+    "name": null,
+    "nameHex": "ca 7b ca 7c ca 11 ca 12",
+    "romOffset": "0b5c3",
+    "range": 5,
+    "kind": "normal",
+    "hit": 120,
+    "hitFalloff": 0,
+    "power": {
+      "air": 100,
+      "land": 100,
+      "sea": 100
+    },
+    "raw": "04 78 00 64 64 64"
+  },
+  {
+    "id": 139,
+    "name": null,
+    "nameHex": "c9 51 ca 7d c9 70 c9 69 ca 21",
+    "romOffset": "0b5c9",
+    "range": 1,
+    "kind": "normal",
+    "hit": 105,
+    "hitFalloff": 1,
+    "power": {
+      "air": 120,
+      "land": 120,
+      "sea": null
+    },
+    "raw": "00 69 01 78 78 00"
+  },
+  {
+    "id": 140,
+    "name": null,
+    "nameHex": "ca 43 ca 26 ca 27",
+    "romOffset": "0b5cf",
+    "range": 5,
+    "kind": "normal",
+    "hit": 120,
+    "hitFalloff": 1,
+    "power": {
+      "air": 80,
+      "land": 80,
+      "sea": null
+    },
+    "raw": "04 78 01 50 50 00"
+  },
+  {
+    "id": 141,
+    "name": null,
+    "nameHex": "ca 43 ca 26 ca 27",
+    "romOffset": "0b5d5",
+    "range": 6,
+    "kind": "normal",
+    "hit": 120,
+    "hitFalloff": 1,
+    "power": {
+      "air": 130,
+      "land": 130,
+      "sea": null
+    },
+    "raw": "05 78 01 82 82 00"
+  },
+  {
+    "id": 142,
+    "name": null,
+    "nameHex": "ca 43 ca 26 ca 27",
+    "romOffset": "0b5db",
+    "range": 7,
+    "kind": "normal",
+    "hit": 120,
+    "hitFalloff": 1,
+    "power": {
+      "air": 180,
+      "land": 180,
+      "sea": null
+    },
+    "raw": "06 78 01 b4 b4 00"
+  },
+  {
+    "id": 143,
+    "name": null,
+    "nameHex": "ca 38 c9 69 ca 30",
+    "romOffset": "0b5e1",
+    "range": 3,
+    "kind": "normal",
+    "hit": 120,
+    "hitFalloff": 0,
+    "power": {
+      "air": 80,
+      "land": 80,
+      "sea": 80
+    },
+    "raw": "02 78 00 50 50 50"
+  },
+  {
+    "id": 144,
+    "name": null,
+    "nameHex": "ca 43 ca 26 ca 29",
+    "romOffset": "0b5e7",
+    "range": 5,
+    "kind": "normal",
+    "hit": 120,
+    "hitFalloff": 0,
+    "power": {
+      "air": 170,
+      "land": 170,
+      "sea": 170
+    },
+    "raw": "04 78 00 aa aa aa"
+  },
+  {
+    "id": 145,
+    "name": null,
+    "nameHex": "ca 43 ca 26 ca 27",
+    "romOffset": "0b5ed",
+    "range": 1,
+    "kind": "normal",
+    "hit": 95,
+    "hitFalloff": 0,
+    "power": {
+      "air": 90,
+      "land": 90,
+      "sea": null
+    },
+    "raw": "00 5f 00 5a 5a 00"
+  },
+  {
+    "id": 146,
+    "name": null,
+    "nameHex": "ca 80 c9 e5",
+    "romOffset": "0b5f3",
+    "range": 1,
+    "kind": "normal",
+    "hit": 120,
+    "hitFalloff": 0,
+    "power": {
+      "air": null,
+      "land": 80,
+      "sea": 80
+    },
+    "raw": "00 78 00 00 50 50"
+  },
+  {
+    "id": 147,
+    "name": null,
+    "nameHex": "ca 31 ca 32 ca 12",
+    "romOffset": "0b5f9",
+    "range": 1,
+    "kind": "normal",
+    "hit": 100,
+    "hitFalloff": 0,
+    "power": {
+      "air": null,
+      "land": 40,
+      "sea": 70
+    },
+    "raw": "00 64 00 00 28 46"
+  },
+  {
+    "id": 148,
+    "name": null,
+    "nameHex": "ca 31 ca 64 ca 12",
+    "romOffset": "0b5ff",
+    "range": 1,
+    "kind": "normal",
+    "hit": 120,
+    "hitFalloff": 0,
+    "power": {
+      "air": 40,
+      "land": 40,
+      "sea": null
+    },
+    "raw": "00 78 00 28 28 00"
+  },
+  {
+    "id": 149,
+    "name": "离子剑",
+    "nameHex": "ca 81 c9 69 ca 27",
+    "romOffset": "0b605",
+    "range": 1,
+    "kind": "normal",
+    "hit": 105,
+    "hitFalloff": 0,
+    "power": {
+      "air": 80,
+      "land": 40,
+      "sea": 40
+    },
+    "raw": "00 69 00 50 28 28"
+  },
+  {
+    "id": 150,
+    "name": "冷冻光线",
+    "nameHex": "ca 3c ca 3d ca 26 ca 2c",
+    "romOffset": "0b60b",
+    "range": 1,
+    "kind": "normal",
+    "hit": 112,
+    "hitFalloff": 0,
+    "power": {
+      "air": null,
+      "land": 80,
+      "sea": 40
+    },
+    "raw": "00 70 00 00 50 28"
+  },
+  {
+    "id": 151,
+    "name": null,
+    "nameHex": "ca 82 ca 83 ca 26 ca 29",
+    "romOffset": "0b611",
+    "range": 1,
+    "kind": "normal",
+    "hit": 120,
+    "hitFalloff": 0,
+    "power": {
+      "air": 40,
+      "land": 40,
+      "sea": 40
+    },
+    "raw": "00 78 00 28 28 28"
+  },
+  {
+    "id": 152,
+    "name": null,
+    "nameHex": "c9 2d ca 36 ca 37",
+    "romOffset": "0b617",
+    "range": 1,
+    "kind": "unknown1",
+    "hit": 120,
+    "hitFalloff": 0,
+    "power": {
+      "air": 70,
+      "land": 70,
+      "sea": null
+    },
+    "raw": "10 78 00 46 46 00"
+  },
+  {
+    "id": 153,
+    "name": null,
+    "nameHex": "c9 2d ca 36 ca 37",
+    "romOffset": "0b61d",
+    "range": 1,
+    "kind": "normal",
+    "hit": 100,
+    "hitFalloff": 0,
+    "power": {
+      "air": 80,
+      "land": 80,
+      "sea": 40
+    },
+    "raw": "00 64 00 50 50 28"
+  },
+  {
+    "id": 154,
+    "name": null,
+    "nameHex": "ca 49 ca 4a c9 64",
+    "romOffset": "0b623",
+    "range": 1,
+    "kind": "normal",
+    "hit": 120,
+    "hitFalloff": 0,
+    "power": {
+      "air": 40,
+      "land": 40,
+      "sea": 40
+    },
+    "raw": "00 78 00 28 28 28"
+  },
+  {
+    "id": 155,
+    "name": null,
+    "nameHex": "86 c9 20 ca 78 ca 21",
+    "romOffset": "0b629",
+    "range": 6,
+    "kind": "normal",
+    "hit": 120,
+    "hitFalloff": 0,
+    "power": {
+      "air": 40,
+      "land": 40,
+      "sea": 40
+    },
+    "raw": "05 78 00 28 28 28"
+  },
+  {
+    "id": 156,
+    "name": null,
+    "nameHex": "ca 43 ca 26 ca 27",
+    "romOffset": "0b62f",
+    "range": 1,
+    "kind": "normal",
+    "hit": 160,
+    "hitFalloff": 0,
+    "power": {
+      "air": 230,
+      "land": 230,
+      "sea": 230
+    },
+    "raw": "00 a0 00 e6 e6 e6"
+  },
+  {
+    "id": 157,
+    "name": null,
+    "nameHex": "ca 44 ca 84 ca 85",
+    "romOffset": "0b635",
+    "range": 8,
+    "kind": "normal",
+    "hit": 160,
+    "hitFalloff": 1,
+    "power": {
+      "air": 220,
+      "land": 220,
+      "sea": 220
+    },
+    "raw": "07 a0 01 dc dc dc"
+  },
+  {
+    "id": 158,
+    "name": null,
+    "nameHex": "ca 43 ca 26 ca 27",
+    "romOffset": "0b63b",
+    "range": 1,
+    "kind": "normal",
+    "hit": 160,
+    "hitFalloff": 0,
+    "power": {
+      "air": 100,
+      "land": 100,
+      "sea": 100
+    },
+    "raw": "00 a0 00 64 64 64"
+  },
+  {
+    "id": 159,
+    "name": "离子波",
+    "nameHex": "ca 81 c9 69 c9 f0",
+    "romOffset": "0b641",
+    "range": 7,
+    "kind": "normal",
+    "hit": 160,
+    "hitFalloff": 1,
+    "power": {
+      "air": 190,
+      "land": 190,
+      "sea": 190
+    },
+    "raw": "06 a0 01 be be be"
+  },
+  {
+    "id": 160,
+    "name": "离子波",
+    "nameHex": "ca 81 c9 69 c9 f0",
+    "romOffset": "0b647",
+    "range": 3,
+    "kind": "normal",
+    "hit": 80,
+    "hitFalloff": 1,
+    "power": {
+      "air": 150,
+      "land": 150,
+      "sea": null
+    },
+    "raw": "02 50 01 96 96 00"
+  },
+  {
+    "id": 161,
+    "name": null,
+    "nameHex": "c9 70 c9 69 c9 20 ca 78 ca 21",
+    "romOffset": "0b64d",
+    "range": 4,
+    "kind": "normal",
+    "hit": 85,
+    "hitFalloff": 1,
+    "power": {
+      "air": 180,
+      "land": 180,
+      "sea": null
+    },
+    "raw": "03 55 01 b4 b4 00"
+  },
+  {
+    "id": 162,
+    "name": null,
+    "nameHex": "c9 70 c9 69 c9 20 ca 78 ca 21",
+    "romOffset": "0b653",
+    "range": 1,
+    "kind": "normal",
+    "hit": 200,
+    "hitFalloff": 0,
+    "power": {
+      "air": 200,
+      "land": 200,
+      "sea": 200
+    },
+    "raw": "00 c8 00 c8 c8 c8"
+  },
+  {
+    "id": 163,
+    "name": null,
+    "nameHex": "ca 50 ca 51 ca 86 ca 4a c9 64",
+    "romOffset": "0b659",
+    "range": 9,
+    "kind": "normal",
+    "hit": 200,
+    "hitFalloff": 1,
+    "power": {
+      "air": 255,
+      "land": 255,
+      "sea": 255
+    },
+    "raw": "08 c8 01 ff ff ff"
+  },
+  {
+    "id": 164,
+    "name": "修理装置",
+    "nameHex": "c9 75 ca 87 c9 5c ca 88",
+    "romOffset": "0b65f",
+    "range": 1,
+    "kind": "support",
+    "hit": 120,
+    "hitFalloff": 0,
+    "power": {
+      "air": null,
+      "land": null,
+      "sea": null
+    },
+    "raw": "f0 78 00 00 00 00"
+  },
+  {
+    "id": 165,
+    "name": null,
+    "nameHex": "c9 2d ca 89 ca 26 ca 28 ca 29",
+    "romOffset": "0b665",
+    "range": 4,
+    "kind": "normal",
+    "hit": 120,
+    "hitFalloff": 1,
+    "power": {
+      "air": 90,
+      "land": 80,
+      "sea": null
+    },
+    "raw": "03 78 01 5a 50 00"
+  },
+  {
+    "id": 166,
+    "name": null,
+    "nameHex": "c9 32 ca 44 ca 21",
+    "romOffset": "0b66b",
+    "range": 1,
+    "kind": "normal",
+    "hit": 90,
+    "hitFalloff": 0,
+    "power": {
+      "air": 105,
+      "land": 95,
+      "sea": null
+    },
+    "raw": "00 5a 00 69 5f 00"
+  },
+  {
+    "id": 167,
+    "name": null,
+    "nameHex": "c9 63 ca 36 ca 26 ca 28",
+    "romOffset": "0b671",
+    "range": 4,
+    "kind": "normal",
+    "hit": 100,
+    "hitFalloff": 1,
+    "power": {
+      "air": 90,
+      "land": 90,
+      "sea": null
+    },
+    "raw": "03 64 01 5a 5a 00"
+  },
+  {
+    "id": 168,
+    "name": null,
+    "nameHex": "c9 63 ca 36 ca 26 ca 28",
+    "romOffset": "0b677",
+    "range": 5,
+    "kind": "normal",
+    "hit": 100,
+    "hitFalloff": 1,
+    "power": {
+      "air": 110,
+      "land": 110,
+      "sea": null
+    },
+    "raw": "04 64 01 6e 6e 00"
+  },
+  {
+    "id": 169,
+    "name": null,
+    "nameHex": "ca 15 ca 56 ca 30",
+    "romOffset": "0b67d",
+    "range": 1,
+    "kind": "normal",
+    "hit": 95,
+    "hitFalloff": 0,
+    "power": {
+      "air": 120,
+      "land": 120,
+      "sea": null
+    },
+    "raw": "00 5f 00 78 78 00"
+  },
+  {
+    "id": 170,
+    "name": null,
+    "nameHex": "ca 15 ca 56 ca 30",
+    "romOffset": "0b683",
+    "range": 1,
+    "kind": "normal",
+    "hit": 95,
+    "hitFalloff": 0,
+    "power": {
+      "air": 150,
+      "land": 150,
+      "sea": null
+    },
+    "raw": "00 5f 00 96 96 00"
+  },
+  {
+    "id": 171,
+    "name": null,
+    "nameHex": "c9 99 ca 8a ca 11 ca 12",
+    "romOffset": "0b689",
+    "range": 5,
+    "kind": "normal",
+    "hit": 120,
+    "hitFalloff": 1,
+    "power": {
+      "air": null,
+      "land": null,
+      "sea": 120
+    },
+    "raw": "04 78 01 00 00 78"
+  },
+  {
+    "id": 172,
+    "name": null,
+    "nameHex": "ca 81 c9 69 ca 30",
+    "romOffset": "0b68f",
+    "range": 1,
+    "kind": "normal",
+    "hit": 120,
+    "hitFalloff": 0,
+    "power": {
+      "air": null,
+      "land": null,
+      "sea": 150
+    },
+    "raw": "00 78 00 00 00 96"
+  },
+  {
+    "id": 173,
+    "name": null,
+    "nameHex": "c9 0a c9 2c ca 11 ca 12",
+    "romOffset": "0b695",
+    "range": 5,
+    "kind": "normal",
+    "hit": 120,
+    "hitFalloff": 1,
+    "power": {
+      "air": null,
+      "land": 120,
+      "sea": null
+    },
+    "raw": "04 78 01 00 78 00"
+  },
+  {
+    "id": 174,
+    "name": null,
+    "nameHex": "ca 8b ca 71 ca 2c ca 29",
+    "romOffset": "0b69b",
+    "range": 1,
+    "kind": "normal",
+    "hit": 120,
+    "hitFalloff": 0,
+    "power": {
+      "air": null,
+      "land": 150,
+      "sea": null
+    },
+    "raw": "00 78 00 00 96 00"
+  },
+  {
+    "id": 175,
+    "name": "20机枪",
+    "nameHex": "32 30 c9 64 ca 29",
+    "romOffset": "0b6a1",
+    "range": 1,
+    "kind": "normal",
+    "hit": 120,
+    "hitFalloff": 0,
+    "power": {
+      "air": 10,
+      "land": 10,
+      "sea": 10
+    },
+    "raw": "00 78 00 0a 0a 0a"
+  },
+  {
+    "id": 176,
+    "name": "20机枪",
+    "nameHex": "32 30 c9 64 ca 29",
+    "romOffset": "0b6a7",
+    "range": 1,
+    "kind": "normal",
+    "hit": 120,
+    "hitFalloff": 0,
+    "power": {
+      "air": 30,
+      "land": 30,
+      "sea": 30
+    },
+    "raw": "00 78 00 1e 1e 1e"
+  },
+  {
+    "id": 177,
+    "name": "20机枪",
+    "nameHex": "32 30 c9 64 ca 29",
+    "romOffset": "0b6ad",
+    "range": 1,
+    "kind": "normal",
+    "hit": 120,
+    "hitFalloff": 0,
+    "power": {
+      "air": 50,
+      "land": 50,
+      "sea": 50
+    },
+    "raw": "00 78 00 32 32 32"
+  },
+  {
+    "id": 178,
+    "name": "20机枪",
+    "nameHex": "32 30 c9 64 ca 29",
+    "romOffset": "0b6b3",
+    "range": 1,
+    "kind": "normal",
+    "hit": 120,
+    "hitFalloff": 0,
+    "power": {
+      "air": 70,
+      "land": 70,
+      "sea": 70
+    },
+    "raw": "00 78 00 46 46 46"
+  },
+  {
+    "id": 179,
+    "name": null,
+    "nameHex": "ca 44 ca 84 c9 f0",
+    "romOffset": "0b6b9",
+    "range": 1,
+    "kind": "normal",
+    "hit": 120,
+    "hitFalloff": 0,
+    "power": {
+      "air": 40,
+      "land": 40,
+      "sea": 40
+    },
+    "raw": "00 78 00 28 28 28"
+  },
+  {
+    "id": 180,
+    "name": null,
+    "nameHex": "ca 44 ca 84 c9 f0",
+    "romOffset": "0b6bf",
+    "range": 1,
+    "kind": "normal",
+    "hit": 120,
+    "hitFalloff": 0,
+    "power": {
+      "air": 80,
+      "land": 80,
+      "sea": 80
+    },
+    "raw": "00 78 00 50 50 50"
+  },
+  {
+    "id": 181,
+    "name": null,
+    "nameHex": "ca 5b c9 08 c9 f0",
+    "romOffset": "0b6c5",
+    "range": 1,
+    "kind": "normal",
+    "hit": 85,
+    "hitFalloff": 0,
+    "power": {
+      "air": 180,
+      "land": 180,
+      "sea": null
+    },
+    "raw": "00 55 00 b4 b4 00"
+  },
+  {
+    "id": 182,
+    "name": null,
+    "nameHex": "ca 5b c9 08 c9 f0",
+    "romOffset": "0b6cb",
+    "range": 1,
+    "kind": "normal",
+    "hit": 85,
+    "hitFalloff": 0,
+    "power": {
+      "air": 200,
+      "land": 200,
+      "sea": null
+    },
+    "raw": "00 55 00 c8 c8 00"
+  },
+  {
+    "id": 183,
+    "name": null,
+    "nameHex": "c9 7d c9 c8 ca 11 ca 12",
+    "romOffset": "0b6d1",
+    "range": 5,
+    "kind": "normal",
+    "hit": 100,
+    "hitFalloff": 1,
+    "power": {
+      "air": null,
+      "land": 135,
+      "sea": null
+    },
+    "raw": "04 64 01 00 87 00"
+  },
+  {
+    "id": 184,
+    "name": "射线枪",
+    "nameHex": "ca 2b ca 2c ca 29",
+    "romOffset": "0b6d7",
+    "range": 1,
+    "kind": "normal",
+    "hit": 90,
+    "hitFalloff": 0,
+    "power": {
+      "air": null,
+      "land": 100,
+      "sea": 165
+    },
+    "raw": "00 5a 00 00 64 a5"
+  },
+  {
+    "id": 185,
+    "name": "射线枪",
+    "nameHex": "ca 2b ca 2c ca 29",
+    "romOffset": "0b6dd",
+    "range": 5,
+    "kind": "normal",
+    "hit": 100,
+    "hitFalloff": 1,
+    "power": {
+      "air": null,
+      "land": null,
+      "sea": 135
+    },
+    "raw": "04 64 01 00 00 87"
+  },
+  {
+    "id": 186,
+    "name": "穿甲弹",
+    "nameHex": "ca 2a c9 5d ca 12",
+    "romOffset": "0b6e3",
+    "range": 1,
+    "kind": "normal",
+    "hit": 60,
+    "hitFalloff": 0,
+    "power": {
+      "air": 60,
+      "land": 120,
+      "sea": 120
+    },
+    "raw": "00 3c 00 3c 78 78"
+  },
+  {
+    "id": 187,
+    "name": null,
+    "nameHex": "c9 46 ca 44 ca 2a c9 5d ca 12",
+    "romOffset": "0b6e9",
+    "range": 1,
+    "kind": "normal",
+    "hit": 60,
+    "hitFalloff": 0,
+    "power": {
+      "air": 80,
+      "land": 160,
+      "sea": 160
+    },
+    "raw": "00 3c 00 50 a0 a0"
+  },
+  {
+    "id": 188,
+    "name": "DX穿甲弹",
+    "nameHex": "83 97 ca 2a c9 5d ca 12",
+    "romOffset": "0b6ef",
+    "range": 1,
+    "kind": "normal",
+    "hit": 60,
+    "hitFalloff": 0,
+    "power": {
+      "air": 100,
+      "land": 200,
+      "sea": 200
+    },
+    "raw": "00 3c 00 64 c8 c8"
+  },
+  {
+    "id": 189,
+    "name": null,
+    "nameHex": "af",
+    "romOffset": "0b6f5",
+    "range": 1,
+    "kind": "normal",
+    "hit": 120,
+    "hitFalloff": 0,
+    "power": {
+      "air": 40,
+      "land": 40,
+      "sea": 40
+    },
+    "raw": "00 78 00 28 28 28"
+  },
+  {
+    "id": 190,
+    "name": null,
+    "nameHex": "af",
+    "romOffset": "0b6fb",
+    "range": 1,
+    "kind": "normal",
+    "hit": 120,
+    "hitFalloff": 0,
+    "power": {
+      "air": 40,
+      "land": 40,
+      "sea": 40
+    },
+    "raw": "00 78 00 28 28 28"
+  },
+  {
+    "id": 191,
+    "name": null,
+    "nameHex": "af",
+    "romOffset": "0b701",
+    "range": 1,
+    "kind": "normal",
+    "hit": 120,
+    "hitFalloff": 0,
+    "power": {
+      "air": 40,
+      "land": 40,
+      "sea": 40
+    },
+    "raw": "00 78 00 28 28 28"
+  }
+]
