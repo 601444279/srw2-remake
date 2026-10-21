@@ -10,3 +10,6 @@ node_modules/
 dist/
 .DS_Store
 .env
+
+# 从 ROM 导出的素材，可随时用 tools/ 下脚本重新生成
+extracted/
