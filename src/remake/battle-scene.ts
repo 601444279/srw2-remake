@@ -133,6 +133,7 @@ export class BattleScene {
   private effect: Effect | null = null;
   private puffs: Puff[] = [];
   private raf = 0;
+  private slow = 1; // 慢镜头时的时间倍率（只影响爆炸）
   private last = 0;
   private speed: () => number;
   private skipped: () => boolean;
@@ -299,21 +300,34 @@ export class BattleScene {
     this.pop(a, "MISS", "miss");
   }
 
-  // 击破：在机体上连续炸开几团原版的爆炸，机体闪烁消失
-  async explode(u: Unit) {
+  // 击破：慢镜头。闪白、镜头推近被击破的机体，原版的爆炸一团接一团放慢炸开，机体闪烁消失，最后一声大爆炸恢复正常速度
+  async explode(u: Unit, boom: () => void) {
     const a = this.actor(u);
     const anim = data.explosions[`explode-${a.side}`];
     const url = anim && fileUrl(effectFiles, anim.file);
     const art = url ? await loadArt(url) : null;
-    const spots = 7;
-    for (let i = 0; i < spots && art; i++) {
-      this.puffs.push({ anim, art, x: a.x + a.w * (0.15 + Math.random() * 0.7), y: a.y + a.h * (0.2 + Math.random() * 0.7), t: -i * 0.09 });
+    if (this.skipped()) { a.alpha = 0; return; }
+    const stage = $(".bs-stage", this.root);
+    stage.style.setProperty("--fx", `${((a.x - this.camera.x + a.w / 2) / W) * 100}%`);
+    stage.style.setProperty("--fy", `${((a.y + a.h / 2) / H) * 100}%`);
+    stage.classList.add("slowmo");
+    this.slow = 0.4;
+    boom();
+    for (let i = 0; i < 10 && art; i++) {
+      this.puffs.push({ anim, art, x: a.x + a.w * (0.1 + Math.random() * 0.8), y: a.y + a.h * (0.15 + Math.random() * 0.75), t: -i * 0.07 });
     }
-    a.flash = 0.2;
-    this.shake(a, 5);
-    await wait(0.45 / this.speed());
-    await tween(0.4 / this.speed(), (t) => { a.alpha = 1 - t; });
-    await wait(0.25 / this.speed());
+    a.flash = 0.25;
+    this.shake(a, 6);
+    await wait(0.9 / this.speed());
+    await tween(0.6 / this.speed(), (t) => { a.alpha = 1 - t; });
+    // 最后一下：大爆炸，速度恢复
+    this.slow = 1;
+    stage.classList.remove("slowmo");
+    stage.classList.add("blast");
+    boom();
+    for (let i = 0; i < 4 && art; i++) this.puffs.push({ anim, art, x: a.x + a.w * (0.3 + Math.random() * 0.4), y: a.y + a.h * (0.3 + Math.random() * 0.4), t: -i * 0.03 });
+    await wait(0.5 / this.speed());
+    stage.classList.remove("blast");
   }
 
   private shake(a: Actor, px: number) {
@@ -341,7 +355,7 @@ export class BattleScene {
   private tick(dt: number) {
     const s = dt * this.speed();
     for (const a of this.actors) a.flash = Math.max(0, a.flash - s);
-    for (const p of this.puffs) p.t += s;
+    for (const p of this.puffs) p.t += s * this.slow;
     this.puffs = this.puffs.filter((p) => p.t * 60 < p.anim.keyframes.at(-1)![0] + p.anim.keyframes.at(-1)![1]);
   }
 

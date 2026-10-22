@@ -884,11 +884,11 @@ export class Game implements DrawState {
       combo,
       traitBefore: before.trait,
       traitAfter: unit.trait,
-    }, this.speed());
+    }, this.speed(), (k) => this.sfx.ui(k === "tick" ? "move" : "ok"));
     const up = unit.levelIndex > before.levelIndex;
     if (!up) { await card.done; return; }
     const prev = this.mode;
-    this.noticeClose = card.close;
+    this.noticeClose = card.advance;
     this.setMode("notice");
     if (this.auto) setTimeout(card.close, 300);
     await card.done;
@@ -931,13 +931,18 @@ export class Game implements DrawState {
       } else {
         scene.miss(e.to);
       }
-      await wait(0.3 / this.speed());
-      scene.say(e.to, reactionShout(e.to.pilotId, damageCase(e.hit, e.damage, e.hpAfter, e.to.maxHp)));
       if (e.hpAfter === 0) {
-        if (!this.skipBattle) this.sfx.explode();
-        await scene.explode(e.to);
+        // 击破：先让这一击打实（伤害数字、血条扣到 0），喊完被击破的台词，再慢镜头爆炸
+        await wait(0.6 / this.speed());
+        scene.say(e.to, reactionShout(e.to.pilotId, "destroyed"));
+        await wait(0.35 / this.speed());
+        await scene.explode(e.to, () => { if (!this.skipBattle) this.sfx.explode(); });
+        await wait(0.4 / this.speed());
+      } else {
+        await wait(0.3 / this.speed());
+        scene.say(e.to, reactionShout(e.to.pilotId, damageCase(e.hit, e.damage, e.hpAfter, e.to.maxHp)));
+        await wait(0.8 / this.speed());
       }
-      await wait(0.8 / this.speed());
       if (i === 0 && e.hpAfter > 0 && events[1]?.from !== defender) {
         scene.say(defender, reactionShout(defender.pilotId, "cannotCounter"));
         await wait(0.7 / this.speed());

@@ -166,17 +166,17 @@ export class UI {
     $("#status").hidden = true;
   }
 
-  // 战斗后的成长卡片：没升级是一张小卡（经验条涨一截，自动消失）；升级是大卡，能力逐项跳出来，按确定继续
-  showGrowth(d: GrowthData, speed: number): { done: Promise<void>; close: () => void } {
+  // 战斗后的成长卡片。没升级：小卡，经验条涨一截，自动消失。
+  // 升级：大卡，像原版那样一项一项往上跳——等级、经验条，然后每项能力一点一点加上去，每跳一下「嘀」一声；
+  // 最后是特性（强化了就高亮）。跳的过程中按确定直接跳完，再按一次关闭。sound 放界面音效
+  showGrowth(d: GrowthData, speed: number, sound: (kind: "tick" | "ding") => void = () => {}): { done: Promise<void>; advance: () => void; close: () => void } {
     const el = $("#growth");
     const up = d.after.level > d.before.level;
     const rows: [string, keyof GrowthStats][] = [["最大 HP", "maxHp"], ["最大 SP", "maxSp"], ["强度", "strength"], ["防卫", "defense"], ["速度", "speed"]];
     const statRows = rows
       .filter(([, k]) => k !== "maxSp" || d.after.maxSp > 0)
-      .map(([label, k], i) => {
-        const diff = d.after[k] - d.before[k];
-        return `<li style="--i:${i}" class="${diff ? "up" : ""}"><span>${label}</span><b>${d.before[k]}</b><i>→</i><b class="to" data-to="${d.after[k]}">${d.before[k]}</b><em>${diff ? `+${diff}` : ""}</em></li>`;
-      }).join("");
+      .map(([label, k]) => `<li data-from="${d.before[k]}" data-to="${d.after[k]}"><span>${label}</span><b>${d.before[k]}</b><em></em></li>`)
+      .join("");
     const face = d.portrait ? `<img src="${d.portrait}" alt="">` : `<span>${(d.unit.pilotName || d.unit.name).slice(0, 1)}</span>`;
     el.className = up ? "big" : "small";
     el.style.setProperty("--speed", String(speed));
@@ -187,43 +187,86 @@ export class UI {
           <div class="gr-face">${face}</div>
           <div class="gr-who">
             <b>${d.unit.pilotName || d.unit.name}</b><small>${d.unit.name}</small>
-            <div class="gr-level">Lv <span>${d.before.level}</span>${up ? `<i>→</i><span class="new">${d.after.level}</span>` : ""}</div>
+            <div class="gr-level">Lv <span class="lv">${d.before.level}</span><em class="lvup"></em></div>
           </div>
           <div class="gr-exp">EXP <b>+${d.gained}</b>${d.combo ? `<span class="gr-combo">${d.combo.count} 连击 · +${d.combo.bonus}%</span>` : ""}</div>
         </div>
         <div class="gr-bar"><i style="width:${d.barBefore * 100}%"></i></div>
         <div class="gr-next">${d.toNext === null ? "已达到最高等级" : `下一级还需 ${d.toNext}`}</div>
-        ${up ? `<ul class="gr-stats">${statRows}</ul>${traitRow(d)}<div class="gr-hint">按确定继续</div>` : ""}
+        ${up ? `<ul class="gr-stats">${statRows}</ul>${traitRow(d)}<div class="gr-hint">按确定跳过</div>` : ""}
       </div>`;
     el.hidden = false;
-    // 经验条：升级时先涨满，再从新等级的进度开始
     const bar = el.querySelector(".gr-bar i") as HTMLElement;
-    const t = (s: number) => (s / speed) * 1000;
-    const timers: number[] = [];
-    const later = (ms: number, f: () => void) => timers.push(window.setTimeout(f, ms));
-    later(t(0.15), () => { bar.style.width = `${up ? 100 : (d.barAfter ?? 1) * 100}%`; });
-    if (up) later(t(0.75), () => { bar.style.transition = "none"; bar.style.width = "0%"; void bar.offsetWidth; bar.style.transition = ""; bar.style.width = `${(d.barAfter ?? 1) * 100}%`; });
-    // 能力数字逐项滚上去
-    el.querySelectorAll<HTMLElement>(".gr-stats .to").forEach((b, i) => {
-      const from = Number(b.textContent), to = Number(b.dataset.to);
-      if (from === to) return;
-      later(t(0.6 + i * 0.18), () => {
-        const t0 = performance.now(), dur = t(0.35);
-        const step = () => {
-          const k = Math.min(1, (performance.now() - t0) / dur);
-          b.textContent = String(Math.round(from + (to - from) * k));
-          if (k < 1) requestAnimationFrame(step);
-        };
-        step();
-      });
-    });
-    let close = () => {};
-    const done = new Promise<void>((resolve) => {
-      close = () => { timers.forEach(clearTimeout); el.hidden = true; el.innerHTML = ""; resolve(); };
-      el.onclick = () => close();
-      if (!up) later(t(1.3), close);
-    });
-    return { done, close };
+    let fast = false, finished = !up, closed = false;
+    const sleep = (s: number) => (fast || closed ? Promise.resolve() : new Promise<void>((r) => setTimeout(r, (s / speed) * 1000)));
+    let resolveDone!: () => void;
+    const done = new Promise<void>((r) => (resolveDone = r));
+    const close = () => { if (closed) return; closed = true; el.hidden = true; el.innerHTML = ""; resolveDone(); };
+    const advance = () => { if (finished) close(); else fast = true; };
+    el.onclick = advance;
+
+    const run = async () => {
+      await sleep(0.15);
+      if (!up) {
+        bar.style.width = `${(d.barAfter ?? 1) * 100}%`;
+        await sleep(1.3);
+        close();
+        return;
+      }
+      // 经验条涨满，等级跳上去，经验条从新等级的进度开始
+      bar.style.width = "100%";
+      await sleep(0.55);
+      // 等级一级一级跳
+      const lv = el.querySelector(".gr-level .lv") as HTMLElement;
+      const lvUp = el.querySelector(".gr-level .lvup") as HTMLElement;
+      for (let L = d.before.level + 1; L <= d.after.level; L++) {
+        lv.textContent = String(fast ? d.after.level : L);
+        lvUp.textContent = `+${(fast ? d.after.level : L) - d.before.level}`;
+        lv.classList.remove("new");
+        void lv.offsetWidth;
+        lv.classList.add("new");
+        if (!fast) sound("ding");
+        if (fast) break;
+        await sleep(0.3);
+      }
+      bar.style.transition = "none";
+      bar.style.width = "0%";
+      void bar.offsetWidth;
+      bar.style.transition = "";
+      bar.style.width = `${(d.barAfter ?? 1) * 100}%`;
+      await sleep(0.45);
+      // 能力一项一项往上加
+      for (const li of el.querySelectorAll<HTMLElement>(".gr-stats li")) {
+        const from = Number(li.dataset.from), to = Number(li.dataset.to);
+        const b = li.querySelector("b")!, em = li.querySelector("em")!;
+        li.classList.add("active");
+        const diff = to - from;
+        const stepS = Math.min(0.09, Math.max(0.03, 0.7 / Math.max(1, diff)));
+        for (let k = 1; k <= diff && !fast && !closed; k++) {
+          b.textContent = String(from + k);
+          em.textContent = `+${k}`;
+          li.classList.toggle("bump");
+          sound("tick");
+          await sleep(stepS);
+        }
+        b.textContent = String(to);
+        em.textContent = diff ? `+${diff}` : "";
+        li.classList.remove("active");
+        li.classList.add(diff ? "up" : "same");
+        await sleep(0.12);
+      }
+      const trait = el.querySelector(".gr-trait") as HTMLElement | null;
+      if (trait) {
+        await sleep(0.2);
+        trait.classList.add("show");
+        if (trait.classList.contains("up") && !fast) sound("ding");
+      }
+      finished = true;
+      const hint = el.querySelector(".gr-hint");
+      if (hint) hint.textContent = "按确定继续";
+    };
+    void run();
+    return { done, advance, close };
   }
 
   // 菜单出现在屏幕坐标 (x, y) 旁边
@@ -482,7 +525,7 @@ export class UI {
 function traitRow(d: GrowthData) {
   const a = d.traitAfter, b = d.traitBefore;
   if (!a) return "";
-  if (b && a.tier > b.tier) return `<div class="gr-trait up" style="--i:6"><em>特性强化</em><b>${traitLabel(b)} → ${traitLabel(a)}</b><span>${a.text}</span></div>`;
-  if (a.next) return `<div class="gr-trait" style="--i:6"><em>${traitLabel(a)}</em><span>Lv ${a.next.level} 强化：${a.next.text}</span></div>`;
+  if (b && a.tier > b.tier) return `<div class="gr-trait up"><em>特性强化</em><b>${traitLabel(b)} → ${traitLabel(a)}</b><span>${a.text}</span></div>`;
+  if (a.next) return `<div class="gr-trait"><em>${traitLabel(a)}</em><span>Lv ${a.next.level} 强化：${a.next.text}</span></div>`;
   return "";
 }
