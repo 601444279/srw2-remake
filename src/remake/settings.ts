@@ -42,9 +42,17 @@ export const MUSIC_STYLES: { id: MusicStyle; label: string }[] = [
 export const VOLUMES = [0, 0.2, 0.4, 0.6, 0.8, 1];
 export const volumeLabel = (v: number) => (v === 0 ? "关" : `${Math.round(v * 100)}%`);
 
+// 画面：原版像素（整数倍放大）/ 平滑放大（Scale4x，见 upscale.ts）
+export type ArtStyle = "original" | "smooth";
+export const ART_STYLES: { id: ArtStyle; label: string }[] = [
+  { id: "original", label: "原版像素" },
+  { id: "smooth", label: "平滑放大" },
+];
+
 export interface Settings {
   keys: Record<BindAction, Binding>;
   mouse: boolean;
+  artStyle: ArtStyle;
   textSpeed: TextSpeed;
   musicStyle: MusicStyle;
   musicVolume: number;
@@ -73,7 +81,7 @@ const listeners = new Set<() => void>();
 
 function load(): Settings {
   const fallback: Settings = {
-    keys: structuredClone(DEFAULT_KEYS), mouse: true, textSpeed: "normal",
+    keys: structuredClone(DEFAULT_KEYS), mouse: true, artStyle: "original", textSpeed: "normal",
     musicStyle: "enhanced", musicVolume: 0.6, sfxVolume: 0.8,
   };
   try {

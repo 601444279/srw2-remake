@@ -1,6 +1,6 @@
 // 设置窗口：鼠标开关、按键绑定。可以用鼠标点，也可以全程用键盘：
 //   ↑↓←→ 移动焦点，Enter / 空格 开始改键或切换开关，改键时按下新键完成，Esc 取消，Delete 清空这个位置。
-import { BIND_ACTIONS, DEFAULT_KEYS, MUSIC_STYLES, TEXT_SPEEDS, VOLUMES, bindKey, keyName, settings, volumeLabel, type BindAction } from "./settings.ts";
+import { BIND_ACTIONS, DEFAULT_KEYS, MUSIC_STYLES, TEXT_SPEEDS, VOLUMES, bindKey, keyName, settings, volumeLabel, type BindAction, ART_STYLES } from "./settings.ts";
 
 export class SettingsPanel {
   private dialog = document.getElementById("settings") as HTMLDialogElement;
@@ -46,6 +46,10 @@ export class SettingsPanel {
         <label class="set-row toggle"><span>鼠标操作<small>关闭后地图上的悬停、点击、右键和滚轮都不起作用</small></span>
           <button class="switch${s.mouse ? " on" : ""}" data-nav data-toggle="mouse" role="switch" aria-checked="${s.mouse}"><i></i></button>
         </label>
+        <div class="set-group">画面</div>
+        <div class="set-row toggle"><span>画面风格<small>平滑放大：用像素画放大算法让斜线和边缘更圆滑</small></span>
+          <button class="cycle" data-nav data-cycle="artStyle">${ART_STYLES.find((a) => a.id === s.artStyle)?.label}</button>
+        </div>
         <div class="set-group">剧情</div>
         <div class="set-row toggle"><span>文字速度<small>对话逐字显示的速度</small></span>
           <button class="cycle" data-nav data-cycle="textSpeed">${TEXT_SPEEDS.find((t) => t.id === s.textSpeed)?.label}</button>
@@ -77,6 +81,12 @@ export class SettingsPanel {
       settings.update({ mouse: !settings.get().mouse });
       this.render();
       this.focus("[data-toggle=mouse]");
+    });
+    this.dialog.querySelector("[data-cycle=artStyle]")!.addEventListener("click", () => {
+      const i = ART_STYLES.findIndex((a) => a.id === settings.get().artStyle);
+      settings.update({ artStyle: ART_STYLES[(i + 1) % ART_STYLES.length].id });
+      this.render();
+      this.focus("[data-cycle=artStyle]");
     });
     this.dialog.querySelector("[data-cycle=textSpeed]")!.addEventListener("click", () => {
       const i = TEXT_SPEEDS.findIndex((t) => t.id === settings.get().textSpeed);

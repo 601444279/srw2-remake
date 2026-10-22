@@ -22,7 +22,11 @@ async function boot() {
   // 关闭鼠标操作时隐藏指针、菜单也不响应鼠标
   const applyMouse = () => document.body.classList.toggle("no-mouse", !settings.get().mouse);
   applyMouse();
-  settings.onChange(() => { applyMouse(); game.settingsChanged(); });
+  settings.onChange(() => {
+    applyMouse();
+    game.settingsChanged();
+    void renderer.setArtStyle(settings.get().artStyle === "smooth", game.units);
+  });
   const openSettings = () => {
     if (panel.isOpen) return;
     input?.releaseAll();

@@ -1,6 +1,8 @@
 // 地图渲染：地形、范围高亮、移动路线、单位、光标。用 Canvas 按整数倍放大原版像素，镜头和光标都平滑移动。
 import type { Stage, Unit } from "./data.ts";
 import type { Point } from "./grid.ts";
+import { smoothCanvas } from "./upscale.ts";
+import { settings } from "./settings.ts";
 
 const TILE = 16;
 export const ZOOM_LEVELS = [2, 3, 4, 5, 6];
@@ -51,6 +53,9 @@ const spriteKey = (u: Unit) => `${u.icon.sheetUrl}#${u.icon.index}`;
 export class Renderer {
   private ctx: CanvasRenderingContext2D;
   private terrain: HTMLCanvasElement | null = null;
+  private terrainRaw: HTMLCanvasElement | null = null;
+  // 画面设置「平滑放大」：地形和单位图标载入时用 Scale4x 放大
+  private smooth = false;
   private sprites = new Map<string, Sprite>();
   private stage: Stage | null = null;
   private dpr = 1;
@@ -94,7 +99,10 @@ export class Renderer {
     c.height = height * TILE;
     const g = c.getContext("2d")!;
     terrain.forEach((row, y) => row.forEach((t, x) => g.drawImage(sheet, t * TILE, 0, TILE, TILE, x * TILE, y * TILE, TILE, TILE)));
-    this.terrain = c;
+    this.terrainRaw = c;
+    this.smooth = settings.get().artStyle === "smooth";
+    // 整张地图一起放大，图块之间的边缘也能接得上
+    this.terrain = this.smooth ? smoothCanvas(c) : c;
     for (const u of stage.units) await this.loadUnit(u);
     // 默认缩放：让视野里大约能看到 18 格宽
     const ideal = this.cssW / (18 * TILE);
@@ -137,7 +145,16 @@ export class Renderer {
     const url = u.icon.sheetUrl;
     if (!this.sheets.has(url)) this.sheets.set(url, loadImage(url));
     const k = spriteKey(u);
-    if (!this.sprites.has(k)) this.sprites.set(k, makeSprite(await this.sheets.get(url)!, u.icon.index));
+    if (!this.sprites.has(k)) this.sprites.set(k, makeSprite(await this.sheets.get(url)!, u.icon.index, this.smooth));
+  }
+
+  // 切换画面风格：重建地形和所有单位图标
+  async setArtStyle(smooth: boolean, units: Unit[]) {
+    if (smooth === this.smooth || !this.terrainRaw) return;
+    this.smooth = smooth;
+    this.terrain = smooth ? smoothCanvas(this.terrainRaw) : this.terrainRaw;
+    this.sprites.clear();
+    for (const u of units) await this.loadUnit(u);
   }
 
   // 信息面板用的单位图标
@@ -354,7 +371,7 @@ function loadImage(url: string): Promise<HTMLImageElement> {
 
 // 已行动的单位显示为灰色；手动处理像素，不依赖 ctx.filter（部分浏览器不支持）
 // 图标表是 16 个 16x16 图标横排，取第 index 个
-function makeSprite(sheet: HTMLImageElement, index: number): Sprite {
+function makeSprite(sheet: HTMLImageElement, index: number, smooth: boolean): Sprite {
   const normal = document.createElement("canvas");
   normal.width = normal.height = TILE;
   normal.getContext("2d")!.drawImage(sheet, index * TILE, 0, TILE, TILE, 0, 0, TILE, TILE);
@@ -368,5 +385,5 @@ function makeSprite(sheet: HTMLImageElement, index: number): Sprite {
     data.data[i] = data.data[i + 1] = data.data[i + 2] = l;
   }
   g.putImageData(data, 0, 0);
-  return { normal, gray };
+  return smooth ? { normal: smoothCanvas(normal), gray: smoothCanvas(gray) } : { normal, gray };
 }

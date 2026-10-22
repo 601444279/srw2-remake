@@ -1,6 +1,8 @@
 // 界面：顶栏、信息面板、菜单、回合横幅、按键提示。都是叠在地图上的 HTML，不切换画面。
 import { TYPE_LABEL, type Unit, type Weapon } from "./data.ts";
 import type { Forecast, BattleEvent } from "./rules.ts";
+import { settings } from "./settings.ts";
+import { smoothUrl } from "./upscale.ts";
 
 export interface MenuItem {
   label: string;
@@ -246,6 +248,13 @@ export class UI {
     el.querySelector(".dl-face")!.innerHTML = portrait
       ? `<img src="${portrait}" alt="">`
       : `<span>${initial}</span>`;
+    // 画面设置「平滑放大」：头像换成 Scale4x 放大后的版本
+    if (portrait && settings.get().artStyle === "smooth") {
+      void smoothUrl(portrait).then((u) => {
+        const img = el.querySelector(".dl-face img") as HTMLImageElement | null;
+        if (img && img.getAttribute("src") === portrait) img.src = u;
+      });
+    }
     (el.querySelector(".dl-face") as HTMLElement).classList.toggle("placeholder", !portrait);
     el.querySelector(".dl-name")!.textContent = speaker;
     el.classList.remove("done");
