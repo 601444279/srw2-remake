@@ -434,7 +434,14 @@ export class Game implements DrawState {
     if (this.mode === "menu") { this.ui.menuMove(dy || dx); this.sfx.ui("move"); return; }
     if (this.mode === "target" || this.mode === "allyTarget") { this.cyclePick(dx + dy > 0 ? 1 : -1); this.sfx.ui("move"); return; }
     if (this.mode !== "browse" && this.mode !== "selected") return;
-    this.setCursor(this.cursor.x + dx, this.cursor.y + dy);
+    this.moveCursorTo(this.cursor.x + dx, this.cursor.y + dy);
+  }
+
+  // 原版：选中单位后在地图上移动光标，每走一格放 1F（和菜单光标同一声）；没选单位时移动光标不出声
+  private moveCursorTo(x: number, y: number) {
+    const { x: ox, y: oy } = this.cursor;
+    this.setCursor(x, y);
+    if (this.mode === "selected" && (this.cursor.x !== ox || this.cursor.y !== oy)) this.sfx.ui("move");
   }
 
   pointerTile(p: Point) {
@@ -444,7 +451,7 @@ export class Game implements DrawState {
       return;
     }
     if (this.mode !== "browse" && this.mode !== "selected") return;
-    if (p.x !== this.cursor.x || p.y !== this.cursor.y) this.setCursor(p.x, p.y);
+    if (p.x !== this.cursor.x || p.y !== this.cursor.y) this.moveCursorTo(p.x, p.y);
   }
 
   pointerClick(p: Point, button: number) {
@@ -1294,12 +1301,21 @@ export class Game implements DrawState {
       { label: "存档", disabled: midAction, detail: midAction ? "单位行动中" : "", run: () => void this.openSaveMenu(reopen) },
       { label: "读档", run: () => void this.openLoadMenu(reopen) },
       { label: "设置", detail: "按键 · 声音", run: () => { back(); this.onOpenSettings(); } },
+      { label: "回到标题", run: () => this.confirmTitle(reopen) },
       { label: "返回", run: back },
     ];
     if (!at) return this.openMenu(items, this.cursor, back);
     this.reachPreview = false;
     this.setMode("menu");
     this.ui.openMenu(items, at.x, at.y, back, true);
+  }
+
+  // 回到标题画面：整页重新载入（没有待读的存档时 main.ts 会进标题画面）
+  private confirmTitle(back: () => void) {
+    this.openMenu([
+      { label: "回到标题", hint: "没存档的进度会丢失", run: () => location.reload() },
+      { label: "取消", run: back },
+    ], this.cursor, back);
   }
 
   private toggleDanger() {
