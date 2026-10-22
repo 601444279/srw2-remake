@@ -354,9 +354,9 @@ body.story #info, body.story #forecast { display: none !important; }
 #growth .tu-card.effect .tu-effect .num.up.done { animation: gr-num .35s ease-out 1 both; text-shadow: 0 0 10px rgba(109, 255, 138, .6); }
 #status .st-next { margin-top: 2px; color: var(--muted); opacity: .8; }
 /* 慢镜头：镜头移到被击破的机体（--fx / --fy 是它在画面里的位置），放大，四周压暗 */
-#battle-scene canvas { transition: transform .45s cubic-bezier(.2, .8, .3, 1), filter .45s ease-out; transform-origin: 50% 50%; }
+#battle-scene canvas { transition: transform .7s cubic-bezier(.2, .8, .3, 1), filter .7s ease-out; transform-origin: 50% 50%; }
 #battle-scene .bs-stage.slowmo canvas { transform: scale(1.7) translate(calc(50% - var(--fx, 50%)), calc(50% - var(--fy, 50%))); filter: saturate(1.4) contrast(1.15); }
-#battle-scene .bs-spot { position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .45s ease-out; background: radial-gradient(ellipse 30% 55% at 50% 50%, transparent 40%, rgba(0, 0, 0, .8) 100%); }
+#battle-scene .bs-spot { position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .7s ease-out; background: radial-gradient(ellipse 30% 55% at 50% 50%, transparent 40%, rgba(0, 0, 0, .8) 100%); }
 #battle-scene .bs-stage.slowmo .bs-spot { opacity: 1; }
 #battle-scene .bs-stage::after { content: ""; position: absolute; inset: 0; background: #fff; opacity: 0; pointer-events: none; }
 #battle-scene .bs-stage.slowmo::after { animation: bs-flash .35s ease-out; }
@@ -398,3 +398,8 @@ body.no-mouse #title { cursor: none; }
 /* 整屏淡入淡出：在地图、世界地图之上，在关卡标题和对话框之下 */
 #fade { position: fixed; inset: 0; z-index: 14; background: #000; opacity: 0; pointer-events: none; transition: opacity .5s ease; }
 #fade.on { opacity: 1; }
+
+/* 修理回血：镜头推近被修理的机体，绿光 */
+#battle-scene .bs-stage.healing canvas { transform: scale(1.5) translate(calc(50% - var(--fx, 50%)), calc(50% - var(--fy, 50%))); filter: brightness(1.15) saturate(1.2); }
+#battle-scene .bs-stage.healing .bs-spot { opacity: 1; background: radial-gradient(ellipse 30% 55% at 50% 50%, rgba(109, 255, 138, .22) 0%, transparent 45%, rgba(0, 0, 0, .7) 100%); }
+#battle-scene .bs-pop.heal { color: #6dff8a; }

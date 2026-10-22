@@ -30,6 +30,7 @@ const W = 256;
 const H = 116;
 const SCALE = 4; // 画布内部按 4 倍画（平滑放大的图正好 1:1）
 const CLOSE_CAMERA = 32;
+const WORLD = 512; // 两个名称表并排的宽度
 const RANGED_OFFSET: Record<Side, number> = { left: 32, right: 224 };
 
 const fileUrl = (files: Record<string, unknown>, name: string) => {
@@ -248,8 +249,8 @@ export class BattleScene {
     if (el) el.textContent = name;
   }
 
-  // 播一段攻击动画（原版逐帧时间；末尾的空等截短）
-  async attack(u: Unit, weaponId: number) {
+  // 播一段攻击动画（原版逐帧时间；末尾的空等截短）。sounds：这次要放的动画音效，默认是动画自带的全部
+  async attack(u: Unit, weaponId: number, sounds?: [number, number][]) {
     const a = this.actor(u);
     const anim = animFor(u.unitId, weaponId);
     const url = anim && fileUrl(effectFiles, anim.file);
@@ -268,8 +269,9 @@ export class BattleScene {
     await new Promise<void>((resolve) => {
       const step = () => {
         // 音效和画面同一帧计数，跟着动画走
-        for (const [f, id] of anim.sounds) if (f === frame) this.sound(id);
+        for (const [f, id] of sounds ?? anim.sounds) if (f === frame) this.sound(id);
         const k = [...kfs].reverse().find((f) => f[0] <= frame) ?? kfs[0];
+        // 镜头和特效位置可能绕过 512（两个名称表首尾相接），画的时候按循环画（见 draw），这里直接用
         const [, , cel = -1, x = 0, y = 0, cx = 0, cy = 0] = k;
         const mx = a.flip ? -cx : cx;
         this.camera = { x: camStart + mx, y: cy };
@@ -293,6 +295,22 @@ export class BattleScene {
     this.setHp(a, hpAfter);
   }
 
+  // 修理回血：镜头推近被修理的机体，慢镜头 + 绿光，飘出回复量，血条涨上去
+  async heal(u: Unit, amount: number, hpAfter: number) {
+    const a = this.actor(u);
+    if (this.skipped()) { this.setHp(a, hpAfter); return; }
+    const stage = $(".bs-stage", this.root);
+    stage.style.setProperty("--fx", `${((this.screenX(a) + a.w / 2) / W) * 100}%`);
+    stage.style.setProperty("--fy", `${((a.y + a.h / 2) / H) * 100}%`);
+    stage.classList.add("healing");
+    await wait(0.35 / this.speed());
+    this.pop(a, `+${amount}`, "heal");
+    this.setHp(a, hpAfter);
+    await wait(1.1 / this.speed());
+    stage.classList.remove("healing");
+    await wait(0.3 / this.speed());
+  }
+
   miss(u: Unit) {
     const a = this.actor(u);
     const dir = a.side === "left" ? -1 : 1;
@@ -308,18 +326,19 @@ export class BattleScene {
     const art = url ? await loadArt(url) : null;
     if (this.skipped()) { a.alpha = 0; return; }
     const stage = $(".bs-stage", this.root);
-    stage.style.setProperty("--fx", `${((a.x - this.camera.x + a.w / 2) / W) * 100}%`);
+    stage.style.setProperty("--fx", `${((this.screenX(a) + a.w / 2) / W) * 100}%`);
     stage.style.setProperty("--fy", `${((a.y + a.h / 2) / H) * 100}%`);
     stage.classList.add("slowmo");
-    this.slow = 0.4;
+    this.slow = 0.25;
     boom();
     for (let i = 0; i < 10 && art; i++) {
       this.puffs.push({ anim, art, x: a.x + a.w * (0.1 + Math.random() * 0.8), y: a.y + a.h * (0.15 + Math.random() * 0.75), t: -i * 0.07 });
     }
     a.flash = 0.25;
     this.shake(a, 6);
-    await wait(0.9 / this.speed());
-    await tween(0.6 / this.speed(), (t) => { a.alpha = 1 - t; });
+    // 慢镜头停留久一点，让爆炸一团团看清楚，再让机体慢慢消失
+    await wait(2.0 / this.speed());
+    await tween(1.0 / this.speed(), (t) => { a.alpha = 1 - t; });
     // 最后一下：大爆炸，速度恢复
     this.slow = 1;
     stage.classList.remove("slowmo");
@@ -346,7 +365,7 @@ export class BattleScene {
     const el = document.createElement("div");
     el.className = `bs-pop ${cls}`;
     el.textContent = text;
-    el.style.left = `${((a.x - this.camera.x + a.w / 2) / W) * 100}%`;
+    el.style.left = `${((this.screenX(a) + a.w / 2) / W) * 100}%`;
     el.style.top = `${((a.y + a.h * 0.3) / H) * 100}%`;
     $(".bs-pops", this.root).append(el);
     setTimeout(() => el.remove(), 1200);
@@ -366,17 +385,16 @@ export class BattleScene {
       if (!a.art || a.alpha <= 0) continue;
       const x = a.x + a.dx - this.camera.x;
       const y = a.y + a.dy - this.camera.y;
-      if (x > W || x + a.w < 0) continue;
       ctx.globalAlpha = a.alpha;
       // 被击破时闪烁
       if (a.alpha < 1 && Math.floor(a.alpha * 12) % 2) continue;
-      this.blit(a.flash > 0 && a.white ? { src: a.white, k: a.art.k } : a.art, 0, 0, a.w, a.h, x, y, a.flip);
+      this.blitWrapped(a.flash > 0 && a.white ? { src: a.white, k: a.art.k } : a.art, 0, 0, a.w, a.h, x, y, a.flip);
       ctx.globalAlpha = 1;
     }
     ctx.globalAlpha = 1;
     if (this.effect) {
       const { art, cel, x, y, flip } = this.effect;
-      this.blit(art, cel[0], cel[1], cel[2], cel[3], x - this.camera.x, y - this.camera.y, flip);
+      this.blitWrapped(art, cel[0], cel[1], cel[2], cel[3], x - this.camera.x, y - this.camera.y, flip);
     }
     for (const p of this.puffs) {
       if (p.t < 0) continue;
@@ -385,8 +403,22 @@ export class BattleScene {
       const cel = k?.[2] ?? -1;
       if (cel < 0) continue;
       const [cx, cy, cw, ch] = p.anim.cels[cel];
-      this.blit(p.art, cx, cy, cw, ch, p.x - cw / 2 - this.camera.x, p.y - ch / 2 - this.camera.y, false);
+      this.blitWrapped(p.art, cx, cy, cw, ch, p.x - cw / 2 - this.camera.x, p.y - ch / 2 - this.camera.y, false);
     }
+  }
+
+  // 原版战斗画面左右两个名称表（共 512 宽）首尾相接，卷动会绕回来：按 512 循环画，看得见的那份才真正画
+  private blitWrapped(art: Art, sx: number, sy: number, sw: number, sh: number, dx: number, dy: number, flip: boolean) {
+    for (const off of [-WORLD, 0, WORLD]) {
+      const x = dx + off;
+      if (x < W && x + sw > 0) this.blit(art, sx, sy, sw, sh, x, dy, flip);
+    }
+  }
+
+  // 机体在画面上的横坐标（按 512 循环换到离画面最近的那份）
+  private screenX(a: Actor) {
+    const x = a.x + a.w / 2 - this.camera.x;
+    return x - WORLD * Math.round((x - W / 2) / WORLD) - a.w / 2;
   }
 
   // 按原版像素坐标画图的一块（sx…sh 是原版像素）

@@ -804,7 +804,10 @@ export class Game implements DrawState {
     this.startPick("allyTarget", targets, {
       confirm: async (t) => {
         this.setMode("busy");
+        const weapon = unit.weapons.find(isRepair);
+        const before = t.hp;
         const amount = this.rules.repair(unit, t);
+        if (weapon) await this.showRepair(unit, weapon, t, before, amount);
         this.renderer.float(t, `+${amount}`, "#6dff8a");
         this.refreshInfo();
         await wait(0.5 / this.speed());
@@ -812,6 +815,34 @@ export class Game implements DrawState {
       },
       cancel: back,
     });
+  }
+
+  // 修理的演出：原版回血不进战斗画面，但 ROM 里有修理装置的动画和音效（资源 0x60）。
+  // 完整模式：战斗画面播修理动画，镜头推近被修理的友军，慢镜头 + 绿光、血条涨上去；简略模式：地图上按原版帧号放音效
+  private async showRepair(unit: Unit, weapon: Weapon, target: Unit, before: number, amount: number) {
+    const full = (this.auto?.battle ?? settings.get().battleStyle) === "full";
+    const after = target.hp;
+    this.inBattle = true;
+    this.refreshHints();
+    if (full) {
+      const scene = new BattleScene(() => this.speed(), () => this.skipBattle, () => this.skipCurrentBattle(), (id) => { if (!this.skipBattle) this.sfx.play(id); });
+      target.hp = before;
+      // 修理动画是按远距离布局做的：治疗光从修理者飞到另一屏的友军身上，镜头跟过去
+      await scene.open(unit, target, "ranged");
+      target.hp = after;
+      await wait(0.25 / this.speed());
+      scene.weapon(unit, weapon.name);
+      await scene.attack(unit, weapon.id);
+      await scene.heal(target, amount, after);
+      await wait(0.4 / this.speed());
+      await scene.close();
+    } else {
+      const seq = attackSounds(unit.unitId, weapon.id);
+      if (seq) await this.playSounds(seq);
+    }
+    this.inBattle = false;
+    this.skipBattle = false;
+    this.refreshHints();
   }
 
   private openSpiritMenu(unit: Unit) {
