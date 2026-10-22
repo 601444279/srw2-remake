@@ -68,6 +68,8 @@ export class Game implements DrawState {
   // 飞行演出：离地高度 0（地面）→ 1（悬停），只记离地的单位
   private alt = new Map<Unit, number>();
   private dangerOn = false;
+  // 开始菜单（继续 / 读档 / 新游戏）开着时，右上角按钮不打开地图菜单
+  private inStartMenu = false;
   private dangerCache: Set<number> | null = null;
   private inspected: Unit | null = null;
   // 移动前的单位菜单打开时，背景显示移动范围
@@ -281,11 +283,12 @@ export class Game implements DrawState {
     const latest = metas.reduce((a, b) => (b.savedAt > a.savedAt ? b : a));
     return new Promise<void>((resolve) => {
       const show = () => {
+        this.inStartMenu = true;
         this.setMode("menu");
         this.ui.openMenu([
           { label: "继续", detail: describeTime(latest.savedAt), hint: `${latest.title} · 第 ${latest.turn} 回合`, run: () => requestLoad(latest.slot) },
           { label: "读档", run: () => void this.openLoadMenu(show) },
-          { label: "新游戏", run: () => { resolve(); void this.start(); } },
+          { label: "新游戏", run: () => { this.inStartMenu = false; resolve(); void this.start(); } },
         ], innerWidth / 2 - 90, innerHeight / 2 - 60, show);
       };
       show();
@@ -1242,25 +1245,44 @@ export class Game implements DrawState {
     this.ui.openMenu(items, pos.x + s * 1.2, pos.y, onCancel);
   }
 
-  // 右上角按钮：再点一次收起。地图上开着别的菜单、或刚选中还没移动的单位时，先取消掉再打开；
-  // 单位已经移动过、敌方回合、战斗、对话中不能打开（取消会把单位退回原位，不能替玩家做）
+  // 右上角按钮：再点一次收起。我方回合里随时能打开：单位菜单、选攻击目标时也行，「返回」原样回到刚才的菜单。
+  // 单位行动到一半（已经移动）时不能结束回合和存档。敌方回合、动画、剧情中不能打开
   hudMenu(x: number, y: number) {
     if (this.mode === "menu" && this.ui.hudMenuOpen) { this.ui.closeMenu(); return; }
-    for (let i = 0; i < 3 && this.mode === "menu" && !this.moved; i++) this.ui.closeMenu();
-    if (this.mode === "selected") this.deselect();
-    if (this.mode !== "browse") { this.ui.toast("现在不能打开菜单"); return; }
-    this.sfx.ui("ok");
-    this.openMapMenu({ x, y });
+    if (this.inStartMenu) { this.ui.toast("先选择继续或新游戏"); return; }
+    // 选中了还没移动的单位（单位菜单、选目的地、原地选攻击目标）：直接放开这个单位，跟按取消一样
+    if (this.selected && !this.moved && (this.mode === "menu" || this.mode === "selected" || this.mode === "target" || this.mode === "allyTarget")) {
+      this.pick = null;
+      this.ui.hideForecast();
+      this.ui.closeMenu(false);
+      this.setCursor(this.selected.x, this.selected.y);
+      this.deselect();
+    }
+    if (this.mode === "browse") { this.sfx.ui("ok"); this.openMapMenu({ x, y }); return; }
+    if (this.mode === "menu" || this.mode === "target" || this.mode === "allyTarget") {
+      const mode = this.mode, reachPreview = this.reachPreview, menu = this.ui.saveMenu();
+      const resume = () => {
+        this.setMode(mode);
+        this.reachPreview = reachPreview;
+        if (menu) this.ui.restoreMenu(menu);
+        if (this.pick) this.focusPick();
+      };
+      this.ui.hideForecast();
+      this.sfx.ui("ok");
+      this.openMapMenu({ x, y }, resume, !!this.selected);
+      return;
+    }
+    this.ui.toast(this.phase === "enemy" ? "敌方回合中，不能打开菜单" : "请稍等，动画结束后再打开菜单");
   }
 
-  // at：屏幕坐标时是右上角按钮的下拉菜单，否则弹在地图光标旁边
-  private openMapMenu(at?: Point) {
-    const back = () => this.setMode("browse");
+  // at：屏幕坐标时是右上角按钮的下拉菜单，否则弹在地图光标旁边。back：返回到哪里；midAction：有单位正在行动
+  private openMapMenu(at?: Point, back = () => this.setMode("browse"), midAction = false) {
+    const reopen = () => this.openMapMenu(at, back, midAction);
     const items: MenuItem[] = [
-      { label: "结束回合", run: () => this.endTurn() },
+      { label: "结束回合", disabled: midAction, detail: midAction ? "单位行动中" : "", run: () => this.endTurn() },
       { label: this.dangerOn ? "隐藏敌方范围" : "显示敌方范围", run: () => { this.toggleDanger(); back(); } },
-      { label: "存档", run: () => void this.openSaveMenu(() => this.openMapMenu(at)) },
-      { label: "读档", run: () => void this.openLoadMenu(() => this.openMapMenu(at)) },
+      { label: "存档", disabled: midAction, detail: midAction ? "单位行动中" : "", run: () => void this.openSaveMenu(reopen) },
+      { label: "读档", run: () => void this.openLoadMenu(reopen) },
       { label: "设置", detail: "按键 · 声音", run: () => { back(); this.onOpenSettings(); } },
       { label: "返回", run: back },
     ];
