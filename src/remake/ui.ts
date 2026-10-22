@@ -54,6 +54,7 @@ export class UI {
   private menuItems: MenuItem[] = [];
   private menuIndex = 0;
   private onMenuClose: (() => void) | null = null;
+  private menuArgs: { items: MenuItem[]; x: number; y: number; onClose: () => void; fromHud: boolean } | null = null;
   // 回合和胜利条件不常驻屏幕，显示在右上角菜单的顶部
   private turn = 1;
   private phase: "player" | "enemy" = "player";
@@ -330,6 +331,7 @@ export class UI {
 
   // 菜单出现在屏幕坐标 (x, y) 旁边；fromHud 时是右上角按钮的下拉菜单，贴着按钮右对齐，顶部显示回合和胜利条件
   openMenu(items: MenuItem[], x: number, y: number, onClose: () => void, fromHud = false) {
+    this.menuArgs = { items, x, y, onClose, fromHud };
     this.menuItems = items;
     this.menuIndex = items.findIndex((i) => !i.disabled);
     this.onMenuClose = onClose;
@@ -361,6 +363,17 @@ export class UI {
 
   get menuOpen() {
     return !$("#menu").hidden;
+  }
+
+  // 记下开着的菜单（连同光标位置），之后用 restoreMenu 原样打开
+  saveMenu() {
+    return this.menuOpen && this.menuArgs ? { ...this.menuArgs, index: this.menuIndex } : null;
+  }
+
+  restoreMenu(m: NonNullable<ReturnType<UI["saveMenu"]>>) {
+    this.openMenu(m.items, m.x, m.y, m.onClose, m.fromHud);
+    this.menuIndex = m.index;
+    this.renderMenuFocus();
   }
 
   get hudMenuOpen() {
