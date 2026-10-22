@@ -132,7 +132,7 @@ export class Game implements DrawState {
   // 原版（模拟器第 1 关第 11 回合实测）：光标先到出现位置，约 10 帧后单位直接冒出来，再停 26 帧才出下一个，
   // 援军是伴着「噔噔噔」一个一个出现的；敌人不打字幕，保留神秘感
   private async addUnit(u: Unit) {
-    if (u.side === "player") this.syncTrait(u);
+    this.syncTrait(u);
     await this.renderer.loadUnit(u);
     this.setCursor(u.x, u.y);
     await wait(10 / 60 / this.speed());
@@ -1125,13 +1125,13 @@ export class Game implements DrawState {
     }
   }
 
-  // 特性档位跟着等级和「特性成长」设置走
+  // 特性档位跟着等级和「特性成长」设置走（敌方有名有姓的驾驶员也一样）
   private syncTrait(u: Unit) {
     u.trait = traitOf(u.pilotId, u.level, settings.get().traitGrowth);
   }
 
   private syncTraits() {
-    for (const u of this.units) if (u.side === "player") this.syncTrait(u);
+    for (const u of this.units) this.syncTrait(u);
   }
 
   // 战斗中按确定 / 取消（或点一下）：跳过演出，直接出结果

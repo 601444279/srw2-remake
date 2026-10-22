@@ -12,6 +12,7 @@ export interface TraitValues {
   lowHpDamage?: number;
   damageTaken?: number;
   lowHpDamageTaken?: number;
+  counterDamage?: number;
   spOnKill?: number;
   spPerTurn?: number;
   hpPerTurn?: number;

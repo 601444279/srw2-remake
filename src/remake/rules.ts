@@ -129,12 +129,12 @@ export class Rules {
     });
     this.applyTraits(p.attack, attacker, defender, weapon, from);
     const cw = p.counter.slot >= 0 ? defender.weapons[p.counter.slot] : undefined;
-    if (cw) this.applyTraits(p.counter, defender, attacker, cw, defender);
+    if (cw) this.applyTraits(p.counter, defender, attacker, cw, defender, true);
     return p;
   }
 
-  // 机师特性的加成（data/pilot-traits.json）。atkPos 是出手方这次战斗时的位置（指挥光环按它算）
-  private applyTraits(r: { flags: number; hit: number; damage: number }, atk: Unit, def: Unit, weapon: Weapon, atkPos: Point) {
+  // 机师特性的加成（data/pilot-traits.json）。atkPos 是出手方这次战斗时的位置（指挥光环按它算），counter = 这是反击
+  private applyTraits(r: { flags: number; hit: number; damage: number }, atk: Unit, def: Unit, weapon: Weapon, atkPos: Point, counter = false) {
     if (!(r.flags & FLAG_VALID)) return;
     const at = atk.trait, dt = def.trait;
     const forcedHit = atk.side === "player" && atk.spirit & FLAG.SURE_HIT;
@@ -146,6 +146,7 @@ export class Rules {
     }
     let dmg = r.damage;
     if (at?.lowHpDamage && atk.hp <= atk.maxHp * (at.lowHp ?? 0)) dmg *= at.lowHpDamage;
+    if (counter && at?.counterDamage) dmg *= at.counterDamage;
     if (dt?.damageTaken) dmg *= dt.damageTaken;
     if (dt?.lowHpDamageTaken && def.hp <= def.maxHp * (dt.lowHp ?? 0)) dmg *= dt.lowHpDamageTaken;
     r.damage = Math.floor(dmg);

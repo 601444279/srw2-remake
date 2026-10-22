@@ -209,6 +209,8 @@ body.no-mouse #menu:not(.from-hud) { pointer-events: none; }
 .fc-head small, .bt-name small { color: var(--dim); font: var(--f-small); }
 .fc-side.player .fc-head b, .bt-side.player b { color: var(--player); }
 .fc-side.enemy .fc-head b, .bt-side.enemy b { color: var(--enemy); }
+.fc-trait { font: var(--f-small); color: var(--dim); }
+.fc-trait em { font-style: normal; margin-right: 6px; padding: 0 6px; background: color-mix(in srgb, var(--accent) 18%, transparent); color: var(--accent); clip-path: var(--chamfer-s); }
 .fc-hp, .bt-hp { display: flex; align-items: center; gap: 8px; font: var(--f-num-s); }
 .fc-hp .bar i, .bt-hp .bar i { transition: width .3s ease-out; }
 .fc-weapon { font: var(--f-body); color: var(--accent); }

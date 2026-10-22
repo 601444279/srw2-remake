@@ -58,7 +58,7 @@ export class SettingsPanel {
           <button class="switch${s.flight ? " on" : ""}" data-nav data-toggle="flight" role="switch" aria-checked="${s.flight}"><i></i></button>
         </label>
         <div class="set-group">成长</div>
-        <label class="set-row toggle"><span>特性成长<small>驾驶员到 Lv 10 / 20 / 30 时机师特性强化一档</small></span>
+        <label class="set-row toggle"><span>特性成长<small>驾驶员到 Lv 10 / 20 / 30 时机师特性强化一档（敌方驾驶员也一样）</small></span>
           <button class="switch${s.traitGrowth ? " on" : ""}" data-nav data-toggle="traitGrowth" role="switch" aria-checked="${s.traitGrowth}"><i></i></button>
         </label>
         <label class="set-row toggle"><span>击破连击<small>同一阶段里连续击破，每多一次经验 +10%（最多 +50%）</small></span>

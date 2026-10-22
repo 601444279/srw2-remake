@@ -65,7 +65,7 @@ export interface Settings {
   battleStyle: BattleStyle;
   // 机体飞行演出：选中时起飞悬停、移动时加速减速、引擎声；关掉就是原版（上下跳动、匀速移动）
   flight: boolean;
-  // 重制版的成长加成：特性成长（Lv 10 / 20 / 30 强化）、击破连击（同一阶段连续击破经验递增）
+  // 重制版的成长加成：特性成长（Lv 10 / 20 / 30 强化，敌我都算）、击破连击（同一阶段连续击破经验递增）
   traitGrowth: boolean;
   killCombo: boolean;
   textSpeed: TextSpeed;

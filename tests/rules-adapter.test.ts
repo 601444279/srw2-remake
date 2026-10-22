@@ -41,6 +41,18 @@ test("机师特性：新人类命中 +10、铁壁伤害 −10%，必杀仍然是
   assert.equal(new Rules(stage).forecast(sure, sure.weapons[0], d, sure, false).attack.hit, 100);
 });
 
+test("敌方特性：迎击只加反击伤害，主动攻击不变", async () => {
+  const { traitOf } = await import("../src/remake/traits.ts");
+  const intercept = traitOf(0x28, 21, false)!; // 亨利
+  assert.equal(intercept.id, "intercept");
+  const plain = new Rules(stage).forecast(taile, taile.weapons[0], zaku, taile, false);
+  const d = { ...zaku, trait: intercept };
+  const f = new Rules(stage).forecast(taile, taile.weapons[0], d, taile, false);
+  assert.equal(f.counter.damage, Math.floor(plain.counter.damage * 1.2));
+  const back = new Rules(stage).forecast(d, d.weapons[1], taile, d, false);
+  assert.equal(back.attack.damage, plain.counter.damage);
+});
+
 test("特性成长：到 Lv 10 / 20 / 30 强化，关掉成长时只有第一档", async () => {
   const { traitOf } = await import("../src/remake/traits.ts");
   assert.equal(traitOf(6, 9)?.hit, 10);

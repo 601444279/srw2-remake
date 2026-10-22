@@ -462,6 +462,7 @@ export class UI {
       return `
         <div class="fc-side ${u.side}">
           <div class="fc-head"><img src="${icon}" alt=""><div><b>${u.name}</b><small>${u.pilotName}</small></div></div>
+          ${u.trait ? `<div class="fc-trait"><em>${traitLabel(u.trait)}</em>${u.trait.text}</div>` : ""}
           <div class="fc-hp"><div class="bar"><i style="width:${(u.hp / u.maxHp) * 100}%"></i></div><span>${u.hp}</span></div>
           <div class="fc-weapon">${w ? w.name : "无法反击"}</div>
           ${s.valid ? `

@@ -1,5 +1,5 @@
 {
-  "note": "机师特性（重制版新增，原版没有）。初版按原作形象、驾驶的机体和自带精神分配，边玩边改。pilots 的键是驾驶员编号（= 人物编号）。growth = 特性成长：驾驶员到这个等级（显示等级）时特性强化，后面的档覆盖前面的数值和说明（设置里可以关掉）",
+  "note": "机师特性（重制版新增，原版没有）。初版按原作形象、驾驶的机体和自带精神分配，边玩边改。pilots 的键是驾驶员编号（= 人物编号），敌方有名有姓的驾驶员也有（原版敌人没有精神点数，所以不给斗志、支援）。growth = 特性成长：驾驶员到这个等级（显示等级）时特性强化，后面的档覆盖前面的数值和说明（设置里可以关掉）",
   "traits": {
     "newtype": {
       "name": "新人类",
@@ -189,24 +189,24 @@
     },
     "command": {
       "name": "指挥",
-      "text": "周围 2 格内的我方单位命中 +5",
+      "text": "周围 2 格内的友军命中 +5",
       "auraHit": 5,
       "auraRange": 2,
       "growth": [
         {
           "level": 10,
-          "text": "周围 2 格内的我方单位命中 +7",
+          "text": "周围 2 格内的友军命中 +7",
           "auraHit": 7
         },
         {
           "level": 20,
-          "text": "周围 3 格内的我方单位命中 +8",
+          "text": "周围 3 格内的友军命中 +8",
           "auraHit": 8,
           "auraRange": 3
         },
         {
           "level": 30,
-          "text": "周围 3 格内的我方单位命中 +10",
+          "text": "周围 3 格内的友军命中 +10",
           "auraHit": 10,
           "auraRange": 3
         }
@@ -233,6 +233,28 @@
           "hpPerTurn": 0.12
         }
       ]
+    },
+    "intercept": {
+      "name": "迎击",
+      "text": "反击时伤害 +20%",
+      "counterDamage": 1.2,
+      "growth": [
+        {
+          "level": 10,
+          "text": "反击时伤害 +25%",
+          "counterDamage": 1.25
+        },
+        {
+          "level": 20,
+          "text": "反击时伤害 +30%",
+          "counterDamage": 1.3
+        },
+        {
+          "level": 30,
+          "text": "反击时伤害 +35%",
+          "counterDamage": 1.35
+        }
+      ]
     }
   },
   "pilots": {
@@ -252,14 +274,44 @@
     "19": "newtype",
     "20": "resilience",
     "21": "quick",
+    "22": "hotblood",
+    "24": "newtype",
+    "25": "sniper",
+    "26": "newtype",
     "27": "newtype",
     "28": "fighting",
+    "29": "ironwall",
+    "30": "quick",
+    "31": "command",
+    "32": "ironwall",
+    "33": "guts",
+    "34": "sniper",
     "35": "sniper",
+    "36": "hotblood",
+    "37": "ironwall",
+    "39": "resilience",
+    "40": "intercept",
+    "41": "newtype",
+    "42": "hotblood",
     "43": "sniper",
     "44": "ironwall",
     "45": "support",
+    "46": "intercept",
+    "47": "quick",
+    "48": "guts",
     "49": "resilience",
+    "50": "intercept",
+    "51": "hotblood",
     "52": "guts",
-    "54": "command"
+    "53": "resilience",
+    "54": "command",
+    "59": "ironwall",
+    "60": "command",
+    "61": "guts",
+    "73": "intercept",
+    "75": "sniper",
+    "76": "sniper",
+    "88": "resilience",
+    "95": "ironwall"
   }
 }
