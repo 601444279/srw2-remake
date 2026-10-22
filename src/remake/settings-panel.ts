@@ -53,6 +53,9 @@ export class SettingsPanel {
         <div class="set-row toggle"><span>战斗演出<small>完整：原版战斗画面和武器特效；简略：在地图上快速结算</small></span>
           <button class="cycle" data-nav data-cycle="battleStyle">${BATTLE_STYLES.find((b) => b.id === s.battleStyle)?.label}</button>
         </div>
+        <label class="set-row toggle"><span>飞行演出<small>选中时起飞悬停，移动时引擎加速、到达后缓缓降落；关闭为原版的跳动和匀速移动</small></span>
+          <button class="switch${s.flight ? " on" : ""}" data-nav data-toggle="flight" role="switch" aria-checked="${s.flight}"><i></i></button>
+        </label>
         <div class="set-group">成长</div>
         <label class="set-row toggle"><span>特性成长<small>驾驶员到 Lv 10 / 20 / 30 时机师特性强化一档</small></span>
           <button class="switch${s.traitGrowth ? " on" : ""}" data-nav data-toggle="traitGrowth" role="switch" aria-checked="${s.traitGrowth}"><i></i></button>
@@ -92,7 +95,7 @@ export class SettingsPanel {
       this.render();
       this.focus("[data-toggle=mouse]");
     });
-    for (const key of ["traitGrowth", "killCombo"] as const) {
+    for (const key of ["flight", "traitGrowth", "killCombo"] as const) {
       this.dialog.querySelector(`[data-toggle=${key}]`)!.addEventListener("click", (e) => {
         e.preventDefault();
         settings.update({ [key]: !settings.get()[key] });

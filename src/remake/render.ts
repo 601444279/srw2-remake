@@ -9,6 +9,7 @@ export const ZOOM_LEVELS = [2, 3, 4, 5, 6];
 const CAMERA_MARGIN = 3; // 光标离视野边缘少于这么多格时镜头跟过去
 const CAMERA_SPEED = 14; // 镜头追赶速度（越大越快）
 const CURSOR_SPEED = 30;
+const HOVER_HEIGHT = 4; // 飞行演出悬停时离地几个原版像素
 
 export interface Overlay {
   move?: Set<number>;
@@ -39,6 +40,8 @@ export interface DrawState {
   units: Unit[];
   // 正在移动的单位的显示位置（格子坐标，可以是小数）
   unitPos(unit: Unit): Point;
+  // 飞行演出：离地高度 0 → 1
+  unitLift(unit: Unit): number;
   selected: Unit | null;
 }
 
@@ -271,7 +274,9 @@ export class Renderer {
       for (const t of state.overlay.targets) ctx.strokeRect(t.x * s + 2, t.y * s + 2, s - 4, s - 4);
     }
 
-    for (const u of state.units) {
+    // 离地的单位最后画，升起来的头部不会被上一格的单位和血条盖住（sort 是稳定的，其余保持原顺序）
+    const order = settings.get().flight ? [...state.units].sort((a, b) => state.unitLift(a) - state.unitLift(b)) : state.units;
+    for (const u of order) {
       const f = this.fx.get(u);
       if (f) {
         f.flash = Math.max(0, f.flash - dt);
@@ -283,8 +288,20 @@ export class Renderer {
       const sprite = this.sprites.get(spriteKey(u))!;
       const shake = f && f.shake > 0 ? Math.sin(this.time * 90) * this.zoom * 1.5 : 0;
       const px = pos.x * s + shake, py = pos.y * s;
-      const lift = u === state.selected ? Math.round(Math.sin(this.time * 8) * this.zoom) - this.zoom : 0;
+      const flight = settings.get().flight;
+      const h = flight ? state.unitLift(u) : 0;
+      // 原版：选中时上下跳；飞行演出：升到悬停高度，悬停时轻轻浮动
+      const lift = !flight
+        ? (u === state.selected ? Math.round(Math.sin(this.time * 8) * this.zoom) - this.zoom : 0)
+        : -h * this.zoom * (HOVER_HEIGHT + (h >= 1 ? 0.4 * Math.sin(this.time * 2.2) : 0));
       ctx.globalAlpha = f && f.fade >= 0 ? f.fade : 1;
+      if (h > 0) {
+        // 脚下的影子：越高越小越淡
+        ctx.fillStyle = `rgba(0,0,0,${0.4 * h * ctx.globalAlpha})`;
+        ctx.beginPath();
+        ctx.ellipse(px + s / 2, py + s * 0.9, s * (0.36 - 0.08 * h), s * 0.09, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
       ctx.drawImage(u.acted ? sprite.gray : sprite.normal, px, py + lift, s, s);
       if (f && f.flash > 0) {
         ctx.fillStyle = `rgba(255,255,255,${f.flash / 0.18 * 0.8})`;

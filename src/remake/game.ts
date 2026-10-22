@@ -22,6 +22,15 @@ import { loadScene, personName, portraitUrl, STAGE_STORY, type SceneRef } from "
 type Mode = "browse" | "selected" | "moving" | "menu" | "target" | "allyTarget" | "busy" | "dialog" | "title" | "over" | "status" | "notice";
 
 const MOVE_TILES_PER_SEC = 14;
+// 飞行演出（设置「飞行演出」）：选中时起飞悬停，移动时引擎推着加速、快到时减速，停下后缓缓降落
+const FLIGHT_MAX_SPEED = 6.5; // 格/秒
+const FLIGHT_ACCEL = 12; // 格/秒²，减速也用这个
+const TAKEOFF_TIME = 0.3;
+const LANDING_TIME = 0.8;
+// 引擎声的推力：起飞、加速、巡航、减速、悬停
+const THRUST = { takeoff: 0.6, accel: 1, cruise: 0.7, brake: 0.4, hover: 0.18 };
+// 这些状态下选中的单位在悬停（战斗、对话时不出引擎声）
+const HOVER_MODES: Mode[] = ["selected", "moving", "menu", "target", "allyTarget"];
 // 剧情对话时的音乐：原版开新游戏后，开场剧情和进地图后的开场对话都放 9 号，第 1 回合开始才换成我方回合曲
 const STORY_BGM = 0x09;
 const LEVEL_UP_JINGLE = 0x0e;
@@ -34,7 +43,8 @@ const ONE_SHOT_SPIRITS = 0xff & ~(SPIRIT_FLAG.ACCEL | SPIRIT_FLAG.GALE);
 interface MoveAnim {
   unit: Unit;
   path: Point[];
-  t: number;
+  t: number; // 沿路线走过的格数
+  v: number; // 飞行演出：当前速度（格/秒）
   done: () => void;
 }
 
@@ -55,6 +65,8 @@ export class Game implements DrawState {
   private origin: Point | null = null;
   private moved = false;
   private anim: MoveAnim | null = null;
+  // 飞行演出：离地高度 0（地面）→ 1（悬停），只记离地的单位
+  private alt = new Map<Unit, number>();
   private dangerOn = false;
   private dangerCache: Set<number> | null = null;
   private inspected: Unit | null = null;
@@ -341,14 +353,22 @@ export class Game implements DrawState {
     return { x: a.x + (b.x - a.x) * f, y: a.y + (b.y - a.y) * f };
   }
 
+  // 离地高度，起落两头都放缓
+  unitLift(unit: Unit): number {
+    const a = this.alt.get(unit) ?? 0;
+    return a * a * (3 - 2 * a);
+  }
+
   update(dt: number) {
     // 按住快速键：对话自动快进
     if (this.talk && this.fast()) {
       this.talk.autoAt += dt;
       if (this.talk.autoAt > 0.12) { this.talk.autoAt = 0; this.ui.finishLine(); this.talk.next(); }
     }
+    const k = dt * this.speed();
+    const thrust = this.updateFlight(k);
+    this.sfx.engine(this.skipBattle ? 0 : thrust);
     if (!this.anim) return;
-    this.anim.t += dt * MOVE_TILES_PER_SEC * this.speed();
     // 镜头跟着移动中的单位
     const p = this.unitPos(this.anim.unit);
     this.cursor = { x: Math.round(p.x), y: Math.round(p.y) };
@@ -362,6 +382,40 @@ export class Game implements DrawState {
       this.dangerCache = null;
       done();
     }
+  }
+
+  // 起飞 / 降落、沿路线推进，返回这一帧的引擎推力
+  private updateFlight(k: number): number {
+    const flight = settings.get().flight, anim = this.anim;
+    const up = new Set<Unit>();
+    if (flight && this.selected) up.add(this.selected);
+    if (flight && anim) up.add(anim.unit);
+    let thrust = 0;
+    for (const u of up) if (!this.alt.has(u)) this.alt.set(u, 0);
+    for (const [u, a] of this.alt) {
+      if (up.has(u) && u.hp > 0) {
+        this.alt.set(u, Math.min(1, a + k / TAKEOFF_TIME));
+        if (a < 1) thrust = Math.max(thrust, THRUST.takeoff);
+        else if (HOVER_MODES.includes(this.mode) || anim?.unit === u) thrust = Math.max(thrust, THRUST.hover);
+      } else {
+        // 降落：推力跟着高度慢慢收
+        if (a - k / LANDING_TIME <= 0) this.alt.delete(u);
+        else this.alt.set(u, a - k / LANDING_TIME);
+        thrust = Math.max(thrust, THRUST.brake * a);
+      }
+    }
+    if (!anim) return thrust;
+    if (!flight) { anim.t += k * MOVE_TILES_PER_SEC; return thrust; }
+    // 先升到悬停高度再走
+    if ((this.alt.get(anim.unit) ?? 0) < 1) return thrust;
+    // 加速到最高速，剩下的距离刚好够刹住时开始减速（最后留一点速度，不会停在半路）
+    const left = anim.path.length - 1 - anim.t;
+    const brakeCap = Math.max(1.2, Math.sqrt(2 * FLIGHT_ACCEL * left));
+    const v = Math.min(FLIGHT_MAX_SPEED, anim.v + FLIGHT_ACCEL * k, brakeCap);
+    const phase = v < anim.v - 1e-6 || v === brakeCap ? "brake" : v > anim.v + 1e-6 ? "accel" : "cruise";
+    anim.v = v;
+    anim.t += v * k;
+    return THRUST[phase];
   }
 
   // 按住 Shift / 手柄 X 时演出加速
@@ -592,7 +646,7 @@ export class Game implements DrawState {
     this.origin = { x: unit.x, y: unit.y };
     this.moved = true;
     this.setMode("moving");
-    this.anim = { unit, path: pathTo(this.stage.map, this.reach!, to), t: 0, done };
+    this.anim = { unit, path: pathTo(this.stage.map, this.reach!, to), t: 0, v: 0, done };
   }
 
   // 点敌人：原地能打就原地打；否则在移动范围里找能用「移动后可用」武器打到它的最近格
@@ -1120,7 +1174,7 @@ export class Game implements DrawState {
     const path = pathTo(this.stage.map, this.unitReach(unit), to);
     return new Promise<void>((resolve) => {
       if (path.length < 2) { unit.x = to.x; unit.y = to.y; this.dangerCache = null; resolve(); return; }
-      this.anim = { unit, path, t: 0, done: resolve };
+      this.anim = { unit, path, t: 0, v: 0, done: resolve };
     });
   }
 

@@ -62,6 +62,8 @@ export class Sfx {
   private out: GainNode | null = null;
   private buffers = new Map<number, AudioBuffer>();
   private voice: AudioBufferSourceNode | null = null;
+  private jet: Jet | null = null;
+  private thrust = 0;
 
   constructor() {
     // 浏览器要求用户操作后才能出声，第一次按键 / 点击时再创建、解码
@@ -117,8 +119,66 @@ export class Sfx {
     this.play(0x02);
   }
 
+  // 飞行演出的引擎声（原版没有，现场合成）：低沉的轰鸣 + 气流嘶声，跟着推力 0..1 变大变亮。
+  // 一直在跑，推力 0 时静音；和原版音效分开走，不会被打断
+  engine(thrust: number) {
+    const ctx = this.ctx;
+    if (!ctx || !this.out || ctx.state !== "running") return;
+    if (Math.abs(thrust - this.thrust) < 0.02 && (thrust > 0 || this.thrust === 0)) return;
+    // 推力上去快（点火），下来慢（引擎收油）
+    const tc = thrust > this.thrust ? 0.06 : 0.22;
+    this.thrust = thrust;
+    const jet = (this.jet ??= makeJet(ctx, this.out));
+    const t = ctx.currentTime;
+    jet.roar.frequency.setTargetAtTime(160 + thrust * 1100, t, tc);
+    jet.roarGain.gain.setTargetAtTime(0.55 * thrust ** 1.2, t, tc);
+    jet.hiss.frequency.setTargetAtTime(1200 + thrust * 2800, t, tc);
+    jet.hissGain.gain.setTargetAtTime(0.1 * thrust ** 2, t, tc);
+  }
+
   // 界面：确定 1E，菜单移动光标 1F（原版取消和地图光标移动都不出声）
   ui(kind: UiSound) {
     this.play(kind === "ok" ? 0x1e : 0x1f);
   }
+}
+
+interface Jet {
+  roar: BiquadFilterNode;
+  roarGain: GainNode;
+  hiss: BiquadFilterNode;
+  hissGain: GainNode;
+}
+
+// 两路循环噪声：棕噪声过低通是火箭的轰鸣，白噪声过带通是气流
+function makeJet(ctx: AudioContext, out: AudioNode): Jet {
+  const len = ctx.sampleRate * 2;
+  const white = ctx.createBuffer(1, len, ctx.sampleRate);
+  const brown = ctx.createBuffer(1, len, ctx.sampleRate);
+  const w = white.getChannelData(0), b = brown.getChannelData(0);
+  let last = 0, peak = 0;
+  for (let i = 0; i < len; i++) {
+    w[i] = Math.random() * 2 - 1;
+    last = (last + 0.02 * w[i]) / 1.02;
+    b[i] = last;
+  }
+  // 拉平首尾，循环接缝处不会咔哒一声
+  const drift = b[len - 1] - b[0];
+  for (let i = 0; i < len; i++) peak = Math.max(peak, Math.abs((b[i] -= (drift * i) / (len - 1))));
+  for (let i = 0; i < len; i++) b[i] /= peak;
+  const layer = (buf: AudioBuffer, type: BiquadFilterType, q: number) => {
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+    src.loop = true;
+    const filter = ctx.createBiquadFilter();
+    filter.type = type;
+    filter.Q.value = q;
+    const gain = ctx.createGain();
+    gain.gain.value = 0;
+    src.connect(filter).connect(gain).connect(out);
+    src.start();
+    return { filter, gain };
+  };
+  const roar = layer(brown, "lowpass", 0.9);
+  const hiss = layer(white, "bandpass", 0.7);
+  return { roar: roar.filter, roarGain: roar.gain, hiss: hiss.filter, hissGain: hiss.gain };
 }
