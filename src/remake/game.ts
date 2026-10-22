@@ -17,7 +17,7 @@ import { traitOf, type Trait } from "./traits.ts";
 import { levelForExp } from "./stats.ts";
 import { AutoTester, type AutoOptions, type AutoReport } from "./autotest.ts";
 import { BattleScene, attackSounds, battleLayout, battleSpriteUrl } from "./battle-scene.ts";
-import { loadScene, personName, portraitUrl, STAGE_STORY, type SceneRef } from "./story.ts";
+import { loadScene, personName, portraitUrl, STAGE_STORY, WORLD_MARKER, type SceneRef } from "./story.ts";
 
 type Mode = "browse" | "selected" | "moving" | "menu" | "target" | "allyTarget" | "busy" | "dialog" | "title" | "over" | "status" | "notice";
 
@@ -172,7 +172,10 @@ export class Game implements DrawState {
     // 进关：开场脚本跑到第一个暂停点（出击前的剧情），然后是关卡标题，之后进入第 1 回合
     this.music.play(STORY_BGM);
     this.setMode("busy");
+    // 原版出击前的对话在世界地图上（红点是这一关的位置），说完才进关卡地图
+    this.ui.showWorldMap(WORLD_MARKER[this.stage.number] ?? null);
     await this.events.runStart();
+    this.ui.hideWorldMap();
     const story = STAGE_STORY[this.stage.number];
     this.setMode("title");
     const card = this.ui.titleCard(story?.title ?? `第${this.stage.number}篇`, story?.subtitle ?? "", 2.4);

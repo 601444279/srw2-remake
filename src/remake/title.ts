@@ -1,12 +1,13 @@
 // 标题画面和主菜单：原版的 logo（assets/original/title/logo.png，从标题画面截出来）、
 // 原版标题音乐轮播（开机后放 5 号，每首约 50 秒淡出换下一首：5 → 2 → 0 → 1），星空背景。
-// 先「按任意键开始」，再出主菜单：继续 / 新游戏 / 读档 / 设置。读档列表带存档截图。
+// 浏览器在玩家第一次按键 / 点击之前不让网页出声，所以先是「按任意键进入」，按下后 logo 落下、音乐响起，
+// 接着直接出主菜单：继续 / 新游戏 / 读档 / 设置。读档列表带存档截图。
 // 返回玩家的选择；继续和读档由调用方整页重新载入。
 import logoUrl from "../../assets/original/title/logo.png";
 import type { Music } from "./music.ts";
 import type { Sfx } from "./sfx.ts";
 import { describeTime, listSaves, type SaveMeta, type SlotId } from "./saves.ts";
-import { keyLabel, settings } from "./settings.ts";
+import { settings } from "./settings.ts";
 import { smoothUrl } from "./upscale.ts";
 
 export type TitleChoice = { kind: "new" } | { kind: "load"; slot: SlotId };
@@ -22,10 +23,10 @@ export function showTitle(opts: { music: Music; sfx: Sfx; openSettings: () => vo
   root.hidden = false;
   root.innerHTML = `
     <canvas class="tt-stars"></canvas>
-    <div class="tt-main">
+    <div class="tt-press">点击或按任意键进入</div>
+    <div class="tt-main" hidden>
       <img class="tt-logo" src="${logoUrl}" alt="第2次超级机器人大战">
       <div class="tt-sub">REMAKE</div>
-      <div class="tt-press">按 ${keyLabel("confirm")} 开始</div>
       <div class="tt-menu" hidden></div>
     </div>
     <div class="tt-foot">原作 © BANPRESTO 1991 · 个人重制，仅供自己游玩</div>`;
@@ -33,13 +34,9 @@ export function showTitle(opts: { music: Music; sfx: Sfx; openSettings: () => vo
   if (settings.get().artStyle === "smooth") void smoothUrl(logoUrl).then((u) => (logo.src = u));
   const stopStars = stars(root.querySelector(".tt-stars") as HTMLCanvasElement);
 
-  // 原版的标题音乐轮播
+  // 原版的标题音乐轮播（进入后才开始）
   let song = 0;
-  music.play(PLAYLIST[0]);
-  const playlist = window.setInterval(() => {
-    song = (song + 1) % PLAYLIST.length;
-    music.play(PLAYLIST[song]);
-  }, SONG_SECONDS * 1000);
+  let playlist = 0;
 
   const menuEl = root.querySelector(".tt-menu") as HTMLElement;
   const press = root.querySelector(".tt-press") as HTMLElement;
@@ -111,10 +108,15 @@ export function showTitle(opts: { music: Music; sfx: Sfx; openSettings: () => vo
     const start = () => {
       if (started) return;
       started = true;
-      sfx.ui("ok");
       press.hidden = true;
-      menuEl.hidden = false;
-      void mainMenu();
+      (root.querySelector(".tt-main") as HTMLElement).hidden = false;
+      music.play(PLAYLIST[0]);
+      playlist = window.setInterval(() => {
+        song = (song + 1) % PLAYLIST.length;
+        music.play(PLAYLIST[song]);
+      }, SONG_SECONDS * 1000);
+      // logo 落下之后出菜单
+      setTimeout(() => { menuEl.hidden = false; void mainMenu(); }, 1100);
     };
 
     // 自己处理按键（游戏的输入在标题画面期间暂停，见 main.ts）

@@ -66,6 +66,11 @@ export function loadScene(ref: SceneRef): Line[] {
 }
 
 // 关卡标题卡（原版是 CHR 里现成的字形图块，还没提取排列表，先手写已知的）
+// 世界地图上这一关的位置（红点，assets/original/worldmap/map.png 的像素坐标，原版出击前的剧情画面）
+export const WORLD_MARKER: Record<number, { x: number; y: number }> = {
+  1: { x: 3.5, y: 11.5 },
+};
+
 export const STAGE_STORY: Record<number, { title: string; subtitle: string }> = {
   1: { title: "第1篇", subtitle: "救出刚达Z" },
 };

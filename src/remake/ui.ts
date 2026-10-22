@@ -3,6 +3,7 @@ import { TYPE_LABEL, type Unit, type Weapon } from "./data.ts";
 import type { Forecast, BattleEvent } from "./rules.ts";
 import { settings } from "./settings.ts";
 import { smoothUrl } from "./upscale.ts";
+import worldMapUrl from "../../assets/original/worldmap/map.png";
 import { traitLabel, type Trait } from "./traits.ts";
 
 export interface MenuItem {
@@ -327,6 +328,24 @@ export class UI {
     };
     void run();
     return { done, advance, close };
+  }
+
+  // 世界地图（出击前的剧情背景）：原版地图 + 这一关的位置（闪烁的红点）
+  showWorldMap(marker: { x: number; y: number } | null) {
+    const el = $("#worldmap");
+    el.innerHTML = `
+      <div class="wm-frame">
+        <img src="${worldMapUrl}" alt="">
+        ${marker ? `<i class="wm-mark" style="left:${(marker.x / 240) * 100}%;top:${(marker.y / 143) * 100}%"></i>` : ""}
+      </div>`;
+    el.hidden = false;
+    if (settings.get().artStyle === "smooth") void smoothUrl(worldMapUrl).then((u) => { const img = el.querySelector("img"); if (img) img.src = u; });
+  }
+
+  hideWorldMap() {
+    const el = $("#worldmap");
+    el.classList.add("out");
+    setTimeout(() => { el.hidden = true; el.classList.remove("out"); el.innerHTML = ""; }, 350);
   }
 
   // 菜单出现在屏幕坐标 (x, y) 旁边；fromHud 时是右上角按钮的下拉菜单，贴着按钮右对齐，顶部显示回合和胜利条件
