@@ -57,6 +57,11 @@ interface TargetPick {
   preview?: (u: Unit) => void;
 }
 
+// 援军曲（原版第 13 首，事件指令 5B CD）的拍点（秒）：第一串「噔」×6 敲完 0.85，第二串 ×7 敲完 2.57，之后每 0.855 秒一记重拍
+const REINFORCE_SONG = 13;
+const REVEAL_BEATS = [0.85, 2.57, 3.41, 4.28, 5.13, 5.99, 6.84, 7.69, 8.56, 9.4, 10.27, 11.12, 11.98];
+const REVEAL_PULSE = 0.855;
+
 export class Game implements DrawState {
   cursor: Point = { x: 0, y: 0 };
   selected: Unit | null = null;
@@ -131,17 +136,36 @@ export class Game implements DrawState {
     await wait(0.2 / this.speed());
   }
 
-  // 原版（模拟器第 1 关第 11 回合实测）：光标先到出现位置，约 10 帧后单位直接冒出来，再停 26 帧才出下一个，
-  // 援军是伴着「噔噔噔」一个一个出现的；敌人不打字幕，保留神秘感
+  // 援军登场：原版第 1 关三个援军 0.6 秒一个，都挤在援军曲开头那串「噔噔噔噔噔噔」里（模拟器实测）。
+  // 重制版加强：每个敌人等一串「噔噔噔噔」敲完、或者后面一记重拍，才在那一拍上闪白冒出来、镜头一震，
+  // 一个一个登场，有神秘感和压迫感。拍点取自援军曲（第 13 首）的音符起点，两套录音一样
+  private lastReveal = 0;
   private async addUnit(u: Unit) {
     this.syncTrait(u);
     await this.renderer.loadUnit(u);
     this.setCursor(u.x, u.y);
-    await wait(10 / 60 / this.speed());
+    if (u.side === "enemy") await this.waitRevealBeat(); else await wait(10 / 60 / this.speed());
     this.units.push(u);
     this.dangerCache = null;
-    if (u.side !== "enemy") this.renderer.float(u, "加入", "player");
+    if (u.side === "enemy") this.renderer.impact(u, 0.35, this.speed());
+    else this.renderer.float(u, "加入", "player");
     await wait(26 / 60 / this.speed());
+  }
+
+  private async waitRevealBeat() {
+    const minLead = 0.25; // 光标、镜头先到位
+    const pos = this.speed() === 1 ? this.music.position(REINFORCE_SONG) : null;
+    if (pos !== null) {
+      const beat = REVEAL_BEATS.find((b) => b >= pos + minLead);
+      const next = beat ?? pos + minLead + ((REVEAL_PULSE - ((pos + minLead - REVEAL_BEATS.at(-1)!) % REVEAL_PULSE)) % REVEAL_PULSE);
+      await wait(next - pos);
+    } else {
+      // 没有音乐时间可对（静音、快进、别的曲子）：按援军曲的拍子 0.85 秒一个
+      const gap = REVEAL_PULSE / this.speed();
+      const since = (performance.now() - this.lastReveal) / 1000;
+      await wait(Math.max(minLead / this.speed(), gap - since));
+    }
+    this.lastReveal = performance.now();
   }
 
   // 撤退 / 离场：淡出，不算击破，不给经验
@@ -176,7 +200,7 @@ export class Game implements DrawState {
     const bgm = MUSIC.stage(this.stage.number);
     // 战斗音乐也先下载，进战斗时不卡
     const battleSongs = this.players().map((u) => MUSIC.battle(u.pilotId, -1));
-    this.music.preload([bgm.player, bgm.enemy, STORY_BGM, STAGE_CARD_BGM, ...new Set(battleSongs)]);
+    this.music.preload([bgm.player, bgm.enemy, STORY_BGM, STAGE_CARD_BGM, REINFORCE_SONG, ...new Set(battleSongs)]);
     // 进关：开场脚本跑到第一个暂停点（出击前的剧情），然后是关卡标题，之后进入第 1 回合
     // 节奏照原版（模拟器逐帧量的）。原版切画面时关掉显示搬显存造成的黑屏（硬件限制）不继承，
     // 有意做的调色板淡入淡出保留：世界地图出来后单独停一会儿才开始对话；说完暗下去，

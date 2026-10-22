@@ -29,7 +29,7 @@ export class Music {
   private ctx: AudioContext | null = null;
   private bus: GainNode | null = null;
   private buffers = new Map<string, Promise<AudioBuffer>>();
-  private current: { id: number; src: AudioBufferSourceNode; gain: GainNode } | null = null;
+  private current: { id: number; src: AudioBufferSourceNode; gain: GainNode; startedAt: number } | null = null;
   private wanted: number | null = null;
 
   constructor() {
@@ -143,6 +143,16 @@ export class Music {
     if (this.wanted === null && resume !== null) this.play(resume);
   }
 
+  // 曲子 id 正在放的话，返回放到第几秒（循环过就折回循环段里）；没在放（还在加载、静音前没解锁等）返回 null
+  position(id: number): number | null {
+    const cur = this.current;
+    if (!cur || cur.id !== id || !this.ctx || this.ctx.state !== "running") return null;
+    const t = this.ctx.currentTime - cur.startedAt;
+    const loop = tracks.get(id)?.loop;
+    if (!loop || this.wantedOnce || t < loop.end) return t;
+    return loop.start + ((t - loop.end) % (loop.end - loop.start));
+  }
+
   private stopJingle() {
     this.jingleSrc?.stop();
     this.jingleSrc = null;
@@ -171,6 +181,6 @@ export class Music {
     src.connect(gain).connect(this.bus);
     src.start();
     src.onended = () => { if (this.current?.src === src) this.current = null; };
-    this.current = { id, src, gain };
+    this.current = { id, src, gain, startedAt: this.ctx.currentTime };
   }
 }
