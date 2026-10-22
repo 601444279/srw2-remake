@@ -173,22 +173,21 @@ export class Game implements DrawState {
     const battleSongs = this.players().map((u) => MUSIC.battle(u.pilotId, -1));
     this.music.preload([bgm.player, bgm.enemy, STORY_BGM, STAGE_CARD_BGM, ...new Set(battleSongs)]);
     // 进关：开场脚本跑到第一个暂停点（出击前的剧情），然后是关卡标题，之后进入第 1 回合
-    // 节奏照原版（模拟器里量的）：黑屏后世界地图淡入，地图单独停一会儿才开始对话；
-    // 说完先黑下来，关卡标题在黑底上；再黑一下，关卡地图淡入，停一下才开始地图上的对话
+    // 节奏照原版（模拟器逐帧量的）。原版切画面时关掉显示搬显存造成的黑屏（硬件限制）不继承，
+    // 有意做的调色板淡入淡出保留：世界地图出来后单独停一会儿才开始对话；说完暗下去，
+    // 关卡标题在黑底上淡入；标题直接切走，关卡地图淡入，停一下才开始地图上的对话
     const pause = (s: number) => wait(s / this.speed());
     this.setMode("busy");
     await this.ui.fade(true, 0);
     this.music.play(STORY_BGM);
     // 原版出击前的对话在世界地图上（红点是这一关的位置），说完才进关卡地图
     this.ui.showWorldMap(WORLD_MARKER[this.stage.number] ?? null);
-    await pause(0.4);
-    await this.ui.fade(false, 0.6 / this.speed());
+    await this.ui.fade(false, 0.3 / this.speed());
     await pause(1.3);
     await this.events.runStart();
-    await pause(0.5);
-    await this.ui.fade(true, 0.6 / this.speed());
+    await pause(0.3);
+    await this.ui.fade(true, 0.3 / this.speed());
     this.ui.hideWorldMap();
-    await pause(0.4);
     const story = STAGE_STORY[this.stage.number];
     this.setMode("title");
     // 原版：关卡标题出现时换 18 号短曲，标题过后回到剧情曲（地图上的对话），我方回合开始再换回合曲
@@ -199,10 +198,9 @@ export class Game implements DrawState {
     await card.done;
     this.titleSkip = null;
     this.setMode("busy");
-    await pause(0.4);
     this.music.play(STORY_BGM);
-    await this.ui.fade(false, 0.6 / this.speed());
-    await pause(0.6);
+    await this.ui.fade(false, 0.4 / this.speed());
+    await pause(0.4);
     await this.playerPhaseStart();
   }
 
@@ -1198,18 +1196,18 @@ export class Game implements DrawState {
     this.inspected = null;
     this.setMode("busy");
     for (const u of this.players()) u.spirit &= ~(SPIRIT_FLAG.ACCEL | SPIRIT_FLAG.GALE);
-    // 回合交接照原版：先黑下来再亮起
-    await this.ui.fade(true, 0.45 / this.speed());
+    // 回合交接照原版：暗下去 0.3 秒、短暂黑一下、0.4 秒亮起（原版中间黑得更久，一部分是关显示搬显存，不继承）
+    await this.ui.fade(true, 0.3 / this.speed());
     this.ui.setTurn(this.turn, "enemy");
     this.phase = "enemy";
     this.music.play(this.songs.enemy);
-    await wait(0.25 / this.speed());
-    await this.ui.fade(false, 0.45 / this.speed());
+    await wait(0.15 / this.speed());
+    await this.ui.fade(false, 0.4 / this.speed());
     await this.ui.banner("敌方回合", "", "enemy");
     await this.enemyPhase();
     if (this.mode === "over") return;
     await wait(0.4 / this.speed());
-    await this.ui.fade(true, 0.45 / this.speed());
+    await this.ui.fade(true, 0.3 / this.speed());
 
     this.turn++;
     this.rules.jamming = false;
@@ -1219,8 +1217,8 @@ export class Game implements DrawState {
     this.ui.setTurn(this.turn, "player");
     const first = this.players()[0];
     if (first) this.setCursor(first.x, first.y);
-    await wait(0.25 / this.speed());
-    await this.ui.fade(false, 0.45 / this.speed());
+    await wait(0.15 / this.speed());
+    await this.ui.fade(false, 0.4 / this.speed());
     await this.playerPhaseStart();
   }
 

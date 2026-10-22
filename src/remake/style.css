@@ -172,8 +172,9 @@ body.story #info, body.story #forecast { display: none !important; }
 #title-card { z-index: 15; position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; background: rgba(0,0,0,0.78); pointer-events: none; }
 #title-card .tc-title { font-size: 44px; font-weight: 800; letter-spacing: 12px; color: #fff; }
 #title-card .tc-sub { font-size: 26px; letter-spacing: 6px; color: var(--accent); }
-#title-card.show { animation: tc 2.4s ease-in-out both; }
-@keyframes tc { 0% { opacity: 0; } 15%, 80% { opacity: 1; } 100% { opacity: 0; } }
+/* 原版：关卡标题淡入约 0.4 秒，停住，然后直接切走（没有淡出） */
+#title-card.show { animation: tc .4s ease-out both; }
+@keyframes tc { from { opacity: 0; } to { opacity: 1; } }
 
 #toast { position: fixed; left: 50%; top: 64px; transform: translateX(-50%); background: var(--panel); border: 1px solid var(--panel-border); padding: 6px 14px; border-radius: 999px; opacity: 0; transition: opacity .2s; pointer-events: none; }
 #toast.show { opacity: 1; }
