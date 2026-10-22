@@ -1,0 +1,518 @@
+{
+  "note": "关卡顺序是线性的：关卡号 = 已过关数（bank 10 $949F 按过关位图 $7412 从高位数连续的 1）。名册变化按出现位置列出，when 是到达该指令时满足的条件",
+  "stages": [
+    {
+      "stage": 1,
+      "index": 0,
+      "victoryText": "全歼敌人即胜利。",
+      "deployment": 1,
+      "map": 0,
+      "victory": [["敌人全灭"]],
+      "defeat": [["我方全灭","敌人 ≥ 1"]],
+      "roster": [{"source":"check","at":"A509","when":[["敌人全灭"]],"change":"join","roster":6,"pilot":11,"mech":130,"level":2,"note":"名册 6：卡姆 / 刚达Z / 等级 3"}],
+      "persuade": []
+    },
+    {
+      "stage": 2,
+      "index": 1,
+      "victoryText": "全歼敌人即胜利。",
+      "deployment": 2,
+      "map": 1,
+      "victory": [["敌人全灭"]],
+      "defeat": [["我方全灭","敌人 ≥ 1"]],
+      "roster": [
+        {"source":"enemyPhase","at":"97CA","when":[["第 3 回合","米奇尔 在场"]],"change":"mech","pilot":45,"mech":38,"note":"米奇尔 → 盖塔Q"},
+        {"source":"check","at":"A53B","when":[["敌人全灭"]],"change":"leave","roster":5}
+      ],
+      "persuade": []
+    },
+    {
+      "stage": 3,
+      "index": 2,
+      "victoryText": "全歼敌人即胜利。",
+      "deployment": 3,
+      "map": 2,
+      "victory": [["敌人全灭"]],
+      "defeat": [["我方全灭","敌人 ≥ 1"]],
+      "roster": [
+        {
+          "source": "enemyPhase",
+          "at": "98AB",
+          "when": [["第 4 回合"]],
+          "change": "join",
+          "roster": 8,
+          "pilot": 13,
+          "mech": 143,
+          "level": 7,
+          "note": "名册 8：布克 / F91 / 等级 8"
+        },
+        {"source":"persuade 大卫→尼娜","at":"B542","when":[[]],"change":"joinFromMap","roster":5,"note":"当前单位（多为劝降对象）转入我方，名册由紧接着的 changeMech 写入"},
+        {"source":"persuade 大卫→尼娜","at":"B544","when":[[]],"change":"mech","pilot":43,"mech":60,"note":"尼娜 → 艾文"}
+      ],
+      "persuade": [{"pilot":6,"target":43,"note":"大卫 劝降 尼娜"}]
+    },
+    {
+      "stage": 4,
+      "index": 3,
+      "victoryText": "全歼敌人即胜利。",
+      "deployment": 4,
+      "map": 3,
+      "victory": [["敌人全灭"]],
+      "defeat": [["我方全灭","敌人 ≥ 1"]],
+      "roster": [
+        {"source":"check","at":"A5CB","when":[["敌人全灭"]],"change":"mech","pilot":54,"mech":162,"note":"乔 → 阿格马"},
+        {"source":"check","at":"A5CE","when":[["敌人全灭"]],"change":"leave","roster":4},
+        {"source":"check","at":"A5D0","when":[["敌人全灭"]],"change":"join","roster":4,"pilot":16,"mech":106,"level":9,"note":"名册 4：发 / 麦塔斯 / 等级 10"}
+      ],
+      "persuade": []
+    },
+    {
+      "stage": 5,
+      "index": 4,
+      "victoryText": "全歼敌人即胜利。",
+      "deployment": 5,
+      "map": 4,
+      "victory": [["敌人全灭"]],
+      "defeat": [["我方全灭","敌人 ≥ 1"]],
+      "roster": [],
+      "persuade": []
+    },
+    {
+      "stage": 6,
+      "index": 5,
+      "victoryText": "攻克敌要塞就是胜利",
+      "deployment": 6,
+      "map": 5,
+      "victory": [["敌人全灭"],["(1,2) 有我方单位","我方 ≥ 1"],["(2,2) 有我方单位","我方 ≥ 1"],["(1,3) 有我方单位","我方 ≥ 1"],["(2,3) 有我方单位","我方 ≥ 1"]],
+      "defeat": [["我方全灭","敌人 ≥ 1"]],
+      "roster": [
+        {
+          "source": "persuade 龙→卡尔",
+          "at": "B58D",
+          "when": [["并非（卡尔 HP ≥ 200）"]],
+          "change": "joinFromMap",
+          "roster": 11,
+          "note": "当前单位（多为劝降对象）转入我方，名册由紧接着的 changeMech 写入"
+        },
+        {"source":"persuade 龙→卡尔","at":"B58F","when":[["并非（卡尔 HP ≥ 200）"]],"change":"mech","pilot":44,"mech":90,"note":"卡尔 → 麦乔"},
+        {
+          "source": "persuade 欧文→卡尔",
+          "at": "B58D",
+          "when": [["并非（卡尔 HP ≥ 200）"]],
+          "change": "joinFromMap",
+          "roster": 11,
+          "note": "当前单位（多为劝降对象）转入我方，名册由紧接着的 changeMech 写入"
+        },
+        {"source":"persuade 欧文→卡尔","at":"B58F","when":[["并非（卡尔 HP ≥ 200）"]],"change":"mech","pilot":44,"mech":90,"note":"卡尔 → 麦乔"},
+        {
+          "source": "persuade 路易→卡尔",
+          "at": "B58D",
+          "when": [["并非（卡尔 HP ≥ 200）"]],
+          "change": "joinFromMap",
+          "roster": 11,
+          "note": "当前单位（多为劝降对象）转入我方，名册由紧接着的 changeMech 写入"
+        },
+        {"source":"persuade 路易→卡尔","at":"B58F","when":[["并非（卡尔 HP ≥ 200）"]],"change":"mech","pilot":44,"mech":90,"note":"卡尔 → 麦乔"}
+      ],
+      "persuade": [{"pilot":8,"target":44,"note":"龙 劝降 卡尔"},{"pilot":9,"target":44,"note":"欧文 劝降 卡尔"},{"pilot":10,"target":44,"note":"路易 劝降 卡尔"}]
+    },
+    {
+      "stage": 7,
+      "index": 6,
+      "victoryText": "记住，要打败拉英X！",
+      "deployment": 7,
+      "map": 6,
+      "victory": [["希拉 不在场"]],
+      "defeat": [["希拉 在场","我方全灭"]],
+      "roster": [
+        {"source":"check","at":"A6ED","when":[["尼娜 在名册中","希拉 不在场"]],"change":"leave","roster":5},
+        {"source":"check","at":"A6EF","when":[["希拉 不在场"]],"change":"mech","pilot":6,"mech":128,"note":"大卫 → 刚达"},
+        {"source":"check","at":"A6F2","when":[["希拉 不在场"]],"change":"mech","pilot":7,"mech":30,"note":"加代 → 金Z"},
+        {"source":"check","at":"A6F5","when":[["希拉 不在场"]],"change":"mech","pilot":8,"mech":5,"note":"龙 → 盖塔"},
+        {"source":"check","at":"A6F8","when":[["希拉 不在场"]],"change":"mech","pilot":11,"mech":132,"note":"卡姆 → 刚达Z"},
+        {"source":"check","at":"A6FB","when":[["希拉 不在场"]],"change":"mech","pilot":16,"mech":108,"note":"发 → 麦塔斯"}
+      ],
+      "persuade": []
+    },
+    {
+      "stage": 8,
+      "index": 7,
+      "victoryText": "破坏加恩即胜利，\n古连被杀死就会失败。",
+      "deployment": 8,
+      "map": 7,
+      "victory": [["关卡标志15已置位","敌人全灭"],["敌人全灭","肯特 HP 全满"],["肯特 不在场"]],
+      "defeat": [["关卡标志15已置位","我方全灭","敌人 ≥ 1","肯特 在场"],["我方全灭","敌人 ≥ 1","肯特 HP 全满","肯特 在场"]],
+      "roster": [
+        {
+          "source": "check",
+          "at": "A75D",
+          "when": [["关卡标志15未置位","肯特 HP 不满","肯特 在场"]],
+          "change": "join",
+          "roster": 9,
+          "pilot": 14,
+          "mech": 98,
+          "level": 20,
+          "note": "名册 9：马丁 / 古连 / 等级 21"
+        },
+        {
+          "source": "check",
+          "at": "A796",
+          "when": [["关卡标志15未置位","肯特 HP 不满","肯特 在场"]],
+          "change": "join",
+          "roster": 10,
+          "pilot": 18,
+          "mech": 39,
+          "level": 19,
+          "note": "名册 10：布西 / 博思 / 等级 20"
+        },
+        {
+          "source": "npc 8",
+          "at": "AEF9",
+          "when": [["本单位与加代相邻"],["第 2 回合"]],
+          "change": "pilotMech",
+          "pilot": 14,
+          "newPilot": 86,
+          "mech": 174,
+          "note": "马丁 → 假马丁 / 假古连"
+        },
+        {"source":"persuade 加代→米巴","at":"B5B2","when":[[]],"change":"joinFromMap","roster":12,"note":"当前单位（多为劝降对象）转入我方，名册由紧接着的 changeMech 写入"},
+        {"source":"persuade 加代→米巴","at":"B5B4","when":[[]],"change":"mech","pilot":95,"mech":44,"note":"米巴 → 米巴"}
+      ],
+      "persuade": [{"pilot":7,"target":95,"note":"加代 劝降 米巴"}]
+    },
+    {
+      "stage": 9,
+      "index": 8,
+      "victoryText": "一定要破坏加恩！",
+      "deployment": 9,
+      "map": 8,
+      "victory": [["肯特 不在场"]],
+      "defeat": [["我方全灭","肯特 在场"]],
+      "roster": [
+        {
+          "source": "enemyPhase",
+          "at": "9C88",
+          "when": [["并非（第 1 回合）","并非（第 2 回合）","第 3 回合"]],
+          "change": "join",
+          "roster": 7,
+          "pilot": 12,
+          "mech": 147,
+          "level": 20,
+          "note": "名册 7：希塔 / 刚达ZZ / 等级 21"
+        },
+        {
+          "source": "check",
+          "at": "A801",
+          "when": [["希塔 不在名册中","肯特 不在场"]],
+          "change": "join",
+          "roster": 7,
+          "pilot": 12,
+          "mech": 147,
+          "level": 20,
+          "note": "名册 7：希塔 / 刚达ZZ / 等级 21"
+        },
+        {"source":"check","at":"A818","when":[["米巴 在名册中","肯特 不在场"]],"change":"leave","roster":12},
+        {"source":"check","at":"A827","when":[["全程标志7已置位","肯特 不在场"]],"change":"leave","roster":11}
+      ],
+      "persuade": []
+    },
+    {
+      "stage": 10,
+      "index": 9,
+      "victoryText": "全歼敌人即胜利。",
+      "deployment": 10,
+      "map": 9,
+      "victory": [["敌人全灭"]],
+      "defeat": [["我方全灭","敌人 ≥ 1"]],
+      "roster": [
+        {"source":"check","at":"A851","when":[["敌人全灭"]],"change":"mech","pilot":54,"mech":163,"note":"乔 → 奈尔"},
+        {
+          "source": "persuade 卡姆→萨米",
+          "at": "B5F5",
+          "when": [["关卡标志15已置位"]],
+          "change": "joinFromMap",
+          "roster": 5,
+          "note": "当前单位（多为劝降对象）转入我方，名册由紧接着的 changeMech 写入"
+        },
+        {"source":"persuade 卡姆→萨米","at":"B5F7","when":[["关卡标志15已置位"]],"change":"mech","pilot":35,"mech":9,"note":"萨米 → 刚达"}
+      ],
+      "persuade": [{"pilot":11,"target":35,"note":"卡姆 劝降 萨米"}]
+    },
+    {
+      "stage": 11,
+      "index": 10,
+      "victoryText": "守住坎普，全歼敌人！",
+      "deployment": 11,
+      "map": 10,
+      "victory": [["敌人全灭"],["关卡标志15已置位","我方全灭"],["乔治 不在场","关卡标志15已置位"]],
+      "defeat": [["关卡标志15未置位","我方全灭","敌人 ≥ 1"],["乔治 不在场","关卡标志15未置位","敌人 ≥ 1"]],
+      "roster": [
+        {
+          "source": "enemyPhase",
+          "at": "9D72",
+          "when": [["并非（第 5 回合）","第 7 回合"]],
+          "change": "join",
+          "roster": 15,
+          "pilot": 20,
+          "mech": 23,
+          "level": 23,
+          "note": "名册 15：安东 / 巴斯塔 / 等级 24"
+        }
+      ],
+      "persuade": []
+    },
+    {
+      "stage": 12,
+      "index": 11,
+      "victoryText": "破坏比克，将巴斯塔弄到手。",
+      "deployment": 12,
+      "map": 11,
+      "victory": [["亨利 不在场"]],
+      "defeat": [["亨利 在场","我方全灭"]],
+      "roster": [
+        {
+          "source": "check",
+          "at": "A8B8",
+          "when": [["亨利 在场","关卡标志13未置位","并非（大卫 在地图上）","大卫 在场","我方 ≥ 1"]],
+          "change": "mech",
+          "pilot": 6,
+          "mech": 140,
+          "note": "大卫 → 刚达R"
+        },
+        {
+          "source": "check",
+          "at": "A8CA",
+          "when": [["亨利 在场","关卡标志14未置位","我方 ≥ 1","并非（龙 在地图上）","龙 在场"]],
+          "change": "mech",
+          "pilot": 8,
+          "mech": 115,
+          "note": "龙 → 盖塔龙"
+        },
+        {
+          "source": "check",
+          "at": "A8DC",
+          "when": [["亨利 在场","关卡标志15未置位","并非（加代 在地图上）","加代 在场","我方 ≥ 1"]],
+          "change": "mech",
+          "pilot": 7,
+          "mech": 31,
+          "note": "加代 → 金"
+        },
+        {"source":"check","at":"A8F7","when":[["亨利 不在场"]],"change":"mech","pilot":6,"mech":140,"note":"大卫 → 刚达R"},
+        {"source":"check","at":"A8FA","when":[["亨利 不在场"]],"change":"mech","pilot":7,"mech":31,"note":"加代 → 金"},
+        {"source":"check","at":"A8FD","when":[["亨利 不在场"]],"change":"mech","pilot":8,"mech":115,"note":"龙 → 盖塔龙"},
+        {"source":"check","at":"A900","when":[["亨利 不在场"]],"change":"mech","pilot":11,"mech":134,"note":"卡姆 → 刚达Z"},
+        {"source":"check","at":"A903","when":[["亨利 不在场"]],"change":"mech","pilot":16,"mech":110,"note":"发 → 麦塔斯"},
+        {"source":"check","at":"A906","when":[["亨利 不在场"]],"change":"mech","pilot":13,"mech":144,"note":"布克 → F91"},
+        {"source":"check","at":"A909","when":[["亨利 不在场"]],"change":"mech","pilot":14,"mech":100,"note":"马丁 → 古连"},
+        {"source":"check","at":"A90C","when":[["亨利 不在场"]],"change":"mech","pilot":18,"mech":40,"note":"布西 → 博思"}
+      ],
+      "persuade": []
+    },
+    {
+      "stage": 13,
+      "index": 12,
+      "victoryText": "保护阿格马，全歼敌人",
+      "deployment": 13,
+      "map": 12,
+      "victory": [["敌人全灭"]],
+      "defeat": [["乔 不在场","敌人 ≥ 1"]],
+      "roster": [],
+      "persuade": [{"pilot":12,"target":27,"note":"希塔 劝降 伊娃"}]
+    },
+    {
+      "stage": 14,
+      "index": 13,
+      "victoryText": "全歼敌人即胜利。",
+      "deployment": 14,
+      "map": 13,
+      "victory": [["敌人全灭"]],
+      "defeat": [["我方全灭","敌人 ≥ 1"]],
+      "roster": [],
+      "persuade": []
+    },
+    {
+      "stage": 15,
+      "index": 14,
+      "victoryText": "全歼敌人即胜利。",
+      "deployment": 15,
+      "map": 14,
+      "victory": [["敌人全灭"]],
+      "defeat": [["我方全灭","敌人 ≥ 1"]],
+      "roster": [{"source":"npc 7","at":"AEE7","when":[[]],"change":"mech","pilot":49,"mech":167,"note":"米亚 → 刚达Ⅱ"}],
+      "persuade": []
+    },
+    {
+      "stage": 16,
+      "index": 15,
+      "victoryText": "全部安全撤离。",
+      "deployment": 16,
+      "map": 15,
+      "victory": [["布克 不在场","敌人全灭"],["敌人全灭","并非（本单位与珍妮相邻）"],["全程标志5已置位","敌人全灭"],["关卡标志10已置位","布克 不在场"],["关卡标志10已置位","并非（本单位与珍妮相邻）"],["全程标志5已置位","关卡标志10已置位"]],
+      "defeat": [["关卡标志10未置位","布克 不在场","我方全灭","敌人 ≥ 1"],["关卡标志10未置位","我方全灭","敌人 ≥ 1","并非（本单位与珍妮相邻）"],["全程标志5已置位","关卡标志10未置位","我方全灭","敌人 ≥ 1"]],
+      "roster": [],
+      "persuade": [{"pilot":13,"target":52,"note":"布克 劝降 珍妮"}]
+    },
+    {
+      "stage": 17,
+      "index": 16,
+      "victoryText": "记住，在11回合内攻下索拉来衣。",
+      "deployment": 17,
+      "map": 16,
+      "victory": [["敌人全灭"],["人物89 不在场"]],
+      "defeat": [["人物89 在场","我方全灭","敌人 ≥ 1"]],
+      "roster": [
+        {"source":"check","at":"ABDC","when":[["敌人全灭"],["人物89 不在场"]],"change":"mech","pilot":18,"mech":41,"note":"布西 → 博思"},
+        {
+          "source": "persuade 希塔→伊娃",
+          "at": "B6CC",
+          "when": [["全程标志6已置位","关卡标志15已置位"]],
+          "change": "joinFromMap",
+          "roster": 14,
+          "note": "当前单位（多为劝降对象）转入我方，名册由紧接着的 changeMech 写入"
+        },
+        {"source":"persuade 希塔→伊娃","at":"B6CE","when":[["全程标志6已置位","关卡标志15已置位"]],"change":"mech","pilot":27,"mech":65,"note":"伊娃 → 吉伯"}
+      ],
+      "persuade": [{"pilot":12,"target":27,"note":"希塔 劝降 伊娃"}]
+    },
+    {
+      "stage": 18,
+      "index": 17,
+      "victoryText": "全歼敌人即胜利。",
+      "deployment": 18,
+      "map": 17,
+      "victory": [["敌人全灭"]],
+      "defeat": [["我方全灭","敌人 ≥ 1"]],
+      "roster": [
+        {"source":"check","at":"AC1B","when":[["敌人全灭"]],"change":"mech","pilot":6,"mech":141,"note":"大卫 → 刚达R"},
+        {"source":"check","at":"AC1E","when":[["敌人全灭"]],"change":"mech","pilot":7,"mech":32,"note":"加代 → 金"},
+        {"source":"check","at":"AC21","when":[["敌人全灭"]],"change":"mech","pilot":8,"mech":119,"note":"龙 → 盖塔龙"},
+        {"source":"check","at":"AC24","when":[["敌人全灭"]],"change":"mech","pilot":11,"mech":136,"note":"卡姆 → 刚达Z"},
+        {"source":"check","at":"AC27","when":[["敌人全灭"]],"change":"mech","pilot":16,"mech":112,"note":"发 → 麦塔斯"},
+        {"source":"check","at":"AC2A","when":[["敌人全灭"]],"change":"mech","pilot":13,"mech":145,"note":"布克 → F91"},
+        {"source":"check","at":"AC2D","when":[["敌人全灭"]],"change":"mech","pilot":14,"mech":102,"note":"马丁 → 古连"},
+        {"source":"check","at":"AC30","when":[["敌人全灭"]],"change":"mech","pilot":20,"mech":26,"note":"安东 → 巴得"}
+      ],
+      "persuade": []
+    },
+    {
+      "stage": 19,
+      "index": 18,
+      "victoryText": "全歼敌人即胜利。",
+      "deployment": 19,
+      "map": 18,
+      "victory": [["敌人全灭"]],
+      "defeat": [["我方全灭","敌人 ≥ 1"]],
+      "roster": [{"source":"check","at":"AC72","when":[["全程标志3未置位","刚才 伊娃 攻击 普西，结果 & B0 = 20"]],"change":"leave","roster":14}],
+      "persuade": []
+    },
+    {
+      "stage": 20,
+      "index": 19,
+      "victoryText": "全歼敌人即胜利。",
+      "deployment": 20,
+      "map": 19,
+      "victory": [["我方 ≥ 1","敌人全灭"]],
+      "defeat": [["我方全灭"]],
+      "roster": [],
+      "persuade": []
+    },
+    {
+      "stage": 21,
+      "index": 20,
+      "victoryText": "15回合内必须全部\n从下面的出口逃出。",
+      "deployment": 21,
+      "map": 20,
+      "victory": [["关卡标志10已置位"]],
+      "defeat": [["关卡标志10未置位","我方全灭"]],
+      "roster": [{"source":"check","at":"ACD2","when":[["关卡标志10已置位"]],"change":"mech","pilot":54,"mech":164,"note":"乔 → 拉姆"}],
+      "persuade": []
+    },
+    {
+      "stage": 22,
+      "index": 21,
+      "victoryText": "一定要坚守拉姆20回合。",
+      "deployment": 22,
+      "map": 21,
+      "victory": [["敌人全灭"],["乔 在场","我方 ≥ 1","第 20 回合"]],
+      "defeat": [["乔 不在场","敌人 ≥ 1"],["我方全灭","敌人 ≥ 1"]],
+      "roster": [
+        {"source":"enemyPhase","at":"ACF4","when":[["并非（第 17 回合）","第 20 回合","并非（第 3 回合）"]],"change":"mech","pilot":6,"mech":142,"note":"大卫 → 刚达R"},
+        {"source":"enemyPhase","at":"ACF7","when":[["并非（第 17 回合）","第 20 回合","并非（第 3 回合）"]],"change":"mech","pilot":7,"mech":33,"note":"加代 → 金"},
+        {"source":"enemyPhase","at":"ACFA","when":[["并非（第 17 回合）","第 20 回合","并非（第 3 回合）"]],"change":"mech","pilot":8,"mech":123,"note":"龙 → 盖塔龙"},
+        {"source":"enemyPhase","at":"ACFD","when":[["并非（第 17 回合）","第 20 回合","并非（第 3 回合）"]],"change":"mech","pilot":11,"mech":138,"note":"卡姆 → 刚达Z"},
+        {"source":"enemyPhase","at":"AD00","when":[["并非（第 17 回合）","第 20 回合","并非（第 3 回合）"]],"change":"mech","pilot":12,"mech":151,"note":"希塔 → 刚达ZZ"},
+        {"source":"enemyPhase","at":"AD03","when":[["并非（第 17 回合）","第 20 回合","并非（第 3 回合）"]],"change":"mech","pilot":13,"mech":146,"note":"布克 → F91"},
+        {"source":"enemyPhase","at":"AD06","when":[["并非（第 17 回合）","第 20 回合","并非（第 3 回合）"]],"change":"mech","pilot":20,"mech":28,"note":"安东 → 巴得"},
+        {"source":"check","at":"ACF4","when":[["敌人全灭"],["乔 在场","我方 ≥ 1","第 20 回合"]],"change":"mech","pilot":6,"mech":142,"note":"大卫 → 刚达R"},
+        {"source":"check","at":"ACF7","when":[["敌人全灭"],["乔 在场","我方 ≥ 1","第 20 回合"]],"change":"mech","pilot":7,"mech":33,"note":"加代 → 金"},
+        {"source":"check","at":"ACFA","when":[["敌人全灭"],["乔 在场","我方 ≥ 1","第 20 回合"]],"change":"mech","pilot":8,"mech":123,"note":"龙 → 盖塔龙"},
+        {"source":"check","at":"ACFD","when":[["敌人全灭"],["乔 在场","我方 ≥ 1","第 20 回合"]],"change":"mech","pilot":11,"mech":138,"note":"卡姆 → 刚达Z"},
+        {"source":"check","at":"AD00","when":[["敌人全灭"],["乔 在场","我方 ≥ 1","第 20 回合"]],"change":"mech","pilot":12,"mech":151,"note":"希塔 → 刚达ZZ"},
+        {"source":"check","at":"AD03","when":[["敌人全灭"],["乔 在场","我方 ≥ 1","第 20 回合"]],"change":"mech","pilot":13,"mech":146,"note":"布克 → F91"},
+        {"source":"check","at":"AD06","when":[["敌人全灭"],["乔 在场","我方 ≥ 1","第 20 回合"]],"change":"mech","pilot":20,"mech":28,"note":"安东 → 巴得"},
+        {
+          "source": "persuade 希塔→普西",
+          "at": "B734",
+          "when": [["全程标志3已置位"]],
+          "change": "joinFromMap",
+          "roster": 14,
+          "note": "当前单位（多为劝降对象）转入我方，名册由紧接着的 changeMech 写入"
+        },
+        {"source":"persuade 希塔→普西","at":"B736","when":[["全程标志3已置位"]],"change":"mech","pilot":28,"mech":11,"note":"普西 → 刚达Ⅱ"}
+      ],
+      "persuade": [{"pilot":12,"target":28,"note":"希塔 劝降 普西"}]
+    },
+    {
+      "stage": 23,
+      "index": 22,
+      "victoryText": "打败基奥。",
+      "deployment": 23,
+      "map": 22,
+      "victory": [["敌人全灭"],["我方 ≥ 1","洛克 不在场"]],
+      "defeat": [["我方全灭","敌人 ≥ 1"]],
+      "roster": [],
+      "persuade": []
+    },
+    {
+      "stage": 24,
+      "index": 23,
+      "victoryText": "消灭吉尔金刚就是胜利。",
+      "deployment": 24,
+      "map": 23,
+      "victory": [["关卡标志15已置位","吉尔 不在场","我方 ≥ 1"]],
+      "defeat": [["吉尔 在场","我方全灭"],["关卡标志15已置位","我方全灭"]],
+      "roster": [{"source":"check","at":"AD71","when":[["伊娃 在名册中","关卡标志15已置位","吉尔 不在场","我方 ≥ 1"]],"change":"mech","pilot":27,"mech":77,"note":"伊娃 → 伯利"}],
+      "persuade": []
+    },
+    {
+      "stage": 25,
+      "index": 24,
+      "victoryText": "请打败希亚。",
+      "deployment": 25,
+      "map": 24,
+      "victory": [["罗纳 不在场"]],
+      "defeat": [["我方全灭","罗纳 在场"]],
+      "roster": [{"source":"persuade 布克→珍妮","at":"B77A","when":[["全程标志5已置位"]],"change":"mech","pilot":52,"mech":82,"note":"珍妮 → 比纳"}],
+      "persuade": [{"pilot":13,"target":52,"note":"布克 劝降 珍妮"}]
+    },
+    {
+      "stage": 26,
+      "index": 25,
+      "victoryText": "全力以赴消灭瓦尔。",
+      "deployment": 26,
+      "map": 25,
+      "victory": [["贝克 不在场"]],
+      "defeat": [["我方全灭","贝克 在场"]],
+      "roster": [],
+      "persuade": []
+    }
+  ],
+  "initialRoster": [
+    {"member":0,"pilot":54,"unit":161,"level":0},
+    {"member":1,"pilot":6,"unit":126,"level":0},
+    {"member":2,"pilot":15,"unit":34,"level":0},
+    {"member":3,"pilot":7,"unit":29,"level":0},
+    {"member":4,"pilot":8,"unit":2,"level":0},
+    {"member":5,"pilot":17,"unit":35,"level":0}
+  ]
+}

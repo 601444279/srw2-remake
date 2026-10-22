@@ -1,0 +1,201 @@
+{
+  "stage": 25,
+  "index": 24,
+  "victoryText": "请打败希亚。",
+  "map": 24,
+  "deployment": 25,
+  "bgm": {"player":135,"enemy":136},
+  "npcDeploy": [],
+  "aiScripts": [1,10,11,12],
+  "scripts": {
+    "start": {
+      "entry": "96E6",
+      "ops": [
+        {"at":"96E6","op":"playerBgm","track":135},
+        {"at":"96E8","op":"enemyBgm","track":136},
+        {"at":"96EA","op":"talk","pause":true,"dialog":"res-32#91","face":54,"note":"乔｜乔：马上就到加布洛基地了。"},
+        {"at":"96EE","op":"talkAt","dialog":"res-32#92","pilot":8,"note":"龙｜龙：那是什么！"},
+        {"at":"96F2","op":"talkAt","dialog":"res-32#93","pilot":20,"note":"安东｜安东：这次别落后！打呀！"},
+        {"at":"96F6","op":"talkAt","dialog":"res-32#94","pilot":61,"note":"罗纳｜罗纳：这帮家伙又来了，干掉他们！"},
+        {"at":"96FA","op":"closeWindow"},
+        {"at":"96FB","op":"stop","pause":true}
+      ]
+    },
+    "enemyPhase": {
+      "entry": "A428",
+      "ops": [
+        {"at":"A428","op":"turnIs","turn":1},
+        {"at":"A42A","op":"jumpIfTrue","to":"A43A"},
+        {"at":"A42D","op":"turnIs","turn":3},
+        {"at":"A42F","op":"jumpIfTrue","to":"A454"},
+        {"at":"A432","op":"turnIs","turn":4},
+        {"at":"A434","op":"jumpIfTrue","to":"A474"},
+        {"at":"A437","op":"jump","pause":true,"to":"A428"},
+        {"at":"A43A","op":"flag","flag":130,"note":"全程标志2"},
+        {"at":"A43C","op":"jumpIfTrue","pause":true,"to":"A428"},
+        {"at":"A43F","op":"bgm","track":205},
+        {"at":"A441","op":"cursorTo","x":31,"y":8},
+        {"at":"A444","op":"window","mode":15},
+        {"at":"A446","op":"narrate","dialog":"res-37#49","note":" 敌方援军出现了。"},
+        {"at":"A449","op":"closeWindow"},
+        {"at":"A44A","op":"spawnEnemy","x":31,"y":8,"pilot":52,"mech":155,"level":45,"ai":11,"note":"珍妮 / 比纳 / 等级 46"},
+        {"at":"A451","op":"jump","pause":true,"to":"A428"},
+        {"at":"A454","op":"bgm","track":205},
+        {"at":"A456","op":"cursorTo","x":9,"y":0},
+        {"at":"A459","op":"window","mode":15},
+        {"at":"A45B","op":"narrate","dialog":"res-37#49","note":" 敌方援军出现了。"},
+        {"at":"A45E","op":"closeWindow"},
+        {"at":"A45F","op":"spawnEnemy","x":9,"y":0,"pilot":26,"mech":177,"level":47,"ai":11,"note":"芬妮 / 秀伯 / 等级 48"},
+        {"at":"A466","op":"wait","n":30},
+        {"at":"A468","op":"spawnEnemy","x":10,"y":0,"pilot":42,"mech":72,"level":47,"ai":11,"note":"温妮 / 盖马 / 等级 48"},
+        {"at":"A46F","op":"wait","n":30},
+        {"at":"A471","op":"jump","pause":true,"to":"A428"},
+        {"at":"A474","op":"bgm","track":205},
+        {"at":"A476","op":"cursorTo","x":8,"y":19},
+        {"at":"A479","op":"window","mode":15},
+        {"at":"A47B","op":"narrate","dialog":"res-37#49","note":" 敌方援军出现了。"},
+        {"at":"A47E","op":"closeWindow"},
+        {"at":"A47F","op":"spawnEnemy","x":8,"y":19,"pilot":23,"mech":79,"level":47,"ai":11,"note":"拉尔 / 亚克扎 / 等级 48"},
+        {"at":"A486","op":"wait","n":30},
+        {"at":"A488","op":"spawnEnemy","x":9,"y":19,"pilot":31,"mech":79,"level":47,"ai":11,"note":"加纳 / 亚克扎 / 等级 48"},
+        {"at":"A48F","op":"wait","n":30},
+        {"at":"A491","op":"jump","pause":true,"to":"A428"}
+      ]
+    },
+    "check": {
+      "entry": "ADA9",
+      "ops": [
+        {"at":"ADA9","op":"exists","pilot":61,"note":"罗纳"},
+        {"at":"ADAB","op":"jumpIfFalse","to":"ADB6"},
+        {"at":"ADAE","op":"alliesAtLeast","n":1},
+        {"at":"ADB0","op":"jumpIfFalse","to":"ADBE"},
+        {"at":"ADB3","op":"jump","pause":true,"to":"ADA9"},
+        {"at":"ADB6","op":"bgm","track":250},
+        {"at":"ADB8","op":"wait","n":60},
+        {"at":"ADBA","op":"bgm","track":137},
+        {"at":"ADBC","op":"stageClear"},
+        {"at":"ADBD","op":"stop","pause":true},
+        {"at":"ADBE","op":"bgm","track":139},
+        {"at":"ADC0","op":"wait","n":60},
+        {"at":"ADC2","op":"gameOver"},
+        {"at":"ADC3","op":"stop","pause":true}
+      ]
+    }
+  },
+  "npcScripts": {},
+  "persuade": [
+    {
+      "pilot": 13,
+      "target": 52,
+      "note": "布克 劝降 珍妮",
+      "index": 10,
+      "script": {
+        "entry": "B740",
+        "ops": [
+          {"at":"B740","op":"flag","flag":133,"note":"全程标志5"},
+          {"at":"B742","op":"jumpIfTrue","to":"B76E"},
+          {"at":"B745","op":"flag","flag":15,"note":"关卡标志15"},
+          {"at":"B747","op":"jumpIfTrue","to":"B761"},
+          {"at":"B74A","op":"talkAt","dialog":"res-33#51","pilot":13,"note":"布克｜布克：珍妮！这不是珍妮嘛！怎么你‥‥‥"},
+          {"at":"B74E","op":"talkAt","dialog":"res-33#52","pilot":52,"note":"珍妮｜思珍妮：布克？你还活着？"},
+          {"at":"B752","op":"talkAt","dialog":"res-33#53","pilot":13,"note":"布克｜布克：珍妮，你不能去那种地方！和我们一起走！"},
+          {"at":"B756","op":"talkAt","dialog":"res-33#54","pilot":52,"note":"珍妮｜珍妮：一起走？怎么现在才来？太迟了！"},
+          {"at":"B75A","op":"closeWindow"},
+          {"at":"B75B","op":"select","pilot":13,"note":"布克"},
+          {"at":"B75D","op":"setFlag","flag":15,"note":"关卡标志15"},
+          {"at":"B75F","op":"endAction"},
+          {"at":"B760","op":"stop","pause":true},
+          {"at":"B761","op":"talkAt","dialog":"res-33#55","pilot":13,"note":"布克｜布克：珍妮！"},
+          {"at":"B765","op":"talkAt","dialog":"res-33#56","pilot":52,"note":"珍妮｜珍妮：不行！我已经‥‥‥"},
+          {"at":"B769","op":"closeWindow"},
+          {"at":"B76A","op":"select","pilot":13,"note":"布克"},
+          {"at":"B76C","op":"endAction"},
+          {"at":"B76D","op":"stop","pause":true},
+          {"at":"B76E","op":"talkAt","dialog":"res-33#57","pilot":13,"note":"布克｜布克：珍妮！我来接你了！"},
+          {"at":"B772","op":"talkAt","dialog":"res-33#58","pilot":52,"note":"珍妮｜珍妮：啊，布克‥‥‥"},
+          {"at":"B776","op":"closeWindow"},
+          {"at":"B777","op":"selectCamera","pilot":52,"note":"珍妮"},
+          {"at":"B779","op":"toNpc"},
+          {"at":"B77A","op":"changeMech","pilot":52,"mech":82,"note":"珍妮 → 比纳"},
+          {"at":"B77D","op":"select","pilot":13,"note":"布克"},
+          {"at":"B77F","op":"jumpIfFalse","to":"B783"},
+          {"at":"B782","op":"endAction"},
+          {"at":"B783","op":"stop","pause":true}
+        ]
+      }
+    }
+  ],
+  "tiles": [{"x":29,"y":7,"pilot":null,"shop":2,"greeting":"res-3F#48","parts":[1,3,16,19]}],
+  "summary": {
+    "victory": [["罗纳 不在场"]],
+    "defeat": [["我方全灭","罗纳 在场"]],
+    "units": [
+      {
+        "source": "enemyPhase",
+        "at": "A44A",
+        "when": [["全程标志2未置位","第 1 回合"]],
+        "op": "spawnEnemy",
+        "x": 31,
+        "y": 8,
+        "pilot": 52,
+        "mech": 155,
+        "level": 45,
+        "ai": 11,
+        "note": "珍妮 / 比纳 / 等级 46"
+      },
+      {
+        "source": "enemyPhase",
+        "at": "A45F",
+        "when": [["并非（第 1 回合）","第 3 回合"]],
+        "op": "spawnEnemy",
+        "x": 9,
+        "y": 0,
+        "pilot": 26,
+        "mech": 177,
+        "level": 47,
+        "ai": 11,
+        "note": "芬妮 / 秀伯 / 等级 48"
+      },
+      {
+        "source": "enemyPhase",
+        "at": "A468",
+        "when": [["并非（第 1 回合）","第 3 回合"]],
+        "op": "spawnEnemy",
+        "x": 10,
+        "y": 0,
+        "pilot": 42,
+        "mech": 72,
+        "level": 47,
+        "ai": 11,
+        "note": "温妮 / 盖马 / 等级 48"
+      },
+      {
+        "source": "enemyPhase",
+        "at": "A47F",
+        "when": [["并非（第 1 回合）","并非（第 3 回合）","第 4 回合"]],
+        "op": "spawnEnemy",
+        "x": 8,
+        "y": 19,
+        "pilot": 23,
+        "mech": 79,
+        "level": 47,
+        "ai": 11,
+        "note": "拉尔 / 亚克扎 / 等级 48"
+      },
+      {
+        "source": "enemyPhase",
+        "at": "A488",
+        "when": [["并非（第 1 回合）","并非（第 3 回合）","第 4 回合"]],
+        "op": "spawnEnemy",
+        "x": 9,
+        "y": 19,
+        "pilot": 31,
+        "mech": 79,
+        "level": 47,
+        "ai": 11,
+        "note": "加纳 / 亚克扎 / 等级 48"
+      }
+    ],
+    "roster": [{"source":"persuade 布克→珍妮","at":"B77A","when":[["全程标志5已置位"]],"change":"mech","pilot":52,"mech":82,"note":"珍妮 → 比纳"}]
+  }
+}

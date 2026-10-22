@@ -1,0 +1,158 @@
+{
+  "stage": 2,
+  "index": 1,
+  "victoryText": "全歼敌人即胜利。",
+  "map": 1,
+  "deployment": 2,
+  "bgm": {"player":135,"enemy":136},
+  "npcDeploy": [],
+  "aiScripts": [1,5,6,7,9,10,11],
+  "scripts": {
+    "start": {
+      "entry": "93F3",
+      "ops": [
+        {"at":"93F3","op":"playerBgm","track":135},
+        {"at":"93F5","op":"enemyBgm","track":136},
+        {"at":"93F7","op":"talk","pause":true,"dialog":"res-38#4","face":54,"note":"乔｜乔：马上就到马利了，为了慎重起见，放慢一些。"},
+        {"at":"93FB","op":"talkAt","dialog":"res-38#5","pilot":7,"note":"加代｜加代：好象有什么过来了！"},
+        {"at":"93FF","op":"talkAt","dialog":"res-38#6","pilot":36,"note":"保罗｜保罗：叛徒！做人质难道就什么都干吗！"},
+        {"at":"9403","op":"talkAt","dialog":"res-38#7","pilot":45,"note":"米奇尔｜米奇尔：！"},
+        {"at":"9407","op":"talkAt","dialog":"res-38#8","pilot":36,"note":"保罗｜保罗：等一下，好的，我要用你的手杀了他们。"},
+        {"at":"940B","op":"talkAt","dialog":"res-38#9","pilot":45,"note":"米奇尔｜米奇尔：什么！"},
+        {"at":"940F","op":"talkAt","dialog":"res-38#10","pilot":36,"note":"保罗｜保罗：我不勉强你，但‥‥‥"},
+        {"at":"9413","op":"talkAt","dialog":"res-38#11","pilot":45,"note":"米奇尔｜米奇尔：这我明白，大家还是‥‥‥"},
+        {"at":"9417","op":"talkAt","dialog":"res-38#12","pilot":36,"note":"保罗｜保罗：你还是不要做无效的反抗，我不想无谓流血。"},
+        {"at":"941B","op":"talkAt","dialog":"res-38#13","pilot":8,"note":"龙｜龙：哼，真无耻！"},
+        {"at":"941F","op":"closeWindow"},
+        {"at":"9420","op":"stop","pause":true}
+      ]
+    },
+    "enemyPhase": {
+      "entry": "979E",
+      "ops": [
+        {"at":"979E","op":"turnIs","turn":3},
+        {"at":"97A0","op":"jumpIfTrue","to":"97AB"},
+        {"at":"97A3","op":"turnIs","turn":6},
+        {"at":"97A5","op":"jumpIfTrue","to":"97D2"},
+        {"at":"97A8","op":"jump","pause":true,"to":"979E"},
+        {"at":"97AB","op":"exists","pilot":45,"note":"米奇尔"},
+        {"at":"97AD","op":"jumpIfFalse","to":"9800"},
+        {"at":"97B0","op":"cursorTo","x":8,"y":0},
+        {"at":"97B3","op":"deployAlly","x":8,"y":0,"roster":5,"ai":0},
+        {"at":"97B8","op":"wait","n":30},
+        {"at":"97BA","op":"talkAt","dialog":"res-38#14","pilot":17,"note":"杰克｜杰克：喂！我把全部居民救出来了，没问题了！"},
+        {"at":"97BE","op":"talkAt","dialog":"res-38#15","pilot":7,"note":"加代｜加代：杰克！干得好！"},
+        {"at":"97C2","op":"talkAt","dialog":"res-38#16","pilot":36,"note":"保罗｜保罗：哦！有伏兵！就算没有人质我也不会输给你！来吧！"},
+        {"at":"97C6","op":"closeWindow"},
+        {"at":"97C7","op":"selectCamera","pilot":45,"note":"米奇尔"},
+        {"at":"97C9","op":"toNpc"},
+        {"at":"97CA","op":"changeMech","pilot":45,"mech":38,"note":"米奇尔 → 盖塔Q"},
+        {"at":"97CD","op":"setFlag","flag":15,"note":"关卡标志15"},
+        {"at":"97CF","op":"jump","pause":true,"to":"979E"},
+        {"at":"97D2","op":"bgm","track":205},
+        {"at":"97D4","op":"cursorTo","x":20,"y":0},
+        {"at":"97D7","op":"window","mode":15},
+        {"at":"97D9","op":"narrate","dialog":"res-37#49","note":" 敌方援军出现了。"},
+        {"at":"97DC","op":"closeWindow"},
+        {"at":"97DD","op":"spawnEnemy","x":20,"y":0,"pilot":23,"mech":55,"level":9,"ai":6,"note":"拉尔 / 古夫 / 等级 10"},
+        {"at":"97E4","op":"wait","n":30},
+        {"at":"97E6","op":"spawnEnemy","x":19,"y":0,"pilot":84,"mech":54,"level":3,"ai":11,"note":"杰夫 / 乍克 / 等级 4"},
+        {"at":"97ED","op":"wait","n":30},
+        {"at":"97EF","op":"spawnEnemy","x":21,"y":0,"pilot":85,"mech":54,"level":2,"ai":10,"note":"休斯 / 乍克 / 等级 3"},
+        {"at":"97F6","op":"wait","n":30},
+        {"at":"97F8","op":"talkAt","dialog":"res-36#5","pilot":23,"note":"拉尔｜拉尔：刚达，金Z，盖塔吗‥‥‥保罗已经失败了‥‥‥"},
+        {"at":"97FC","op":"closeWindow"},
+        {"at":"97FD","op":"jump","pause":true,"to":"979E"},
+        {"at":"9800","op":"cursorTo","x":8,"y":0},
+        {"at":"9803","op":"deployAlly","x":8,"y":0,"roster":5,"ai":0},
+        {"at":"9808","op":"wait","n":30},
+        {"at":"980A","op":"talkAt","dialog":"res-38#17","pilot":36,"note":"保罗｜保罗：哼！来吧，别客气！但我劝你们还是退走吧，不然人质要完蛋了！"},
+        {"at":"980E","op":"talkAt","dialog":"res-38#18","pilot":17,"note":"杰克｜杰克：不用怕！人质全部被我救出来了！"},
+        {"at":"9812","op":"talkAt","dialog":"res-38#19","pilot":7,"note":"加代｜加代：杰克！干得好！"},
+        {"at":"9816","op":"talkAt","dialog":"res-38#20","pilot":36,"note":"保罗｜保罗：噢！又是伏兵？就算没有人质，我也不会输给你们！来吧！"},
+        {"at":"981A","op":"closeWindow"},
+        {"at":"981B","op":"jump","pause":true,"to":"979E"}
+      ]
+    },
+    "check": {
+      "entry": "A526",
+      "ops": [
+        {"at":"A526","op":"enemiesAtLeast","n":1},
+        {"at":"A528","op":"jumpIfFalse","to":"A533"},
+        {"at":"A52B","op":"alliesAtLeast","n":1},
+        {"at":"A52D","op":"jumpIfFalse","to":"A545"},
+        {"at":"A530","op":"jump","pause":true,"to":"A526"},
+        {"at":"A533","op":"talk","dialog":"res-38#22","face":45,"note":"米奇尔｜米奇尔：请原谅，做了人质，让大家冒了那么大风险‥‥‥"},
+        {"at":"A537","op":"closeWindow"},
+        {"at":"A538","op":"money","amount":100},
+        {"at":"A53B","op":"rosterRemove","roster":5},
+        {"at":"A53D","op":"bgm","track":250},
+        {"at":"A53F","op":"wait","n":60},
+        {"at":"A541","op":"bgm","track":137},
+        {"at":"A543","op":"stageClear"},
+        {"at":"A544","op":"stop","pause":true},
+        {"at":"A545","op":"bgm","track":139},
+        {"at":"A547","op":"wait","n":60},
+        {"at":"A549","op":"gameOver"},
+        {"at":"A54A","op":"stop","pause":true}
+      ]
+    }
+  },
+  "npcScripts": {},
+  "persuade": [],
+  "tiles": [
+    {"x":6,"y":2,"pilot":54,"shop":3,"greeting":"res-3F#55","parts":[2,3,10,16]},
+    {"x":6,"y":2,"pilot":null,"shop":0,"greeting":"res-3F#48","parts":[2,3,10,16]}
+  ],
+  "summary": {
+    "victory": [["敌人全灭"]],
+    "defeat": [["我方全灭","敌人 ≥ 1"]],
+    "units": [
+      {"source":"enemyPhase","at":"97B3","when":[["第 3 回合","米奇尔 在场"]],"op":"deployAlly","x":8,"y":0,"roster":5},
+      {
+        "source": "enemyPhase",
+        "at": "97DD",
+        "when": [["并非（第 3 回合）","第 6 回合"]],
+        "op": "spawnEnemy",
+        "x": 20,
+        "y": 0,
+        "pilot": 23,
+        "mech": 55,
+        "level": 9,
+        "ai": 6,
+        "note": "拉尔 / 古夫 / 等级 10"
+      },
+      {
+        "source": "enemyPhase",
+        "at": "97E6",
+        "when": [["并非（第 3 回合）","第 6 回合"]],
+        "op": "spawnEnemy",
+        "x": 19,
+        "y": 0,
+        "pilot": 84,
+        "mech": 54,
+        "level": 3,
+        "ai": 11,
+        "note": "杰夫 / 乍克 / 等级 4"
+      },
+      {
+        "source": "enemyPhase",
+        "at": "97EF",
+        "when": [["并非（第 3 回合）","第 6 回合"]],
+        "op": "spawnEnemy",
+        "x": 21,
+        "y": 0,
+        "pilot": 85,
+        "mech": 54,
+        "level": 2,
+        "ai": 10,
+        "note": "休斯 / 乍克 / 等级 3"
+      },
+      {"source":"enemyPhase","at":"9803","when":[["第 3 回合","米奇尔 不在场"]],"op":"deployAlly","x":8,"y":0,"roster":5}
+    ],
+    "roster": [
+      {"source":"enemyPhase","at":"97CA","when":[["第 3 回合","米奇尔 在场"]],"change":"mech","pilot":45,"mech":38,"note":"米奇尔 → 盖塔Q"},
+      {"source":"check","at":"A53B","when":[["敌人全灭"]],"change":"leave","roster":5}
+    ]
+  }
+}

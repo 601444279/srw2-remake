@@ -1,0 +1,131 @@
+{
+  "stage": 1,
+  "index": 0,
+  "victoryText": "全歼敌人即胜利。",
+  "map": 0,
+  "deployment": 1,
+  "bgm": {"player":135,"enemy":136},
+  "npcDeploy": [],
+  "aiScripts": [2,3,4,5,10,11,12],
+  "scripts": {
+    "start": {
+      "entry": "93E5",
+      "ops": [
+        {"at":"93E5","op":"playerBgm","track":135},
+        {"at":"93E7","op":"enemyBgm","track":136},
+        {"at":"93E9","op":"talk","pause":true,"dialog":"res-38#0","face":54,"note":"乔｜乔：首要问题是如何整备战斗力。"},
+        {"at":"93ED","op":"talkAt","dialog":"res-38#1","pilot":54,"note":"乔｜乔：很好，正如情报所说，敌人防守较差。全歼他们！救出热核装置！"},
+        {"at":"93F1","op":"closeWindow"},
+        {"at":"93F2","op":"stop","pause":true}
+      ]
+    },
+    "enemyPhase": {
+      "entry": "9761",
+      "ops": [
+        {"at":"9761","op":"turnIs","turn":11},
+        {"at":"9763","op":"jumpIfFalse","pause":true,"to":"9761"},
+        {"at":"9766","op":"bgm","track":205},
+        {"at":"9768","op":"cursorTo","x":4,"y":4},
+        {"at":"976B","op":"spawnEnemy","x":1,"y":0,"pilot":22,"mech":175,"level":12,"ai":2,"note":"凯 / 乍克 / 等级 13"},
+        {"at":"9772","op":"spawnEnemy","x":2,"y":0,"pilot":79,"mech":54,"level":4,"ai":3,"note":"莫尼 / 乍克 / 等级 5"},
+        {"at":"9779","op":"spawnEnemy","x":2,"y":1,"pilot":80,"mech":54,"level":1,"ai":4,"note":"邓肯 / 乍克 / 等级 2"},
+        {"at":"9780","op":"window","mode":15},
+        {"at":"9782","op":"narrate","dialog":"res-37#49","note":" 敌方援军出现了。"},
+        {"at":"9785","op":"closeWindow"},
+        {"at":"9786","op":"talkAt","dialog":"res-36#0","pilot":22,"note":"凯｜凯：真走运，居然在这儿碰上这么好的猎物‥‥‥"},
+        {"at":"978A","op":"talkAt","dialog":"res-36#1","pilot":79,"note":"莫尼｜莫尼：我们先去侦察一下。"},
+        {"at":"978E","op":"talkAt","dialog":"res-36#2","pilot":22,"note":"凯｜凯：嗯，在了解敌情之前不可冒然进攻。"},
+        {"at":"9792","op":"talkAt","dialog":"res-36#3","pilot":79,"note":"莫尼｜莫尼：是。金，出发！"},
+        {"at":"9796","op":"talkAt","dialog":"res-36#4","pilot":80,"note":"邓肯｜邓肯：是！"},
+        {"at":"979A","op":"closeWindow"},
+        {"at":"979B","op":"bgm","track":251},
+        {"at":"979D","op":"stop","pause":true}
+      ]
+    },
+    "check": {
+      "entry": "A4DC",
+      "ops": [
+        {"at":"A4DC","op":"enemiesAtLeast","n":1},
+        {"at":"A4DE","op":"jumpIfFalse","to":"A504"},
+        {"at":"A4E1","op":"alliesAtLeast","n":1},
+        {"at":"A4E3","op":"jumpIfFalse","to":"A520"},
+        {"at":"A4E6","op":"exists","pilot":22,"note":"凯"},
+        {"at":"A4E8","op":"jumpIfFalse","pause":true,"to":"A4DC"},
+        {"at":"A4EB","op":"exists","pilot":80,"note":"邓肯"},
+        {"at":"A4ED","op":"jumpIfTrue","to":"A4F8"},
+        {"at":"A4F0","op":"exists","pilot":79,"note":"莫尼"},
+        {"at":"A4F2","op":"jumpIfTrue","to":"A4F8"},
+        {"at":"A4F5","op":"setUnitBit","pilot":22,"bit":4,"note":"凯"},
+        {"at":"A4F8","op":"hpAtLeast","pilot":22,"hp":0,"note":"凯"},
+        {"at":"A4FB","op":"jumpIfTrue","to":"A501"},
+        {"at":"A4FE","op":"clearUnitBit","pilot":22,"bit":5,"note":"凯"},
+        {"at":"A501","op":"jump","pause":true,"to":"A4DC"},
+        {"at":"A504","op":"cursorTo","x":12,"y":1},
+        {"at":"A507","op":"wait","n":30},
+        {"at":"A509","op":"rosterAdd","roster":6,"pilot":11,"mech":130,"level":2,"note":"名册 6：卡姆 / 刚达Z / 等级 3"},
+        {"at":"A50E","op":"deployAlly","x":12,"y":1,"roster":6,"ai":0},
+        {"at":"A513","op":"talk","dialog":"res-38#2","face":11,"note":"卡姆｜卡姆：谢谢大家救了我。"},
+        {"at":"A517","op":"closeWindow"},
+        {"at":"A518","op":"bgm","track":250},
+        {"at":"A51A","op":"wait","n":60},
+        {"at":"A51C","op":"bgm","track":137},
+        {"at":"A51E","op":"stageClear"},
+        {"at":"A51F","op":"stop","pause":true},
+        {"at":"A520","op":"bgm","track":139},
+        {"at":"A522","op":"wait","n":60},
+        {"at":"A524","op":"gameOver"},
+        {"at":"A525","op":"stop","pause":true}
+      ]
+    }
+  },
+  "npcScripts": {},
+  "persuade": [],
+  "tiles": [],
+  "summary": {
+    "victory": [["敌人全灭"]],
+    "defeat": [["我方全灭","敌人 ≥ 1"]],
+    "units": [
+      {
+        "source": "enemyPhase",
+        "at": "976B",
+        "when": [["第 11 回合"]],
+        "op": "spawnEnemy",
+        "x": 1,
+        "y": 0,
+        "pilot": 22,
+        "mech": 175,
+        "level": 12,
+        "ai": 2,
+        "note": "凯 / 乍克 / 等级 13"
+      },
+      {
+        "source": "enemyPhase",
+        "at": "9772",
+        "when": [["第 11 回合"]],
+        "op": "spawnEnemy",
+        "x": 2,
+        "y": 0,
+        "pilot": 79,
+        "mech": 54,
+        "level": 4,
+        "ai": 3,
+        "note": "莫尼 / 乍克 / 等级 5"
+      },
+      {
+        "source": "enemyPhase",
+        "at": "9779",
+        "when": [["第 11 回合"]],
+        "op": "spawnEnemy",
+        "x": 2,
+        "y": 1,
+        "pilot": 80,
+        "mech": 54,
+        "level": 1,
+        "ai": 4,
+        "note": "邓肯 / 乍克 / 等级 2"
+      },
+      {"source":"check","at":"A50E","when":[["敌人全灭"]],"op":"deployAlly","x":12,"y":1,"roster":6}
+    ],
+    "roster": [{"source":"check","at":"A509","when":[["敌人全灭"]],"change":"join","roster":6,"pilot":11,"mech":130,"level":2,"note":"名册 6：卡姆 / 刚达Z / 等级 3"}]
+  }
+}
