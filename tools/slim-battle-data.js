@@ -5,7 +5,7 @@
 // 输出: data/battle-scene.json
 //   units[id]   = { file, side, screen, origin, w, h }（file 已经跟过 sameAs）
 //   weapons[id] = { right: { 机体编号: 动画名 }, left: … }
-//   anims[name] = { file, layout, anchor, camera, cels, keyframes: [start, duration, cel?, x?, y?, camX?, camY?] }
+//   anims[name] = { file, layout, anchor, camera, cels, keyframes: [start, duration, cel?, x?, y?, camX?, camY?], sounds: [帧, 音效号] }
 import fs from "node:fs";
 import path from "node:path";
 
@@ -45,6 +45,8 @@ const slim = (a) => ({
     if (k.camera) row.push(k.camera.x, k.camera.y);
     return row;
   }),
+  // 原版音效触发的帧（同一帧同一音效只留一个）
+  sounds: (a.sounds ?? []).filter(([f, id], i, all) => !all.slice(0, i).some(([g, j]) => g === f && j === id)),
 });
 const anims = Object.fromEntries(Object.entries(effects.anims).filter(([, a]) => a.effectFile).map(([n, a]) => [n, slim(a)]));
 const explosions = Object.fromEntries(Object.entries(effects.explosions).map(([n, a]) => [n, slim(a)]));

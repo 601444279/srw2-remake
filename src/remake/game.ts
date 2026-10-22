@@ -1,12 +1,12 @@
 // 游戏流程：我方回合（移动、攻击、精神、待机）、敌方回合、剧情。
 // 战斗、命中、伤害、经验等规则在 rules.ts 里调用原版规则代码；
 // 关卡事件（对话、援军、胜负、过关）和敌人 AI 由原版脚本驱动，见 events.ts。
-import { applyLevel, expToNext, formIndexOf, formsOf, mechName, pilotForForm, transformUnit, type Stage, type Unit, type Weapon } from "./data.ts";
+import { applyLevel, expProgress, expToNext, formIndexOf, formsOf, mechName, pilotForForm, transformUnit, type Stage, type Unit, type Weapon } from "./data.ts";
 import { StageEvents } from "./events.ts";
 import { key, pathTo, rangeFrom, reachable, inBounds, MOVE_TYPE_ROW, type Point, type Reach } from "./grid.ts";
 import type { Action } from "./input.ts";
 import type { DrawState, Overlay, Renderer } from "./render.ts";
-import type { UI, MenuItem } from "./ui.ts";
+import type { GrowthStats, UI, MenuItem } from "./ui.ts";
 import { Rules, SPIRIT_FLAG, rngState, setRngState, type BattleEvent } from "./rules.ts";
 import { describeTime, listSaves, readSave, requestLoad, writeSave, SAVE_VERSION, type SaveData, type SlotId } from "./saves.ts";
 import { strikeSound, type Sfx } from "./sfx.ts";
@@ -14,10 +14,10 @@ import { MUSIC, type Music } from "./music.ts";
 import { keyLabel, settings, TEXT_SPEEDS, type BindAction } from "./settings.ts";
 import { attackShout, damageCase, reactionShout } from "./shouts.ts";
 import { AutoTester, type AutoOptions, type AutoReport } from "./autotest.ts";
-import { BattleScene, battleLayout, battleSpriteUrl } from "./battle-scene.ts";
+import { BattleScene, attackSounds, battleLayout, battleSpriteUrl } from "./battle-scene.ts";
 import { loadScene, personName, portraitUrl, STAGE_STORY, type SceneRef } from "./story.ts";
 
-type Mode = "browse" | "selected" | "moving" | "menu" | "target" | "allyTarget" | "busy" | "dialog" | "title" | "over" | "status";
+type Mode = "browse" | "selected" | "moving" | "menu" | "target" | "allyTarget" | "busy" | "dialog" | "title" | "over" | "status" | "notice";
 
 const MOVE_TILES_PER_SEC = 14;
 // 剧情对话时的音乐：原版开新游戏后，开场剧情和进地图后的开场对话都放 9 号，第 1 回合开始才换成我方回合曲
@@ -67,6 +67,8 @@ export class Game implements DrawState {
   // 对话播放中：等玩家按确定翻页
   private talk: { next: () => void; skip: () => void; autoAt: number } | null = null;
   private titleSkip: (() => void) | null = null;
+  // 升级卡片开着时：按确定关闭
+  private noticeClose: (() => void) | null = null;
   private events: StageEvents;
   // 我方 / 敌方回合曲（脚本的 playerBgm / enemyBgm 会改），phase 是现在是谁的回合
   private songs = { player: 7, enemy: 8 };
@@ -222,7 +224,7 @@ export class Game implements DrawState {
     this.ui.toast(`已读取存档 · 第 ${this.turn} 回合`);
   }
 
-  private async openSaveMenu() {
+  private async openSaveMenu(onCancel = () => this.openMapMenu()) {
     const metas = await listSaves();
     const items: MenuItem[] = ([1, 2, 3] as SlotId[]).map((slot) => {
       const m = metas.find((x) => x.slot === slot);
@@ -236,7 +238,7 @@ export class Game implements DrawState {
         },
       };
     });
-    this.openMenu(items, this.cursor, () => this.openMapMenu());
+    this.openMenu(items, this.cursor, onCancel);
   }
 
   // 读档列表（地图菜单和开始菜单共用）。onCancel 为空时不能取消
@@ -418,6 +420,9 @@ export class Game implements DrawState {
       case "title":
         if (a === "confirm" || a === "cancel") this.titleSkip?.();
         return;
+      case "notice":
+        if (a === "confirm" || a === "cancel") this.noticeClose?.();
+        return;
       case "status":
         if (a === "confirm" || a === "cancel") this.closeStatus();
         if (a === "next" || a === "prev") this.cycleStatus(a === "next" ? 1 : -1);
@@ -460,6 +465,10 @@ export class Game implements DrawState {
         return this.toggleDanger();
       case "menu":
         return this.openMapMenu();
+      case "save":
+        return void this.openSaveMenu(() => this.setMode("browse"));
+      case "load":
+        return void this.openLoadMenu(() => this.setMode("browse"));
     }
   }
 
@@ -779,18 +788,16 @@ export class Game implements DrawState {
       if (!full) this.sfx.explode();
       this.renderer.killUnit(victim);
       this.renderer.float(victim, "击破", "#ffd257");
+      const before = { stats: growthStats(killer), levelIndex: killer.levelIndex, exp: killer.exp };
       const r = this.rules.reward(killer, victim, this.money);
       if (r.exp) {
         await wait(0.35 / this.speed());
-        this.renderer.float(killer, `EXP +${r.exp}`, "#8fd3ff");
         if (r.levels > 0 && r.newLevel !== undefined) {
           applyLevel(killer, r.newLevel);
-          this.ui.toast(`${killer.name} 升到 Lv ${killer.level}！`);
           // 原版升级时插播 0x0E 号小号角（系统消息里的 FD CE），放完接回原来的音乐
           this.music.jingle(LEVEL_UP_JINGLE);
-          await wait(0.3 / this.speed());
-          this.renderer.float(killer, "LEVEL UP", "#ffd257");
         }
+        await this.showGrowth(killer, r.exp, before);
       }
       await wait(0.5 / this.speed());
     }
@@ -812,14 +819,18 @@ export class Game implements DrawState {
       const kind = e.from === attacker ? (attacks++ ? "extra" : "attack") : "counter";
       this.ui.battleSay(e.from, attackShout(e.from.pilotId, kind, e.weapon.id));
       await wait(0.35 / this.speed());
-      // 先放开火声，等“弹道飞到”再命中（音效是原版的，见 sfx.ts）
+      // 放原版这段攻击动画的音效（按原版帧号），放完再出结果；没有动画数据的用按武器名配的音效
+      const seq = attackSounds(e.from.unitId, e.weapon.id);
       const sound = strikeSound(e.weapon.name);
-      if (!this.skipBattle) this.sfx.attack(sound);
-      await wait(sound.travel / this.speed());
+      if (seq) await this.playSounds(seq);
+      else {
+        if (!this.skipBattle) this.sfx.attack(sound);
+        await wait(sound.travel / this.speed());
+      }
       if (e.hit) {
         // 伤害占最大 HP 的比例决定打击力度：一半血以上或击破就是满力度
         const power = e.hpAfter === 0 ? 1 : Math.min(1, (e.damage / e.to.maxHp) * 2);
-        if (!this.skipBattle) this.sfx.hit(sound);
+        if (!seq && !this.skipBattle) this.sfx.hit(sound);
         // 先顿帧，再扣血、飘数字、震屏
         await wait(this.renderer.impact(e.to, power, this.speed()));
         e.to.hp = e.hpAfter;
@@ -839,6 +850,42 @@ export class Game implements DrawState {
     this.ui.battleEnd();
   }
 
+  // 战斗后的经验 / 升级卡片（ui.showGrowth）。升级卡等玩家按确定，自动测试时直接关
+  private async showGrowth(unit: Unit, gained: number, before: { stats: GrowthStats; levelIndex: number; exp: number }) {
+    const bar = (li: number, exp: number) => { const p = expProgress(li, exp); return p ? Math.min(1, p.into / p.span) : null; };
+    const card = this.ui.showGrowth({
+      unit,
+      portrait: unit.pilotName ? portraitUrl(unit.pilotId) : null,
+      gained,
+      before: before.stats,
+      after: growthStats(unit),
+      barBefore: bar(before.levelIndex, before.exp) ?? 1,
+      barAfter: bar(unit.levelIndex, unit.exp),
+      toNext: expToNext(unit),
+    }, this.speed());
+    const up = unit.levelIndex > before.levelIndex;
+    if (!up) { await card.done; return; }
+    const prev = this.mode;
+    this.noticeClose = card.close;
+    this.setMode("notice");
+    if (this.auto) setTimeout(card.close, 300);
+    await card.done;
+    this.noticeClose = null;
+    this.setMode(prev);
+  }
+
+  // 按原版帧号依次放音效（60 帧 = 1 秒，跟着演出倍速），跳过战斗时停
+  private async playSounds(seq: [number, number][]) {
+    let frame = 0;
+    for (const [f, id] of seq) {
+      await wait((f - frame) / 60 / this.speed());
+      frame = f;
+      if (this.skipBattle) return;
+      this.sfx.play(id);
+    }
+    await wait(6 / 60 / this.speed());
+  }
+
   // 完整：原版战斗画面（battle-scene.ts）。台词规则和简略一样
   private async battleFull(attacker: Unit, defender: Unit, events: BattleEvent[]) {
     // 原版进战斗画面换战斗音乐（按我方驾驶员，对贝克放专属曲），战斗结束接回地图上的曲子
@@ -846,7 +893,7 @@ export class Game implements DrawState {
     const ours = [attacker, defender].find((u) => u.side === "player") ?? attacker;
     const theirs = ours === attacker ? defender : attacker;
     this.music.play(MUSIC.battle(ours.pilotId, theirs.pilotId));
-    const scene = new BattleScene(() => this.speed(), () => this.skipBattle, () => this.skipCurrentBattle());
+    const scene = new BattleScene(() => this.speed(), () => this.skipBattle, () => this.skipCurrentBattle(), (id) => { if (!this.skipBattle) this.sfx.play(id); });
     await scene.open(attacker, defender, battleLayout(attacker, defender));
     await wait(0.25 / this.speed());
     let attacks = 0;
@@ -855,11 +902,9 @@ export class Game implements DrawState {
       scene.weapon(e.from, e.weapon.name);
       scene.say(e.from, attackShout(e.from.pilotId, kind, e.weapon.id) ?? `${e.weapon.name}！`);
       await wait(0.55 / this.speed());
-      const sound = strikeSound(e.weapon.name);
-      if (!this.skipBattle) this.sfx.attack(sound);
+      // 音效由原版动画数据按帧触发（scene.attack 里）；原版命中、落空之后不另放音效
       await scene.attack(e.from, e.weapon.id);
       if (e.hit) {
-        if (!this.skipBattle) this.sfx.hit(sound);
         scene.hit(e.to, e.damage, e.hpAfter, e.hpAfter === 0 ? 1 : Math.min(1, (e.damage / e.to.maxHp) * 2));
       } else {
         scene.miss(e.to);
@@ -1132,7 +1177,7 @@ export class Game implements DrawState {
     const k = (a: BindAction) => keyLabel(a);
     const move = `${k("up")}${k("down")}${k("left")}${k("right")}`;
     const hints: Record<Mode, [string, string][]> = {
-      browse: [[k("confirm"), "选择"], [`${k("next")} / ${k("prev")}`, "切换单位"], [k("danger"), "敌方范围"], [k("menu"), "菜单"], [`${k("zoomIn")} / ${k("zoomOut")}`, "缩放"], [k("fast"), "快速移动"], [k("settings"), "设置"]],
+      browse: [[k("confirm"), "选择"], [`${k("next")} / ${k("prev")}`, "切换单位"], [k("danger"), "敌方范围"], [k("menu"), "菜单"], [k("save"), "存档"], [k("load"), "读档"], [`${k("zoomIn")} / ${k("zoomOut")}`, "缩放"], [k("fast"), "快速移动"], [k("settings"), "设置"]],
       selected: [[k("confirm"), "移动到这里 / 点敌人直接攻击"], [k("cancel"), "返回菜单"], [k("danger"), "敌方范围"]],
       moving: [[`按住 ${k("fast")}`, "加速"]],
       menu: [[move, "选择"], [k("confirm"), "确定"], [k("cancel"), "返回"]],
@@ -1142,6 +1187,7 @@ export class Game implements DrawState {
       dialog: [[k("confirm"), "下一句"], [`按住 ${k("fast")}`, "快进"], [k("cancel"), "跳过这段"], [k("settings"), "设置"]],
       title: [[k("confirm"), "继续"]],
       over: [],
+      notice: [[k("confirm"), "继续"]],
       status: [[`${k("left")}${k("right")} / ${k("prev")} ${k("next")}`, "切换单位"], [k("cancel"), "关闭"]],
     };
     if (this.inBattle) { this.ui.setHints([[`${k("confirm")} / ${k("cancel")}`, "跳过战斗"], [`按住 ${k("fast")}`, "加速"]]); return; }
@@ -1196,6 +1242,10 @@ function transformLines(pilotId: number, to: number): SceneRef[] {
     { res: "37", index: 27 + team.indexOf(pilotId), who: pilotId },
     { res: "37", index: (getterG ? 33 : 30) + formIndexOf(to) - 1, who: newPilot },
   ];
+}
+
+function growthStats(u: Unit): GrowthStats {
+  return { level: u.level, maxHp: u.maxHp, maxSp: u.maxSp, strength: u.strength, defense: u.defense, speed: u.speed };
 }
 
 function minus(a: Set<number>, b: { has(k: number): boolean }) {

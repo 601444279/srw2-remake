@@ -3,7 +3,7 @@
 export type BindAction =
   | "up" | "down" | "left" | "right"
   | "confirm" | "cancel" | "next" | "prev"
-  | "danger" | "menu" | "fast" | "zoomIn" | "zoomOut" | "settings";
+  | "danger" | "menu" | "fast" | "zoomIn" | "zoomOut" | "settings" | "save" | "load";
 
 export type Binding = [string | null, string | null];
 
@@ -20,6 +20,8 @@ export const BIND_ACTIONS: { id: BindAction; label: string; group: string }[] = 
   { id: "prev", label: "上一个单位", group: "操作" },
   { id: "danger", label: "敌方威胁范围", group: "操作" },
   { id: "menu", label: "地图菜单", group: "操作" },
+  { id: "save", label: "存档", group: "操作" },
+  { id: "load", label: "读档", group: "操作" },
   { id: "zoomIn", label: "放大", group: "画面" },
   { id: "zoomOut", label: "缩小", group: "画面" },
   { id: "settings", label: "打开设置", group: "画面" },
@@ -82,6 +84,8 @@ export const DEFAULT_KEYS: Record<BindAction, Binding> = {
   zoomIn: ["Equal", "NumpadAdd"],
   zoomOut: ["Minus", "NumpadSubtract"],
   settings: ["KeyO", null],
+  save: ["F5", null],
+  load: ["F9", null],
 };
 
 const STORAGE_KEY = "srw2-remake:settings";

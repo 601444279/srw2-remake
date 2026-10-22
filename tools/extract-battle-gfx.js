@@ -1,6 +1,7 @@
 // 提取原版战斗画面的素材：机体大图、武器特效动画、击破爆炸，并测量战斗流程各阶段的帧数。
 //
 // 用法: node tools/extract-battle-gfx.js [--units] [--effects] [--timing] [--verify]   （不带参数 = 全部）
+//       --sounds          在已导出的动画上补录原版音效触发的帧（写进 battle-effects.json）
 //       --weapons 47,51   只录这几把武器（16 进制，调试用，结果不写 JSON）
 // 需要 extracted/states/t4.json（太勒移到 (8,8)、选好萨斯剑、光标对准拉达K7，按 A 即开战）
 // 和 extracted/states/e2.json（第 1 回合「回合结束」确认框，按 A 进入敌方回合）。
@@ -18,7 +19,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { PNG } from "pngjs";
-import { ROOT, hookExec, makeEmu } from "./lib/trace.js";
+import { ROOT, hookExec, hookWrite, makeEmu } from "./lib/trace.js";
 import { resolve } from "./lib/res.js";
 import { runBattle, attachCapture, render, renderWorld, bbox, bboxW, diffWithFrame, rgbOf, regsAtLine, chrBankOf, OVERSCAN } from "./lib/battle-capture.js";
 
@@ -274,7 +275,8 @@ const RAND_ENTRY = 0xc39b, RAND_EXIT = 0xc3b5;
 // 录一段动画：从脚本开始到 $AA 清零（脚本 FF）。返回每帧的快照（只留需要的部分）
 // forceWeapon = [指令地址, RAM 地址, 武器]：bank 6 执行到该指令时把 RAM 里的武器编号换掉
 // ranged：战前预测算完距离后（bank 4 $87F9）把 $E3 bit6（距离 ≠ 1）置位，画面改用远距离布局
-function recordAnim({ setup, want, frames = 700, rolls = () => 99, forceWeapon = null, ranged = false }) {
+// sounds：传数组时记下动画期间触发的音效 [第几帧（和关键帧同一计数）, 音效号]（往 $4C 写 $01–$7F）
+function recordAnim({ setup, want, frames = 700, rolls = () => 99, forceWeapon = null, ranged = false, sounds = null }) {
   const rec = [];
   let active = false, ended = false, startFrame = -1, info = null, before = null;
   runBattle(T4, {
@@ -294,6 +296,7 @@ function recordAnim({ setup, want, frames = 700, rolls = () => 99, forceWeapon =
           info = { res: m[0xaa], index: m[0xad], anchor: { x: m[0x92], y: m[0x93] } };
         }
       });
+      if (sounds) hookWrite(nes, (a, v) => { if (active && a === 0x4c && v >= 1 && v < 0x80) sounds.push([rec.length, v]); });
     },
     onFrame(f, cap, emu) {
       if (!active) { if (!ended && f > 30) before = cap.snapshot(); return; }
@@ -759,6 +762,48 @@ function verifyNatural(unitsOut) {
   return results;
 }
 
+// ---------- 音效时间
+
+// 每段攻击动画、爆炸里原版触发音效的帧（动画脚本 F4 和对象轨道都会写 $4C）。按已导出的 recorded 逐台重录
+function extractSounds(doc) {
+  const done = new Map(); // 动画名 → sounds
+  for (const w of doc.weapons) {
+    const ranged = w.layout === "ranged";
+    for (const [res, side] of [[0x60, "right"], [0x61, "left"]]) {
+      for (const v of w[side]?.recorded ?? []) {
+        if (!v.anim) continue;
+        process.stdout.write(`\r音效 武器 ${hex(w.id)} ${side} 机体 ${hex(v.unit)}            `);
+        const partner = PARTNER[side === "right" ? "left" : "right"].find((p) => p !== v.unit);
+        const sounds = [];
+        recordAnim({
+          setup(m) {
+            m[0x7557 + (side === "right" ? SLOT_RIGHT : SLOT_LEFT)] = v.unit;
+            m[0x7557 + (side === "right" ? SLOT_LEFT : SLOT_RIGHT)] = partner;
+          },
+          forceWeapon: side === "right" ? [0x82fc, 0xd7, w.id] : [0x83da, 0xd8, w.id],
+          ranged,
+          want: (aa) => aa === res,
+          frames: side === "right" ? 300 : 520,
+          sounds,
+        });
+        const prev = done.get(v.anim);
+        if (prev && JSON.stringify(prev) !== JSON.stringify(sounds)) console.log(`\n${v.anim}：机体 ${hex(v.unit)} 的音效和别的机体不同`, JSON.stringify(prev), JSON.stringify(sounds));
+        if (!prev) done.set(v.anim, sounds);
+      }
+    }
+  }
+  console.log();
+  for (const [name, sounds] of done) doc.anims[name].sounds = sounds;
+  for (const c of [
+    { name: "explode-left", setup: (m) => { m[0x76b7 + SLOT_LEFT] = 1; m[0x76d7 + SLOT_LEFT] = 0; }, rolls: () => 0 },
+    { name: "explode-right", setup: (m) => { m[0x76b7 + SLOT_RIGHT] = 1; m[0x76d7 + SLOT_RIGHT] = 0; }, rolls: (k) => (k === 0 ? 99 : 0) },
+  ]) for (const ranged of [false, true]) {
+    const sounds = [];
+    recordAnim({ setup: c.setup, want: (aa) => aa === 0x62, rolls: c.rolls, frames: 900, ranged, sounds });
+    doc.explosions[c.name + (ranged ? "-ranged" : "")].sounds = sounds;
+  }
+}
+
 // ---------- 主程序
 
 const argv = process.argv.slice(2);
@@ -808,6 +853,14 @@ if (all || args.has("--effects") || args.has("--timing") || ONLY_WEAPONS) {
     const bad = Object.values({ ...doc.anims, ...doc.explosions }).filter((a) => a.check.stageDiff);
     console.log(`武器：${doc.weapons.length} 把，动画 ${Object.keys(doc.anims).length} 个，整屏渲染不一致 ${bad.length} 个${bad.length ? "：" + bad.map((a) => a.name ?? "").join(" ") : ""}`);
   }
+}
+
+if (args.has("--sounds")) {
+  const doc = JSON.parse(fs.readFileSync(effectsFile, "utf8"));
+  extractSounds(doc);
+  fs.writeFileSync(effectsFile, stringify(doc) + "\n");
+  const all = Object.values(doc.anims);
+  console.log(`音效：${all.filter((a) => a.sounds?.length).length} / ${all.length} 个动画有音效`);
 }
 
 if (all || args.has("--verify")) {

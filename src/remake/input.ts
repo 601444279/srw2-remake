@@ -2,7 +2,7 @@
 // 方向键支持 8 方向（同时按两个方向就斜走），长按会逐渐加速，按住「快速」键 / 手柄 X 键高速移动。
 import { settings, type BindAction } from "./settings.ts";
 
-export type Action = "confirm" | "cancel" | "next" | "prev" | "danger" | "menu" | "zoomIn" | "zoomOut" | "settings";
+export type Action = "confirm" | "cancel" | "next" | "prev" | "danger" | "menu" | "zoomIn" | "zoomOut" | "settings" | "save" | "load";
 
 export interface InputHandlers {
   onMove(dx: number, dy: number): void;

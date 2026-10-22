@@ -38,6 +38,7 @@ async function boot() {
     panel.open(() => game.settingsChanged());
   };
   document.getElementById("gear")!.addEventListener("click", openSettings);
+  document.getElementById("menu-btn")!.addEventListener("click", () => game.action("menu"));
   // 点对话框翻页
   document.getElementById("dialog")!.addEventListener("click", () => { if (settings.get().mouse) game.action("confirm"); });
   game.onOpenSettings = openSettings;

@@ -268,6 +268,14 @@ export function expToNext(unit: Unit): number | null {
   return need === undefined ? null : Math.max(0, need - unit.exp);
 }
 
+// 当前等级里的经验进度：已得 / 这一级共需（满级时 null）
+export function expProgress(levelIndex: number, exp: number): { into: number; span: number } | null {
+  const need = EXP_TABLE_A[levelIndex];
+  if (need === undefined) return null;
+  const from = EXP_TABLE_A[levelIndex - 1] ?? 0;
+  return { into: Math.max(0, exp - from), span: Math.max(1, need - from) };
+}
+
 export const AI_SCRIPTS = (aiDb as unknown as { scripts: Record<string, Script> }).scripts;
 
 export function loadStage(number: number, rosterMembers: RosterMember[] = roster.members): Stage {

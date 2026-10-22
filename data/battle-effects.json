@@ -11279,7 +11279,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 38 16 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 22 0c 0f 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "right-101a0-u126"
+   "name": "right-101a0-u126",
+   "sounds": [[1,14]]
   },
   "left-10e4f-u014": {
    "effectFile": "assets/original/battle/effects/left-10e4f-u014.png",
@@ -11302,7 +11303,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 38 10 0a 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 17 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "left-10e4f-u014"
+   "name": "left-10e4f-u014",
+   "sounds": [[1,14]]
   },
   "left-10e4f-u155": {
    "effectFile": "assets/original/battle/effects/left-10e4f-u155.png",
@@ -11350,7 +11352,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 36 10 00 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 38 16 13",
    "check": {"stageDiff":0,"spriteOverflowKeyframes":27},
    "layout": "close",
-   "name": "left-10e4f-u155"
+   "name": "left-10e4f-u155",
+   "sounds": [[1,14]]
   },
   "right-101b4-u126": {
    "effectFile": "assets/original/battle/effects/right-101b4-u126.png",
@@ -11439,7 +11442,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 38 16 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 22 0c 0f 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "right-101b4-u126"
+   "name": "right-101b4-u126",
+   "sounds": [[0,15],[8,3]]
   },
   "left-10e77-u013": {
    "effectFile": "assets/original/battle/effects/left-10e77-u013.png",
@@ -11526,7 +11530,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 38 10 0a 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 17 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "left-10e77-u013"
+   "name": "left-10e77-u013",
+   "sounds": [[0,8],[7,3]]
   },
   "left-10eab-u180": {
    "effectFile": "assets/original/battle/effects/left-10eab-u180.png",
@@ -11612,7 +11617,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 20 00 10 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 13 16 30",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "left-10eab-u180"
+   "name": "left-10eab-u180",
+   "sounds": [[0,15],[7,3]]
   },
   "right-101e8-u082": {
    "effectFile": "assets/original/battle/effects/right-101e8-u082.png",
@@ -11700,7 +11706,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 13 10 00 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 22 0c 0f 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "right-101e8-u082"
+   "name": "right-101e8-u082",
+   "sounds": [[0,15],[7,3]]
   },
   "right-1021c-u148": {
    "effectFile": "assets/original/battle/effects/right-1021c-u148.png",
@@ -11812,7 +11819,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 16 00 12 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 30 38 0f 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "ranged",
-   "name": "right-1021c-u148"
+   "name": "right-1021c-u148",
+   "sounds": [[1,10],[66,3],[69,3],[72,3],[75,3],[78,3]]
   },
   "left-10edf-u043": {
    "effectFile": "assets/original/battle/effects/left-10edf-u043.png",
@@ -11925,7 +11933,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 30 33 16 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "ranged",
-   "name": "left-10edf-u043"
+   "name": "left-10edf-u043",
+   "sounds": [[1,10],[66,3],[69,3],[72,3],[75,3],[78,3]]
   },
   "right-10238-u029": {
    "effectFile": "assets/original/battle/effects/right-10238-u029.png",
@@ -11983,7 +11992,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 02 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 38 10 0f 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "right-10238-u029"
+   "name": "right-10238-u029",
+   "sounds": [[1,10],[25,3]]
   },
   "left-10efb-u096": {
    "effectFile": "assets/original/battle/effects/left-10efb-u096.png",
@@ -12055,7 +12065,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 30 16 03 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 38 10 23",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "left-10efb-u096"
+   "name": "left-10efb-u096",
+   "sounds": [[1,10],[34,3]]
   },
   "right-1024c-u029": {
    "effectFile": "assets/original/battle/effects/right-1024c-u029.png",
@@ -12230,7 +12241,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 02 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 38 10 0f 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "right-1024c-u029"
+   "name": "right-1024c-u029",
+   "sounds": [[14,12]]
   },
   "right-102a3-u030": {
    "effectFile": "assets/original/battle/effects/right-102a3-u030.png",
@@ -12289,7 +12301,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 02 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 38 10 0f 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "right-102a3-u030"
+   "name": "right-102a3-u030",
+   "sounds": [[1,10],[27,3]]
   },
   "right-102b7-u030": {
    "effectFile": "assets/original/battle/effects/right-102b7-u030.png",
@@ -12467,7 +12480,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 02 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 38 10 0f 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "right-102b7-u030"
+   "name": "right-102b7-u030",
+   "sounds": [[14,12]]
   },
   "left-10f0f-u096": {
    "effectFile": "assets/original/battle/effects/left-10f0f-u096.png",
@@ -12658,7 +12672,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 30 16 03 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 38 10 23",
    "check": {"stageDiff":0,"spriteOverflowKeyframes":61},
    "layout": "close",
-   "name": "left-10f0f-u096"
+   "name": "left-10f0f-u096",
+   "sounds": [[11,12],[23,12],[35,12],[47,12]]
   },
   "right-10813-u031": {
    "effectFile": "assets/original/battle/effects/right-10813-u031.png",
@@ -12681,7 +12696,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 02 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 38 10 0f 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "right-10813-u031"
+   "name": "right-10813-u031",
+   "sounds": [[1,14]]
   },
   "right-1030c-u031": {
    "effectFile": "assets/original/battle/effects/right-1030c-u031.png",
@@ -12742,7 +12758,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 02 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 38 10 0f 0f 38 0f 0f",
    "check": {"stageDiff":0,"spriteOverflowKeyframes":24},
    "layout": "close",
-   "name": "right-1030c-u031"
+   "name": "right-1030c-u031",
+   "sounds": [[1,10],[27,3]]
   },
   "right-10320-u032": {
    "effectFile": "assets/original/battle/effects/right-10320-u032.png",
@@ -12829,7 +12846,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 02 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 38 10 0f 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "right-10320-u032"
+   "name": "right-10320-u032",
+   "sounds": [[2,11],[14,11],[26,11],[38,11],[50,11],[62,11]]
   },
   "right-1035c-u032": {
    "effectFile": "assets/original/battle/effects/right-1035c-u032.png",
@@ -12922,7 +12940,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 02 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 38 10 0f 0f 38 0f 0f",
    "check": {"stageDiff":0,"spriteOverflowKeyframes":32},
    "layout": "close",
-   "name": "right-1035c-u032"
+   "name": "right-1035c-u032",
+   "sounds": [[1,17],[25,3],[28,3],[31,3],[34,3]]
   },
   "right-1037a-u033": {
    "effectFile": "assets/original/battle/effects/right-1037a-u033.png",
@@ -12983,7 +13002,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 02 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 38 10 0f 0f 38 0f 0f",
    "check": {"stageDiff":0,"spriteOverflowKeyframes":24},
    "layout": "close",
-   "name": "right-1037a-u033"
+   "name": "right-1037a-u033",
+   "sounds": [[1,8],[27,3]]
   },
   "right-1038e-u002": {
    "effectFile": "assets/original/battle/effects/right-1038e-u002.png",
@@ -13074,7 +13094,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 21 16 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 38 1c 0c 0f 38 0f 0f",
    "check": {"stageDiff":0,"spriteOverflowKeyframes":11},
    "layout": "close",
-   "name": "right-1038e-u002"
+   "name": "right-1038e-u002",
+   "sounds": [[1,17],[24,3]]
   },
   "right-103ac-u002": {
    "effectFile": "assets/original/battle/effects/right-103ac-u002.png",
@@ -13249,7 +13270,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 21 16 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 38 1c 0c 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "right-103ac-u002"
+   "name": "right-103ac-u002",
+   "sounds": [[14,12]]
   },
   "left-10f63-u170": {
    "effectFile": "assets/original/battle/effects/left-10f63-u170.png",
@@ -13441,7 +13463,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 30 36 26 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 32 0f 0f",
    "check": {"stageDiff":0,"spriteOverflowKeyframes":61},
    "layout": "close",
-   "name": "left-10f63-u170"
+   "name": "left-10f63-u170",
+   "sounds": [[14,12],[26,12],[38,12],[50,12]]
   },
   "right-10403-u115": {
    "effectFile": "assets/original/battle/effects/right-10403-u115.png",
@@ -13523,7 +13546,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 21 16 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 38 0f 0f 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "right-10403-u115"
+   "name": "right-10403-u115",
+   "sounds": [[2,12],[14,12],[26,12],[38,12]]
   },
   "right-1043f-u003": {
    "effectFile": "assets/original/battle/effects/right-1043f-u003.png",
@@ -13579,7 +13603,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 31 10 16 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 38 22 0f 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "right-1043f-u003"
+   "name": "right-1043f-u003",
+   "sounds": [[1,23],[16,23],[31,23],[46,23]]
   },
   "right-10453-u003": {
    "effectFile": "assets/original/battle/effects/right-10453-u003.png",
@@ -13673,7 +13698,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 31 10 16 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 38 22 0f 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "right-10453-u003"
+   "name": "right-10453-u003",
+   "sounds": [[8,19]]
   },
   "right-10497-u004": {
    "effectFile": "assets/original/battle/effects/right-10497-u004.png",
@@ -13767,7 +13793,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 38 16 0c 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 30 31 1c 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "right-10497-u004"
+   "name": "right-10497-u004",
+   "sounds": [[8,19],[14,19],[20,19],[26,19],[32,19],[38,19],[44,19],[50,19],[56,19],[62,19]]
   },
   "right-104db-u004": {
    "effectFile": "assets/original/battle/effects/right-104db-u004.png",
@@ -13875,7 +13902,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 38 16 0c 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 30 31 1c 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "ranged",
-   "name": "right-104db-u004"
+   "name": "right-104db-u004",
+   "sounds": [[1,10],[66,3],[69,3],[72,3],[75,3],[78,3]]
   },
   "right-104f7-u136": {
    "effectFile": "assets/original/battle/effects/right-104f7-u136.png",
@@ -14022,7 +14050,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 12 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 38 2b 0c 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "ranged",
-   "name": "right-104f7-u136"
+   "name": "right-104f7-u136",
+   "sounds": [[0,16]]
   },
   "right-104f7-u137": {
    "effectFile": "assets/original/battle/effects/right-104f7-u137.png",
@@ -14169,7 +14198,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 1c 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 38 11 0f 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "ranged",
-   "name": "right-104f7-u137"
+   "name": "right-104f7-u137",
+   "sounds": [[0,16]]
   },
   "right-10533-u147": {
    "effectFile": "assets/original/battle/effects/right-10533-u147.png",
@@ -14258,7 +14288,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 38 12 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 16 10 0f 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "right-10533-u147"
+   "name": "right-10533-u147",
+   "sounds": [[0,15],[7,3]]
   },
   "right-10567-u149": {
    "effectFile": "assets/original/battle/effects/right-10567-u149.png",
@@ -14281,7 +14312,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 38 12 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 16 10 0f 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "right-10567-u149"
+   "name": "right-10567-u149",
+   "sounds": [[1,14]]
   },
   "right-1057b-u141": {
    "effectFile": "assets/original/battle/effects/right-1057b-u141.png",
@@ -14474,7 +14506,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 38 0c 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 16 2b 0f 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "ranged",
-   "name": "right-1057b-u141"
+   "name": "right-1057b-u141",
+   "sounds": [[1,22],[72,22],[103,12]]
   },
   "right-105c8-u145": {
    "effectFile": "assets/original/battle/effects/right-105c8-u145.png",
@@ -14554,7 +14587,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 12 0c 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 38 16 1b 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "right-105c8-u145"
+   "name": "right-105c8-u145",
+   "sounds": [[2,16],[10,16],[18,16],[26,16],[34,16],[42,16],[50,16]]
   },
   "right-105ff-u098": {
    "effectFile": "assets/original/battle/effects/right-105ff-u098.png",
@@ -14697,7 +14731,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 02 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 38 21 23 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "right-105ff-u098"
+   "name": "right-105ff-u098",
+   "sounds": [[11,16],[23,16],[35,16],[47,16]]
   },
   "right-10653-u098": {
    "effectFile": "assets/original/battle/effects/right-10653-u098.png",
@@ -14769,7 +14804,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 02 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 38 21 23 0f 38 0f 0f",
    "check": {"stageDiff":0,"spriteOverflowKeyframes":19},
    "layout": "close",
-   "name": "right-10653-u098"
+   "name": "right-10653-u098",
+   "sounds": [[9,8],[35,3]]
   },
   "right-10667-u100": {
    "effectFile": "assets/original/battle/effects/right-10667-u100.png",
@@ -14944,7 +14980,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 02 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 38 21 23 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "right-10667-u100"
+   "name": "right-10667-u100",
+   "sounds": [[11,12],[23,12],[35,12],[47,12]]
   },
   "right-106bb-u100": {
    "effectFile": "assets/original/battle/effects/right-106bb-u100.png",
@@ -15034,7 +15071,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 02 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 38 21 23 0f 38 0f 0f",
    "check": {"stageDiff":0,"spriteOverflowKeyframes":21},
    "layout": "close",
-   "name": "right-106bb-u100"
+   "name": "right-106bb-u100",
+   "sounds": [[1,17],[25,3],[28,3],[31,3],[34,3]]
   },
   "right-10320-u102": {
    "effectFile": "assets/original/battle/effects/right-10320-u102.png",
@@ -15122,7 +15160,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 02 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 38 21 23 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "right-10320-u102"
+   "name": "right-10320-u102",
+   "sounds": [[2,11],[14,11],[26,11],[38,11],[50,11],[63,11]]
   },
   "right-106d9-u102": {
    "effectFile": "assets/original/battle/effects/right-106d9-u102.png",
@@ -15145,7 +15184,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 02 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 38 21 23 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "right-106d9-u102"
+   "name": "right-106d9-u102",
+   "sounds": [[1,14]]
   },
   "right-106ed-u115": {
    "effectFile": "assets/original/battle/effects/right-106ed-u115.png",
@@ -15237,7 +15277,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 21 16 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 38 0f 0f 0f 38 0f 0f",
    "check": {"stageDiff":0,"spriteOverflowKeyframes":11},
    "layout": "close",
-   "name": "right-106ed-u115"
+   "name": "right-106ed-u115",
+   "sounds": [[1,10],[25,3],[28,3],[31,3],[34,3]]
   },
   "right-1070b-u124": {
    "effectFile": "assets/original/battle/effects/right-1070b-u124.png",
@@ -15347,7 +15388,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 21 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 38 0c 0c 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "right-1070b-u124"
+   "name": "right-1070b-u124",
+   "sounds": [[1,23],[1,23],[10,3]]
   },
   "right-10751-u116": {
    "effectFile": "assets/original/battle/effects/right-10751-u116.png",
@@ -15455,7 +15497,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 21 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 38 0c 0c 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "ranged",
-   "name": "right-10751-u116"
+   "name": "right-10751-u116",
+   "sounds": [[1,10],[66,3]]
   },
   "right-1076d-u117": {
    "effectFile": "assets/original/battle/effects/right-1076d-u117.png",
@@ -15563,7 +15606,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 28 16 21 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 30 0c 0f 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "ranged",
-   "name": "right-1076d-u117"
+   "name": "right-1076d-u117",
+   "sounds": [[1,10],[66,3]]
   },
   "right-10789-u023": {
    "effectFile": "assets/original/battle/effects/right-10789-u023.png",
@@ -15677,7 +15721,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 31 38 13 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 16 1a 0f 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "ranged",
-   "name": "right-10789-u023"
+   "name": "right-10789-u023",
+   "sounds": [[1,10],[1,10],[1,10],[65,3],[65,3],[65,3]]
   },
   "right-10789-u024": {
    "effectFile": "assets/original/battle/effects/right-10789-u024.png",
@@ -15791,7 +15836,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 31 38 13 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 16 1a 1a 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "ranged",
-   "name": "right-10789-u024"
+   "name": "right-10789-u024",
+   "sounds": [[1,10],[1,10],[1,10],[65,3],[65,3],[65,3]]
   },
   "right-1085e-u035": {
    "effectFile": "assets/original/battle/effects/right-1085e-u035.png",
@@ -15879,7 +15925,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 21 38 10 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "right-1085e-u035"
+   "name": "right-1085e-u035",
+   "sounds": [[7,18]]
   },
   "right-10892-u106": {
    "effectFile": "assets/original/battle/effects/right-10892-u106.png",
@@ -15968,7 +16015,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 28 10 1c 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 22 0c 0f 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "right-10892-u106"
+   "name": "right-10892-u106",
+   "sounds": [[0,15],[7,3]]
   },
   "left-11036-u042": {
    "effectFile": "assets/original/battle/effects/left-11036-u042.png",
@@ -16057,7 +16105,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 38 02 1a 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "left-11036-u042"
+   "name": "left-11036-u042",
+   "sounds": [[0,6],[7,3]]
   },
   "left-11036-u174": {
    "effectFile": "assets/original/battle/effects/left-11036-u174.png",
@@ -16146,7 +16195,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 20 25 03 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "left-11036-u174"
+   "name": "left-11036-u174",
+   "sounds": [[0,6],[7,3]]
   },
   "left-1106a-u042": {
    "effectFile": "assets/original/battle/effects/left-1106a-u042.png",
@@ -16223,7 +16273,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 38 02 1a 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "left-1106a-u042"
+   "name": "left-1106a-u042",
+   "sounds": [[3,9],[11,9],[19,9],[27,9],[35,9],[43,9],[51,9],[59,9]]
   },
   "left-1125e-u043": {
    "effectFile": "assets/original/battle/effects/left-1125e-u043.png",
@@ -16246,7 +16297,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 30 33 16 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "left-1125e-u043"
+   "name": "left-1125e-u043",
+   "sounds": [[1,14]]
   },
   "left-10e63-u045": {
    "effectFile": "assets/original/battle/effects/left-10e63-u045.png",
@@ -16269,7 +16321,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 30 10 25 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "left-10e63-u045"
+   "name": "left-10e63-u045",
+   "sounds": [[1,14]]
   },
   "left-110a2-u046": {
    "effectFile": "assets/original/battle/effects/left-110a2-u046.png",
@@ -16371,7 +16424,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 30 10 0b 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 05 0f 0f",
    "check": {"stageDiff":0},
    "layout": "ranged",
-   "name": "left-110a2-u046"
+   "name": "left-110a2-u046",
+   "sounds": [[32,13]]
   },
   "left-110c0-u046": {
    "effectFile": "assets/original/battle/effects/left-110c0-u046.png",
@@ -16479,7 +16533,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 30 10 0b 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 05 0f 0f",
    "check": {"stageDiff":0,"spriteOverflowKeyframes":61},
    "layout": "close",
-   "name": "left-110c0-u046"
+   "name": "left-110c0-u046",
+   "sounds": [[0,18],[8,3]]
   },
   "left-110f5-u047": {
    "effectFile": "assets/original/battle/effects/left-110f5-u047.png",
@@ -16590,7 +16645,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 1c 26 0b 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 30 38 0f",
    "check": {"stageDiff":0,"spriteOverflowKeyframes":60},
    "layout": "close",
-   "name": "left-110f5-u047"
+   "name": "left-110f5-u047",
+   "sounds": [[0,21]]
   },
   "left-11249-u048": {
    "effectFile": "assets/original/battle/effects/left-11249-u048.png",
@@ -16619,7 +16675,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 30 16 0c 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "left-11249-u048"
+   "name": "left-11249-u048",
+   "sounds": [[5,3]]
   },
   "left-11137-u050": {
    "effectFile": "assets/original/battle/effects/left-11137-u050.png",
@@ -16696,7 +16753,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 30 17 06 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 22 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "left-11137-u050"
+   "name": "left-11137-u050",
+   "sounds": [[3,6],[11,6],[19,6],[27,6],[35,6],[43,6],[51,6],[59,6]]
   },
   "left-1116f-u051": {
    "effectFile": "assets/original/battle/effects/left-1116f-u051.png",
@@ -16806,7 +16864,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 37 00 12 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 30 21 16",
    "check": {"stageDiff":0,"spriteOverflowKeyframes":59},
    "layout": "close",
-   "name": "left-1116f-u051"
+   "name": "left-1116f-u051",
+   "sounds": [[15,21]]
   },
   "left-111b1-u174": {
    "effectFile": "assets/original/battle/effects/left-111b1-u174.png",
@@ -16895,7 +16954,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 20 25 03 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "left-111b1-u174"
+   "name": "left-111b1-u174",
+   "sounds": [[0,6]]
   },
   "right-10904-u034": {
    "effectFile": "assets/original/battle/effects/right-10904-u034.png",
@@ -17003,7 +17063,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 25 27 16 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 30 0f 0f 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "ranged",
-   "name": "right-10904-u034"
+   "name": "right-10904-u034",
+   "sounds": [[1,10],[66,3]]
   },
   "left-111e4-u052": {
    "effectFile": "assets/original/battle/effects/left-111e4-u052.png",
@@ -17116,7 +17177,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 31 17 00 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 26 12 0f",
    "check": {"stageDiff":0},
    "layout": "ranged",
-   "name": "left-111e4-u052"
+   "name": "left-111e4-u052",
+   "sounds": [[1,10],[66,3],[69,3],[72,3],[75,3],[78,3]]
   },
   "right-10920-u166": {
    "effectFile": "assets/original/battle/effects/right-10920-u166.png",
@@ -17300,7 +17362,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 32 16 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 38 10 0f 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "right-10920-u166"
+   "name": "right-10920-u166",
+   "sounds": [[1,22],[72,22],[103,12]]
   },
   "left-11200-u083": {
    "effectFile": "assets/original/battle/effects/left-11200-u083.png",
@@ -17408,7 +17471,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 30 06 10 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 0c 0f 0f",
    "check": {"stageDiff":0,"spriteOverflowKeyframes":59},
    "layout": "close",
-   "name": "left-11200-u083"
+   "name": "left-11200-u083",
+   "sounds": [[0,13]]
   },
   "left-11200-u053": {
    "effectFile": "assets/original/battle/effects/left-11200-u053.png",
@@ -17502,7 +17566,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 33 3a 00 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 30 26 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "left-11200-u053"
+   "name": "left-11200-u053",
+   "sounds": [[0,13]]
   },
   "left-11249-u091": {
    "effectFile": "assets/original/battle/effects/left-11249-u091.png",
@@ -17535,7 +17600,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 38 16 1a 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 30 10 0f",
    "check": {"stageDiff":0,"spriteOverflowKeyframes":13},
    "layout": "close",
-   "name": "left-11249-u091"
+   "name": "left-11249-u091",
+   "sounds": [[5,3]]
   },
   "left-11272-u054": {
    "effectFile": "assets/original/battle/effects/left-11272-u054.png",
@@ -17606,7 +17672,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 0c 3a 1a 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 30 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "left-11272-u054"
+   "name": "left-11272-u054",
+   "sounds": [[3,7]]
   },
   "left-1125e-u056": {
    "effectFile": "assets/original/battle/effects/left-1125e-u056.png",
@@ -17655,7 +17722,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 33 10 00 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 38 16 0f",
    "check": {"stageDiff":0,"spriteOverflowKeyframes":28},
    "layout": "close",
-   "name": "left-1125e-u056"
+   "name": "left-1125e-u056",
+   "sounds": [[1,14]]
   },
   "left-112aa-u056": {
    "effectFile": "assets/original/battle/effects/left-112aa-u056.png",
@@ -17727,7 +17795,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 33 10 00 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 38 16 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "left-112aa-u056"
+   "name": "left-112aa-u056",
+   "sounds": [[1,10],[34,3]]
   },
   "left-112be-u058": {
    "effectFile": "assets/original/battle/effects/left-112be-u058.png",
@@ -17824,7 +17893,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 30 38 16 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "left-112be-u058"
+   "name": "left-112be-u058",
+   "sounds": [[4,20]]
   },
   "left-1171a-u059": {
    "effectFile": "assets/original/battle/effects/left-1171a-u059.png",
@@ -17964,7 +18034,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 10 00 0a 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "ranged",
-   "name": "left-1171a-u059"
+   "name": "left-1171a-u059",
+   "sounds": [[0,15],[33,3]]
   },
   "left-112fb-u059": {
    "effectFile": "assets/original/battle/effects/left-112fb-u059.png",
@@ -18050,7 +18121,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 10 00 0a 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "left-112fb-u059"
+   "name": "left-112fb-u059",
+   "sounds": [[2,20]]
   },
   "right-108c6-u111": {
    "effectFile": "assets/original/battle/effects/right-108c6-u111.png",
@@ -18197,7 +18269,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 28 10 1c 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 22 0c 0f 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "ranged",
-   "name": "right-108c6-u111"
+   "name": "right-108c6-u111",
+   "sounds": [[0,16],[32,3]]
   },
   "right-108c6-u127": {
    "effectFile": "assets/original/battle/effects/right-108c6-u127.png",
@@ -18344,7 +18417,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 02 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 10 38 21 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "ranged",
-   "name": "right-108c6-u127"
+   "name": "right-108c6-u127",
+   "sounds": [[0,16],[32,3]]
   },
   "left-10ff8-u061": {
    "effectFile": "assets/original/battle/effects/left-10ff8-u061.png",
@@ -18491,7 +18565,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 1c 16 13 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 38 26 0f",
    "check": {"stageDiff":0},
    "layout": "ranged",
-   "name": "left-10ff8-u061"
+   "name": "left-10ff8-u061",
+   "sounds": [[0,16],[31,3]]
   },
   "left-10fba-u019": {
    "effectFile": "assets/original/battle/effects/left-10fba-u019.png",
@@ -18638,7 +18713,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 30 23 03 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 22 0c 0f",
    "check": {"stageDiff":0},
    "layout": "ranged",
-   "name": "left-10fba-u019"
+   "name": "left-10fba-u019",
+   "sounds": [[0,16],[31,3]]
   },
   "right-10920-u060": {
    "effectFile": "assets/original/battle/effects/right-10920-u060.png",
@@ -18827,7 +18903,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 10 1c 00 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 38 0f 0f 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "ranged",
-   "name": "right-10920-u060"
+   "name": "right-10920-u060",
+   "sounds": [[1,22],[72,22],[103,12]]
   },
   "left-11338-u097": {
    "effectFile": "assets/original/battle/effects/left-11338-u097.png",
@@ -19031,7 +19108,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 10 1c 00 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 38 0f 0f",
    "check": {"stageDiff":0,"spriteOverflowKeyframes":60},
    "layout": "ranged",
-   "name": "left-11338-u097"
+   "name": "left-11338-u097",
+   "sounds": [[1,22],[72,22],[103,12]]
   },
   "left-11660-u061": {
    "effectFile": "assets/original/battle/effects/left-11660-u061.png",
@@ -19187,7 +19265,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 1c 16 13 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 38 26 0f",
    "check": {"stageDiff":0,"spriteOverflowKeyframes":55},
    "layout": "ranged",
-   "name": "left-11660-u061"
+   "name": "left-11660-u061",
+   "sounds": [[1,16],[42,3]]
   },
   "left-11385-u063": {
    "effectFile": "assets/original/battle/effects/left-11385-u063.png",
@@ -19259,7 +19338,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 3c 1c 00 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 17 06 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "left-11385-u063"
+   "name": "left-11385-u063",
+   "sounds": [[1,10],[34,3]]
   },
   "left-11399-u066": {
    "effectFile": "assets/original/battle/effects/left-11399-u066.png",
@@ -19354,7 +19434,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 30 38 0c 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "left-11399-u066"
+   "name": "left-11399-u066",
+   "sounds": [[12,15]]
   },
   "left-113db-u079": {
    "effectFile": "assets/original/battle/effects/left-113db-u079.png",
@@ -19546,7 +19627,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 38 02 0c 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 30 16 0f",
    "check": {"stageDiff":0},
    "layout": "ranged",
-   "name": "left-113db-u079"
+   "name": "left-113db-u079",
+   "sounds": [[1,22],[72,22],[103,12]]
   },
   "left-11428-u080": {
    "effectFile": "assets/original/battle/effects/left-11428-u080.png",
@@ -19738,7 +19820,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 38 16 0c 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "ranged",
-   "name": "left-11428-u080"
+   "name": "left-11428-u080",
+   "sounds": [[1,22],[72,22],[103,12]]
   },
   "right-1096d-u065": {
    "effectFile": "assets/original/battle/effects/right-1096d-u065.png",
@@ -19923,7 +20006,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 03 26 0c 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 22 0c 0f 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "ranged",
-   "name": "right-1096d-u065"
+   "name": "right-1096d-u065",
+   "sounds": [[1,22],[72,22],[103,12]]
   },
   "left-11475-u153": {
    "effectFile": "assets/original/battle/effects/left-11475-u153.png",
@@ -20125,7 +20209,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 03 26 0c 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 22 0c 0f",
    "check": {"stageDiff":0,"spriteOverflowKeyframes":53},
    "layout": "ranged",
-   "name": "left-11475-u153"
+   "name": "left-11475-u153",
+   "sounds": [[1,22],[72,22],[103,12]]
   },
   "left-11475-u177": {
    "effectFile": "assets/original/battle/effects/left-11475-u177.png",
@@ -20328,7 +20413,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 30 26 0c 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 22 0c 0f",
    "check": {"stageDiff":0,"spriteOverflowKeyframes":55},
    "layout": "ranged",
-   "name": "left-11475-u177"
+   "name": "left-11475-u177",
+   "sounds": [[1,22],[72,22],[103,12]]
   },
   "right-109ba-u077": {
    "effectFile": "assets/original/battle/effects/right-109ba-u077.png",
@@ -20513,7 +20599,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 38 16 2c 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 22 0c 0f 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "ranged",
-   "name": "right-109ba-u077"
+   "name": "right-109ba-u077",
+   "sounds": [[1,22],[72,22],[103,12]]
   },
   "left-114c2-u154": {
    "effectFile": "assets/original/battle/effects/left-114c2-u154.png",
@@ -20716,7 +20803,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 38 16 2c 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 22 0c 0f",
    "check": {"stageDiff":0,"spriteOverflowKeyframes":55},
    "layout": "ranged",
-   "name": "left-114c2-u154"
+   "name": "left-114c2-u154",
+   "sounds": [[1,22],[72,22],[103,12]]
   },
   "left-1150f-u072": {
    "effectFile": "assets/original/battle/effects/left-1150f-u072.png",
@@ -20907,7 +20995,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 30 27 11 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 38 0f 0f",
    "check": {"stageDiff":0,"spriteOverflowKeyframes":64},
    "layout": "ranged",
-   "name": "left-1150f-u072"
+   "name": "left-1150f-u072",
+   "sounds": [[65,12]]
   },
   "left-115a7-u066": {
    "effectFile": "assets/original/battle/effects/left-115a7-u066.png",
@@ -20930,7 +21019,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 30 38 0c 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "left-115a7-u066"
+   "name": "left-115a7-u066",
+   "sounds": [[1,14]]
   },
   "left-115bb-u081": {
    "effectFile": "assets/original/battle/effects/left-115bb-u081.png",
@@ -21134,7 +21224,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 10 37 16 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 38 0f 0f",
    "check": {"stageDiff":0,"spriteOverflowKeyframes":60},
    "layout": "ranged",
-   "name": "left-115bb-u081"
+   "name": "left-115bb-u081",
+   "sounds": [[1,22],[72,22],[103,12]]
   },
   "left-11608-u015": {
    "effectFile": "assets/original/battle/effects/left-11608-u015.png",
@@ -21220,7 +21311,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 38 15 02 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 22 0c 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "left-11608-u015"
+   "name": "left-11608-u015",
+   "sounds": [[1,20]]
   },
   "right-10a07-u009": {
    "effectFile": "assets/original/battle/effects/right-10a07-u009.png",
@@ -21309,7 +21401,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 10 16 0c 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 38 0f 0f 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "right-10a07-u009"
+   "name": "right-10a07-u009",
+   "sounds": [[1,20]]
   },
   "right-10a07-u010": {
    "effectFile": "assets/original/battle/effects/right-10a07-u010.png",
@@ -21398,7 +21491,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 1c 16 0c 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 22 0c 0f 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "right-10a07-u010"
+   "name": "right-10a07-u010",
+   "sounds": [[1,20]]
   },
   "left-11608-u157": {
    "effectFile": "assets/original/battle/effects/left-11608-u157.png",
@@ -21484,7 +21578,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 10 16 0c 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "left-11608-u157"
+   "name": "left-11608-u157",
+   "sounds": [[1,20]]
   },
   "left-11644-u068": {
    "effectFile": "assets/original/battle/effects/left-11644-u068.png",
@@ -21597,7 +21692,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 28 2a 0c 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "ranged",
-   "name": "left-11644-u068"
+   "name": "left-11644-u068",
+   "sounds": [[1,10],[66,3]]
   },
   "left-116bd-u073": {
    "effectFile": "assets/original/battle/effects/left-116bd-u073.png",
@@ -21752,7 +21848,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 16 1c 0c 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 30 0f 0f",
    "check": {"stageDiff":0,"spriteOverflowKeyframes":44},
    "layout": "ranged",
-   "name": "left-116bd-u073"
+   "name": "left-116bd-u073",
+   "sounds": [[1,16],[42,3]]
   },
   "right-10a42-u010": {
    "effectFile": "assets/original/battle/effects/right-10a42-u010.png",
@@ -21896,7 +21993,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 1c 16 0c 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 22 0c 0f 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "ranged",
-   "name": "right-10a42-u010"
+   "name": "right-10a42-u010",
+   "sounds": [[0,15],[33,3]]
   },
   "left-11768-u078": {
    "effectFile": "assets/original/battle/effects/left-11768-u078.png",
@@ -21969,7 +22067,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 2a 1c 0a 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "left-11768-u078"
+   "name": "left-11768-u078",
+   "sounds": [[3,7]]
   },
   "left-1125e-u083": {
    "effectFile": "assets/original/battle/effects/left-1125e-u083.png",
@@ -22010,7 +22109,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 30 06 10 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 0c 0f 0f",
    "check": {"stageDiff":0,"spriteOverflowKeyframes":10},
    "layout": "close",
-   "name": "left-1125e-u083"
+   "name": "left-1125e-u083",
+   "sounds": [[1,14]]
   },
   "left-117a0-u084": {
    "effectFile": "assets/original/battle/effects/left-117a0-u084.png",
@@ -22082,7 +22182,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 30 31 11 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "left-117a0-u084"
+   "name": "left-117a0-u084",
+   "sounds": [[1,10],[34,3],[37,3],[40,3],[43,3],[46,3]]
   },
   "right-10a90-u038": {
    "effectFile": "assets/original/battle/effects/right-10a90-u038.png",
@@ -22159,7 +22260,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 36 26 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 32 0f 0f 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "right-10a90-u038"
+   "name": "right-10a90-u038",
+   "sounds": [[1,6]]
   },
   "left-117b4-u170": {
    "effectFile": "assets/original/battle/effects/left-117b4-u170.png",
@@ -22248,7 +22350,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 30 36 26 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 32 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "left-117b4-u170"
+   "name": "left-117b4-u170",
+   "sounds": [[0,6],[7,3]]
   },
   "right-10ac2-u090": {
    "effectFile": "assets/original/battle/effects/right-10ac2-u090.png",
@@ -22337,7 +22440,33 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 38 36 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 26 0c 0f 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "right-10ac2-u090"
+   "name": "right-10ac2-u090",
+   "sounds": [
+    [11,29],
+    [13,29],
+    [15,29],
+    [17,29],
+    [19,29],
+    [21,29],
+    [23,29],
+    [25,29],
+    [27,29],
+    [29,29],
+    [31,29],
+    [33,29],
+    [35,29],
+    [37,29],
+    [39,29],
+    [41,29],
+    [43,29],
+    [45,29],
+    [47,29],
+    [49,29],
+    [51,29],
+    [53,29],
+    [55,29],
+    [57,29]
+   ]
   },
   "left-117e8-u169": {
    "effectFile": "assets/original/battle/effects/left-117e8-u169.png",
@@ -22426,7 +22555,33 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 30 38 36 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 26 0c 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "left-117e8-u169"
+   "name": "left-117e8-u169",
+   "sounds": [
+    [11,29],
+    [13,29],
+    [15,29],
+    [17,29],
+    [19,29],
+    [21,29],
+    [23,29],
+    [25,29],
+    [27,29],
+    [29,29],
+    [31,29],
+    [33,29],
+    [35,29],
+    [37,29],
+    [39,29],
+    [41,29],
+    [43,29],
+    [45,29],
+    [47,29],
+    [49,29],
+    [51,29],
+    [53,29],
+    [55,29],
+    [57,29]
+   ]
   },
   "right-10b0f-u090": {
    "effectFile": "assets/original/battle/effects/right-10b0f-u090.png",
@@ -22518,7 +22673,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 38 36 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 26 0c 0f 0f 38 0f 0f",
    "check": {"stageDiff":0,"spriteOverflowKeyframes":11},
    "layout": "close",
-   "name": "right-10b0f-u090"
+   "name": "right-10b0f-u090",
+   "sounds": [[1,17],[25,3]]
   },
   "left-11835-u169": {
    "effectFile": "assets/original/battle/effects/left-11835-u169.png",
@@ -22610,7 +22766,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 30 38 36 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 26 0c 0f",
    "check": {"stageDiff":0,"spriteOverflowKeyframes":37},
    "layout": "close",
-   "name": "left-11835-u169"
+   "name": "left-11835-u169",
+   "sounds": [[1,17],[25,3]]
   },
   "left-11853-u093": {
    "effectFile": "assets/original/battle/effects/left-11853-u093.png",
@@ -22743,7 +22900,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 16 00 12 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 38 0f 0f",
    "check": {"stageDiff":0,"spriteOverflowKeyframes":12},
    "layout": "ranged",
-   "name": "left-11853-u093"
+   "name": "left-11853-u093",
+   "sounds": [[1,26],[66,22],[66,22],[66,22],[74,3],[74,3],[74,3]]
   },
   "left-10e63-u158": {
    "effectFile": "assets/original/battle/effects/left-10e63-u158.png",
@@ -22783,7 +22941,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 30 16 02 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 28 1a 25",
    "check": {"stageDiff":0,"spriteOverflowKeyframes":10},
    "layout": "close",
-   "name": "left-10e63-u158"
+   "name": "left-10e63-u158",
+   "sounds": [[1,14]]
   },
   "left-10e63-u159": {
    "effectFile": "assets/original/battle/effects/left-10e63-u159.png",
@@ -22806,7 +22965,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 30 10 00 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 28 25 16",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "left-10e63-u159"
+   "name": "left-10e63-u159",
+   "sounds": [[1,14]]
   },
   "left-118c1-u158": {
    "effectFile": "assets/original/battle/effects/left-118c1-u158.png",
@@ -22951,7 +23111,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 30 16 02 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 28 1a 25",
    "check": {"stageDiff":0},
    "layout": "ranged",
-   "name": "left-118c1-u158"
+   "name": "left-118c1-u158",
+   "sounds": [[0,25]]
   },
   "left-118c1-u159": {
    "effectFile": "assets/original/battle/effects/left-118c1-u159.png",
@@ -23095,7 +23256,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 30 10 00 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 28 25 16",
    "check": {"stageDiff":0},
    "layout": "ranged",
-   "name": "left-118c1-u159"
+   "name": "left-118c1-u159",
+   "sounds": [[0,25]]
   },
   "left-1190f-u160": {
    "effectFile": "assets/original/battle/effects/left-1190f-u160.png",
@@ -23269,7 +23431,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 31 27 05 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "ranged",
-   "name": "left-1190f-u160"
+   "name": "left-1190f-u160",
+   "sounds": [[0,24]]
   },
   "right-10b2d-u034": {
    "effectFile": "assets/original/battle/effects/right-10b2d-u034.png",
@@ -23378,7 +23541,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 25 27 16 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 30 0f 0f 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "right-10b2d-u034"
+   "name": "right-10b2d-u034",
+   "sounds": [[1,23],[2,23],[65,3],[66,3]]
   },
   "right-10b2d-u092": {
    "effectFile": "assets/original/battle/effects/right-10b2d-u092.png",
@@ -23498,7 +23662,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 28 10 00 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 32 0f 0f 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "right-10b2d-u092"
+   "name": "right-10b2d-u092",
+   "sounds": [[1,23],[2,23],[65,3],[66,3]]
   },
   "right-10b2d-u106": {
    "effectFile": "assets/original/battle/effects/right-10b2d-u106.png",
@@ -23617,7 +23782,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 28 10 1c 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 22 0c 0f 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "right-10b2d-u106"
+   "name": "right-10b2d-u106",
+   "sounds": [[1,23],[2,23],[65,3],[66,3]]
   },
   "left-1197b-u058": {
    "effectFile": null,
@@ -23699,7 +23865,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 13 0f 30 38 16 0f 27 2a 00 0f 37 1a 00 0f 21 38 10 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "left-1197b-u058"
+   "name": "left-1197b-u058",
+   "sounds": []
   },
   "right-10b2d-u099": {
    "effectFile": "assets/original/battle/effects/right-10b2d-u099.png",
@@ -23815,7 +23982,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 02 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 38 21 23 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "ranged",
-   "name": "right-10b2d-u099"
+   "name": "right-10b2d-u099",
+   "sounds": [[1,23],[2,23],[65,3],[66,3]]
   },
   "right-10b53-u099": {
    "effectFile": "assets/original/battle/effects/right-10b53-u099.png",
@@ -23900,7 +24068,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 02 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 38 21 23 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "right-10b53-u099"
+   "name": "right-10b53-u099",
+   "sounds": [[1,21]]
   },
   "right-10b94-u101": {
    "effectFile": "assets/original/battle/effects/right-10b94-u101.png",
@@ -24073,7 +24242,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 02 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 38 21 23 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "ranged",
-   "name": "right-10b94-u101"
+   "name": "right-10b94-u101",
+   "sounds": [[0,16]]
   },
   "right-10bfc-u101": {
    "effectFile": "assets/original/battle/effects/right-10bfc-u101.png",
@@ -24127,7 +24297,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 02 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 38 21 23 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "right-10bfc-u101"
+   "name": "right-10bfc-u101",
+   "sounds": [[1,23],[27,3]]
   },
   "right-10c10-u105": {
    "effectFile": "assets/original/battle/effects/right-10c10-u105.png",
@@ -24235,7 +24406,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 38 16 02 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 30 21 23 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "ranged",
-   "name": "right-10c10-u105"
+   "name": "right-10c10-u105",
+   "sounds": [[1,10],[66,3]]
   },
   "right-10c2c-u105": {
    "effectFile": "assets/original/battle/effects/right-10c2c-u105.png",
@@ -24289,7 +24461,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 38 16 02 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 30 21 23 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "right-10c2c-u105"
+   "name": "right-10c2c-u105",
+   "sounds": [[1,23],[27,3]]
   },
   "right-10c40-u104": {
    "effectFile": "assets/original/battle/effects/right-10c40-u104.png",
@@ -24401,7 +24574,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 1c 02 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 38 21 16 0f 38 0f 0f",
    "check": {"stageDiff":0,"spriteOverflowKeyframes":19},
    "layout": "ranged",
-   "name": "right-10c40-u104"
+   "name": "right-10c40-u104",
+   "sounds": [[1,10],[65,3],[68,3],[71,3],[74,3],[77,3]]
   },
   "right-10c5c-u104": {
    "effectFile": "assets/original/battle/effects/right-10c5c-u104.png",
@@ -24576,7 +24750,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 1c 02 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 38 21 16 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "right-10c5c-u104"
+   "name": "right-10c5c-u104",
+   "sounds": [[14,12],[26,12],[38,12],[50,12]]
   },
   "right-10827-u092": {
    "effectFile": "assets/original/battle/effects/right-10827-u092.png",
@@ -24656,7 +24831,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 28 10 00 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 32 0f 0f 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "right-10827-u092"
+   "name": "right-10827-u092",
+   "sounds": [[2,7],[10,7],[18,7],[26,7],[34,7],[42,7],[50,7]]
   },
   "right-10827-u161": {
    "effectFile": "assets/original/battle/effects/right-10827-u161.png",
@@ -24736,7 +24912,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 16 12 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 38 0c 0f 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "right-10827-u161"
+   "name": "right-10827-u161",
+   "sounds": [[2,7],[10,7],[18,7],[26,7],[34,7],[42,7],[50,7]]
   },
   "right-10cb3-u119": {
    "effectFile": "assets/original/battle/effects/right-10cb3-u119.png",
@@ -24793,7 +24970,8 @@
    "basePalette": "0f 30 10 00 0f 27 2a 1a 0f 30 21 16 0f 30 33 16 0f 27 2a 00 0f 37 27 06 0f 38 0f 0f 0f 38 0f 0f",
    "check": {"stageDiff":0},
    "layout": "close",
-   "name": "right-10cb3-u119"
+   "name": "right-10cb3-u119",
+   "sounds": [[1,17],[17,3]]
   }
  },
  "explosions": {
@@ -24877,7 +25055,8 @@
      "end"
     ]
    },
-   "firstFrame": 258
+   "firstFrame": 258,
+   "sounds": [[1,2]]
   },
   "explode-left-ranged": {
    "effectFile": "assets/original/battle/effects/explode-left-ranged.png",
@@ -24959,7 +25138,8 @@
      "end"
     ]
    },
-   "firstFrame": 258
+   "firstFrame": 258,
+   "sounds": [[1,2]]
   },
   "explode-right": {
    "effectFile": "assets/original/battle/effects/explode-right.png",
@@ -25041,7 +25221,8 @@
      "end"
     ]
    },
-   "firstFrame": 377
+   "firstFrame": 377,
+   "sounds": [[1,2]]
   },
   "explode-right-ranged": {
    "effectFile": "assets/original/battle/effects/explode-right-ranged.png",
@@ -25123,7 +25304,8 @@
      "end"
     ]
    },
-   "firstFrame": 377
+   "firstFrame": 377,
+   "sounds": [[1,2]]
   }
  },
  "timing": {

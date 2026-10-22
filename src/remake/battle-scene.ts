@@ -17,7 +17,7 @@ type Side = "left" | "right";
 interface SpriteInfo { file: string; side: Side; screen: { x: number; y: number }; origin: { x: number; y: number }; w: number; h: number }
 // 关键帧：开始帧、帧数、cel（-1 = 没有）、cel 相对锚点的 x、y、镜头偏移 x、y
 type Keyframe = [number, number, number?, number?, number?, number?, number?];
-interface Anim { file: string; layout: "close" | "ranged"; anchor: { x: number; y: number }; camera: { x: number; y: number }; cels: [number, number, number, number][]; keyframes: Keyframe[] }
+interface Anim { file: string; layout: "close" | "ranged"; anchor: { x: number; y: number }; camera: { x: number; y: number }; cels: [number, number, number, number][]; keyframes: Keyframe[]; sounds: [number, number][] }
 
 const data = db as unknown as {
   units: Record<string, SpriteInfo>;
@@ -49,6 +49,11 @@ function animFor(unitId: number, weaponId: number): Anim | null {
   if (!byUnit) return null;
   const name = byUnit[unitId] ?? Object.values(byUnit)[0];
   return data.anims[name] ?? null;
+}
+
+// 原版这段攻击动画的音效：[第几帧, 音效号]（命中和落空一样，原版在动画之后不另放音效）
+export function attackSounds(unitId: number, weaponId: number): [number, number][] | null {
+  return animFor(unitId, weaponId)?.sounds ?? null;
 }
 
 // 远程武器（射程 > 1）打不到相邻格，所以战斗布局只看距离
@@ -132,12 +137,14 @@ export class BattleScene {
   private speed: () => number;
   private skipped: () => boolean;
   private onSkip: () => void;
+  private sound: (id: number) => void;
 
-  // skipped：玩家按了跳过（立即隐藏、动画不再播放）；onSkip：点击画面请求跳过
-  constructor(speed: () => number, skipped: () => boolean, onSkip: () => void) {
+  // skipped：玩家按了跳过（立即隐藏、动画不再播放）；onSkip：点击画面请求跳过；sound：放原版音效
+  constructor(speed: () => number, skipped: () => boolean, onSkip: () => void, sound: (id: number) => void) {
     this.speed = speed;
     this.skipped = skipped;
     this.onSkip = onSkip;
+    this.sound = sound;
   }
 
   // 攻方画在它原生的那一侧，守方画在另一侧
@@ -254,10 +261,13 @@ export class BattleScene {
     const camStart = this.layout === "close" ? CLOSE_CAMERA : a.side === "right" ? 256 : 0;
     const kfs = anim.keyframes;
     const lastCel = kfs.reduce((end, k) => ((k[2] ?? -1) >= 0 ? k[0] + k[1] : end), 0);
-    const end = Math.min(kfs.at(-1)![0] + kfs.at(-1)![1], lastCel + 14);
+    const lastSound = anim.sounds.at(-1)?.[0] ?? 0;
+    const end = Math.min(kfs.at(-1)![0] + kfs.at(-1)![1], Math.max(lastCel + 14, lastSound + 10));
     let frame = 0;
     await new Promise<void>((resolve) => {
       const step = () => {
+        // 音效和画面同一帧计数，跟着动画走
+        for (const [f, id] of anim.sounds) if (f === frame) this.sound(id);
         const k = [...kfs].reverse().find((f) => f[0] <= frame) ?? kfs[0];
         const [, , cel = -1, x = 0, y = 0, cx = 0, cy = 0] = k;
         const mx = a.flip ? -cx : cx;

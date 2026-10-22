@@ -24,6 +24,19 @@ export interface StatusData {
   count: number;
 }
 
+export interface GrowthStats { level: number; maxHp: number; maxSp: number; strength: number; defense: number; speed: number }
+export interface GrowthData {
+  unit: Unit;
+  portrait: string | null;
+  gained: number; // 这次得到的经验
+  before: GrowthStats;
+  after: GrowthStats;
+  // 经验条：之前 / 之后在各自等级里的进度（0–1），之后满级时 null
+  barBefore: number;
+  barAfter: number | null;
+  toNext: number | null;
+}
+
 export interface TerrainInfo {
   name: string;
   evade: number;
@@ -147,6 +160,66 @@ export class UI {
 
   hideStatus() {
     $("#status").hidden = true;
+  }
+
+  // 战斗后的成长卡片：没升级是一张小卡（经验条涨一截，自动消失）；升级是大卡，能力逐项跳出来，按确定继续
+  showGrowth(d: GrowthData, speed: number): { done: Promise<void>; close: () => void } {
+    const el = $("#growth");
+    const up = d.after.level > d.before.level;
+    const rows: [string, keyof GrowthStats][] = [["最大 HP", "maxHp"], ["最大 SP", "maxSp"], ["强度", "strength"], ["防卫", "defense"], ["速度", "speed"]];
+    const statRows = rows
+      .filter(([, k]) => k !== "maxSp" || d.after.maxSp > 0)
+      .map(([label, k], i) => {
+        const diff = d.after[k] - d.before[k];
+        return `<li style="--i:${i}" class="${diff ? "up" : ""}"><span>${label}</span><b>${d.before[k]}</b><i>→</i><b class="to" data-to="${d.after[k]}">${d.before[k]}</b><em>${diff ? `+${diff}` : ""}</em></li>`;
+      }).join("");
+    const face = d.portrait ? `<img src="${d.portrait}" alt="">` : `<span>${(d.unit.pilotName || d.unit.name).slice(0, 1)}</span>`;
+    el.className = up ? "big" : "small";
+    el.style.setProperty("--speed", String(speed));
+    el.innerHTML = `
+      <div class="gr-card">
+        ${up ? '<div class="gr-burst"></div><div class="gr-title">LEVEL UP!</div>' : ""}
+        <div class="gr-head">
+          <div class="gr-face">${face}</div>
+          <div class="gr-who">
+            <b>${d.unit.pilotName || d.unit.name}</b><small>${d.unit.name}</small>
+            <div class="gr-level">Lv <span>${d.before.level}</span>${up ? `<i>→</i><span class="new">${d.after.level}</span>` : ""}</div>
+          </div>
+          <div class="gr-exp">EXP <b>+${d.gained}</b></div>
+        </div>
+        <div class="gr-bar"><i style="width:${d.barBefore * 100}%"></i></div>
+        <div class="gr-next">${d.toNext === null ? "已达到最高等级" : `下一级还需 ${d.toNext}`}</div>
+        ${up ? `<ul class="gr-stats">${statRows}</ul><div class="gr-hint">按确定继续</div>` : ""}
+      </div>`;
+    el.hidden = false;
+    // 经验条：升级时先涨满，再从新等级的进度开始
+    const bar = el.querySelector(".gr-bar i") as HTMLElement;
+    const t = (s: number) => (s / speed) * 1000;
+    const timers: number[] = [];
+    const later = (ms: number, f: () => void) => timers.push(window.setTimeout(f, ms));
+    later(t(0.15), () => { bar.style.width = `${up ? 100 : (d.barAfter ?? 1) * 100}%`; });
+    if (up) later(t(0.75), () => { bar.style.transition = "none"; bar.style.width = "0%"; void bar.offsetWidth; bar.style.transition = ""; bar.style.width = `${(d.barAfter ?? 1) * 100}%`; });
+    // 能力数字逐项滚上去
+    el.querySelectorAll<HTMLElement>(".gr-stats .to").forEach((b, i) => {
+      const from = Number(b.textContent), to = Number(b.dataset.to);
+      if (from === to) return;
+      later(t(0.6 + i * 0.18), () => {
+        const t0 = performance.now(), dur = t(0.35);
+        const step = () => {
+          const k = Math.min(1, (performance.now() - t0) / dur);
+          b.textContent = String(Math.round(from + (to - from) * k));
+          if (k < 1) requestAnimationFrame(step);
+        };
+        step();
+      });
+    });
+    let close = () => {};
+    const done = new Promise<void>((resolve) => {
+      close = () => { timers.forEach(clearTimeout); el.hidden = true; el.innerHTML = ""; resolve(); };
+      el.onclick = () => close();
+      if (!up) later(t(1.3), close);
+    });
+    return { done, close };
   }
 
   // 菜单出现在屏幕坐标 (x, y) 旁边
