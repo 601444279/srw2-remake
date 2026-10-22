@@ -91,13 +91,16 @@ export class Music {
   }
 
   // 播放某首；正在放的就是这首时什么也不做
-  play(id: number) {
+  // fade：旧曲淡出秒数；once：只放一遍不循环（关卡标题那种短曲）
+  play(id: number, opts: { fade?: number; once?: boolean } = {}) {
     if (this.wanted === id) return;
     this.wanted = id;
+    this.wantedOnce = !!opts.once;
     this.stopJingle();
-    this.fadeOut();
+    this.fadeOut(opts.fade);
     if (this.ctx?.state === "running") void this.start(id);
   }
+  private wantedOnce = false;
 
   stop() {
     this.wanted = null;
@@ -159,7 +162,7 @@ export class Music {
     if (this.wanted !== id || this.current) return;
     const src = this.ctx.createBufferSource();
     src.buffer = buffer;
-    if (track.loop) {
+    if (track.loop && !this.wantedOnce) {
       src.loop = true;
       src.loopStart = track.loop.start;
       src.loopEnd = track.loop.end;

@@ -191,14 +191,15 @@ export class Game implements DrawState {
     const story = STAGE_STORY[this.stage.number];
     this.setMode("title");
     // 原版：关卡标题出现时换 18 号短曲，标题过后回到剧情曲（地图上的对话），我方回合开始再换回合曲
-    this.music.play(STAGE_CARD_BGM);
-    const card = this.ui.titleCard(story?.title ?? `第${this.stage.number}篇`, story?.subtitle ?? "", 2.7);
+    // 18 号是约 2.6 秒的短曲：只放一遍；标题照原版停约 2.3 秒（140 帧）就切走，换曲时快速收掉
+    this.music.play(STAGE_CARD_BGM, { once: true });
+    const card = this.ui.titleCard(story?.title ?? `第${this.stage.number}篇`, story?.subtitle ?? "", 2.3);
     this.titleSkip = card.skip;
     if (this.auto) card.skip();
     await card.done;
     this.titleSkip = null;
     this.setMode("busy");
-    this.music.play(STORY_BGM);
+    this.music.play(STORY_BGM, { fade: 0.15 });
     await this.ui.fade(false, 0.4 / this.speed());
     await pause(0.4);
     await this.playerPhaseStart();
