@@ -3,6 +3,7 @@ import type { Stage, Unit } from "./data.ts";
 import type { Point } from "./grid.ts";
 import { smoothCanvas } from "./upscale.ts";
 import { settings } from "./settings.ts";
+import { floatFont, tone, type Tone } from "./theme.ts";
 
 const TILE = 16;
 export const ZOOM_LEVELS = [2, 3, 4, 5, 6];
@@ -24,7 +25,7 @@ interface FloatText {
   x: number;
   y: number;
   text: string;
-  color: string;
+  tone: Tone;
   t: number;
 }
 
@@ -120,8 +121,8 @@ export class Renderer {
     this.sparkles.push({ x: p.x, y: p.y, t: 0, dur: seconds });
   }
 
-  float(p: Point, text: string, color = "#fff") {
-    this.floats.push({ x: p.x, y: p.y, text, color, t: 0 });
+  float(p: Point, text: string, color: Tone = "ink") {
+    this.floats.push({ x: p.x, y: p.y, text, tone: color, t: 0 });
   }
 
   hitUnit(u: Unit) {
@@ -249,7 +250,7 @@ export class Renderer {
     const map = this.stage.map;
     ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
     ctx.imageSmoothingEnabled = false;
-    ctx.fillStyle = "#0b0b10";
+    ctx.fillStyle = tone("bg");
     ctx.fillRect(0, 0, this.cssW, this.cssH);
     // 镜头位置按设备像素取整，避免图块之间出现缝隙和抖动
     let qx = 0, qy = 0;
@@ -333,7 +334,7 @@ export class Renderer {
       const fade = Math.min(1, k * 6, (1 - k) * 6);
       // 淡绿光环
       ctx.globalAlpha = 0.6 * fade;
-      ctx.strokeStyle = "#6dff8a";
+      ctx.strokeStyle = tone("hp");
       ctx.lineWidth = Math.max(2, s / 10);
       ctx.beginPath();
       ctx.ellipse(cx, cy, s * 0.5, s * 0.5, 0, 0, Math.PI * 2);
@@ -370,19 +371,24 @@ export class Renderer {
   // 伤害、回复数字：从格子中间往上飘，1 秒后消失
   private drawFloats(s: number, dt: number) {
     const ctx = this.ctx;
-    const size = Math.max(14, s * 0.42);
-    ctx.font = `800 ${size}px "PingFang SC", "Microsoft YaHei", sans-serif`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.lineWidth = Math.max(3, size / 5);
-    ctx.strokeStyle = "rgba(0,0,0,0.85)";
     for (const f of this.floats) {
       f.t += dt;
       const rise = Math.min(1, f.t * 3) * s * 0.5 + f.t * s * 0.15;
       ctx.globalAlpha = f.t < 0.8 ? 1 : Math.max(0, 1 - (f.t - 0.8) / 0.4);
-      const x = f.x * s + s / 2, y = f.y * s + s / 2 - rise;
-      ctx.strokeText(f.text, x, y);
-      ctx.fillStyle = f.color;
+      const x = Math.round(f.x * s + s / 2), y = Math.round(f.y * s + s / 2 - rise);
+      const { font, size } = floatFont(f.text, s);
+      ctx.font = font;
+      // 硬描边：往 8 个方向各偏 2 像素画黑字，再加右下投影，和界面上的 text-shadow 一致
+      const o = Math.max(2, Math.round(size / 12));
+      ctx.fillStyle = "rgba(0, 0, 0, 0.9)";
+      for (const [dx, dy] of [[-1, -1], [0, -1], [1, -1], [-1, 0], [1, 0], [-1, 1], [0, 1], [1, 1], [2, 2]]) ctx.fillText(f.text, x + dx * o, y + dy * o);
+      // 上白下色的竖向渐变，同界面上的大数字
+      const g = ctx.createLinearGradient(0, y - size / 2, 0, y + size / 2);
+      g.addColorStop(0.2, "#fff");
+      g.addColorStop(0.75, tone(f.tone));
+      ctx.fillStyle = g;
       ctx.fillText(f.text, x, y);
     }
     ctx.globalAlpha = 1;
@@ -419,7 +425,7 @@ export class Renderer {
     const ratio = Math.max(0, u.hp / u.maxHp);
     ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
     ctx.fillRect(x - 1, y - 1, w + 2, h + 2);
-    ctx.fillStyle = ratio > 0.5 ? "#4cd964" : ratio > 0.25 ? "#ffcc00" : "#ff3b30";
+    ctx.fillStyle = tone(ratio > 0.5 ? "hp" : ratio > 0.25 ? "warn" : "danger");
     ctx.fillRect(x, y, Math.round(w * ratio), h);
   }
 

@@ -135,13 +135,13 @@ export class Game implements DrawState {
     this.units.push(u);
     this.dangerCache = null;
     this.setCursor(u.x, u.y);
-    this.renderer.float(u, u.side === "enemy" ? "出现" : "加入", u.side === "enemy" ? "#ff8a8a" : "#8fd3ff");
+    this.renderer.float(u, u.side === "enemy" ? "出现" : "加入", u.side === "enemy" ? "enemy" : "player");
     await wait(0.35 / this.speed());
   }
 
   // 撤退 / 离场：淡出，不算击破，不给经验
   private async removeUnit(u: Unit) {
-    this.renderer.float(u, "撤退", "#c8c8d0");
+    this.renderer.float(u, "撤退", "dim");
     this.renderer.killUnit(u);
     u.hp = 0;
     this.dangerCache = null;
@@ -755,7 +755,7 @@ export class Game implements DrawState {
     this.syncTrait(unit);
     await this.renderer.loadUnit(unit);
     this.renderer.hitUnit(unit);
-    this.renderer.float(unit, "变形", "#8fd3ff");
+    this.renderer.float(unit, "变形", "player");
     this.dangerCache = null;
     this.refreshInfo();
     await wait(0.3 / this.speed());
@@ -811,7 +811,7 @@ export class Game implements DrawState {
         this.renderer.repairFx(t, 1.4 / this.speed());
         await wait(1.4 / this.speed());
         this.sfx.play(0x05);
-        this.renderer.float(t, `+${amount}`, "#6dff8a");
+        this.renderer.float(t, `+${amount}`, "hp");
         this.refreshInfo();
         await wait(1.0 / this.speed());
         this.finishAction(unit);
@@ -845,7 +845,7 @@ export class Game implements DrawState {
     const r = this.rules.useSpirit(unit, spiritId, this.units, target);
     this.ui.toast(r.text);
     for (const a of r.affected) {
-      this.renderer.float(a.unit, a.kind === "heal" ? `+${a.amount}` : `-${a.amount}`, a.kind === "heal" ? "#6dff8a" : "#ff6b6b");
+      this.renderer.float(a.unit, a.kind === "heal" ? `+${a.amount}` : `-${a.amount}`, a.kind === "heal" ? "hp" : "danger");
       if (a.kind === "damage") {
         const power = a.unit.hp === 0 ? 1 : Math.min(1, (a.amount / a.unit.maxHp) * 2);
         this.sfx.play(0x03);
@@ -911,7 +911,7 @@ export class Game implements DrawState {
       if (victim.hp > 0) continue;
       if (!full) this.sfx.explode();
       this.renderer.killUnit(victim);
-      this.renderer.float(victim, "击破", "#ffd257");
+      this.renderer.float(victim, "击破", "accent");
       const before = { stats: growthStats(killer), levelIndex: killer.levelIndex, exp: killer.exp, trait: killer.trait };
       // 击破连击：同一阶段里我方第 n 次击破，经验 +10% × (n − 1)，最多 +50%
       let combo: { count: number; bonus: number } | null = null;
@@ -919,7 +919,7 @@ export class Game implements DrawState {
         this.combo++;
         if (this.combo >= 2) {
           combo = { count: this.combo, bonus: Math.min(50, (this.combo - 1) * 10) };
-          this.renderer.float(killer, `${this.combo} 连击！`, "#ff9f43");
+          this.renderer.float(killer, `${this.combo} 连击！`, "combo");
         }
       }
       const r = this.rules.reward(killer, victim, this.money, combo?.bonus ?? 0);
@@ -970,10 +970,10 @@ export class Game implements DrawState {
         // 先顿帧，再扣血、飘数字、震屏
         await wait(this.renderer.impact(e.to, power, this.speed()));
         e.to.hp = e.hpAfter;
-        this.renderer.float(e.to, `-${e.damage}`, "#ff6b6b");
+        this.renderer.float(e.to, `-${e.damage}`, "danger");
       } else {
         if (seq) this.missSound(seq);
-        this.renderer.float(e.to, "MISS", "#c8c8d0");
+        this.renderer.float(e.to, "MISS", "dim");
       }
       this.ui.battleSay(e.to, reactionShout(e.to.pilotId, damageCase(e.hit, e.damage, e.hpAfter, e.to.maxHp)));
       await this.ui.battleStrike(e, 0.75 / this.speed());
@@ -1280,7 +1280,7 @@ export class Game implements DrawState {
       if (this.stage.map.terrain[u.y][u.x] !== REPAIR_TERRAIN) continue;
       const before = u.hp;
       u.hp = Math.min(u.maxHp, u.hp + Math.floor(u.maxHp * 0.3));
-      this.renderer.float(u, `+${u.hp - before}`, "#6dff8a");
+      this.renderer.float(u, `+${u.hp - before}`, "hp");
     }
   }
 
@@ -1293,7 +1293,7 @@ export class Game implements DrawState {
       if (t.hpPerTurn && u.hp < u.maxHp) {
         const before = u.hp;
         u.hp = Math.min(u.maxHp, u.hp + Math.max(1, Math.floor(u.maxHp * t.hpPerTurn)));
-        this.renderer.float(u, `+${u.hp - before}`, "#6dff8a");
+        this.renderer.float(u, `+${u.hp - before}`, "hp");
       }
     }
   }

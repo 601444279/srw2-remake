@@ -1,4 +1,5 @@
 import "./style.css";
+import "./theme.ts";
 import { loadStage } from "./data.ts";
 import { Renderer } from "./render.ts";
 import { Input } from "./input.ts";
