@@ -1,18 +1,19 @@
 // 游戏流程：我方回合（移动、攻击、精神、待机）、敌方回合、剧情。
 // 战斗、命中、伤害、经验等规则在 rules.ts 里调用原版规则代码；
 // 关卡事件（对话、援军、胜负、过关）和敌人 AI 由原版脚本驱动，见 events.ts。
-import { applyLevel, battleSpriteUrl, expToNext, formIndexOf, formsOf, mechName, pilotForForm, transformUnit, type Stage, type Unit, type Weapon } from "./data.ts";
+import { applyLevel, expToNext, formIndexOf, formsOf, mechName, pilotForForm, transformUnit, type Stage, type Unit, type Weapon } from "./data.ts";
 import { StageEvents } from "./events.ts";
 import { key, pathTo, rangeFrom, reachable, inBounds, MOVE_TYPE_ROW, type Point, type Reach } from "./grid.ts";
 import type { Action } from "./input.ts";
 import type { DrawState, Overlay, Renderer } from "./render.ts";
 import type { UI, MenuItem } from "./ui.ts";
-import { Rules, SPIRIT_FLAG, rngState, setRngState } from "./rules.ts";
+import { Rules, SPIRIT_FLAG, rngState, setRngState, type BattleEvent } from "./rules.ts";
 import { describeTime, listSaves, readSave, requestLoad, writeSave, SAVE_VERSION, type SaveData, type SlotId } from "./saves.ts";
 import { strikeSound, type Sfx } from "./sfx.ts";
 import { MUSIC, type Music } from "./music.ts";
 import { keyLabel, settings, TEXT_SPEEDS, type BindAction } from "./settings.ts";
 import { attackShout, damageCase, reactionShout } from "./shouts.ts";
+import { BattleScene, battleLayout, battleSpriteUrl } from "./battle-scene.ts";
 import { loadScene, personName, portraitUrl, STAGE_STORY, type SceneRef } from "./story.ts";
 
 type Mode = "browse" | "selected" | "moving" | "menu" | "target" | "allyTarget" | "busy" | "dialog" | "title" | "over" | "status";
@@ -742,6 +743,42 @@ export class Game implements DrawState {
     const after = new Map([[attacker, attacker.hp], [defender, defender.hp]]);
     for (const [u, hp] of before) u.hp = hp;
 
+    const full = settings.get().battleStyle === "full";
+    if (full) await this.battleFull(attacker, defender, events);
+    else await this.battleSimple(attacker, defender, events);
+    for (const [u, hp] of after) u.hp = hp;
+
+    // 击破、经验、升级
+    for (const [victim, killer] of [[defender, attacker], [attacker, defender]] as const) {
+      if (victim.hp > 0) continue;
+      if (!full) this.sfx.explode();
+      this.renderer.killUnit(victim);
+      this.renderer.float(victim, "击破", "#ffd257");
+      const r = this.rules.reward(killer, victim, this.money);
+      if (r.exp) {
+        await wait(0.35 / this.speed());
+        this.renderer.float(killer, `EXP +${r.exp}`, "#8fd3ff");
+        if (r.levels > 0 && r.newLevel !== undefined) {
+          applyLevel(killer, r.newLevel);
+          this.ui.toast(`${killer.name} 升到 Lv ${killer.level}！`);
+          // 原版升级时插播 0x0E 号小号角（系统消息里的 FD CE），放完接回原来的音乐
+          this.music.jingle(LEVEL_UP_JINGLE);
+          await wait(0.3 / this.speed());
+          this.renderer.float(killer, "LEVEL UP", "#ffd257");
+        }
+      }
+      await wait(0.5 / this.speed());
+    }
+    // 记下这场战斗，检查脚本的 battle 条件会用
+    this.events.battleRecord = { attacker: attacker.pilotId, defender: defender.pilotId, attackerDown: attacker.hp <= 0, defenderDown: defender.hp <= 0 };
+    // 一次性精神打完一场就清除
+    for (const u of [attacker, defender]) if (u.side === "player") u.spirit &= ~ONE_SHOT_SPIRITS;
+    this.dangerCache = null;
+    this.refreshInfo();
+  }
+
+  // 简略：地图上的小战斗面板
+  private async battleSimple(attacker: Unit, defender: Unit, events: BattleEvent[]) {
     this.ui.battleStart(attacker, this.renderer.iconUrl(attacker), defender, this.renderer.iconUrl(defender));
     await wait(0.25 / this.speed());
     let attacks = 0;
@@ -773,37 +810,43 @@ export class Game implements DrawState {
         await wait(0.6 / this.speed());
       }
     }
-    for (const [u, hp] of after) u.hp = hp;
     await wait(0.2 / this.speed());
     this.ui.battleEnd();
+  }
 
-    // 击破、经验、升级
-    for (const [victim, killer] of [[defender, attacker], [attacker, defender]] as const) {
-      if (victim.hp > 0) continue;
-      this.sfx.explode();
-      this.renderer.killUnit(victim);
-      this.renderer.float(victim, "击破", "#ffd257");
-      const r = this.rules.reward(killer, victim, this.money);
-      if (r.exp) {
-        await wait(0.35 / this.speed());
-        this.renderer.float(killer, `EXP +${r.exp}`, "#8fd3ff");
-        if (r.levels > 0 && r.newLevel !== undefined) {
-          applyLevel(killer, r.newLevel);
-          this.ui.toast(`${killer.name} 升到 Lv ${killer.level}！`);
-          // 原版升级时插播 0x0E 号小号角（系统消息里的 FD CE），放完接回原来的音乐
-          this.music.jingle(LEVEL_UP_JINGLE);
-          await wait(0.3 / this.speed());
-          this.renderer.float(killer, "LEVEL UP", "#ffd257");
-        }
+  // 完整：原版战斗画面（battle-scene.ts）。台词规则和简略一样
+  private async battleFull(attacker: Unit, defender: Unit, events: BattleEvent[]) {
+    const scene = new BattleScene(() => this.speed());
+    await scene.open(attacker, defender, battleLayout(attacker, defender));
+    await wait(0.25 / this.speed());
+    let attacks = 0;
+    for (const [i, e] of events.entries()) {
+      const kind = e.from === attacker ? (attacks++ ? "extra" : "attack") : "counter";
+      scene.weapon(e.from, e.weapon.name);
+      scene.say(e.from, attackShout(e.from.pilotId, kind, e.weapon.id) ?? `${e.weapon.name}！`);
+      await wait(0.55 / this.speed());
+      const sound = strikeSound(e.weapon.name);
+      this.sfx.attack(sound);
+      await scene.attack(e.from, e.weapon.id);
+      if (e.hit) {
+        this.sfx.hit(sound);
+        scene.hit(e.to, e.damage, e.hpAfter, e.hpAfter === 0 ? 1 : Math.min(1, (e.damage / e.to.maxHp) * 2));
+      } else {
+        scene.miss(e.to);
       }
-      await wait(0.5 / this.speed());
+      await wait(0.3 / this.speed());
+      scene.say(e.to, reactionShout(e.to.pilotId, damageCase(e.hit, e.damage, e.hpAfter, e.to.maxHp)));
+      if (e.hpAfter === 0) {
+        this.sfx.explode();
+        await scene.explode(e.to);
+      }
+      await wait(0.8 / this.speed());
+      if (i === 0 && e.hpAfter > 0 && events[1]?.from !== defender) {
+        scene.say(defender, reactionShout(defender.pilotId, "cannotCounter"));
+        await wait(0.7 / this.speed());
+      }
     }
-    // 记下这场战斗，检查脚本的 battle 条件会用
-    this.events.battleRecord = { attacker: attacker.pilotId, defender: defender.pilotId, attackerDown: attacker.hp <= 0, defenderDown: defender.hp <= 0 };
-    // 一次性精神打完一场就清除
-    for (const u of [attacker, defender]) if (u.side === "player") u.spirit &= ~ONE_SHOT_SPIRITS;
-    this.dangerCache = null;
-    this.refreshInfo();
+    await scene.close();
   }
 
   // ---------- 回合 ----------

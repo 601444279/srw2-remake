@@ -1,6 +1,6 @@
 // 设置窗口：鼠标开关、按键绑定。可以用鼠标点，也可以全程用键盘：
 //   ↑↓←→ 移动焦点，Enter / 空格 开始改键或切换开关，改键时按下新键完成，Esc 取消，Delete 清空这个位置。
-import { BIND_ACTIONS, DEFAULT_KEYS, MUSIC_STYLES, TEXT_SPEEDS, VOLUMES, bindKey, keyName, settings, volumeLabel, type BindAction, ART_STYLES } from "./settings.ts";
+import { BIND_ACTIONS, DEFAULT_KEYS, MUSIC_STYLES, TEXT_SPEEDS, VOLUMES, bindKey, keyName, settings, volumeLabel, type BindAction, ART_STYLES, BATTLE_STYLES } from "./settings.ts";
 
 export class SettingsPanel {
   private dialog = document.getElementById("settings") as HTMLDialogElement;
@@ -50,6 +50,9 @@ export class SettingsPanel {
         <div class="set-row toggle"><span>画面风格<small>平滑放大：用像素画放大算法让斜线和边缘更圆滑</small></span>
           <button class="cycle" data-nav data-cycle="artStyle">${ART_STYLES.find((a) => a.id === s.artStyle)?.label}</button>
         </div>
+        <div class="set-row toggle"><span>战斗演出<small>完整：原版战斗画面和武器特效；简略：在地图上快速结算</small></span>
+          <button class="cycle" data-nav data-cycle="battleStyle">${BATTLE_STYLES.find((b) => b.id === s.battleStyle)?.label}</button>
+        </div>
         <div class="set-group">剧情</div>
         <div class="set-row toggle"><span>文字速度<small>对话逐字显示的速度</small></span>
           <button class="cycle" data-nav data-cycle="textSpeed">${TEXT_SPEEDS.find((t) => t.id === s.textSpeed)?.label}</button>
@@ -87,6 +90,12 @@ export class SettingsPanel {
       settings.update({ artStyle: ART_STYLES[(i + 1) % ART_STYLES.length].id });
       this.render();
       this.focus("[data-cycle=artStyle]");
+    });
+    this.dialog.querySelector("[data-cycle=battleStyle]")!.addEventListener("click", () => {
+      const i = BATTLE_STYLES.findIndex((b) => b.id === settings.get().battleStyle);
+      settings.update({ battleStyle: BATTLE_STYLES[(i + 1) % BATTLE_STYLES.length].id });
+      this.render();
+      this.focus("[data-cycle=battleStyle]");
     });
     this.dialog.querySelector("[data-cycle=textSpeed]")!.addEventListener("click", () => {
       const i = TEXT_SPEEDS.findIndex((t) => t.id === settings.get().textSpeed);

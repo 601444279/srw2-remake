@@ -237,3 +237,48 @@ body.story #info, body.story #forecast { display: none !important; }
   #status .st-sprite { width: 100%; }
   #status .st-spirits { grid-template-columns: 1fr; }
 }
+
+/* 完整战斗画面 */
+#battle-scene { position: fixed; inset: 0; z-index: 15; display: grid; place-items: center; background: rgba(4, 5, 10, 0.92); animation: bs-in .2s ease-out; }
+#battle-scene.out { animation: bs-out .2s ease-in forwards; }
+@keyframes bs-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes bs-out { to { opacity: 0; } }
+#battle-scene .bs-frame { width: min(96vw, 1024px, calc((100vh - 220px) * 256 / 116)); display: flex; flex-direction: column; gap: 10px; }
+#battle-scene .bs-stage { position: relative; width: 100%; aspect-ratio: 256 / 116; border-radius: 12px; overflow: hidden; border: 1px solid var(--panel-border);
+  background: radial-gradient(ellipse at 50% 120%, rgba(90, 110, 170, 0.22), transparent 60%), #000; }
+#battle-scene canvas { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; }
+#battle-scene .bs-pops { position: absolute; inset: 0; pointer-events: none; }
+#battle-scene .bs-pop { position: absolute; transform: translate(-50%, -50%); font: 800 clamp(18px, 3.2vw, 34px) / 1 var(--font); text-shadow: 0 2px 0 #000, 0 0 12px rgba(0,0,0,.8); animation: bs-pop 1.1s ease-out forwards; }
+#battle-scene .bs-pop.hit { color: #ff6b6b; }
+#battle-scene .bs-pop.miss { color: #c8c8d0; font-style: italic; }
+@keyframes bs-pop { 0% { opacity: 0; transform: translate(-50%, -20%) scale(.6); } 15% { opacity: 1; transform: translate(-50%, -50%) scale(1.15); } 30% { transform: translate(-50%, -50%) scale(1); } 80% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%, -110%); } }
+#battle-scene .bs-hud { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+#battle-scene .bs-card { padding: 10px 14px; border-radius: 10px; background: var(--panel); border: 1px solid var(--panel-border); display: flex; flex-direction: column; gap: 6px; }
+#battle-scene .bs-card.right { text-align: right; }
+#battle-scene .bs-name { display: flex; align-items: baseline; gap: 8px; }
+#battle-scene .bs-card.right .bs-name { flex-direction: row-reverse; }
+#battle-scene .bs-name b { font-size: 16px; }
+#battle-scene .bs-card.player .bs-name b { color: var(--player); }
+#battle-scene .bs-card.enemy .bs-name b { color: var(--enemy); }
+#battle-scene .bs-name small { color: var(--muted); }
+#battle-scene .bs-hp { display: flex; align-items: center; gap: 8px; font: 13px ui-monospace, monospace; }
+#battle-scene .bs-card.right .bs-hp { flex-direction: row-reverse; }
+#battle-scene .bs-hp .bar { flex: 1; height: 8px; background: rgba(255,255,255,0.12); border-radius: 4px; overflow: hidden; }
+#battle-scene .bs-hp .bar i { display: block; height: 100%; background: #4cd964; transition: width .5s ease-out; }
+#battle-scene .bs-card.right .bs-hp .bar i { margin-left: auto; }
+#battle-scene .bs-weapon { min-height: 1.4em; color: var(--accent); font-size: 13px; }
+#battle-scene .bs-msg { display: flex; gap: 12px; align-items: center; min-height: 76px; padding: 10px 14px; border-radius: 10px; background: var(--panel); border: 1px solid var(--panel-border); }
+#battle-scene .bs-face { flex: none; width: 56px; height: 56px; border-radius: 8px; overflow: hidden; background: rgba(255,255,255,0.06); display: grid; place-items: center; color: var(--muted); font-size: 22px; }
+#battle-scene .bs-face:empty { visibility: hidden; }
+#battle-scene .bs-face img { width: 100%; height: 100%; image-rendering: pixelated; }
+#battle-scene .bs-text { font-size: 16px; }
+#battle-scene .bs-text b { margin-right: 10px; }
+#battle-scene .bs-text b.player { color: var(--player); }
+#battle-scene .bs-text b.enemy { color: var(--enemy); }
+#battle-scene .bs-text.show { animation: bs-text .18s ease-out; }
+@keyframes bs-text { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+@media (max-width: 600px) {
+  #battle-scene .bs-frame { width: calc(100vw - 16px); }
+  #battle-scene .bs-name b { font-size: 14px; }
+  #battle-scene .bs-text { font-size: 14px; }
+}

@@ -10,6 +10,7 @@
 | `assets/original/battle/effects/NAME.png` | 一段动画的特效层：去重后的图块（cel）拼成的图，131 张（127 个武器动画 + 4 个爆炸；left-1197b-u058 没有特效画面） |
 | `data/battle-sprites.json` | 机体编号 → 图片、原版位置、来源（资源偏移、CHR bank、色板、图块排列、叠色精灵） |
 | `data/battle-effects.json` | 武器编号 → 两个方向的动画脚本和录到的动画；动画的关键帧（时长、cel、位置、镜头、色板）；爆炸；流程时间 |
+| `data/battle-scene.json` | 游戏运行时用的精简版（`node tools/slim-battle-data.js` 从上面两份生成，提取后要重跑） |
 | `extracted/battle/`（不进仓库） | 机体总览 `units-overview.png`、每段动画的整屏关键帧 `stage/NAME.png`（每行 4 帧，256×116，约 20MB）、核对截图 `natural-*.png` 和 `verify.json` |
 
 做法：不自己重写原版的拼图和动画引擎，而是让原版代码在模拟器里画，再按 PPU 状态把需要的层单独渲染出来。机体：t4 存档开战前把 RAM 里的机体编号换成要导出的机体；特效：攻击动画开始前把武器编号换掉。渲染器（`tools/lib/battle-capture.js`）按扫描线记录 MMC3 的 CHR bank 切换、按对象记录 OAM 归属，整屏渲染结果和模拟器画面逐像素一致（见「核对」）。

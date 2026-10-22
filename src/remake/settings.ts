@@ -49,10 +49,18 @@ export const ART_STYLES: { id: ArtStyle; label: string }[] = [
   { id: "smooth", label: "平滑放大" },
 ];
 
+// 战斗演出：完整 = 原版战斗画面（机体大图 + 武器特效）；简略 = 地图上的小战斗面板
+export type BattleStyle = "full" | "simple";
+export const BATTLE_STYLES: { id: BattleStyle; label: string }[] = [
+  { id: "full", label: "完整" },
+  { id: "simple", label: "简略" },
+];
+
 export interface Settings {
   keys: Record<BindAction, Binding>;
   mouse: boolean;
   artStyle: ArtStyle;
+  battleStyle: BattleStyle;
   textSpeed: TextSpeed;
   musicStyle: MusicStyle;
   musicVolume: number;
@@ -81,7 +89,7 @@ const listeners = new Set<() => void>();
 
 function load(): Settings {
   const fallback: Settings = {
-    keys: structuredClone(DEFAULT_KEYS), mouse: true, artStyle: "original", textSpeed: "normal",
+    keys: structuredClone(DEFAULT_KEYS), mouse: true, artStyle: "original", battleStyle: "full", textSpeed: "normal",
     musicStyle: "enhanced", musicVolume: 0.6, sfxVolume: 0.8,
   };
   try {
