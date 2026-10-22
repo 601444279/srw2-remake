@@ -85,6 +85,11 @@ export class Music {
     for (const id of ids) { const t = tracks.get(id); if (t) this.load(t.file).catch(() => {}); }
   }
 
+  // 现在要放的曲子（战斗音乐放完后接回它）
+  get playing() {
+    return this.wanted;
+  }
+
   // 播放某首；正在放的就是这首时什么也不做
   play(id: number) {
     if (this.wanted === id) return;

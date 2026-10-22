@@ -144,7 +144,9 @@ export class Game implements DrawState {
     this.ui.setTurn(this.turn, "player");
     this.refreshInfo();
     const bgm = MUSIC.stage(this.stage.number);
-    this.music.preload([bgm.player, bgm.enemy, STORY_BGM]);
+    // 战斗音乐也先下载，进战斗时不卡
+    const battleSongs = this.players().map((u) => MUSIC.battle(u.pilotId, -1));
+    this.music.preload([bgm.player, bgm.enemy, STORY_BGM, ...new Set(battleSongs)]);
     // 进关：开场脚本跑到第一个暂停点（出击前的剧情），然后是关卡标题，之后进入第 1 回合
     this.music.play(STORY_BGM);
     this.setMode("busy");
@@ -839,6 +841,11 @@ export class Game implements DrawState {
 
   // 完整：原版战斗画面（battle-scene.ts）。台词规则和简略一样
   private async battleFull(attacker: Unit, defender: Unit, events: BattleEvent[]) {
+    // 原版进战斗画面换战斗音乐（按我方驾驶员，对贝克放专属曲），战斗结束接回地图上的曲子
+    const back = this.music.playing;
+    const ours = [attacker, defender].find((u) => u.side === "player") ?? attacker;
+    const theirs = ours === attacker ? defender : attacker;
+    this.music.play(MUSIC.battle(ours.pilotId, theirs.pilotId));
     const scene = new BattleScene(() => this.speed(), () => this.skipBattle, () => this.skipCurrentBattle());
     await scene.open(attacker, defender, battleLayout(attacker, defender));
     await wait(0.25 / this.speed());
@@ -870,6 +877,8 @@ export class Game implements DrawState {
       }
     }
     await scene.close();
+    if (back === null) this.music.stop();
+    else this.music.play(back);
   }
 
   // 战斗中按确定 / 取消（或点一下）：跳过演出，直接出结果
