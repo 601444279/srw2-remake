@@ -919,6 +919,18 @@ export class Game implements DrawState {
 
   private async castSpirit(unit: Unit, spiritId: number, target?: Unit) {
     const r = this.rules.useSpirit(unit, spiritId, this.units, target);
+    // 原版：被施加的单位格子上刷过蓝色横纹 3 遍，每遍一声 1D（约 16 帧一遍），刷完才出消息。
+    // 回复类刷在被回复的单位上，其他（加速、必杀、怒……）刷在使用者身上
+    this.setMode("busy");
+    const healed = r.affected.filter((a) => a.kind === "heal").map((a) => a.unit);
+    const marks = healed.length ? healed : [unit];
+    this.setCursor(marks[0].x, marks[0].y);
+    const pass = 16 / 60 / this.speed();
+    for (let i = 0; i < 3; i++) {
+      this.sfx.play(0x1d);
+      for (const u of marks) this.renderer.spiritWipe(u, pass);
+      await wait(pass);
+    }
     this.ui.toast(r.text);
     for (const a of r.affected) {
       this.renderer.float(a.unit, a.kind === "heal" ? `+${a.amount}` : `-${a.amount}`, a.kind === "heal" ? "hp" : "danger");

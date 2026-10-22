@@ -92,6 +92,7 @@ export class Renderer {
   private floats: FloatText[] = [];
   // 修理的闪光：原版是 4 颗星绕着被修理的单位转（地图上，不进战斗画面）
   private sparkles: { x: number; y: number; t: number; dur: number }[] = [];
+  private wipes: { x: number; y: number; t: number; dur: number }[] = [];
   // 飞行时留下的尾烟（格子坐标）
   private smoke: { x: number; y: number; t: number }[] = [];
   // 击破爆炸：每个爆炸一组粒子（火球、火花、黑烟），格子坐标，t 秒
@@ -139,6 +140,11 @@ export class Renderer {
   }
 
   // ---------- 特效 ----------
+  // 精神：原版在单位格子上刷过一道蓝色横纹（前沿一条白亮竖线），盖满停一下再恢复。一次刷一遍，seconds 秒
+  spiritWipe(p: Point, seconds: number) {
+    this.wipes.push({ x: p.x, y: p.y, t: 0, dur: seconds });
+  }
+
   // 修理：被修理的单位周围星星绕圈 + 一圈淡绿光环，持续 seconds 秒
   repairFx(p: Point, seconds: number) {
     this.sparkles.push({ x: p.x, y: p.y, t: 0, dur: seconds });
@@ -426,6 +432,7 @@ export class Renderer {
     this.drawLock(state.overlay.lock, s);
     this.drawCursor(this.cursorDraw.x * s, this.cursorDraw.y * s, s);
     this.drawSparkles(s, dt);
+    this.drawWipes(s, dt);
     this.drawFloats(s, dt);
   }
 
@@ -488,6 +495,29 @@ export class Renderer {
     }
     ctx.globalAlpha = 1;
     this.sparkles = this.sparkles.filter((sp) => sp.t < sp.dur);
+  }
+
+  // 一遍：前 35% 横纹从左往右盖上来（前沿白线），中间 30% 盖满，最后 35% 露出单位
+  private drawWipes(s: number, dt: number) {
+    const ctx = this.ctx;
+    for (const w of this.wipes) {
+      w.t += dt;
+      const k = w.t / w.dur;
+      if (k >= 0.65) continue;
+      const x0 = w.x * s, y0 = w.y * s;
+      const cover = Math.min(1, k / 0.35);
+      const width = s * cover;
+      ctx.fillStyle = "#1838d8";
+      ctx.fillRect(x0, y0, width, s);
+      ctx.fillStyle = "#5c8cff";
+      const line = Math.max(1, Math.round(s / 16));
+      for (let y = 0; y < s; y += line * 3) ctx.fillRect(x0, y0 + y, width, line);
+      if (cover < 1) {
+        ctx.fillStyle = "#fff";
+        ctx.fillRect(x0 + width - line * 2, y0, line * 2, s);
+      }
+    }
+    this.wipes = this.wipes.filter((w) => w.t < w.dur);
   }
 
   // 四角星：白芯、蓝边
