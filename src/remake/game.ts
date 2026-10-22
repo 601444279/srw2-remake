@@ -1242,16 +1242,32 @@ export class Game implements DrawState {
     this.ui.openMenu(items, pos.x + s * 1.2, pos.y, onCancel);
   }
 
-  private openMapMenu() {
+  // 右上角按钮：再点一次收起。地图上开着别的菜单、或刚选中还没移动的单位时，先取消掉再打开；
+  // 单位已经移动过、敌方回合、战斗、对话中不能打开（取消会把单位退回原位，不能替玩家做）
+  hudMenu(x: number, y: number) {
+    if (this.mode === "menu" && this.ui.hudMenuOpen) { this.ui.closeMenu(); return; }
+    for (let i = 0; i < 3 && this.mode === "menu" && !this.moved; i++) this.ui.closeMenu();
+    if (this.mode === "selected") this.deselect();
+    if (this.mode !== "browse") { this.ui.toast("现在不能打开菜单"); return; }
+    this.sfx.ui("ok");
+    this.openMapMenu({ x, y });
+  }
+
+  // at：屏幕坐标时是右上角按钮的下拉菜单，否则弹在地图光标旁边
+  private openMapMenu(at?: Point) {
     const back = () => this.setMode("browse");
-    this.openMenu([
+    const items: MenuItem[] = [
       { label: "结束回合", run: () => this.endTurn() },
       { label: this.dangerOn ? "隐藏敌方范围" : "显示敌方范围", run: () => { this.toggleDanger(); back(); } },
-      { label: "存档", run: () => void this.openSaveMenu() },
-      { label: "读档", run: () => void this.openLoadMenu(() => this.openMapMenu()) },
+      { label: "存档", run: () => void this.openSaveMenu(() => this.openMapMenu(at)) },
+      { label: "读档", run: () => void this.openLoadMenu(() => this.openMapMenu(at)) },
       { label: "设置", detail: "按键 · 声音", run: () => { back(); this.onOpenSettings(); } },
       { label: "返回", run: back },
-    ], this.cursor, back);
+    ];
+    if (!at) return this.openMenu(items, this.cursor, back);
+    this.reachPreview = false;
+    this.setMode("menu");
+    this.ui.openMenu(items, at.x, at.y, back, true);
   }
 
   private toggleDanger() {
