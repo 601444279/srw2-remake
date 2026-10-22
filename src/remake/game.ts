@@ -92,6 +92,8 @@ export class Game implements DrawState {
   private phase: "player" | "enemy" = "player";
   // 这一阶段我方的击破数（击破连击）
   private combo = 0;
+  // 播过的剧情段数（判断刚才有没有说话）
+  private scenesPlayed = 0;
   // 战斗演出中（可以按键跳过）
   private inBattle = false;
   private skipBattle = false;
@@ -171,22 +173,36 @@ export class Game implements DrawState {
     const battleSongs = this.players().map((u) => MUSIC.battle(u.pilotId, -1));
     this.music.preload([bgm.player, bgm.enemy, STORY_BGM, STAGE_CARD_BGM, ...new Set(battleSongs)]);
     // 进关：开场脚本跑到第一个暂停点（出击前的剧情），然后是关卡标题，之后进入第 1 回合
-    this.music.play(STORY_BGM);
+    // 节奏照原版（模拟器里量的）：黑屏后世界地图淡入，地图单独停一会儿才开始对话；
+    // 说完先黑下来，关卡标题在黑底上；再黑一下，关卡地图淡入，停一下才开始地图上的对话
+    const pause = (s: number) => wait(s / this.speed());
     this.setMode("busy");
+    await this.ui.fade(true, 0);
+    this.music.play(STORY_BGM);
     // 原版出击前的对话在世界地图上（红点是这一关的位置），说完才进关卡地图
     this.ui.showWorldMap(WORLD_MARKER[this.stage.number] ?? null);
+    await pause(0.4);
+    await this.ui.fade(false, 0.6 / this.speed());
+    await pause(1.3);
     await this.events.runStart();
+    await pause(0.5);
+    await this.ui.fade(true, 0.6 / this.speed());
     this.ui.hideWorldMap();
+    await pause(0.4);
     const story = STAGE_STORY[this.stage.number];
     this.setMode("title");
     // 原版：关卡标题出现时换 18 号短曲，标题过后回到剧情曲（地图上的对话），我方回合开始再换回合曲
     this.music.play(STAGE_CARD_BGM);
-    const card = this.ui.titleCard(story?.title ?? `第${this.stage.number}篇`, story?.subtitle ?? "", 2.4);
+    const card = this.ui.titleCard(story?.title ?? `第${this.stage.number}篇`, story?.subtitle ?? "", 2.7);
     this.titleSkip = card.skip;
     if (this.auto) card.skip();
     await card.done;
     this.titleSkip = null;
+    this.setMode("busy");
+    await pause(0.4);
     this.music.play(STORY_BGM);
+    await this.ui.fade(false, 0.6 / this.speed());
+    await pause(0.6);
     await this.playerPhaseStart();
   }
 
@@ -195,9 +211,12 @@ export class Game implements DrawState {
     this.setMode("busy");
     this.phase = "player";
     this.combo = 0;
+    const scenes = this.scenesPlayed;
     await this.events.runStart();
     await this.events.runCheck();
     if (this.mode === "over") return;
+    // 刚说完话：地图空着停一下再进回合（原版的节奏）
+    if (this.scenesPlayed !== scenes) await wait(0.6 / this.speed());
     this.music.play(this.songs.player);
     await this.ui.banner(`第 ${this.turn} 回合`, "我方回合", "player");
     this.setMode("browse");
@@ -305,6 +324,7 @@ export class Game implements DrawState {
   // ---------- 剧情 ----------
   private async playScene(ref: SceneRef) {
     const lines = loadScene(ref);
+    this.scenesPlayed++;
     if (this.auto) { this.auto.scenes++; this.auto.progress(); return; }
     if (ref.focusUnit && ref.who !== undefined) {
       const u = this.units.find((x) => x.pilotId === ref.who && x.hp > 0);
@@ -1178,12 +1198,18 @@ export class Game implements DrawState {
     this.inspected = null;
     this.setMode("busy");
     for (const u of this.players()) u.spirit &= ~(SPIRIT_FLAG.ACCEL | SPIRIT_FLAG.GALE);
+    // 回合交接照原版：先黑下来再亮起
+    await this.ui.fade(true, 0.45 / this.speed());
     this.ui.setTurn(this.turn, "enemy");
     this.phase = "enemy";
     this.music.play(this.songs.enemy);
+    await wait(0.25 / this.speed());
+    await this.ui.fade(false, 0.45 / this.speed());
     await this.ui.banner("敌方回合", "", "enemy");
     await this.enemyPhase();
     if (this.mode === "over") return;
+    await wait(0.4 / this.speed());
+    await this.ui.fade(true, 0.45 / this.speed());
 
     this.turn++;
     this.rules.jamming = false;
@@ -1193,6 +1219,8 @@ export class Game implements DrawState {
     this.ui.setTurn(this.turn, "player");
     const first = this.players()[0];
     if (first) this.setCursor(first.x, first.y);
+    await wait(0.25 / this.speed());
+    await this.ui.fade(false, 0.45 / this.speed());
     await this.playerPhaseStart();
   }
 
@@ -1216,8 +1244,14 @@ export class Game implements DrawState {
     }
   }
 
-  private moveUnit(unit: Unit, to: Point) {
+  private async moveUnit(unit: Unit, to: Point) {
     const path = pathTo(this.stage.map, this.unitReach(unit), to);
+    // 敌方回合：原版先把这个单位的移动范围亮出来停一下，再移动
+    if (this.phase === "enemy" && path.length >= 2 && !this.auto) {
+      this.inspected = unit;
+      await wait(0.55 / this.speed());
+      this.inspected = null;
+    }
     return new Promise<void>((resolve) => {
       if (path.length < 2) { unit.x = to.x; unit.y = to.y; this.dangerCache = null; resolve(); return; }
       this.anim = { unit, path, t: 0, v: 0, done: resolve };

@@ -330,6 +330,14 @@ export class UI {
     return { done, advance, close };
   }
 
+  // 整屏淡入淡出（场景之间先黑下来再亮起，原版的节奏）
+  fade(toBlack: boolean, seconds: number): Promise<void> {
+    const el = $("#fade");
+    el.style.transitionDuration = `${seconds}s`;
+    el.classList.toggle("on", toBlack);
+    return new Promise((r) => setTimeout(r, seconds * 1000));
+  }
+
   // 世界地图（出击前的剧情背景）：原版地图 + 这一关的位置（闪烁的红点）
   showWorldMap(marker: { x: number; y: number } | null) {
     const el = $("#worldmap");

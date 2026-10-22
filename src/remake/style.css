@@ -169,7 +169,7 @@ body.story #info, body.story #forecast { display: none !important; }
 @media (max-width: 560px) { .dl-face { width: 64px; height: 64px; } .dl-text { font-size: 15px; } }
 
 /* 关卡标题卡 */
-#title-card { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; background: rgba(0,0,0,0.78); pointer-events: none; }
+#title-card { z-index: 15; position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; background: rgba(0,0,0,0.78); pointer-events: none; }
 #title-card .tc-title { font-size: 44px; font-weight: 800; letter-spacing: 12px; color: #fff; }
 #title-card .tc-sub { font-size: 26px; letter-spacing: 6px; color: var(--accent); }
 #title-card.show { animation: tc 2.4s ease-in-out both; }
@@ -393,3 +393,7 @@ body.no-mouse #title { cursor: none; }
 #worldmap img { display: block; width: 100%; height: 100%; image-rendering: pixelated; }
 #worldmap .wm-mark { position: absolute; width: 3%; aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%; background: #e83a1a; box-shadow: 0 0 0 2px #fff, 0 0 14px 4px rgba(255, 80, 40, .8); animation: wm-blink 1s ease-in-out infinite; }
 @keyframes wm-blink { 50% { transform: translate(-50%, -50%) scale(.6); opacity: .5; } }
+
+/* 整屏淡入淡出：在地图、世界地图之上，在关卡标题和对话框之下 */
+#fade { position: fixed; inset: 0; z-index: 14; background: #000; opacity: 0; pointer-events: none; transition: opacity .5s ease; }
+#fade.on { opacity: 1; }
