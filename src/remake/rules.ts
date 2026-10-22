@@ -83,6 +83,9 @@ const strike = (r: { flags: number; hit: number; damage: number }): Strike => ({
   lethal: !!(r.flags & FLAG_LETHAL),
 });
 
+// 修理武器：第 0 字节高 4 位是 F
+export const isRepair = (w: Weapon) => w.rangeByte >= 0xf0;
+
 export class Rules {
   // 干扰：本回合敌方命中减半
   jamming = false;
@@ -161,9 +164,24 @@ export class Rules {
     return bonus;
   }
 
-  // 能攻击的目标：从 from 出发，用这把武器
+  // 能攻击的目标：从 from 出发，用这把武器。修理武器的目标是射程内没满血的友军
   targetsFor(attacker: Unit, weapon: Weapon, from: Point, moved: boolean, units: Unit[]) {
+    if (isRepair(weapon)) {
+      return units.filter((u) => u !== attacker && u.side === attacker.side && u.hp > 0 && u.hp < u.maxHp && this.canHit(weapon, from, u, moved));
+    }
     return units.filter((u) => u.side !== attacker.side && u.hp > 0 && this.canHit(weapon, from, u, moved) && this.forecast(attacker, weapon, u, from, moved).attack.valid);
+  }
+
+  // 修理（bank 4 $8904，原版实测：阿波罗A 最大 HP 280 给 HP 10 的太勒回复 140）：
+  // 回复量 = min(缺的 HP, 修理者最大 HP / 2)，不算命中、没有反击、不给经验，在地图上直接回复
+  repairAmount(repairer: Unit, target: Unit) {
+    return Math.min(target.maxHp - target.hp, repairer.maxHp >> 1);
+  }
+
+  repair(repairer: Unit, target: Unit) {
+    const amount = this.repairAmount(repairer, target);
+    target.hp += amount;
+    return amount;
   }
 
   // 执行一场战斗，返回出手顺序（给演出用）。会直接修改双方 HP

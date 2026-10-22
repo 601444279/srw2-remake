@@ -7,7 +7,7 @@ import { key, pathTo, rangeFrom, reachable, inBounds, MOVE_TYPE_ROW, type Point,
 import type { Action } from "./input.ts";
 import type { DrawState, Overlay, Renderer } from "./render.ts";
 import type { GrowthStats, UI, MenuItem } from "./ui.ts";
-import { Rules, SPIRIT_FLAG, rngState, setRngState, type BattleEvent } from "./rules.ts";
+import { Rules, SPIRIT_FLAG, isRepair, rngState, setRngState, type BattleEvent } from "./rules.ts";
 import { describeTime, listSaves, readSave, requestLoad, writeSave, SAVE_VERSION, type SaveData, type SlotId } from "./saves.ts";
 import { hitSoundFor, strikeSound, type Sfx } from "./sfx.ts";
 import { MUSIC, type Music } from "./music.ts";
@@ -756,6 +756,10 @@ export class Game implements DrawState {
   private chooseWeapon(unit: Unit, preset?: Unit) {
     const items: MenuItem[] = unit.weapons.map((w) => {
       const targets = this.rules.targetsFor(unit, w, unit, this.moved, preset ? [preset] : this.units);
+      if (isRepair(w)) {
+        const hint = `射程 ${w.range}　回复友军 HP（最多 ${unit.maxHp >> 1}）`;
+        return { label: w.name, detail: targets.length ? `${targets.length} 个目标` : "无人受伤", hint, disabled: !targets.length, run: () => this.chooseRepairTarget(unit, targets, () => this.chooseWeapon(unit, preset)) };
+      }
       const fire = (["air", "land", "sea"] as const).map((t) => (w.power[t] === null ? "—" : w.power[t]! + unit.strength)).join("/");
       const hint = `射程 ${w.range}　命中 ${w.hit}　火力 ${fire}`;
       const detail = targets.length ? `${targets.length} 个目标` : w.range > 1 && !w.usableAfterMove && this.moved ? "移动后不能用" : "打不到";
@@ -773,6 +777,21 @@ export class Game implements DrawState {
         if (this.mode !== "over") this.finishAction(unit);
       },
       cancel: () => { this.ui.hideForecast(); back(); },
+    });
+  }
+
+  // 修理装置：选一名射程内受伤的友军，在地图上直接回复，然后行动结束（原版不给经验）
+  private chooseRepairTarget(unit: Unit, targets: Unit[], back: () => void) {
+    this.startPick("allyTarget", targets, {
+      confirm: async (t) => {
+        this.setMode("busy");
+        const amount = this.rules.repair(unit, t);
+        this.renderer.float(t, `+${amount}`, "#6dff8a");
+        this.refreshInfo();
+        await wait(0.5 / this.speed());
+        this.finishAction(unit);
+      },
+      cancel: back,
     });
   }
 
