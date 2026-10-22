@@ -334,11 +334,25 @@ body.story #info, body.story #forecast { display: none !important; }
 #growth .gr-hint { position: relative; text-align: center; font-size: 12px; color: var(--muted); margin-top: 4px; animation: gr-blink 1.2s ease-in-out infinite; }
 @keyframes gr-blink { 50% { opacity: .4; } }
 #growth .gr-combo { display: block; margin-top: 2px; color: #ff9f43; font-weight: 700; font-size: 12px; text-align: right; }
-#growth .gr-trait { position: relative; display: flex; flex-direction: column; gap: 2px; padding: 8px 10px; border-radius: 8px; background: rgba(255,255,255,0.05); font-size: 12px; color: var(--muted); opacity: 0; transform: translateY(6px); transition: opacity .3s, transform .3s; }
-#growth .gr-trait.show { opacity: 1; transform: none; }
-#growth .gr-trait em { font-style: normal; color: var(--accent); font-weight: 700; }
-#growth .gr-trait.up { background: rgba(255, 210, 87, 0.12); border: 1px solid rgba(255, 210, 87, 0.45); }
-#growth .gr-trait.up b { color: var(--fg); font-size: 15px; }
+/* 特性强化画面 */
+#growth .tu-card { align-items: center; text-align: center; gap: 10px; padding: 22px 20px 16px; border-color: rgba(255, 210, 87, 0.6); }
+#growth .tu-title { position: relative; font: 900 26px/1 var(--font); letter-spacing: 6px; color: var(--accent); text-shadow: 0 0 16px rgba(255, 210, 87, .5); }
+#growth .tu-who { position: relative; display: flex; align-items: center; gap: 10px; color: var(--player); font-size: 15px; }
+#growth .tu-name { position: relative; height: 40px; width: 100%; }
+#growth .tu-name span { position: absolute; inset: 0; display: grid; place-items: center; font: 800 28px/1 var(--font); transition: opacity .3s, transform .4s cubic-bezier(.2, 1.6, .4, 1), filter .3s; }
+#growth .tu-name .old { color: var(--fg); }
+#growth .tu-name .new { color: var(--accent); opacity: 0; transform: scale(2.2); text-shadow: 0 0 20px rgba(255, 210, 87, .8); }
+#growth .tu-card.charge .tu-name .old { animation: tu-shake .12s linear infinite; filter: brightness(1.8) drop-shadow(0 0 8px #fff); }
+@keyframes tu-shake { 0%, 100% { transform: none; } 25% { transform: translate(-2px, 1px); } 75% { transform: translate(2px, -1px); } }
+#growth .tu-card.reveal .tu-name .old { opacity: 0; transform: scale(.6); }
+#growth .tu-card.reveal .tu-name .new { opacity: 1; transform: none; }
+#growth .tu-card::after { content: ""; position: absolute; inset: 0; background: #fff; opacity: 0; pointer-events: none; }
+#growth .tu-card.reveal::after { animation: bs-flash .5s ease-out; }
+#growth .tu-was, #growth .tu-now { position: relative; font-size: 13px; transition: opacity .4s, transform .4s; }
+#growth .tu-was { color: var(--muted); }
+#growth .tu-card.effect .tu-was { text-decoration: line-through; opacity: .5; }
+#growth .tu-now { color: #6dff8a; font-size: 15px; font-weight: 700; opacity: 0; transform: translateY(6px); }
+#growth .tu-card.effect .tu-now { opacity: 1; transform: none; }
 #status .st-next { margin-top: 2px; color: var(--muted); opacity: .8; }
 /* 慢镜头：镜头移到被击破的机体（--fx / --fy 是它在画面里的位置），放大，四周压暗 */
 #battle-scene canvas { transition: transform .45s cubic-bezier(.2, .8, .3, 1), filter .45s ease-out; transform-origin: 50% 50%; }

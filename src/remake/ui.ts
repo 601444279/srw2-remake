@@ -141,7 +141,7 @@ export class UI {
           <div class="st-pbody">
             <div class="st-pname">${unit.pilotName}<span class="tag">Lv ${unit.level}</span>${unit.side === "player" ? `<span class="muted">经验 ${unit.exp} · ${exp}</span>` : ""}</div>
             ${unit.maxSp ? `<div class="st-sp">SP <b>${unit.sp} / ${unit.maxSp}</b></div>` : ""}
-            ${unit.trait ? `<div class="st-trait"><em>${traitLabel(unit.trait)}</em>${unit.trait.text}${unit.trait.next ? `<div class="st-next">Lv ${unit.trait.next.level} 强化：${unit.trait.next.text}</div>` : ""}</div>` : ""}
+            ${unit.trait ? `<div class="st-trait"><em>${traitLabel(unit.trait)}</em>${unit.trait.text}${unit.trait.next ? `<div class="st-next">Lv ${unit.trait.next.level} 时会有变化……</div>` : ""}</div>` : ""}
           </div>
         </div>` : ""}
         ${spirits ? `<ul class="st-spirits">${spirits}</ul>` : ""}
@@ -193,7 +193,7 @@ export class UI {
         </div>
         <div class="gr-bar"><i style="width:${d.barBefore * 100}%"></i></div>
         <div class="gr-next">${d.toNext === null ? "已达到最高等级" : `下一级还需 ${d.toNext}`}</div>
-        ${up ? `<ul class="gr-stats">${statRows}</ul>${traitRow(d)}<div class="gr-hint">按确定加快</div>` : ""}
+        ${up ? `<ul class="gr-stats">${statRows}</ul><div class="gr-hint">按确定加快</div>` : ""}
       </div>`;
     el.hidden = false;
     const bar = el.querySelector(".gr-bar i") as HTMLElement;
@@ -262,14 +262,53 @@ export class UI {
         rush = false;
         await sleep(0.35);
       }
-      const trait = el.querySelector(".gr-trait") as HTMLElement | null;
-      if (trait && !closed) {
-        await sleep(0.2);
-        trait.classList.add("show");
-        if (trait.classList.contains("up")) sound("ding");
-      }
       finished = true;
       if (hint) hint.textContent = "按确定继续";
+    };
+    void run();
+    return { done, advance, close };
+  }
+
+  // 特性强化：升级卡之后单独一个画面。先只亮出旧特性，蓄力、闪光，换成新档位的名字，最后才揭晓效果
+  showTraitUp(d: { unit: Unit; portrait: string | null; before: Trait; after: Trait }, speed: number, sound: (kind: "tick" | "ding") => void = () => {}): { done: Promise<void>; advance: () => void; close: () => void } {
+    const el = $("#growth");
+    const face = d.portrait ? `<img src="${d.portrait}" alt="">` : `<span>${(d.unit.pilotName || d.unit.name).slice(0, 1)}</span>`;
+    el.className = "big trait";
+    el.style.setProperty("--speed", String(speed));
+    el.innerHTML = `
+      <div class="gr-card tu-card">
+        <div class="gr-burst"></div>
+        <div class="tu-title">特性强化</div>
+        <div class="tu-who"><div class="gr-face">${face}</div><b>${d.unit.pilotName || d.unit.name}</b></div>
+        <div class="tu-name"><span class="old">${traitLabel(d.before)}</span><span class="new">${traitLabel(d.after)}</span></div>
+        <div class="tu-was">${d.before.text}</div>
+        <div class="tu-now">${d.after.text}</div>
+        <div class="gr-hint">按确定继续</div>
+      </div>`;
+    el.hidden = false;
+    const card = el.querySelector(".tu-card") as HTMLElement;
+    const hint = el.querySelector(".gr-hint")!;
+    let rush = false, finished = false, closed = false;
+    const sleep = (s: number) => (rush || closed ? Promise.resolve() : new Promise<void>((r) => setTimeout(r, (s / speed) * 1000)));
+    let resolveDone!: () => void;
+    const done = new Promise<void>((r) => (resolveDone = r));
+    const close = () => { if (closed) return; closed = true; el.hidden = true; el.innerHTML = ""; el.className = ""; resolveDone(); };
+    const advance = () => { if (finished) close(); else rush = true; };
+    el.onclick = advance;
+    const run = async () => {
+      hint.textContent = "";
+      await sleep(0.6);
+      card.classList.add("charge");
+      for (let i = 0; i < 4; i++) { sound("tick"); await sleep(0.18); }
+      await sleep(0.25);
+      card.classList.remove("charge");
+      card.classList.add("reveal");
+      sound("ding");
+      await sleep(0.7);
+      card.classList.add("effect");
+      await sleep(0.4);
+      finished = true;
+      hint.textContent = "按确定继续";
     };
     void run();
     return { done, advance, close };
@@ -527,11 +566,3 @@ export class UI {
   }
 }
 
-// 升级卡片里的特性一行：这次强化了就高亮，否则预告下一档
-function traitRow(d: GrowthData) {
-  const a = d.traitAfter, b = d.traitBefore;
-  if (!a) return "";
-  if (b && a.tier > b.tier) return `<div class="gr-trait up"><em>特性强化</em><b>${traitLabel(b)} → ${traitLabel(a)}</b><span>${a.text}</span></div>`;
-  if (a.next) return `<div class="gr-trait"><em>${traitLabel(a)}</em><span>Lv ${a.next.level} 强化：${a.next.text}</span></div>`;
-  return "";
-}

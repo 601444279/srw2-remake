@@ -892,6 +892,14 @@ export class Game implements DrawState {
     this.setMode("notice");
     if (this.auto) setTimeout(card.close, 300);
     await card.done;
+    // 特性强化了：单独再弹一个画面
+    const tb = before.trait, ta = unit.trait;
+    if (tb && ta && ta.tier > tb.tier) {
+      const tu = this.ui.showTraitUp({ unit, portrait: unit.pilotName ? portraitUrl(unit.pilotId) : null, before: tb, after: ta }, this.speed(), (k) => this.sfx.ui(k === "tick" ? "move" : "ok"));
+      this.noticeClose = tu.advance;
+      if (this.auto) setTimeout(tu.close, 300);
+      await tu.done;
+    }
     this.noticeClose = null;
     this.setMode(prev);
   }
