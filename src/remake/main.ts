@@ -28,6 +28,8 @@ async function boot() {
     panel.open(() => game.settingsChanged());
   };
   document.getElementById("gear")!.addEventListener("click", openSettings);
+  // 点对话框翻页
+  document.getElementById("dialog")!.addEventListener("click", () => { if (settings.get().mouse) game.action("confirm"); });
   game.onOpenSettings = openSettings;
 
   input = new Input(canvas, {

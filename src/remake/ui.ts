@@ -235,6 +235,74 @@ export class UI {
     el.hidden = false;
   }
 
+  // ---------- 剧情对话 ----------
+  private typing: { full: string; shown: number; timer: number } | null = null;
+
+  // 显示一句台词，cps = 每秒字数（Infinity 表示瞬间显示）
+  showLine(speaker: string, text: string, portrait: string | null, initial: string, cps: number) {
+    const el = $("#dialog");
+    el.hidden = false;
+    el.querySelector(".dl-face")!.innerHTML = portrait
+      ? `<img src="${portrait}" alt="">`
+      : `<span>${initial}</span>`;
+    (el.querySelector(".dl-face") as HTMLElement).classList.toggle("placeholder", !portrait);
+    el.querySelector(".dl-name")!.textContent = speaker;
+    el.classList.remove("done");
+    const body = el.querySelector(".dl-text")!;
+    if (this.typing) clearInterval(this.typing.timer);
+    if (!Number.isFinite(cps)) {
+      body.textContent = text;
+      this.typing = null;
+      el.classList.add("done");
+      return;
+    }
+    const t = { full: text, shown: 0, timer: 0 };
+    this.typing = t;
+    body.textContent = "";
+    t.timer = window.setInterval(() => {
+      t.shown = Math.min(t.full.length, t.shown + 1);
+      body.textContent = t.full.slice(0, t.shown);
+      if (t.shown >= t.full.length) this.finishLine();
+    }, 1000 / cps);
+  }
+
+  get lineDone() {
+    return !this.typing;
+  }
+
+  // 字还没出完时按确定：直接显示整句
+  finishLine() {
+    const t = this.typing;
+    if (!t) return;
+    clearInterval(t.timer);
+    $("#dialog").querySelector(".dl-text")!.textContent = t.full;
+    $("#dialog").classList.add("done");
+    this.typing = null;
+  }
+
+  hideDialog() {
+    if (this.typing) clearInterval(this.typing.timer);
+    this.typing = null;
+    $("#dialog").hidden = true;
+  }
+
+  // 关卡标题卡，seconds 秒后自动消失（也可以提前关）
+  titleCard(title: string, subtitle: string, seconds: number): { done: Promise<void>; skip: () => void } {
+    const el = $("#title-card");
+    el.innerHTML = `<div class="tc-title">${title}</div><div class="tc-sub">${subtitle}</div>`;
+    el.hidden = false;
+    el.classList.remove("show");
+    void el.offsetWidth;
+    el.classList.add("show");
+    let skip = () => {};
+    const done = new Promise<void>((resolve) => {
+      const end = () => { clearTimeout(timer); el.hidden = true; resolve(); };
+      const timer = setTimeout(end, seconds * 1000);
+      skip = end;
+    });
+    return { done, skip };
+  }
+
   toast(text: string) {
     const el = $("#toast");
     el.textContent = text;

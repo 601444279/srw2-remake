@@ -25,9 +25,18 @@ export const BIND_ACTIONS: { id: BindAction; label: string; group: string }[] = 
   { id: "settings", label: "打开设置", group: "画面" },
 ];
 
+export type TextSpeed = "slow" | "normal" | "fast" | "instant";
+export const TEXT_SPEEDS: { id: TextSpeed; label: string; cps: number }[] = [
+  { id: "slow", label: "慢", cps: 20 },
+  { id: "normal", label: "中", cps: 40 },
+  { id: "fast", label: "快", cps: 80 },
+  { id: "instant", label: "瞬间", cps: Infinity },
+];
+
 export interface Settings {
   keys: Record<BindAction, Binding>;
   mouse: boolean;
+  textSpeed: TextSpeed;
 }
 
 export const DEFAULT_KEYS: Record<BindAction, Binding> = {
@@ -51,11 +60,11 @@ const STORAGE_KEY = "srw2-remake:settings";
 const listeners = new Set<() => void>();
 
 function load(): Settings {
-  const fallback: Settings = { keys: structuredClone(DEFAULT_KEYS), mouse: true };
+  const fallback: Settings = { keys: structuredClone(DEFAULT_KEYS), mouse: true, textSpeed: "normal" };
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "null");
     if (!saved) return fallback;
-    return { keys: { ...fallback.keys, ...saved.keys }, mouse: saved.mouse ?? true };
+    return { keys: { ...fallback.keys, ...saved.keys }, mouse: saved.mouse ?? true, textSpeed: saved.textSpeed ?? "normal" };
   } catch {
     return fallback;
   }

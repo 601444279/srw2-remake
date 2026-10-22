@@ -7,9 +7,10 @@ import type { DrawState, Overlay, Renderer } from "./render.ts";
 import type { UI, MenuItem } from "./ui.ts";
 import { Rules, SPIRIT_FLAG } from "./rules.ts";
 import type { Sfx } from "./sfx.ts";
-import { keyLabel, type BindAction } from "./settings.ts";
+import { keyLabel, settings, TEXT_SPEEDS, type BindAction } from "./settings.ts";
+import { loadScene, personName, portraitUrl, STAGE_STORY, type SceneRef } from "./story.ts";
 
-type Mode = "browse" | "selected" | "moving" | "menu" | "target" | "allyTarget" | "busy" | "over";
+type Mode = "browse" | "selected" | "moving" | "menu" | "target" | "allyTarget" | "busy" | "dialog" | "title" | "over";
 
 const MOVE_TILES_PER_SEC = 14;
 const TYPE_LABELS = { air: "空", land: "陆", sea: "海" } as const;
@@ -50,6 +51,9 @@ export class Game implements DrawState {
   private money = { value: 0 };
   private rules: Rules;
   onOpenSettings: () => void = () => {};
+  // 对话播放中：等玩家按确定翻页
+  private talk: { next: () => void; skip: () => void; autoAt: number } | null = null;
+  private titleSkip: (() => void) | null = null;
 
   constructor(private stage: Stage, private renderer: Renderer, private ui: UI, private sfx: Sfx, private fast: () => boolean) {
     this.units = stage.units;
@@ -63,8 +67,49 @@ export class Game implements DrawState {
     this.ui.setObjective("胜利条件：击破所有敌人　失败条件：我方全灭");
     this.ui.setTurn(this.turn, "player");
     this.refreshInfo();
+    const story = STAGE_STORY[this.stage.number];
+    if (story) {
+      for (const scene of story.prologue) await this.playScene(scene);
+      this.setMode("title");
+      const card = this.ui.titleCard(story.title, story.subtitle, 2.4);
+      this.titleSkip = card.skip;
+      await card.done;
+      this.titleSkip = null;
+      for (const scene of story.opening) await this.playScene(scene);
+    }
     await this.ui.banner(`第 ${this.turn} 回合`, "我方回合", "player");
     this.setMode("browse");
+  }
+
+  // ---------- 剧情 ----------
+  private async playScene(ref: SceneRef) {
+    const lines = loadScene(ref);
+    if (ref.focusUnit && ref.who !== undefined) {
+      const u = this.units.find((x) => x.pilotId === ref.who && x.hp > 0);
+      if (u) this.setCursor(u.x, u.y);
+    }
+    const prev = this.mode;
+    this.setMode("dialog");
+    let skipped = false;
+    for (const line of lines) {
+      if (skipped) break;
+      const cps = TEXT_SPEEDS.find((t) => t.id === settings.get().textSpeed)!.cps;
+      const name = line.speaker || personName(line.face);
+      this.ui.showLine(name, line.text, portraitUrl(line.face), name.slice(0, 1), cps);
+      await new Promise<void>((resolve) => {
+        this.talk = { next: resolve, skip: () => { skipped = true; resolve(); }, autoAt: 0 };
+      });
+    }
+    this.talk = null;
+    this.ui.hideDialog();
+    this.setMode(prev === "dialog" ? "busy" : prev);
+  }
+
+  // 确定：字没出完就先出完，出完了翻到下一句
+  private advanceTalk() {
+    if (!this.talk) return;
+    if (!this.ui.lineDone) this.ui.finishLine();
+    else this.talk.next();
   }
 
   // ---------- 绘制需要的状态 ----------
@@ -97,6 +142,11 @@ export class Game implements DrawState {
   }
 
   update(dt: number) {
+    // 按住快速键：对话自动快进
+    if (this.talk && this.fast()) {
+      this.talk.autoAt += dt;
+      if (this.talk.autoAt > 0.12) { this.talk.autoAt = 0; this.ui.finishLine(); this.talk.next(); }
+    }
     if (!this.anim) return;
     this.anim.t += dt * MOVE_TILES_PER_SEC * this.speed();
     // 镜头跟着移动中的单位
@@ -138,6 +188,7 @@ export class Game implements DrawState {
   }
 
   pointerClick(p: Point, button: number) {
+    if (this.mode === "dialog" || this.mode === "title") { this.action(button === 2 ? "cancel" : "confirm"); return; }
     if (button === 2) { this.action("cancel"); return; }
     if (this.mode === "menu" || this.mode === "busy" || this.mode === "over") return;
     if (this.pick) {
@@ -152,8 +203,15 @@ export class Game implements DrawState {
 
   action(a: Action) {
     if (a === "zoomIn" || a === "zoomOut") { this.renderer.setZoom(a === "zoomIn" ? 1 : -1); return; }
-    if (a === "settings") { if (this.mode === "browse" || this.mode === "selected") this.onOpenSettings(); return; }
+    if (a === "settings") { if (this.mode === "browse" || this.mode === "selected" || this.mode === "dialog") this.onOpenSettings(); return; }
     switch (this.mode) {
+      case "dialog":
+        if (a === "confirm") this.advanceTalk();
+        if (a === "cancel") this.talk?.skip();
+        return;
+      case "title":
+        if (a === "confirm" || a === "cancel") this.titleSkip?.();
+        return;
       case "menu":
         if (a === "confirm") this.ui.menuConfirm();
         if (a === "cancel") this.ui.closeMenu();
@@ -473,12 +531,18 @@ export class Game implements DrawState {
     return false;
   }
 
-  private gameOver(win: boolean) {
+  private async gameOver(win: boolean) {
     this.setMode("over");
     this.ui.closeMenu(false);
     this.ui.hideForecast();
     const lines = [`回合数　${this.turn}`, `获得资金　${this.money.value * 10}G`];
-    setTimeout(() => this.ui.showResult(win, lines, () => location.reload()), 600);
+    await wait(0.8);
+    const story = STAGE_STORY[this.stage.number];
+    if (win && story) {
+      for (const scene of story.clear) await this.playScene(scene);
+      this.setMode("over");
+    }
+    this.ui.showResult(win, lines, () => location.reload());
   }
 
   // ---------- 目标选择 ----------
@@ -534,6 +598,7 @@ export class Game implements DrawState {
 
   private setMode(mode: Mode) {
     this.mode = mode;
+    document.body.classList.toggle("story", mode === "dialog" || mode === "title");
     this.refreshHints();
   }
 
@@ -572,6 +637,8 @@ export class Game implements DrawState {
       target: [[move, "切换目标"], [k("confirm"), "攻击"], [k("cancel"), "返回"]],
       allyTarget: [[move, "切换"], [k("confirm"), "确定"], [k("cancel"), "返回"]],
       busy: [[`按住 ${k("fast")}`, "加速"]],
+      dialog: [[k("confirm"), "下一句"], [`按住 ${k("fast")}`, "快进"], [k("cancel"), "跳过这段"], [k("settings"), "设置"]],
+      title: [[k("confirm"), "继续"]],
       over: [],
     };
     this.ui.setHints(hints[this.mode]);

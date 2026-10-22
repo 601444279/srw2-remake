@@ -1,6 +1,6 @@
 // 设置窗口：鼠标开关、按键绑定。可以用鼠标点，也可以全程用键盘：
 //   ↑↓←→ 移动焦点，Enter / 空格 开始改键或切换开关，改键时按下新键完成，Esc 取消，Delete 清空这个位置。
-import { BIND_ACTIONS, DEFAULT_KEYS, bindKey, keyName, settings, type BindAction } from "./settings.ts";
+import { BIND_ACTIONS, DEFAULT_KEYS, TEXT_SPEEDS, bindKey, keyName, settings, type BindAction } from "./settings.ts";
 
 export class SettingsPanel {
   private dialog = document.getElementById("settings") as HTMLDialogElement;
@@ -46,6 +46,10 @@ export class SettingsPanel {
         <label class="set-row toggle"><span>鼠标操作<small>关闭后地图上的悬停、点击、右键和滚轮都不起作用</small></span>
           <button class="switch${s.mouse ? " on" : ""}" data-nav data-toggle="mouse" role="switch" aria-checked="${s.mouse}"><i></i></button>
         </label>
+        <div class="set-group">剧情</div>
+        <div class="set-row toggle"><span>文字速度<small>对话逐字显示的速度</small></span>
+          <button class="cycle" data-nav data-cycle="textSpeed">${TEXT_SPEEDS.find((t) => t.id === s.textSpeed)?.label}</button>
+        </div>
         <div class="set-cols"><span></span><small>主键</small><small>副键</small></div>
         ${rows}
         <p class="set-hint">点按键框（或用方向键选中后按 Enter），再按下新的键。和其他功能冲突时会互换。Delete 清空，Esc 取消。</p>
@@ -63,6 +67,12 @@ export class SettingsPanel {
       settings.update({ mouse: !settings.get().mouse });
       this.render();
       this.focus("[data-toggle=mouse]");
+    });
+    this.dialog.querySelector("[data-cycle=textSpeed]")!.addEventListener("click", () => {
+      const i = TEXT_SPEEDS.findIndex((t) => t.id === settings.get().textSpeed);
+      settings.update({ textSpeed: TEXT_SPEEDS[(i + 1) % TEXT_SPEEDS.length].id });
+      this.render();
+      this.focus("[data-cycle=textSpeed]");
     });
     this.dialog.querySelectorAll<HTMLButtonElement>("button.key").forEach((b) =>
       b.addEventListener("click", () => {

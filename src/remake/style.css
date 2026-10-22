@@ -51,6 +51,7 @@ body.no-mouse #menu { pointer-events: none; }
 .switch i { position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; transition: transform .15s; }
 .switch.on { background: var(--player); }
 .switch.on i { transform: translateX(20px); }
+.cycle { min-width: 72px; height: 30px; border: 1px solid var(--panel-border); border-radius: 6px; background: rgba(255,255,255,0.05); color: var(--fg); font: 13px var(--font); cursor: pointer; }
 .set-hint { margin: 12px 0 4px; color: var(--muted); font-size: 12px; }
 #settings .reset { align-self: flex-start; padding: 7px 12px; border: 0; border-radius: 8px; background: rgba(255,255,255,0.1); color: var(--fg); font: inherit; cursor: pointer; }
 @media (max-width: 480px) { .set-row, .set-cols { grid-template-columns: 1fr 90px 90px; } }
@@ -142,6 +143,30 @@ body.no-mouse #menu { pointer-events: none; }
 #result .title.lose { color: var(--enemy); }
 #result .line { color: var(--muted); }
 #result button { margin-top: 10px; padding: 8px 16px; border: 0; border-radius: 8px; background: var(--accent); color: #000; font: inherit; font-weight: 700; cursor: pointer; }
+
+/* 剧情对话框：播放时隐藏地图上的信息面板和按键以外的浮层 */
+body.story #info, body.story #forecast { display: none !important; }
+/* 剧情对话框 */
+#dialog { position: fixed; left: 50%; bottom: 52px; transform: translateX(-50%); width: min(760px, calc(100vw - 24px)); display: flex; gap: 14px; padding: 14px 16px; background: rgba(12, 14, 22, 0.92); border: 1px solid var(--panel-border); border-radius: 12px; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); cursor: pointer; animation: dl-in .15s ease-out; }
+@keyframes dl-in { from { opacity: 0; transform: translate(-50%, 8px); } to { opacity: 1; transform: translateX(-50%); } }
+.dl-face { flex: none; width: 96px; height: 96px; border-radius: 8px; overflow: hidden; background: #000; display: grid; place-items: center; }
+.dl-face img { width: 100%; height: 100%; image-rendering: pixelated; }
+.dl-face.placeholder { background: linear-gradient(135deg, #2a3150, #1a1d2c); }
+.dl-face span { font-size: 40px; font-weight: 800; color: rgba(255,255,255,0.75); }
+.dl-body { flex: 1; min-height: 96px; }
+.dl-name { color: var(--accent); font-weight: 700; font-size: 15px; margin-bottom: 6px; }
+.dl-text { font-size: 18px; line-height: 1.7; white-space: pre-wrap; }
+.dl-next { position: absolute; right: 16px; bottom: 10px; color: var(--accent); font-size: 12px; opacity: 0; }
+#dialog.done .dl-next { opacity: 1; animation: blink 1s steps(2) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+@media (max-width: 560px) { .dl-face { width: 64px; height: 64px; } .dl-text { font-size: 15px; } }
+
+/* 关卡标题卡 */
+#title-card { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; background: rgba(0,0,0,0.78); pointer-events: none; }
+#title-card .tc-title { font-size: 44px; font-weight: 800; letter-spacing: 12px; color: #fff; }
+#title-card .tc-sub { font-size: 26px; letter-spacing: 6px; color: var(--accent); }
+#title-card.show { animation: tc 2.4s ease-in-out both; }
+@keyframes tc { 0% { opacity: 0; } 15%, 80% { opacity: 1; } 100% { opacity: 0; } }
 
 #toast { position: fixed; left: 50%; top: 64px; transform: translateX(-50%); background: var(--panel); border: 1px solid var(--panel-border); padding: 6px 14px; border-radius: 999px; opacity: 0; transition: opacity .2s; pointer-events: none; }
 #toast.show { opacity: 1; }
