@@ -15,22 +15,21 @@
 html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); color: var(--fg); font: 14px/1.5 var(--font); user-select: none; -webkit-user-select: none; }
 #map { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
 
-.panel, #hud, #info, #menu, #hints span { background: var(--panel); border: 1px solid var(--panel-border); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+.panel, #info, #menu, #hints span { background: var(--panel); border: 1px solid var(--panel-border); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
 
-#hud { position: fixed; top: 12px; left: 12px; right: 12px; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 8px 14px; border-radius: var(--radius); pointer-events: none; }
-#hud .left { display: flex; gap: 12px; font-weight: 600; }
-#phase[data-phase="player"] { color: var(--player); }
-#phase[data-phase="enemy"] { color: var(--enemy); }
-#objective { color: var(--muted); font-size: 13px; }
-#hud .right { display: flex; align-items: center; gap: 10px; }
-#gear { pointer-events: auto; border: 0; background: none; color: var(--muted); font-size: 18px; cursor: pointer; padding: 0 2px; line-height: 1; }
-#gear:hover { color: var(--fg); }
-#menu-btn { pointer-events: auto; border: 1px solid var(--panel-border); border-radius: 6px; background: rgba(255,255,255,0.06); color: var(--fg); font: 12px var(--font); padding: 2px 8px; cursor: pointer; }
-#menu-btn:hover { background: rgba(255,255,255,0.14); }
+/* 右上角只留一个小按钮，点开是地图菜单（回合、胜利条件、结束回合、存档、设置……） */
+#hud { position: fixed; top: 12px; right: 12px; pointer-events: none; }
+#menu-btn { pointer-events: auto; width: 36px; height: 36px; display: grid; place-items: center; border: 1px solid var(--panel-border); border-radius: 8px; background: var(--panel); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); color: var(--fg); font: 18px/1 var(--font); cursor: pointer; }
+#menu-btn:hover, #menu-btn[aria-expanded="true"] { background: rgba(40, 44, 62, 0.95); color: var(--accent); }
+#menu .menu-head { padding: 4px 12px 8px; margin-bottom: 2px; border-bottom: 1px solid var(--panel-border); font-size: 13px; }
+#menu .menu-head b { font-weight: 600; }
+#menu .menu-head [data-phase="player"] { color: var(--player); }
+#menu .menu-head [data-phase="enemy"] { color: var(--enemy); }
+#menu .menu-head small { display: block; color: var(--muted); font-size: 12px; line-height: 1.4; }
 
-/* 关闭鼠标操作：地图上不显示指针，菜单不响应鼠标（设置窗口和齿轮按钮除外） */
+/* 关闭鼠标操作：地图上不显示指针，菜单不响应鼠标（设置窗口和右上角按钮除外） */
 body.no-mouse #map { cursor: none; }
-body.no-mouse #menu { pointer-events: none; }
+body.no-mouse #menu:not(.from-hud) { pointer-events: none; }
 
 /* 设置窗口 */
 #settings { width: min(520px, calc(100vw - 24px)); max-height: calc(100vh - 32px); padding: 0; border: 1px solid var(--panel-border); border-radius: 14px; background: #161821; color: var(--fg); overflow: auto; }
@@ -187,7 +186,6 @@ body.story #info, body.story #forecast { display: none !important; }
 
 @media (max-width: 640px) {
   #info { width: auto; right: 12px; }
-  #objective { display: none; }
 }
 
 /* 资料页 */

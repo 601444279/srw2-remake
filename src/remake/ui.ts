@@ -54,16 +54,18 @@ export class UI {
   private menuItems: MenuItem[] = [];
   private menuIndex = 0;
   private onMenuClose: (() => void) | null = null;
+  // 回合和胜利条件不常驻屏幕，显示在右上角菜单的顶部
+  private turn = 1;
+  private phase: "player" | "enemy" = "player";
+  private objective = "";
 
   setTurn(turn: number, phase: "player" | "enemy") {
-    $("#turn").textContent = `第 ${turn} 回合`;
-    const p = $("#phase");
-    p.textContent = phase === "player" ? "我方回合" : "敌方回合";
-    p.dataset.phase = phase;
+    this.turn = turn;
+    this.phase = phase;
   }
 
   setObjective(text: string) {
-    $("#objective").textContent = text;
+    this.objective = text;
   }
 
   setHints(hints: [string, string][]) {
@@ -326,13 +328,21 @@ export class UI {
     return { done, advance, close };
   }
 
-  // 菜单出现在屏幕坐标 (x, y) 旁边
-  openMenu(items: MenuItem[], x: number, y: number, onClose: () => void) {
+  // 菜单出现在屏幕坐标 (x, y) 旁边；fromHud 时是右上角按钮的下拉菜单，贴着按钮右对齐，顶部显示回合和胜利条件
+  openMenu(items: MenuItem[], x: number, y: number, onClose: () => void, fromHud = false) {
     this.menuItems = items;
     this.menuIndex = items.findIndex((i) => !i.disabled);
     this.onMenuClose = onClose;
     const el = $("#menu");
     el.innerHTML = "";
+    el.classList.toggle("from-hud", fromHud);
+    $("#menu-btn").setAttribute("aria-expanded", String(fromHud));
+    if (fromHud) {
+      const head = document.createElement("div");
+      head.className = "menu-head";
+      head.innerHTML = `<b>第 ${this.turn} 回合</b> · <b data-phase="${this.phase}">${this.phase === "player" ? "我方回合" : "敌方回合"}</b>${this.objective ? `<small>${this.objective}</small>` : ""}`;
+      el.append(head);
+    }
     items.forEach((item, i) => {
       const b = document.createElement("button");
       b.innerHTML = `<span class="label">${item.label}</span>${item.detail ? `<span class="detail">${item.detail}</span>` : ""}${item.hint ? `<small>${item.hint}</small>` : ""}`;
@@ -343,6 +353,7 @@ export class UI {
     });
     el.hidden = false;
     const rect = el.getBoundingClientRect();
+    if (fromHud) x -= rect.width;
     el.style.left = `${Math.min(Math.max(8, x), innerWidth - rect.width - 8)}px`;
     el.style.top = `${Math.min(Math.max(56, y), innerHeight - rect.height - 8)}px`;
     this.renderMenuFocus();
@@ -350,6 +361,10 @@ export class UI {
 
   get menuOpen() {
     return !$("#menu").hidden;
+  }
+
+  get hudMenuOpen() {
+    return this.menuOpen && $("#menu").classList.contains("from-hud");
   }
 
   menuMove(dy: number) {
@@ -370,6 +385,7 @@ export class UI {
 
   closeMenu(notify = true) {
     $("#menu").hidden = true;
+    $("#menu-btn").setAttribute("aria-expanded", "false");
     const cb = this.onMenuClose;
     this.onMenuClose = null;
     if (notify) cb?.();
@@ -383,7 +399,7 @@ export class UI {
   }
 
   private renderMenuFocus() {
-    [...$("#menu").children].forEach((b, i) => b.classList.toggle("focus", i === this.menuIndex));
+    $("#menu").querySelectorAll("button").forEach((b, i) => b.classList.toggle("focus", i === this.menuIndex));
   }
 
   // 回合横幅：滑入、停留、滑出，返回动画结束的 Promise
