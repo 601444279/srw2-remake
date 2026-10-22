@@ -51,12 +51,26 @@ const slim = (a) => ({
 const anims = Object.fromEntries(Object.entries(effects.anims).filter(([, a]) => a.effectFile).map(([n, a]) => [n, slim(a)]));
 const explosions = Object.fromEntries(Object.entries(effects.explosions).map(([n, a]) => [n, slim(a)]));
 
+// 地图菜单「变形」的原版演出（--transform 提取）：pairs["从>到"] = 合体 { film, at } 或两段 { from, to }（世界坐标）
+const tf = effects.transform;
+const transform = tf && {
+  films: Object.fromEntries(Object.entries(tf.combine.films).map(([n, f]) => [n, { file: path.basename(f.file), w: f.frameSize.w, h: f.frameSize.h, columns: f.columns, frames: f.frames }])),
+  fadeSteps: tf.combine.timing.fadeSteps,
+  swapCamera: tf.swapCameras[0],
+  swapEnd: tf.pairs.find((p) => p.kind === "swap")?.animEnd,
+  music: Object.fromEntries(["combine", "swap"].map((k) => [k, tf.pairs.find((p) => p.kind === k)?.music])),
+  pairs: Object.fromEntries(tf.pairs.filter((p) => !p.error).map((p) => [`${p.from}>${p.to}`, p.kind === "combine"
+    ? { kind: "combine", film: p.film, at: [p.reveal.x, p.reveal.y] }
+    : { kind: "swap", from: [p.fromAt.x, p.fromAt.y], to: [p.toAt.x, p.toAt.y] }])),
+};
+
 const out = {
   note: "战斗画面运行时数据，由 tools/slim-battle-data.js 从 battle-sprites.json / battle-effects.json 生成。keyframes 每项：开始帧、帧数、cel（-1 = 没有）、cel 相对锚点的 x、y、镜头偏移 x、y",
   units,
   weapons,
   anims,
   explosions,
+  transform,
 };
 fs.writeFileSync(path.join(ROOT, "data/battle-scene.json"), JSON.stringify(out) + "\n");
 console.log(`机体 ${Object.keys(units).length}，武器 ${Object.keys(weapons).length}，动画 ${Object.keys(anims).length}，${fs.statSync(path.join(ROOT, "data/battle-scene.json")).size} 字节`);

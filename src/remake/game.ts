@@ -18,6 +18,7 @@ import { levelForExp } from "./stats.ts";
 import { AutoTester, type AutoOptions, type AutoReport } from "./autotest.ts";
 import { BattleScene, attackSounds, battleLayout, battleSpriteUrl } from "./battle-scene.ts";
 import { loadScene, personName, portraitUrl, STAGE_STORY, WORLD_MARKER, type SceneRef } from "./story.ts";
+import { TransformScene, TRANSFORM_SONG, hasTransformScene, type TransformLine } from "./transform-scene.ts";
 
 type Mode = "browse" | "selected" | "moving" | "menu" | "target" | "allyTarget" | "busy" | "dialog" | "title" | "over" | "status" | "notice";
 
@@ -794,7 +795,25 @@ export class Game implements DrawState {
   private async transform(unit: Unit, id: number) {
     this.setMode("busy");
     const scenes = transformLines(unit.pilotId, id);
-    for (const scene of scenes) await this.playScene(scene);
+    // 完整演出（原版）：地图上放现驾驶员的台词，切到战斗画面放变形演出（盖塔合体 / 两段变形），
+    // 新形态驾驶员的台词显示在演出的窗口里，停在新形态上等按键；演出期间放 1 号曲
+    const full = !this.auto && settings.get().battleStyle === "full" && hasTransformScene(unit.unitId, id);
+    if (full) {
+      if (scenes[0]) await this.playScene(scenes[0]);
+      const said = scenes[1] ? loadScene(scenes[1])[0] : null;
+      const line: TransformLine | null = said ? { name: said.speaker || personName(said.face), text: said.text, face: portraitUrl(said.face) } : null;
+      const back = this.music.playing;
+      this.music.play(TRANSFORM_SONG);
+      this.inBattle = true;
+      const scene = new TransformScene(() => this.speed(), () => this.skipBattle, () => this.skipCurrentBattle(), () => { this.skipBattle = false; });
+      await scene.play(unit.unitId, id, line, `${mechName(id)}`);
+      this.inBattle = false;
+      this.skipBattle = false;
+      if (back === null) this.music.stop();
+      else this.music.play(back);
+    } else {
+      for (const scene of scenes) await this.playScene(scene);
+    }
     transformUnit(this.stage, unit, id);
     this.syncTrait(unit);
     await this.renderer.loadUnit(unit);

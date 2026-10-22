@@ -2,6 +2,7 @@
 //
 // 用法: node tools/extract-battle-gfx.js [--units] [--effects] [--timing] [--verify]   （不带参数 = 全部）
 //       --sounds          在已导出的动画上补录原版音效触发的帧（写进 battle-effects.json）
+//       --transform       录地图菜单「变形」的原版过场（assets/original/battle/transform/，写进 battle-effects.json 的 transform）
 //       --weapons 47,51   只录这几把武器（16 进制，调试用，结果不写 JSON）
 // 需要 extracted/states/t4.json（太勒移到 (8,8)、选好萨斯剑、光标对准拉达K7，按 A 即开战）
 // 和 extracted/states/e2.json（第 1 回合「回合结束」确认框，按 A 进入敌方回合）。
@@ -21,7 +22,7 @@ import path from "node:path";
 import { PNG } from "pngjs";
 import { ROOT, hookExec, hookWrite, makeEmu } from "./lib/trace.js";
 import { resolve } from "./lib/res.js";
-import { runBattle, attachCapture, render, renderWorld, bbox, bboxW, diffWithFrame, rgbOf, regsAtLine, chrBankOf, OVERSCAN } from "./lib/battle-capture.js";
+import { runBattle, attachCapture, render, renderWorld, bbox, bboxW, diffWithFrame, rgbOf, regsAtLine, chrBankOf, OVERSCAN, NES_COLORS } from "./lib/battle-capture.js";
 
 const T4 = "extracted/states/t4.json", E2 = "extracted/states/e2.json";
 const OUT_IMG = path.join(ROOT, "assets/original/battle");
@@ -804,6 +805,252 @@ function extractSounds(doc) {
   }
 }
 
+// ---------- 变形过场
+
+// 原版地图菜单里的「变形」：先在地图上放现驾驶员的台词，然后切到战斗画面放一段演出，停住等按键，按键后回地图。
+// 演出有两种（流程脚本在 bank 28 $84BE 起，38 02 xx = 放动画 0x62#xx）：
+//   combine（盖塔式三段变形，0x62#0B）：网格地面、三架战机起飞、冲进星空纵向合体、整屏加亮到全白；
+//     全白时画好新形态，再从白里一档一档淡出新形态的战斗大图
+//   swap（两段变形，0x62#10）：现形态和新形态分别画在两个名称表上，镜头往一边卷（先慢后快），卷到新形态停住
+// 两种都在动画开始前几帧切 1 号曲，回地图时切回地图曲。
+//
+// 录法：map-cursor 存档，把盖塔1（4 号槽位）换成要变形的机体（连同运行时的形态位、盖塔的主驾驶员），
+// 走原版菜单（选中 → 变形 → 第 k 个形态），台词每 30 帧按一次 A，动画开始后不再按。
+
+const TF_SLOT = 4;
+const TF_H = 160; // 变形演出的画面布局和战斗不同：舞台到 y = 160，下面才是窗口（亮相时机体画得比战斗画面低）
+const GETTER_TEAM = [8, 9, 10]; // 龙、隼人、武藏：盖塔式三段变形形态 1/2/3 的主驾驶员
+
+// 亮相淡入：每档把颜色亮度托底到 floor。灰色（色号低 4 位 0）和黑色的亮度刻度比彩色高一级（00 = 1 … 30 = 4，0F = 0），
+// 彩色 x1–xC 的亮度就是高 4 位；托底后灰色按 floor − 1 回到色号，彩色保留色相、亮度 = floor（最多 3）
+export function fadeFromWhite(c, floor) {
+  const hue = c & 0x0f, black = hue >= 0x0d;
+  const grey = black || hue === 0;
+  const level = black ? 0 : grey ? (c >> 4) + 1 : c >> 4;
+  if (level >= floor) return c;
+  return grey ? (floor - 1) << 4 : (Math.min(3, floor) << 4) | hue;
+}
+
+function recordTransform(fromId, option) {
+  const emu = makeEmu(path.join(ROOT, "extracted/states/map-cursor.json"));
+  const nes = emu.nes, m = nes.cpu.mem;
+  const unit = UNITS.find((u) => u.id === fromId);
+  m[0x7557 + TF_SLOT] = fromId;
+  // 运行时的类型 / 形态位（机体表 +0 的低 6 位）也要换，原版菜单按它算能变成哪些形态
+  const raw0 = parseInt(unit.raw.slice(0, 2), 16);
+  m[0x77d7 + TF_SLOT] = (m[0x77d7 + TF_SLOT] & 0xc0) | (raw0 & 0x3f);
+  if (unit.transform.kind === "triple") m[0x7537 + TF_SLOT] = GETTER_TEAM[unit.transform.formIndex - 1];
+  const cap = attachCapture(emu);
+  let f = 0, start = -1, animEnd = -1, anim = null;
+  const frames = [], music = [];
+  hookWrite(nes, (a, v) => {
+    if (a === 0xad && m[0xaa] === 0x62 && start < 0) { start = f; anim = v; }
+    if (a === 0xaa && v === 0 && start >= 0 && animEnd < 0) animEnd = f - start;
+    if (a === 0x4c && v >= 0x80 && v < 0xf0) music.push([start < 0 ? null : f - start, v & 0x7f, f]);
+  });
+  let done = false;
+  const step = (n) => {
+    for (let i = 0; i < n && !done; i++) {
+      cap.beginFrame();
+      nes.frame();
+      f++;
+      if (start < 0) continue;
+      const s = cap.snapshot();
+      const { regs } = regsAtLine(s, 60);
+      frames.push({ fb: s.frameBuffer.slice(0, 256 * TF_H), palette: Array.from(s.palette), regs: regs.join(), scroll: s.scroll.x, snap: frames.length ? null : s });
+      // 动画结束后再录 40 帧（合体的亮相淡入在动画结束后约 25 帧内完成）
+      if (animEnd >= 0 && frames.length > animEnd + 40) done = true;
+    }
+  };
+  const press = (b) => { nes.buttonDown(1, b); step(6); nes.buttonUp(1, b); step(14); };
+  const x = m[0x7597 + TF_SLOT], y = m[0x75b7 + TF_SLOT];
+  for (let i = 0; i < 80 && (m[0xc0] !== x || m[0xc1] !== y); i++) {
+    const b = m[0xc0] < x ? 7 : m[0xc0] > x ? 6 : m[0xc1] < y ? 5 : 4;
+    nes.buttonDown(1, b); step(4); nes.buttonUp(1, b); step(10);
+  }
+  // 单位菜单：移动 / 精神 / 状态 / 变形（2×2），变形在右下
+  step(20); press(0); step(30); press(7); press(5); press(0); step(30);
+  for (let i = 0; i < option; i++) press(5);
+  const pressed = f;
+  press(0);
+  for (let i = 0; i < 1500 && !done; i++) {
+    if (start < 0 && i % 30 === 0) nes.buttonDown(1, 0);
+    if (i % 30 === 6 || start >= 0) nes.buttonUp(1, 0);
+    step(1);
+  }
+  // 切 1 号曲的帧（相对动画开始）
+  const bgm = music.find(([, t, abs]) => t === 1 && abs >= pressed);
+  return { frames, anim, animEnd, toId: m[0x7557 + TF_SLOT], music: bgm ? bgm[2] - (f - frames.length) : null };
+}
+
+// 全白之后的几次色板变化 = 亮相淡入的各档
+function revealSteps(frames) {
+  const allWhite = (p) => p.every((c) => c === 0x30);
+  const whiteFrom = frames.findIndex((fr) => allWhite(fr.palette));
+  if (whiteFrom < 0) return null;
+  const steps = [];
+  for (let i = whiteFrom + 1; i < frames.length; i++) {
+    if (frames[i].palette.join() !== frames[i - 1].palette.join()) steps.push(i);
+    if (steps.length === 4) break;
+  }
+  return steps.length === 4 ? { whiteFrom, steps } : null;
+}
+
+const unitFileOf = (() => {
+  let sprites = null;
+  return (id) => {
+    sprites ??= JSON.parse(fs.readFileSync(path.join(ROOT, "data/battle-sprites.json"), "utf8")).units;
+    let u = sprites.find((e) => e.id === id);
+    for (let i = 0; i < 4 && u && !u.file && u.sameAs != null; i++) u = sprites.find((e) => e.id === u.sameAs);
+    return u?.file ?? null;
+  };
+})();
+
+function extractTransforms() {
+  const groups = {};
+  for (const u of UNITS) if (u.transform) (groups[u.transform.baseId] ??= []).push(u);
+  const pairs = [];
+  for (const list of Object.values(groups)) {
+    // 盖塔式三段变形的形态 0 是全 0 的占位记录，菜单里不出现；菜单按形态顺序列出其余形态
+    const forms = list.filter((u) => !(u.transform.kind === "triple" && u.transform.formIndex === 0));
+    for (const u of forms) forms.filter((o) => o.id !== u.id).forEach((o, k) => pairs.push({ from: u.id, to: o.id, option: k }));
+  }
+  const variants = [];
+  const out = [];
+  const swapCameras = new Map();
+  let combineTiming = null;
+  for (const p of pairs) {
+    process.stdout.write(`\r变形 ${hex(p.from)} → ${hex(p.to)}        `);
+    const r = recordTransform(p.from, p.option);
+    const row = { from: p.from, to: p.to };
+    // 0x67–0x69、0xA7/0xA8 是敌方机体，放进我方槽位时菜单 / 色板对不上，玩家也不会操作它们变形
+    if (r.toId !== p.to) { out.push({ ...row, error: `菜单第 ${p.option} 项变成了 ${hex(r.toId)}（敌方机体，不适用）` }); continue; }
+    row.music = r.music;
+    if (r.anim === 0x0b) {
+      const rs = revealSteps(r.frames);
+      if (!rs) { out.push({ ...row, error: "合体演出没录到亮相淡入" }); continue; }
+      // 过场 = 动画开始到亮相淡入开始（含全白）。星空的星星位置每次随机，所以按每帧的色板和 CHR bank 分组
+      // 色板在帧末写进 PPU，下一帧画面才变：淡入第一档在 steps[0] + 1 帧显示，过场到 steps[0] 为止
+      const film = r.frames.slice(0, rs.steps[0] + 1);
+      const key = film.map((fr) => fr.palette.join() + "/" + fr.regs).join("|");
+      let v = variants.find((x) => x.key === key);
+      if (!v) variants.push((v = { key, film, name: `combine-${variants.length}`, units: [] }));
+      v.units.push(p.from);
+      // 亮相：淡入结束后的画面里找新形态战斗大图的位置；按 fadeFromWhite 算出各档画面和原版逐像素比较
+      const pos = locateUnit(p.to, r.frames[rs.steps[3] + 5].fb);
+      let fadeDiff = null;
+      // 色板在这一帧末尾才写进 PPU，画面下一帧才变，所以比后一帧
+      if (pos) { fadeDiff = 0; for (let k = 0; k < 3; k++) fadeDiff += compareFade(pos, r.frames[rs.steps[k] + 1], 3 - k); }
+      Object.assign(row, { kind: "combine", film: v.name, reveal: pos && { x: pos.x, y: pos.y }, fadeDiff });
+      // fadeSteps：淡入各档实际显示的帧（托底 3、2、1、恢复原色）
+      combineTiming ??= { animEnd: r.animEnd, whiteFrom: rs.whiteFrom + 1, fadeSteps: rs.steps.map((f) => f + 1) };
+    } else if (r.anim === 0x10) {
+      // 镜头：每帧上半屏卷动值（世界坐标里屏幕左边缘，两屏共 512 宽）
+      const cam = r.frames.map((fr) => fr.scroll);
+      const keys = [];
+      cam.forEach((x, i) => { if (!i || x !== cam[i - 1]) keys.push([i, x]); });
+      const camKey = JSON.stringify(keys);
+      if (!swapCameras.has(camKey)) swapCameras.set(camKey, keys);
+      // 两台机体在世界坐标里的位置：第 0 帧找现形态，最后一帧找新形态
+      const a = locateUnit(p.from, r.frames[0].fb), b = locateUnit(p.to, r.frames.at(-1).fb);
+      const world = (pos, c) => pos && { x: (pos.x + c) & 511, y: pos.y };
+      const from = world(a, cam[0]), to = world(b, cam.at(-1));
+      // 核对：按「黑底 + 两张图 − 镜头」重画每一帧，和模拟器画面逐像素比较
+      let diff = null;
+      if (!from || !to) { out.push({ ...row, error: "画面上找不到机体（敌方机体放进我方槽位色板不对，不适用）" }); continue; }
+      if (from && to) { diff = 0; r.frames.forEach((fr, i) => { if (i < r.animEnd) diff += compareSwap(p.from, from, p.to, to, cam[i], fr.fb); }); }
+      Object.assign(row, { kind: "swap", camera: [...swapCameras.keys()].indexOf(camKey), fromAt: from, toAt: to, animEnd: r.animEnd, diff });
+    } else {
+      out.push({ ...row, error: `没见过的动画 0x62#${hex(r.anim ?? 0)}` });
+      continue;
+    }
+    out.push(row);
+  }
+  console.log();
+  // 合体过场：每种逐帧去重（同一画面只存一次），256×116 一格，每行 8 格
+  const films = {};
+  for (const v of variants) {
+    const uniq = [], seq = [];
+    for (const fr of v.film) {
+      let h = 0;
+      for (let i = 0; i < fr.fb.length; i++) h = (h * 31 + fr.fb[i]) | 0;
+      let idx = uniq.findIndex((u) => u.h === h);
+      if (idx < 0) { idx = uniq.length; uniq.push({ h, fb: fr.fb }); }
+      const last = seq.at(-1);
+      if (last && last[0] === idx) last[1]++;
+      else seq.push([idx, 1]);
+    }
+    const COLS = 8, Wd = 256, Ht = TF_H;
+    const file = `assets/original/battle/transform/${v.name}.png`;
+    writeRgbPng(path.join(ROOT, file), COLS * Wd, Math.ceil(uniq.length / COLS) * Ht, (x, y) => {
+      const u = uniq[Math.floor(y / Ht) * COLS + Math.floor(x / Wd)];
+      if (!u) return [0, 0, 0];
+      const c = u.fb[(y % Ht) * 256 + (x % Wd)];
+      return [c & 0xff, (c >> 8) & 0xff, (c >> 16) & 0xff];
+    });
+    films[v.name] = { file, frameSize: { w: Wd, h: Ht }, columns: COLS, uniqueFrames: uniq.length, totalFrames: v.film.length, frames: seq, units: v.units.map((id) => hex(id)) };
+  }
+  return { combine: { films, timing: combineTiming }, swapCameras: [...swapCameras.values()], pairs: out };
+}
+
+// 在画面上找机体战斗大图（不透明像素全部一致的位置；过扫描黑边里的不比）
+function locateUnit(id, fb) {
+  const file = unitFileOf(id);
+  if (!file) return null;
+  const png = PNG.sync.read(fs.readFileSync(path.join(ROOT, file)));
+  for (let oy = 0; oy + png.height <= TF_H; oy++) for (let ox = -png.width + 16; ox < 256 - 16; ox++) {
+    let bad = 0, seen = 0;
+    for (let y = 0; y < png.height && !bad; y++) for (let x = 0; x < png.width; x++) {
+      const o = (y * png.width + x) * 4;
+      const sx = ox + x;
+      if (!png.data[o + 3] || sx < OVERSCAN || sx >= 256 - OVERSCAN) continue;
+      seen++;
+      const c = fb[(oy + y) * 256 + sx];
+      if ((c & 0xff) !== png.data[o] || ((c >> 8) & 0xff) !== png.data[o + 1] || ((c >> 16) & 0xff) !== png.data[o + 2]) { bad++; break; }
+    }
+    if (!bad && seen > 50) return { x: ox, y: oy, file };
+  }
+  return null;
+}
+
+// 两段变形的一帧：黑底上按世界坐标 − 镜头画两张图（世界 512 宽首尾相接），和模拟器画面比较
+function compareSwap(fromId, fromAt, toId, toAt, cam, fb) {
+  const imgs = [[PNG.sync.read(fs.readFileSync(path.join(ROOT, unitFileOf(fromId)))), fromAt], [PNG.sync.read(fs.readFileSync(path.join(ROOT, unitFileOf(toId)))), toAt]];
+  const want = new Uint32Array(256 * TF_H).fill(NES_COLORS[0x0f] & 0xffffff);
+  for (const [png, at] of imgs) for (let y = 0; y < png.height; y++) for (let x = 0; x < png.width; x++) {
+    const o = (y * png.width + x) * 4;
+    if (!png.data[o + 3]) continue;
+    const sx = (((at.x + x - cam) % 512) + 512) % 512, sy = at.y + y;
+    if (sx >= 256 || sy >= TF_H) continue;
+    want[sy * 256 + sx] = png.data[o] | (png.data[o + 1] << 8) | (png.data[o + 2] << 16);
+  }
+  let diff = 0;
+  for (let y = OVERSCAN; y < TF_H; y++) for (let x = OVERSCAN; x < 256 - OVERSCAN; x++) if ((fb[y * 256 + x] & 0xffffff) !== want[y * 256 + x]) diff++;
+  return diff;
+}
+
+// 淡入某一档：图片像素反查色号 → fadeFromWhite → 和模拟器画面比较（背景色也按同样规则）
+function compareFade(pos, frame, floor) {
+  const png = PNG.sync.read(fs.readFileSync(path.join(ROOT, pos.file)));
+  const toNes = new Map();
+  for (let c = 0x3f; c >= 0; c--) toNes.set(NES_COLORS[c] & 0xffffff, c);
+  const backdrop = NES_COLORS[fadeFromWhite(0x0f, floor)] & 0xffffff;
+  let diff = 0;
+  for (let y = OVERSCAN; y < TF_H; y++) for (let x = OVERSCAN; x < 256 - OVERSCAN; x++) {
+    let want = backdrop;
+    const px = x - pos.x, py = y - pos.y;
+    if (px >= 0 && py >= 0 && px < png.width && py < png.height) {
+      const o = (py * png.width + px) * 4;
+      if (png.data[o + 3]) {
+        const rgb = png.data[o] | (png.data[o + 1] << 8) | (png.data[o + 2] << 16);
+        want = NES_COLORS[fadeFromWhite(toNes.get(rgb), floor)] & 0xffffff;
+      }
+    }
+    if ((frame.fb[y * 256 + x] & 0xffffff) !== want) diff++;
+  }
+  return diff;
+}
+
 // ---------- 主程序
 
 const argv = process.argv.slice(2);
@@ -853,6 +1100,19 @@ if (all || args.has("--effects") || args.has("--timing") || ONLY_WEAPONS) {
     const bad = Object.values({ ...doc.anims, ...doc.explosions }).filter((a) => a.check.stageDiff);
     console.log(`武器：${doc.weapons.length} 把，动画 ${Object.keys(doc.anims).length} 个，整屏渲染不一致 ${bad.length} 个${bad.length ? "：" + bad.map((a) => a.name ?? "").join(" ") : ""}`);
   }
+}
+
+if (args.has("--transform")) {
+  const doc = JSON.parse(fs.readFileSync(effectsFile, "utf8"));
+  const t = extractTransforms();
+  doc.transform = {
+    note: "地图菜单「变形」的原版演出。pairs[] 每个变形组合：kind = combine（盖塔式三段变形，动画 0x62#0B）或 swap（两段变形，0x62#10），music = 切 1 号曲的帧（相对动画开始）。combine：film = 用哪段过场（combine.films，frames = [唯一帧序号, 连续帧数]…，唯一帧按 columns 列排在 file 里，从动画开始到亮相淡入开始，含整屏加亮和全白），reveal = 新形态战斗大图在上半屏的位置，之后按 combine.timing.fadeSteps 的帧逐档淡入（托底亮度 3、2、1，第 4 档恢复原色，规则见 docs/notes-battle-gfx.md），fadeDiff = 按规则重画和原版不同的像素数。swap：fromAt / toAt = 现形态、新形态的图在世界坐标（两屏 512 宽）里的位置，camera = swapCameras 里第几条镜头轨迹（[帧, 屏幕左边缘的世界 x]…），diff = 按模型重画动画期间每帧和原版不同的像素总数。两种演出最后都停住等按键",
+    ...t,
+  };
+  fs.writeFileSync(effectsFile, stringify(doc) + "\n");
+  const ok = t.pairs.filter((p) => !p.error);
+  const bad = ok.filter((p) => (p.kind === "combine" ? p.fadeDiff : p.diff) !== 0);
+  console.log(`变形：${t.pairs.length} 个组合，合体 ${ok.filter((p) => p.kind === "combine").length}（过场 ${Object.keys(t.combine.films).length} 种），两段 ${ok.filter((p) => p.kind === "swap").length}（镜头轨迹 ${t.swapCameras.length} 种），重画不一致 ${bad.length}，失败 ${t.pairs.length - ok.length}`);
 }
 
 if (args.has("--sounds")) {
