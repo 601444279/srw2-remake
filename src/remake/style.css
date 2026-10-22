@@ -282,3 +282,10 @@ body.story #info, body.story #forecast { display: none !important; }
   #battle-scene .bs-name b { font-size: 14px; }
   #battle-scene .bs-text { font-size: 14px; }
 }
+
+/* 自动测试面板（开发用） */
+#autotest { position: fixed; right: 12px; bottom: 52px; z-index: 30; width: min(420px, calc(100vw - 24px)); max-height: 50vh; overflow: auto; padding: 10px 12px; border-radius: var(--radius); background: rgba(10, 12, 20, 0.92); border: 1px solid var(--accent); font-size: 12px; display: flex; flex-direction: column; gap: 4px; }
+#autotest b { color: var(--accent); font-size: 13px; }
+#autotest .ok { color: #6dff8a; }
+#autotest .bad { color: var(--enemy); }
+#autotest ul { margin: 4px 0 0; padding-left: 16px; color: var(--muted); }

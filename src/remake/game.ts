@@ -13,6 +13,7 @@ import { strikeSound, type Sfx } from "./sfx.ts";
 import { MUSIC, type Music } from "./music.ts";
 import { keyLabel, settings, TEXT_SPEEDS, type BindAction } from "./settings.ts";
 import { attackShout, damageCase, reactionShout } from "./shouts.ts";
+import { AutoTester, type AutoOptions, type AutoReport } from "./autotest.ts";
 import { BattleScene, battleLayout, battleSpriteUrl } from "./battle-scene.ts";
 import { loadScene, personName, portraitUrl, STAGE_STORY, type SceneRef } from "./story.ts";
 
@@ -70,6 +71,11 @@ export class Game implements DrawState {
   // 我方 / 敌方回合曲（脚本的 playerBgm / enemyBgm 会改），phase 是现在是谁的回合
   private songs = { player: 7, enemy: 8 };
   private phase: "player" | "enemy" = "player";
+  // 战斗演出中（可以按键跳过）
+  private inBattle = false;
+  private skipBattle = false;
+  // 自动测试（autotest.ts）
+  private auto: AutoTester | null = null;
 
   constructor(private stage: Stage, private renderer: Renderer, private ui: UI, private sfx: Sfx, private music: Music, private fast: () => boolean) {
     this.units = stage.units;
@@ -147,6 +153,7 @@ export class Game implements DrawState {
     this.setMode("title");
     const card = this.ui.titleCard(story?.title ?? `第${this.stage.number}篇`, story?.subtitle ?? "", 2.4);
     this.titleSkip = card.skip;
+    if (this.auto) card.skip();
     await card.done;
     this.titleSkip = null;
     await this.playerPhaseStart();
@@ -162,6 +169,7 @@ export class Game implements DrawState {
     this.music.play(this.songs.player);
     await this.ui.banner(`第 ${this.turn} 回合`, "我方回合", "player");
     this.setMode("browse");
+    if (this.auto) { void this.autoPlayerTurn(); return; }
     this.saveTo("auto").catch((e) => console.warn("自动存档失败", e));
   }
 
@@ -263,6 +271,7 @@ export class Game implements DrawState {
   // ---------- 剧情 ----------
   private async playScene(ref: SceneRef) {
     const lines = loadScene(ref);
+    if (this.auto) { this.auto.scenes++; this.auto.progress(); return; }
     if (ref.focusUnit && ref.who !== undefined) {
       const u = this.units.find((x) => x.pilotId === ref.who && x.hp > 0);
       if (u) this.setCursor(u.x, u.y);
@@ -345,6 +354,8 @@ export class Game implements DrawState {
 
   // 按住 Shift / 手柄 X 时演出加速
   private speed() {
+    if (this.skipBattle) return 40;
+    if (this.auto) return this.auto.speed;
     return this.fast() ? 3 : 1;
   }
 
@@ -370,6 +381,7 @@ export class Game implements DrawState {
   pointerClick(p: Point, button: number) {
     if (this.mode === "dialog" || this.mode === "title") { this.action(button === 2 ? "cancel" : "confirm"); return; }
     if (this.mode === "status") return;
+    if (this.inBattle) { this.skipCurrentBattle(); return; }
     if (button === 2) { this.action("cancel"); return; }
     // 移动前的单位菜单开着时直接点地图：点范围内的格子就走过去，点敌人就自动接近攻击
     if (this.mode === "menu" && this.reachPreview && this.selected && inBounds(this.stage.map, p.x, p.y)) {
@@ -393,6 +405,7 @@ export class Game implements DrawState {
   }
 
   action(a: Action) {
+    if (this.inBattle && (a === "confirm" || a === "cancel")) { this.skipCurrentBattle(); return; }
     if (a === "zoomIn" || a === "zoomOut") { this.renderer.setZoom(a === "zoomIn" ? 1 : -1); return; }
     if (a === "settings") { if (this.mode === "browse" || this.mode === "selected" || this.mode === "dialog") this.onOpenSettings(); return; }
     switch (this.mode) {
@@ -743,9 +756,19 @@ export class Game implements DrawState {
     const after = new Map([[attacker, attacker.hp], [defender, defender.hp]]);
     for (const [u, hp] of before) u.hp = hp;
 
-    const full = settings.get().battleStyle === "full";
+    const full = (this.auto?.battle ?? settings.get().battleStyle) === "full";
+    this.inBattle = true;
+    this.refreshHints();
     if (full) await this.battleFull(attacker, defender, events);
     else await this.battleSimple(attacker, defender, events);
+    this.inBattle = false;
+    this.skipBattle = false;
+    this.ui.battleEnd();
+    this.refreshHints();
+    if (this.auto) {
+      this.auto.battles++;
+      for (const u of [attacker, defender]) if (after.get(u) === 0) this.auto.kills[u.side === "player" ? "player" : "enemy"]++;
+    }
     for (const [u, hp] of after) u.hp = hp;
 
     // 击破、经验、升级
@@ -789,12 +812,12 @@ export class Game implements DrawState {
       await wait(0.35 / this.speed());
       // 先放开火声，等“弹道飞到”再命中（音效是原版的，见 sfx.ts）
       const sound = strikeSound(e.weapon.name);
-      this.sfx.attack(sound);
+      if (!this.skipBattle) this.sfx.attack(sound);
       await wait(sound.travel / this.speed());
       if (e.hit) {
         // 伤害占最大 HP 的比例决定打击力度：一半血以上或击破就是满力度
         const power = e.hpAfter === 0 ? 1 : Math.min(1, (e.damage / e.to.maxHp) * 2);
-        this.sfx.hit(sound);
+        if (!this.skipBattle) this.sfx.hit(sound);
         // 先顿帧，再扣血、飘数字、震屏
         await wait(this.renderer.impact(e.to, power, this.speed()));
         e.to.hp = e.hpAfter;
@@ -816,7 +839,7 @@ export class Game implements DrawState {
 
   // 完整：原版战斗画面（battle-scene.ts）。台词规则和简略一样
   private async battleFull(attacker: Unit, defender: Unit, events: BattleEvent[]) {
-    const scene = new BattleScene(() => this.speed());
+    const scene = new BattleScene(() => this.speed(), () => this.skipBattle, () => this.skipCurrentBattle());
     await scene.open(attacker, defender, battleLayout(attacker, defender));
     await wait(0.25 / this.speed());
     let attacks = 0;
@@ -826,10 +849,10 @@ export class Game implements DrawState {
       scene.say(e.from, attackShout(e.from.pilotId, kind, e.weapon.id) ?? `${e.weapon.name}！`);
       await wait(0.55 / this.speed());
       const sound = strikeSound(e.weapon.name);
-      this.sfx.attack(sound);
+      if (!this.skipBattle) this.sfx.attack(sound);
       await scene.attack(e.from, e.weapon.id);
       if (e.hit) {
-        this.sfx.hit(sound);
+        if (!this.skipBattle) this.sfx.hit(sound);
         scene.hit(e.to, e.damage, e.hpAfter, e.hpAfter === 0 ? 1 : Math.min(1, (e.damage / e.to.maxHp) * 2));
       } else {
         scene.miss(e.to);
@@ -837,7 +860,7 @@ export class Game implements DrawState {
       await wait(0.3 / this.speed());
       scene.say(e.to, reactionShout(e.to.pilotId, damageCase(e.hit, e.damage, e.hpAfter, e.to.maxHp)));
       if (e.hpAfter === 0) {
-        this.sfx.explode();
+        if (!this.skipBattle) this.sfx.explode();
         await scene.explode(e.to);
       }
       await wait(0.8 / this.speed());
@@ -847,6 +870,83 @@ export class Game implements DrawState {
       }
     }
     await scene.close();
+  }
+
+  // 战斗中按确定 / 取消（或点一下）：跳过演出，直接出结果
+  private skipCurrentBattle() {
+    if (!this.inBattle || this.skipBattle) return;
+    this.skipBattle = true;
+    this.ui.battleEnd();
+  }
+
+  // ---------- 自动测试（开发用，见 autotest.ts） ----------
+  get autoplaying() {
+    return !!this.auto;
+  }
+
+  autoplay(opts: AutoOptions = {}): Promise<AutoReport> {
+    if (this.auto) return this.auto.done;
+    const auto = new AutoTester(this.stage, opts, () => ({ turn: this.turn, mode: this.mode }));
+    this.auto = auto;
+    const real = { sfx: this.sfx, music: this.music };
+    if (auto.mute) {
+      const silent = new Proxy({}, { get: () => () => {} });
+      this.sfx = silent as Sfx;
+      this.music = silent as Music;
+      real.music.stop();
+    }
+    void auto.done.then(() => {
+      this.auto = null;
+      this.sfx = real.sfx;
+      this.music = real.music;
+    });
+    // 已经在我方回合里就直接开始；否则等开场流程走到我方回合
+    if (this.mode === "browse") void this.autoPlayerTurn();
+    return auto.done;
+  }
+
+  // 我方回合交给 AI：能打就打（偶尔先用精神），打不到就接近；然后结束回合
+  private async autoPlayerTurn() {
+    const auto = this.auto!;
+    this.setMode("busy");
+    try {
+      for (const u of this.players()) {
+        if (u.acted || u.hp <= 0 || u.npc) continue;
+        this.autoSpirit(u);
+        const plan = this.rules.pickAttack(u, this.units, 3, true);
+        if (plan) {
+          const moved = plan.to.x !== u.x || plan.to.y !== u.y;
+          await this.focus(u);
+          if (moved) await this.moveUnit(u, plan.to);
+          await this.battle(u, plan.weapon, plan.target, moved);
+        } else {
+          const to = this.rules.approach(u, this.units);
+          if (to && (to.x !== u.x || to.y !== u.y)) await this.moveUnit(u, to);
+        }
+        u.acted = true;
+        await this.events.runCheck();
+        auto.check(this.units);
+        if (this.mode === "over") return;
+      }
+    } catch (e) {
+      auto.problem(`我方行动出错：${(e as Error).stack ?? e}`);
+      auto.finish("出错停止");
+      return;
+    }
+    if (this.turn >= auto.turns) { auto.finish(`到达回合上限 ${auto.turns}`); return; }
+    await this.endTurn();
+  }
+
+  // 血少时用回复类精神；其他时候有一定机会随便用一个（顺便测精神）
+  private autoSpirit(u: Unit) {
+    const menu = this.rules.spiritMenu(u, this.units).filter((s) => s.usable && s.def.effect.kind !== "warp" && !(s.def.effect.kind === "heal" && s.def.effect.target === "ally"));
+    if (!menu.length) return;
+    const heal = menu.find((s) => s.def.effect.kind === "heal");
+    const pick = u.hp < u.maxHp * 0.4 && heal ? heal : Math.random() < 0.25 ? menu[Math.floor(Math.random() * menu.length)] : null;
+    if (!pick) return;
+    this.rules.useSpirit(u, pick.spirit.id, this.units);
+    this.auto!.spirits++;
+    this.dangerCache = null;
   }
 
   // ---------- 回合 ----------
@@ -926,6 +1026,7 @@ export class Game implements DrawState {
 
   // 检查脚本走到「过关」「失败」「结局」。过关剧情、换曲都已经由脚本做完了
   private async finishStage(result: "clear" | "gameover" | "ending") {
+    this.auto?.finish({ clear: "过关", gameover: "失败", ending: "结局" }[result]);
     this.setMode("over");
     this.ui.closeMenu(false);
     this.ui.hideForecast();
@@ -1034,6 +1135,7 @@ export class Game implements DrawState {
       over: [],
       status: [[`${k("left")}${k("right")} / ${k("prev")} ${k("next")}`, "切换单位"], [k("cancel"), "关闭"]],
     };
+    if (this.inBattle) { this.ui.setHints([[`${k("confirm")} / ${k("cancel")}`, "跳过战斗"], [`按住 ${k("fast")}`, "加速"]]); return; }
     this.ui.setHints(hints[this.mode]);
   }
 

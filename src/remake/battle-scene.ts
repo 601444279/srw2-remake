@@ -130,9 +130,14 @@ export class BattleScene {
   private raf = 0;
   private last = 0;
   private speed: () => number;
+  private skipped: () => boolean;
+  private onSkip: () => void;
 
-  constructor(speed: () => number) {
+  // skipped：玩家按了跳过（立即隐藏、动画不再播放）；onSkip：点击画面请求跳过
+  constructor(speed: () => number, skipped: () => boolean, onSkip: () => void) {
     this.speed = speed;
+    this.skipped = skipped;
+    this.onSkip = onSkip;
   }
 
   // 攻方画在它原生的那一侧，守方画在另一侧
@@ -156,10 +161,13 @@ export class BattleScene {
     this.canvas = $("canvas", this.root);
     this.ctx = this.canvas.getContext("2d")!;
     this.ctx.imageSmoothingEnabled = false;
-    this.root.hidden = false;
+    this.root.hidden = this.skipped();
     this.root.classList.remove("out");
+    this.root.onclick = () => this.onSkip();
+    this.root.oncontextmenu = (e) => { e.preventDefault(); this.onSkip(); };
     this.last = performance.now();
     const loop = (now: number) => {
+      if (this.skipped()) this.root.hidden = true;
       this.tick(Math.min(0.1, (now - this.last) / 1000));
       this.last = now;
       this.draw();
@@ -170,7 +178,7 @@ export class BattleScene {
 
   async close() {
     this.root.classList.add("out");
-    await wait(0.2);
+    if (!this.skipped()) await wait(0.2);
     cancelAnimationFrame(this.raf);
     this.root.hidden = true;
     this.root.innerHTML = "";
@@ -237,6 +245,7 @@ export class BattleScene {
     const a = this.actor(u);
     const anim = animFor(u.unitId, weaponId);
     const url = anim && fileUrl(effectFiles, anim.file);
+    if (this.skipped()) return;
     if (!anim || !url || !a.info) { await wait(0.4 / this.speed()); return; }
     const art = await loadArt(url);
     // 锚点 = 攻方叠色精灵的位置；镜像的机体锚点也镜像
@@ -256,7 +265,7 @@ export class BattleScene {
         this.effect = cel >= 0
           ? { art, cel: anim.cels[cel], x: a.flip ? ax - x - anim.cels[cel][2] : ax + x, y: ay + y, flip: a.flip }
           : null;
-        if (frame >= end) { this.effect = null; resolve(); return; }
+        if (frame >= end || this.skipped()) { this.effect = null; resolve(); return; }
         frame += 1;
         setTimeout(step, 1000 / 60 / this.speed());
       };
@@ -375,15 +384,16 @@ export class BattleScene {
 
 const wait = (s: number) => new Promise<void>((r) => setTimeout(r, s * 1000));
 
+// 用计时器而不是 requestAnimationFrame：页面在后台时也能走完（自动测试）
 function tween(seconds: number, f: (t: number) => void) {
   return new Promise<void>((resolve) => {
     const t0 = performance.now();
-    const step = (now: number) => {
-      const t = Math.min(1, (now - t0) / 1000 / seconds);
+    const step = () => {
+      const t = Math.min(1, (performance.now() - t0) / 1000 / seconds);
       f(t);
-      if (t < 1) requestAnimationFrame(step);
-      else { f(1); resolve(); }
+      if (t < 1) setTimeout(step, 16);
+      else resolve();
     };
-    requestAnimationFrame(step);
+    step();
   });
 }

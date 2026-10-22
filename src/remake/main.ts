@@ -23,8 +23,6 @@ async function boot() {
   const panel = new SettingsPanel();
   let input: Input | null = null;
   const game = new Game(stage, renderer, ui, new Sfx(), new Music(), () => input?.isFast ?? false);
-  // 开发时在控制台调试用
-  if (import.meta.env.DEV) (window as unknown as { game: Game }).game = game;
 
   // 关闭鼠标操作时隐藏指针、菜单也不响应鼠标
   const applyMouse = () => document.body.classList.toggle("no-mouse", !settings.get().mouse);
@@ -56,15 +54,31 @@ async function boot() {
   if (import.meta.env.DEV) Object.assign(window, { game, renderer });
 
   let last = performance.now();
+  let lastFrame = performance.now();
   const frame = (now: number) => {
     const dt = Math.min(0.1, (now - last) / 1000);
     last = now;
+    lastFrame = performance.now();
     input.update(now);
     game.update(dt);
     renderer.draw(game, dt);
     requestAnimationFrame(frame);
   };
   requestAnimationFrame(frame);
+  // 页面在后台时浏览器会暂停 requestAnimationFrame：自动测试时改用计时器推进（平时就让游戏暂停）
+  setInterval(() => {
+    if (!game.autoplaying || performance.now() - lastFrame < 200) return;
+    game.update(0.05);
+  }, 50);
+  // 自动测试（开发时）：地址加 ?autoplay，可带 &turns=30&speed=8&battle=full|simple&sound=1
+  const params = new URLSearchParams(location.search);
+  if (import.meta.env.DEV && params.has("autoplay")) {
+    const num = (k: string) => Number(params.get(k)) || undefined;
+    const battle = params.get("battle");
+    void game.autoplay({ turns: num("turns"), speed: num("speed"), battle: battle === "full" || battle === "simple" ? battle : undefined, mute: !params.has("sound") });
+    await game.start();
+    return;
+  }
   if (save) await game.resumeFromSave(save);
   else if (pending === "new") await game.start();
   else await game.showStartMenu();
