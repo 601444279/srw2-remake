@@ -21,7 +21,7 @@
     "target": "self",
     "effect": "moveUp",
     "value": 3,
-    "text": "机动 +3（本回合）"
+    "text": "机动 +3"
   },
   {
     "id": 2,
@@ -33,7 +33,7 @@
     "target": "self",
     "effect": "hitUp",
     "value": 10,
-    "text": "命中率 +10%（下一次攻击）"
+    "text": "命中率 +10%"
   },
   {
     "id": 3,
@@ -57,7 +57,7 @@
     "target": "self",
     "effect": "damageMul",
     "value": 2,
-    "text": "攻击伤害 ×2（下一次攻击）"
+    "text": "攻击伤害 ×2"
   },
   {
     "id": 5,
@@ -81,7 +81,7 @@
     "target": "self",
     "effect": "sureHit",
     "value": null,
-    "text": "命中率变为 100%（下一次攻击）"
+    "text": "命中率变为 100%"
   },
   {
     "id": 7,
@@ -93,7 +93,7 @@
     "target": "self",
     "effect": "moveUp",
     "value": 5,
-    "text": "机动 +5（本回合）"
+    "text": "机动 +5"
   },
   {
     "id": 8,
@@ -129,7 +129,7 @@
     "target": "self",
     "effect": "damageMul",
     "value": 3,
-    "text": "攻击伤害 ×3（下一次攻击）"
+    "text": "攻击伤害 ×3"
   },
   {
     "id": 11,

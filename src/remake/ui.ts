@@ -22,9 +22,13 @@ export interface StatusData {
   sprite: string | null;
   portrait: string | null;
   expToNext: number | null;
-  index: number;
-  count: number;
+  // 敌人没交过手时为 false：只显示外形、名字和类型
+  known: boolean;
+  tab: StatusTab;
+  hasPilot: boolean;
 }
+
+export type StatusTab = "unit" | "pilot";
 
 export interface GrowthStats { level: number; maxHp: number; maxSp: number; strength: number; defense: number; speed: number }
 export interface GrowthData {
@@ -51,6 +55,8 @@ export interface TerrainInfo {
 
 const $ = <T extends HTMLElement>(sel: string) => document.querySelector(sel) as T;
 
+const UNKNOWN_TEXT = "尚未交战，资料不明";
+
 export class UI {
   private menuItems: MenuItem[] = [];
   private menuIndex = 0;
@@ -74,88 +80,60 @@ export class UI {
     $("#hints").innerHTML = hints.map(([k, v]) => `<span><kbd>${k}</kbd>${v}</span>`).join("");
   }
 
-  showInfo(unit: Unit | null, iconUrl: string, terrain: TerrainInfo | null) {
+  showInfo(unit: Unit | null, iconUrl: string, known: boolean, terrain: TerrainInfo | null) {
     const el = $("#info");
     if (!unit && !terrain) { el.hidden = true; return; }
     el.hidden = false;
     let html = "";
-    if (unit) {
-      const ratio = Math.max(0, unit.hp / unit.maxHp);
-      // 原版状态画面显示的火力 = 武器火力 + 机体强度
-      const fire = (p: number | null) => (p === null ? "—" : String(p + unit.strength));
-      const weapons = unit.weapons.map((w) => `
-        <tr><td>${w.name}</td><td>${w.range}</td><td>${w.hit}</td><td>${fire(w.power.air)}</td><td>${fire(w.power.land)}</td><td>${fire(w.power.sea)}</td></tr>`).join("");
-      const spirits = unit.spirits.length
-        ? `<div class="spirits">${unit.spirits.map((s) => `<span title="${s.text}" class="${s.cost > unit.sp ? "off" : ""}">${s.name}<i>${s.cost}</i></span>`).join("")}</div>`
-        : "";
+    if (unit && !known) {
       html += `
         <div class="unit ${unit.side}">
           <img src="${iconUrl}" alt="">
           <div class="body">
-            <div class="name">${unit.name}<span class="tag">${TYPE_LABEL[unit.moveType]}</span><span class="tag">Lv ${unit.level}</span>${unit.acted ? '<span class="tag">已行动</span>' : ""}</div>
-            ${unit.pilotName ? `<div class="pilot"><span>驾驶员 ${unit.pilotName}${unit.trait ? `<em class="trait" title="${unit.trait.text}">${traitLabel(unit.trait)}</em>` : ""}</span>${unit.maxSp ? `<span>SP ${unit.sp} / ${unit.maxSp}</span>` : ""}</div>` : ""}
-            ${unit.trait ? `<div class="trait-text">${traitLabel(unit.trait)}：${unit.trait.text}</div>` : ""}
-            <div class="hp"><div class="bar"><i style="width:${ratio * 100}%"></i></div><span>${unit.hp} / ${unit.maxHp}</span></div>
-            <div class="stats">
-              <span>机动 <b>${unit.move}</b></span><span>强度 <b>${unit.strength}</b></span>
-              <span>防卫 <b>${unit.defense}</b></span><span>速度 <b>${unit.speed}</b></span>
-            </div>
+            <div class="name">${unit.name}<span class="tag">${TYPE_LABEL[unit.moveType]}</span></div>
+            <div class="muted">${UNKNOWN_TEXT}</div>
+          </div>
+        </div>`;
+    } else if (unit) {
+      // 简要资料：只放和战斗有关的能力。武器、驾驶员、精神、特性说明都在资料页
+      const ratio = Math.max(0, unit.hp / unit.maxHp);
+      html += `
+        <div class="unit ${unit.side}">
+          <img src="${iconUrl}" alt="">
+          <div class="body">
+            <div class="name"><span class="nm">${unit.name}</span><span class="lv">Lv ${unit.level}</span></div>
+            <div class="tags"><span class="tag">${TYPE_LABEL[unit.moveType]}</span>${unit.trait ? `<em class="trait">${traitLabel(unit.trait)}</em>` : ""}${unit.acted ? '<span class="tag done">已行动</span>' : ""}</div>
           </div>
         </div>
-        <table class="weapons"><tr><th>武器</th><th>射程</th><th>命中</th><th>空</th><th>陆</th><th>海</th></tr>${weapons}</table>
-        ${spirits}`;
+        <div class="hp"><div class="bar"><i style="width:${ratio * 100}%"></i></div><span>${unit.hp}<small> / ${unit.maxHp}</small></span></div>
+        <div class="stats">
+          <span>机动<b>${unit.move}</b></span><span>强度<b>${unit.strength}</b></span>
+          <span>防卫<b>${unit.defense}</b></span><span>速度<b>${unit.speed}</b></span>
+        </div>`;
     }
     if (terrain) {
-      const costs = terrain.costs.map((c) => `${c.label} ${c.cost === 0 ? "×" : c.cost}`).join(" · ");
       const evade = terrain.evade ? `回避 +${terrain.evade}%` : "无地形效果";
-      html += `<div class="terrain"><b>${terrain.name}</b><span>${evade}${terrain.sea ? " · 算作海上" : ""}</span><span class="muted">移动消耗 ${costs}</span></div>`;
+      // 光标下有单位时只给地形效果；空格子才列移动消耗
+      const costs = unit ? "" : `<span class="muted">移动消耗 ${terrain.costs.map((c) => `${c.label} ${c.cost === 0 ? "×" : c.cost}`).join(" · ")}</span>`;
+      html += `<div class="terrain"><b>${terrain.name}</b><span>${evade}${terrain.sea ? " · 算作海上" : ""}</span>${costs}</div>`;
     }
     el.innerHTML = html;
   }
 
-  // 资料页：机体战斗大图、能力、武器、驾驶员、精神。←→ / E Q 切换单位
-  showStatus(d: StatusData, on: { close(): void; cycle(dir: number): void }) {
+  // 资料页：同一个单位分两页。机体页：战斗大图、HP、能力、武器；驾驶员页：头像、等级经验、SP、特性、精神。
+  // ←→ / Q E 或点上方标签切换
+  showStatus(d: StatusData, on: { close(): void; tab(t: StatusTab): void }) {
     const { unit } = d;
     const el = $("#status");
-    const fire = (p: number | null) => (p === null ? "—" : String(p + unit.strength));
-    const weapons = unit.weapons.map((w) => `
-      <tr><td>${w.name}</td><td>${w.range}</td><td>${w.hit}</td><td>${fire(w.power.air)}</td><td>${fire(w.power.land)}</td><td>${fire(w.power.sea)}</td><td>${w.usableAfterMove ? "○" : "—"}</td></tr>`).join("");
-    const spirits = unit.spirits.map((s) => `<li class="${s.cost > unit.sp ? "off" : ""}"><b>${s.name}</b><i>${s.cost}</i><span>${s.text}</span></li>`).join("");
-    const ratio = Math.max(0, unit.hp / unit.maxHp);
-    const exp = d.expToNext === null ? "已满级" : `下一级还需 ${d.expToNext}`;
     el.className = unit.side;
-    el.innerHTML = `
-      <div class="st-card">
-        <button class="st-close" aria-label="关闭">✕</button>
-        <div class="st-head">
-          <div class="st-sprite">${d.sprite ? `<img src="${d.sprite}" alt="">` : `<img class="icon" src="${d.iconUrl}" alt="">`}</div>
-          <div class="st-main">
-            <div class="st-name">${unit.name}<span class="tag">${TYPE_LABEL[unit.moveType]}</span>${unit.acted ? '<span class="tag">已行动</span>' : ""}</div>
-            <div class="st-hp"><span>HP</span><div class="bar"><i style="width:${ratio * 100}%"></i></div><b>${unit.hp} / ${unit.maxHp}</b></div>
-            <div class="st-stats">
-              <span>机动<b>${unit.move}</b></span><span>强度<b>${unit.strength}</b></span>
-              <span>防卫<b>${unit.defense}</b></span><span>速度<b>${unit.speed}</b></span>
-            </div>
-          </div>
-        </div>
-        <table class="st-weapons"><tr><th>武器</th><th>射程</th><th>命中</th><th>空</th><th>陆</th><th>海</th><th>移动后</th></tr>${weapons || '<tr><td colspan="7" class="muted">没有武器</td></tr>'}</table>
-        ${unit.pilotName ? `
-        <div class="st-pilot">
-          <div class="st-face">${d.portrait ? `<img src="${d.portrait}" alt="">` : `<span>${unit.pilotName.slice(0, 1)}</span>`}</div>
-          <div class="st-pbody">
-            <div class="st-pname">${unit.pilotName}<span class="tag">Lv ${unit.level}</span>${unit.side === "player" ? `<span class="muted">经验 ${unit.exp} · ${exp}</span>` : ""}</div>
-            ${unit.maxSp ? `<div class="st-sp">SP <b>${unit.sp} / ${unit.maxSp}</b></div>` : ""}
-            ${unit.trait ? `<div class="st-trait"><em>${traitLabel(unit.trait)}</em>${unit.trait.text}${unit.trait.next ? `<div class="st-next">Lv ${unit.trait.next.level} 时会有变化……</div>` : ""}</div>` : ""}
-          </div>
-        </div>` : ""}
-        ${spirits ? `<ul class="st-spirits">${spirits}</ul>` : ""}
-        <div class="st-nav">
-          <button data-dir="-1">‹ 上一个</button><span>${d.index + 1} / ${d.count}</span><button data-dir="1">下一个 ›</button>
-        </div>
-      </div>`;
+    const tabs = d.known && d.hasPilot
+      ? `<div class="st-tabs">${(["unit", "pilot"] as const).map((t) => `<button data-tab="${t}" class="${d.tab === t ? "on" : ""}">${t === "unit" ? "机体" : "驾驶员"}</button>`).join("")}</div>`
+      : "";
+    const body = !d.known ? this.statusHead(d, false) : d.tab === "pilot" && d.hasPilot ? this.statusPilot(d) : this.statusUnit(d);
+    el.innerHTML = `<div class="st-card"><button class="st-close" aria-label="关闭">✕</button>${tabs}${body}</div>`;
     el.hidden = false;
     (el.querySelector(".st-close") as HTMLElement).onclick = () => on.close();
-    el.querySelectorAll<HTMLElement>(".st-nav button").forEach((b) => (b.onclick = () => on.cycle(Number(b.dataset.dir))));
+    el.querySelectorAll<HTMLElement>(".st-tabs button").forEach((b) => (b.onclick = () => on.tab(b.dataset.tab as StatusTab)));
     el.onclick = (e) => { if (e.target === el) on.close(); };
     el.oncontextmenu = (e) => { e.preventDefault(); on.close(); };
     if (settings.get().artStyle === "smooth") {
@@ -164,6 +142,52 @@ export class UI {
         void smoothUrl(src).then((u) => { if (img.getAttribute("src") === src) img.src = u; });
       }
     }
+  }
+
+  // 机体大图 + 名字；known 为 false（没交过手的敌人）时只有这些
+  private statusHead(d: StatusData, known: boolean) {
+    const { unit } = d;
+    const ratio = Math.max(0, unit.hp / unit.maxHp);
+    return `
+      <div class="st-head">
+        <div class="st-sprite">${d.sprite ? `<img src="${d.sprite}" alt="">` : `<img class="icon" src="${d.iconUrl}" alt="">`}</div>
+        <div class="st-main">
+          <div class="st-name">${unit.name}<span class="tag">${TYPE_LABEL[unit.moveType]}</span>${known ? `<span class="tag">Lv ${unit.level}</span>` : ""}${unit.acted ? '<span class="tag">已行动</span>' : ""}</div>
+          ${known ? `
+          <div class="st-hp"><span>HP</span><div class="bar"><i style="width:${ratio * 100}%"></i></div><b>${unit.hp} / ${unit.maxHp}</b></div>
+          <div class="st-stats">
+            <span>机动<b>${unit.move}</b></span><span>强度<b>${unit.strength}</b></span>
+            <span>防卫<b>${unit.defense}</b></span><span>速度<b>${unit.speed}</b></span>
+          </div>` : `<div class="muted">${UNKNOWN_TEXT}</div>`}
+        </div>
+      </div>`;
+  }
+
+  private statusUnit(d: StatusData) {
+    const { unit } = d;
+    const fire = (p: number | null) => (p === null ? "—" : String(p + unit.strength));
+    const weapons = unit.weapons.map((w) => `
+      <tr><td>${w.name}</td><td>${w.range}</td><td>${w.hit}</td><td>${fire(w.power.air)}</td><td>${fire(w.power.land)}</td><td>${fire(w.power.sea)}</td><td>${w.usableAfterMove ? "○" : "—"}</td></tr>`).join("");
+    return `${this.statusHead(d, true)}
+      <table class="st-weapons"><tr><th>武器</th><th>射程</th><th>命中</th><th>空</th><th>陆</th><th>海</th><th>移动后</th></tr>${weapons || '<tr><td colspan="7" class="muted">没有武器</td></tr>'}</table>`;
+  }
+
+  private statusPilot(d: StatusData) {
+    const { unit } = d;
+    const exp = d.expToNext === null ? "已满级" : `下一级还需 ${d.expToNext}`;
+    const spirits = unit.spirits.map((s) => `<li class="${s.cost > unit.sp ? "off" : ""}"><b>${s.name}</b><i>${s.cost}</i><span>${s.text}</span></li>`).join("");
+    return `
+      <div class="st-pilot">
+        <div class="st-face">${d.portrait ? `<img src="${d.portrait}" alt="">` : `<span>${unit.pilotName.slice(0, 1)}</span>`}</div>
+        <div class="st-pbody">
+          <div class="st-pname">${unit.pilotName}<span class="tag">Lv ${unit.level}</span></div>
+          ${unit.side === "player" ? `<div class="st-exp">经验 <b>${unit.exp}</b> · ${exp}</div>` : ""}
+          ${unit.maxSp ? `<div class="st-sp">SP <b>${unit.sp} / ${unit.maxSp}</b></div>` : ""}
+          <div class="muted">乘坐 ${unit.name}</div>
+        </div>
+      </div>
+      ${unit.trait ? `<div class="st-trait"><div class="tt-head"><b>${traitLabel(unit.trait)}</b><small>特性</small></div><span>${unit.trait.text}</span></div>` : ""}
+      ${spirits ? `<ul class="st-spirits">${spirits}</ul>` : ""}`;
   }
 
   hideStatus() {
@@ -455,8 +479,20 @@ export class UI {
   }
 
   // ---------- 攻击预测 ----------
-  showForecast(atk: Unit, atkIcon: string, def: Unit, defIcon: string, weapon: Weapon, f: Forecast) {
+  // known = false：对方没交过手，命中、伤害、反击都不显示（它们取决于对方的能力和武器）
+  // top：放在画面上方（敌方瞄准时用，不挡住下方的单位）
+  showForecast(atk: Unit, atkIcon: string, def: Unit, defIcon: string, weapon: Weapon, f: Forecast, known = true, top = false) {
     const el = $("#forecast");
+    el.classList.toggle("top", top);
+    if (!known) {
+      const head = (u: Unit, icon: string) => `<div class="fc-head"><img src="${icon}" alt=""><div><b>${u.name}</b><small>${u.pilotName}</small></div></div>`;
+      el.innerHTML = `
+        <div class="fc-side ${atk.side}">${head(atk, atkIcon)}<div class="fc-weapon">${weapon.name}</div><div class="fc-nums muted">命中、伤害 ?</div></div>
+        <div class="fc-vs">VS</div>
+        <div class="fc-side ${def.side}">${head(def, defIcon)}<div class="fc-weapon">?</div><div class="fc-nums muted">${UNKNOWN_TEXT}</div></div>`;
+      el.hidden = false;
+      return;
+    }
     const side = (u: Unit, icon: string, w: Weapon | null, s: { hit: number; damage: number; valid: boolean; lethal: boolean }, twice: boolean, other: Unit) => {
       const after = Math.max(0, other.hp - (s.valid ? s.damage * (twice ? 2 : 1) : 0));
       return `
@@ -485,7 +521,8 @@ export class UI {
   }
 
   // ---------- 战斗面板（简略演出，叠在地图上） ----------
-  battleStart(atk: Unit, atkIcon: string, def: Unit, defIcon: string) {
+  // f：战前预测，卡片上标出双方这一战的命中率（不能反击的一方标「不能反击」）
+  battleStart(atk: Unit, atkIcon: string, def: Unit, defIcon: string, f: Forecast) {
     const el = $("#battle");
     const card = (u: Unit, icon: string, role: string) => `
       <div class="bt-side ${u.side}" data-unit="${u.id}">
@@ -497,7 +534,8 @@ export class UI {
         <div class="bt-pop"></div>
         <div class="bt-say"></div>
       </div>`;
-    el.innerHTML = card(atk, atkIcon, "攻击") + card(def, defIcon, "防守") + '<div class="bt-weapon"></div>';
+    const counter = f.counter.valid && f.counter.weapon ? `反击 · 命中 ${f.counter.hit}%` : "不能反击";
+    el.innerHTML = card(atk, atkIcon, `攻击 · 命中 ${f.attack.hit}%`) + card(def, defIcon, counter) + '<div class="bt-weapon"></div>';
     el.hidden = false;
   }
 

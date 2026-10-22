@@ -5,7 +5,8 @@
 // 近身：两台机体都在镜头 32 的同一屏；远距离：左侧机体在第 0 屏（世界 = 画面位置 + 32），
 // 右侧机体在第 1 屏（+ 224），攻击动画的关键帧带着镜头平移（docs/notes-battle-gfx.md）。
 import db from "../../data/battle-scene.json";
-import type { Unit } from "./data.ts";
+import type { Unit, Weapon } from "./data.ts";
+import type { Strike } from "./rules.ts";
 import { portraitUrl } from "./story.ts";
 import { settings } from "./settings.ts";
 import { smoothCanvas, smoothUrl } from "./upscale.ts";
@@ -52,9 +53,48 @@ function animFor(unitId: number, weaponId: number): Anim | null {
   return data.anims[name] ?? null;
 }
 
-// 原版这段攻击动画的音效：[第几帧, 音效号]（命中和落空一样，原版在动画之后不另放音效）
-export function attackSounds(unitId: number, weaponId: number): [number, number][] | null {
-  return animFor(unitId, weaponId)?.sounds ?? null;
+// 原版用作命中声的音效：弹道 03、炸开 0C、砍击 0E、离子剑 06
+const IMPACT_SOUNDS = new Set([0x03, 0x0c, 0x0e, 0x06]);
+
+// 一次攻击的时间线（帧，60 帧 = 1 秒），完整战斗画面和地图上的简略面板共用。
+// 原版：音效全在攻击动画里按帧触发，命中和落空的动画一模一样，判定在动画播完之后，只出文字。
+// 原版的命中声就落在特效打到守方的那一帧（和按特效位置算出来的到达帧只差几帧），
+// 所以重制版的受击反应（闪白、震屏、伤害数字或 MISS）放在第一个命中声那一帧，而不是动画播完之后；
+// 后面的命中声（连续爆炸、导弹多发）每声再小震一下。音效一律按原版帧号放，不挪不删。
+// 没有命中声的动画（左轮、机枪、连续射线），取「第一声开火」和「特效飞到最远」里晚的那帧，之后每声开火小震一下，打中时可补一声 03（extraHit）。
+export interface AttackTimeline {
+  sounds: [number, number][]; // [帧, 音效号]
+  impacts: number[]; // 受击反应的帧（第一个是正式的一击）
+  extraHit: boolean; // 动画里没有命中声
+  end: number; // 动画画到哪一帧（末尾的空等截短）
+}
+
+export function attackTimeline(unitId: number, weaponId: number): AttackTimeline | null {
+  const anim = animFor(unitId, weaponId);
+  if (!anim) return null;
+  const hits = anim.sounds.filter(([, id]) => IMPACT_SOUNDS.has(id)).map(([f]) => f);
+  const side = data.units[unitId]?.side ?? "right";
+  // 没有命中声：第一击在开火和特效到达之后；之后每一声开火（机枪连射）再小震一下
+  const first = Math.max(anim.sounds[0]?.[0] ?? 0, reachFrame(anim, side));
+  const impacts = hits.length ? hits : [first, ...anim.sounds.map(([f]) => f).filter((f) => f > first)];
+  return { sounds: anim.sounds, impacts, extraHit: !hits.length, end: Math.max(animEnd(anim), impacts[0] + 1) };
+}
+
+// 特效前沿第一次到达最远处（朝守方方向，最远距离的 90%）的帧；右侧的特效往左飞
+function reachFrame(anim: Anim, side: Side): number {
+  const fronts = anim.keyframes.filter((k) => (k[2] ?? -1) >= 0)
+    .map(([f, , cel = 0, x = 0]) => ({ f, d: side === "right" ? -x : x + anim.cels[cel][2] }));
+  if (!fronts.length) return 0;
+  const max = Math.max(...fronts.map((p) => p.d));
+  return fronts.find((p) => p.d >= max * 0.9)!.f;
+}
+
+// 动画画到哪一帧：特效画完再留 14 帧，最后一声音效后留 10 帧（原版末尾常有很长的空等）
+function animEnd(anim: Anim): number {
+  const kfs = anim.keyframes;
+  const lastCel = kfs.reduce((end, k) => ((k[2] ?? -1) >= 0 ? k[0] + k[1] : end), 0);
+  const lastSound = anim.sounds.at(-1)?.[0] ?? 0;
+  return Math.min(kfs.at(-1)![0] + kfs.at(-1)![1], Math.max(lastCel + 14, lastSound + 10));
 }
 
 // 远程武器（射程 > 1）打不到相邻格，所以战斗布局只看距离
@@ -221,7 +261,7 @@ export class BattleScene {
     const u = a.unit;
     return `
       <div class="bs-card ${a.side} ${u.side}" data-unit="${u.id}">
-        <div class="bs-name"><b>${u.name}</b>${u.pilotName ? `<small>${u.pilotName}</small>` : ""}</div>
+        <div class="bs-name"><b>${u.name}</b></div>
         <div class="bs-hp"><div class="bar"><i style="width:${(u.hp / u.maxHp) * 100}%"></i></div><span>${u.hp} / ${u.maxHp}</span></div>
         <div class="bs-weapon"></div>
       </div>`;
@@ -243,33 +283,54 @@ export class BattleScene {
     t.classList.add("show");
   }
 
-  weapon(u: Unit, name: string) {
-    this.root.querySelectorAll(".bs-weapon").forEach((e) => (e.textContent = ""));
-    const el = this.root.querySelector(`[data-unit="${u.id}"] .bs-weapon`);
-    if (el) el.textContent = name;
+  // 开场就把双方这一战用的武器和命中率写上（驾驶员名字不写，下方台词框里有）
+  arms(atk: Unit, atkWeapon: Weapon, atkStrike: Strike, def: Unit, defWeapon: Weapon | null, defStrike: Strike) {
+    const fill = (u: Unit, w: Weapon | null, s: Strike) => {
+      const el = this.root.querySelector(`[data-unit="${u.id}"] .bs-weapon`);
+      if (!el) return;
+      el.innerHTML = w && s.valid ? `<span>${w.name}</span><em>命中 <b>${s.hit}</b>%</em>` : `<span class="none">不能反击</span>`;
+    };
+    fill(atk, atkWeapon, atkStrike);
+    fill(def, defWeapon, defStrike);
   }
 
-  // 播一段攻击动画（原版逐帧时间；末尾的空等截短）。sounds：这次要放的动画音效，默认是动画自带的全部
-  async attack(u: Unit, weaponId: number, sounds?: [number, number][]) {
+  // 出手的一方武器栏亮起，另一方变暗
+  weapon(u: Unit, name: string) {
+    this.root.querySelectorAll(".bs-weapon").forEach((e) => e.classList.remove("active"));
+    const el = this.root.querySelector(`[data-unit="${u.id}"] .bs-weapon`);
+    if (!el) return;
+    if (!el.textContent) el.innerHTML = `<span>${name}</span>`;
+    el.classList.add("active");
+  }
+
+  // 播一段攻击动画（原版逐帧时间，见 attackTimeline）。onImpact(i) 在第 i 个受击帧调用；
+  // 没有动画、或者中途跳过时，保证第 0 个一定会调用（伤害要结算）
+  async attack(u: Unit, weaponId: number, onImpact: (i: number) => void) {
+    let fired = false;
+    const impact = (i: number) => { if (i === 0) fired = true; onImpact(i); };
+    await this.playAttack(u, weaponId, impact);
+    if (!fired) impact(0);
+  }
+
+  private async playAttack(u: Unit, weaponId: number, impact: (i: number) => void) {
     const a = this.actor(u);
     const anim = animFor(u.unitId, weaponId);
+    const tl = attackTimeline(u.unitId, weaponId);
     const url = anim && fileUrl(effectFiles, anim.file);
     if (this.skipped()) return;
-    if (!anim || !url || !a.info) { await wait(0.4 / this.speed()); return; }
+    if (!anim || !tl || !url || !a.info) { await wait(0.4 / this.speed()); return; }
     const art = await loadArt(url);
     // 锚点 = 攻方叠色精灵的位置；镜像的机体锚点也镜像
     const ax = a.flip ? a.x + a.w - a.info.origin.x : a.x + a.info.origin.x;
     const ay = a.y + a.info.origin.y;
     const camStart = this.layout === "close" ? CLOSE_CAMERA : a.side === "right" ? 256 : 0;
     const kfs = anim.keyframes;
-    const lastCel = kfs.reduce((end, k) => ((k[2] ?? -1) >= 0 ? k[0] + k[1] : end), 0);
-    const lastSound = anim.sounds.at(-1)?.[0] ?? 0;
-    const end = Math.min(kfs.at(-1)![0] + kfs.at(-1)![1], Math.max(lastCel + 14, lastSound + 10));
     let frame = 0;
     await new Promise<void>((resolve) => {
       const step = () => {
-        // 音效和画面同一帧计数，跟着动画走
-        for (const [f, id] of sounds ?? anim.sounds) if (f === frame) this.sound(id);
+        // 音效、受击反应和画面同一帧计数，跟着动画走
+        for (const [f, id] of tl.sounds) if (f === frame) this.sound(id);
+        tl.impacts.forEach((f, i) => { if (f === frame) impact(i); });
         const k = [...kfs].reverse().find((f) => f[0] <= frame) ?? kfs[0];
         // 镜头和特效位置可能绕过 512（两个名称表首尾相接），画的时候按循环画（见 draw），这里直接用
         const [, , cel = -1, x = 0, y = 0, cx = 0, cy = 0] = k;
@@ -278,7 +339,7 @@ export class BattleScene {
         this.effect = cel >= 0
           ? { art, cel: anim.cels[cel], x: a.flip ? ax - x - anim.cels[cel][2] : ax + x, y: ay + y, flip: a.flip }
           : null;
-        if (frame >= end || this.skipped()) { this.effect = null; resolve(); return; }
+        if (frame >= tl.end || this.skipped()) { this.effect = null; resolve(); return; }
         frame += 1;
         setTimeout(step, 1000 / 60 / this.speed());
       };
@@ -293,6 +354,13 @@ export class BattleScene {
     this.shake(a, 2 + power * 4);
     this.pop(a, `-${damage}`, "hit");
     this.setHp(a, hpAfter);
+  }
+
+  // 同一次攻击的后续命中（连续爆炸、导弹多发）：小闪一下、小震一下
+  jolt(u: Unit) {
+    const a = this.actor(u);
+    a.flash = 0.06;
+    this.shake(a, 2);
   }
 
   miss(u: Unit) {
@@ -313,23 +381,23 @@ export class BattleScene {
     stage.style.setProperty("--fx", `${((this.screenX(a) + a.w / 2) / W) * 100}%`);
     stage.style.setProperty("--fy", `${((a.y + a.h / 2) / H) * 100}%`);
     stage.classList.add("slowmo");
-    this.slow = 0.25;
+    this.slow = 0.45;
     boom();
     for (let i = 0; i < 10 && art; i++) {
-      this.puffs.push({ anim, art, x: a.x + a.w * (0.1 + Math.random() * 0.8), y: a.y + a.h * (0.15 + Math.random() * 0.75), t: -i * 0.07 });
+      this.puffs.push({ anim, art, x: a.x + a.w * (0.1 + Math.random() * 0.8), y: a.y + a.h * (0.15 + Math.random() * 0.75), t: -i * 0.05 });
     }
     a.flash = 0.25;
     this.shake(a, 6);
-    // 慢镜头停留久一点，让爆炸一团团看清楚，再让机体慢慢消失
-    await wait(2.0 / this.speed());
-    await tween(1.0 / this.speed(), (t) => { a.alpha = 1 - t; });
+    // 慢镜头停一会儿让爆炸一团团炸开，再让机体消失。回到地图还会再炸一次，这里不宜拖长（整段约 1.9 秒）
+    await wait(1.0 / this.speed());
+    await tween(0.5 / this.speed(), (t) => { a.alpha = 1 - t; });
     // 最后一下：大爆炸，速度恢复
     this.slow = 1;
     stage.classList.remove("slowmo");
     stage.classList.add("blast");
     boom();
     for (let i = 0; i < 4 && art; i++) this.puffs.push({ anim, art, x: a.x + a.w * (0.3 + Math.random() * 0.4), y: a.y + a.h * (0.3 + Math.random() * 0.4), t: -i * 0.03 });
-    await wait(0.5 / this.speed());
+    await wait(0.4 / this.speed());
     stage.classList.remove("blast");
   }
 
@@ -350,7 +418,8 @@ export class BattleScene {
     el.className = `bs-pop ${cls}`;
     el.textContent = text;
     el.style.left = `${((this.screenX(a) + a.w / 2) / W) * 100}%`;
-    el.style.top = `${((a.y + a.h * 0.3) / H) * 100}%`;
+    // 放在机体头顶，不压住机体
+    el.style.top = `${(Math.max(a.y - a.h * 0.05, 0) / H) * 100}%`;
     $(".bs-pops", this.root).append(el);
     setTimeout(() => el.remove(), 1200);
   }

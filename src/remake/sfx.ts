@@ -55,24 +55,6 @@ export function strikeSound(weaponName: string): StrikeSound {
   return BY_NAME[weaponName.trim()] ?? shot(0x0a, 0x03, 0.3);
 }
 
-// 原版用作命中声的音效：弹道 03、炸开 0C、砍击 0E、离子剑 06
-const IMPACTS = new Set([0x03, 0x0c, 0x0e, 0x06]);
-
-// 原版攻击动画的音效里，最后一声命中类音效（光束枪的 03、大炮的 0C、砍击的 0E…）在原版是跟着动画放的，
-// 不管打没打中、也比画面上真正打到早（光束枪是开火后第 8 帧，还会把光束声截断）。
-// 重制版把它挪到真正命中的那一刻（顿帧、震屏时）放；没打中就不放——除非动画里只有这一声（格斗），那就照原样放。
-export function splitAttackSounds(sounds: [number, number][]): { lead: [number, number][]; impact: number | null } {
-  const last = sounds.at(-1);
-  return last && IMPACTS.has(last[1]) ? { lead: sounds.slice(0, -1), impact: last[1] } : { lead: sounds, impact: null };
-}
-
-// 命中那一刻放的音效：动画自带的命中声（splitAttackSounds）；动画里没有命中声的（左轮、机枪、离子波等只有开火声），
-// 重制版补原版的弹道命中 03（设置里可关）。
-// 不按武器名查 BY_NAME：那张表是没有动画数据时的配音，有的和动画对不上（乍克的连发枪动画是机枪 07，表里却是大炮的 0C）
-export function hitSoundFor(animSounds: [number, number][], addMissing: boolean): number | null {
-  return splitAttackSounds(animSounds).impact ?? (addMissing ? 0x03 : null);
-}
-
 export type UiSound = "ok" | "move";
 
 export class Sfx {
@@ -85,10 +67,11 @@ export class Sfx {
   private thrust = 0;
 
   constructor() {
-    // 浏览器要求用户操作后才能出声，第一次按键 / 点击时再创建、解码
+    // 一开始就建好音频、解码音效（浏览器允许就直接能出声），不允许的话第一次按键 / 点击时恢复
+    this.init();
     const unlock = () => {
       this.init();
-      if (this.ctx?.state === "suspended") void this.ctx.resume();
+      if (this.ctx?.state === "suspended") void this.ctx.resume().catch(() => {});
     };
     for (const ev of ["keydown", "pointerdown", "touchstart"]) addEventListener(ev, unlock);
   }
@@ -116,7 +99,7 @@ export class Sfx {
     this.voice = src;
   }
 
-  // 补的命中音（hitSoundFor）：单独一路，不打断攻击动画还在响的尾音
+  // 补的命中音（game.ts extraHitSound）：单独一路，不打断攻击动画还在响的尾音
   impact(id: number) {
     const src = this.start(id, 0, this.impactVoice);
     if (!src) return;

@@ -33,11 +33,12 @@ export class Music {
   private wanted: number | null = null;
 
   constructor() {
-    // 浏览器要求用户操作后才能出声：先记下要放的曲子，第一次按键 / 点击时再开始
+    // 一开始就建好音频、试着恢复：浏览器允许（这个站点交互过、或者本来就不拦）就直接出声，
+    // 不允许就等第一次按键 / 点击。之前要等按键才建，读档进地图后要按一下才有音乐
+    this.init();
     const unlock = () => {
       this.init();
-      if (this.ctx?.state === "suspended") void this.ctx.resume();
-      if (this.wanted !== null && !this.current) void this.start(this.wanted);
+      if (this.ctx?.state === "suspended") void this.ctx.resume().catch(() => {});
     };
     for (const ev of ["keydown", "pointerdown", "touchstart"]) addEventListener(ev, unlock);
     settings.onChange(() => this.applySettings());
@@ -45,10 +46,15 @@ export class Music {
 
   private init() {
     if (this.ctx || !window.AudioContext) return;
-    this.ctx = new AudioContext();
-    this.bus = this.ctx.createGain();
+    const ctx = (this.ctx = new AudioContext());
+    this.bus = ctx.createGain();
     this.bus.gain.value = settings.get().musicVolume;
-    this.bus.connect(this.ctx.destination);
+    this.bus.connect(ctx.destination);
+    // 一能出声就放现在该放的曲子
+    ctx.addEventListener("statechange", () => {
+      if (ctx.state === "running" && this.wanted !== null && !this.current) void this.start(this.wanted);
+    });
+    if (ctx.state === "suspended") void ctx.resume().catch(() => {});
   }
 
   private style = settings.get().musicStyle;
@@ -79,10 +85,13 @@ export class Music {
     return p;
   }
 
-  // 预先下载解码，切歌时不卡
+  // 预先下载解码，切歌时不卡。按顺序一首一首解码（先给的先好），不让一堆曲子同时抢解码
+  private preloading: Promise<void> = Promise.resolve();
   preload(ids: number[]) {
     this.init();
-    for (const id of ids) { const t = tracks.get(id); if (t) this.load(t.file).catch(() => {}); }
+    this.preloading = this.preloading.then(async () => {
+      for (const id of ids) { const t = tracks.get(id); if (t) await this.load(t.file).catch(() => {}); }
+    });
   }
 
   // 现在要放的曲子（战斗音乐放完后接回它）
@@ -98,7 +107,9 @@ export class Music {
     this.wantedOnce = !!opts.once;
     this.stopJingle();
     this.fadeOut(opts.fade);
+    // 还不能出声时也先下载解码好，一解锁就能马上放
     if (this.ctx?.state === "running") void this.start(id);
+    else { const t = tracks.get(id); if (t) this.load(t.file).catch(() => {}); }
   }
   private wantedOnce = false;
 

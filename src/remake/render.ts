@@ -19,6 +19,9 @@ export interface Overlay {
   path?: Point[];
   // 可以攻击 / 选择的目标格（选目标时闪烁的框）
   targets?: Point[];
+  // 敌方回合：正在行动的单位（脚下亮圈）、瞄准（from 攻方显示位置 → to 目标格）
+  actor?: { at: Point; enemy: boolean };
+  lock?: { from: Point; to: Point };
 }
 
 interface FloatText {
@@ -27,6 +30,17 @@ interface FloatText {
   text: string;
   tone: Tone;
   t: number;
+}
+
+interface BlastPart {
+  kind: "fire" | "spark" | "smoke";
+  x: number; // 相对格子中心，格子为单位
+  y: number;
+  vx: number;
+  vy: number;
+  delay: number;
+  life: number;
+  size: number;
 }
 
 interface UnitFx {
@@ -46,6 +60,8 @@ export interface DrawState {
   // 飞行演出：引擎推力 0 → 1，移动方向（没在走时为 null）
   unitThrust(unit: Unit): number;
   unitHeading(unit: Unit): Point | null;
+  // 资料可见（没交过手的敌人为 false，不画血条）
+  known(unit: Unit): boolean;
   selected: Unit | null;
 }
 
@@ -78,6 +94,8 @@ export class Renderer {
   private sparkles: { x: number; y: number; t: number; dur: number }[] = [];
   // 飞行时留下的尾烟（格子坐标）
   private smoke: { x: number; y: number; t: number }[] = [];
+  // 击破爆炸：每个爆炸一组粒子（火球、火花、黑烟），格子坐标，t 秒
+  private blasts: { x: number; y: number; t: number; parts: BlastPart[] }[] = [];
   private fx = new Map<Unit, UnitFx>();
   private hitstop = 0;
   // 震屏：amp 单位是原版像素，随时间按平方衰减
@@ -147,6 +165,81 @@ export class Renderer {
 
   killUnit(u: Unit) {
     this.unitFx(u).fade = 1;
+  }
+
+  // 地图上的击破爆炸。原版回到地图后在格子上炸一下（小火光 → 白色闪爆 → 四散火花，约 50 帧，单位随之消失）；
+  // 重制版加强成闪白 + 火球 + 火花 + 黑烟 + 震屏。返回演出时长（秒），之后才出经验
+  explode(u: Unit): number {
+    const f = this.unitFx(u);
+    f.flash = 0.18;
+    f.shake = 0.3;
+    f.fade = 1;
+    const parts: BlastPart[] = [];
+    const rnd = (a: number, b: number) => a + Math.random() * (b - a);
+    // 火球：中心一个大的，周围几团错开爆开
+    parts.push({ kind: "fire", x: 0, y: 0, vx: 0, vy: 0, delay: 0.06, life: 0.55, size: 0.95 });
+    for (let i = 0; i < 5; i++) {
+      const a = (i / 5) * Math.PI * 2 + rnd(-0.4, 0.4), r = rnd(0.2, 0.42);
+      parts.push({ kind: "fire", x: Math.cos(a) * r, y: Math.sin(a) * r, vx: 0, vy: -0.2, delay: rnd(0.1, 0.38), life: rnd(0.35, 0.5), size: rnd(0.45, 0.7) });
+    }
+    // 火花：向四周飞，受重力往下落
+    for (let i = 0; i < 16; i++) {
+      const a = rnd(0, Math.PI * 2), v = rnd(1.4, 3);
+      parts.push({ kind: "spark", x: 0, y: 0, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 1, delay: rnd(0.06, 0.14), life: rnd(0.4, 0.7), size: rnd(0.06, 0.1) });
+    }
+    // 黑烟：火球散了以后慢慢升起
+    for (let i = 0; i < 5; i++) {
+      parts.push({ kind: "smoke", x: rnd(-0.3, 0.3), y: rnd(-0.2, 0.2), vx: rnd(-0.15, 0.15), vy: rnd(-0.7, -0.4), delay: rnd(0.3, 0.55), life: rnd(0.6, 0.9), size: rnd(0.25, 0.4) });
+    }
+    this.blasts.push({ x: u.x, y: u.y, t: 0, parts });
+    this.quake = { amp: 3, t: 0, dur: 0.4 };
+    return 0.85;
+  }
+
+  private drawBlasts(s: number, dt: number) {
+    const ctx = this.ctx;
+    for (const b of this.blasts) {
+      b.t += dt;
+      const cx = (b.x + 0.5) * s, cy = (b.y + 0.5) * s;
+      // 起爆闪光：白色圆形一下子撑开再消失
+      const fk = (b.t - 0.06) / 0.18;
+      if (fk > 0 && fk < 1) {
+        ctx.fillStyle = `rgba(255, 255, 240, ${1 - fk})`;
+        ctx.beginPath();
+        ctx.arc(cx, cy, s * (0.3 + 0.55 * Math.sqrt(fk)), 0, Math.PI * 2);
+        ctx.fill();
+      }
+      for (const p of b.parts) {
+        const t = b.t - p.delay;
+        if (t < 0 || t > p.life) continue;
+        const k = t / p.life;
+        const x = cx + (p.x + p.vx * t) * s, y = cy + (p.y + p.vy * t + (p.kind === "spark" ? 2.2 * t * t : 0)) * s;
+        if (p.kind === "fire") {
+          // 白芯 → 黄 → 橙 → 暗红，边长大边淡
+          const r = s * p.size * (0.5 + 0.7 * Math.sqrt(k));
+          const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+          const a = 1 - k * k;
+          g.addColorStop(0, `rgba(255, 255, ${Math.round(230 - 200 * k)}, ${a})`);
+          g.addColorStop(0.45, `rgba(255, ${Math.round(200 - 110 * k)}, 40, ${a * 0.95})`);
+          g.addColorStop(1, `rgba(160, 30, 10, 0)`);
+          ctx.fillStyle = g;
+          ctx.beginPath();
+          ctx.arc(x, y, r, 0, Math.PI * 2);
+          ctx.fill();
+        } else if (p.kind === "spark") {
+          // 方块火花，按缩放取整成像素点
+          const px = Math.max(this.zoom, Math.round(s * p.size * (1 - k * 0.5)));
+          ctx.fillStyle = k < 0.4 ? "#fff6c0" : `rgba(255, ${Math.round(190 - 120 * k)}, 40, ${1 - k})`;
+          ctx.fillRect(Math.round(x - px / 2), Math.round(y - px / 2), px, px);
+        } else {
+          ctx.fillStyle = `rgba(40, 36, 40, ${0.55 * Math.min(1, k * 5) * (1 - k)})`;
+          ctx.beginPath();
+          ctx.arc(x, y, s * p.size * (0.6 + 0.8 * k), 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+    }
+    this.blasts = this.blasts.filter((b) => b.t < 1.6);
   }
 
   private unitFx(u: Unit) {
@@ -287,6 +380,8 @@ export class Renderer {
       for (const t of state.overlay.targets) ctx.strokeRect(t.x * s + 2, t.y * s + 2, s - 4, s - 4);
     }
 
+    if (state.overlay.actor) this.drawActorRing(state.overlay.actor.at, state.overlay.actor.enemy, s);
+
     // 离地的单位最后画，升起来的头部不会被上一格的单位和血条盖住（sort 是稳定的，其余保持原顺序）
     this.drawSmoke(s, dt);
     const order = settings.get().flight ? [...state.units].sort((a, b) => state.unitLift(a) - state.unitLift(b)) : state.units;
@@ -323,10 +418,12 @@ export class Renderer {
         ctx.fillStyle = `rgba(255,255,255,${f.flash / 0.18 * 0.8})`;
         ctx.fillRect(px, py + lift, s, s);
       }
-      if (u.hp > 0) this.drawHpBar(u, px, py, s);
+      if (u.hp > 0 && state.known(u)) this.drawHpBar(u, px, py, s);
       ctx.globalAlpha = 1;
     }
 
+    this.drawBlasts(s, dt);
+    this.drawLock(state.overlay.lock, s);
     this.drawCursor(this.cursorDraw.x * s, this.cursorDraw.y * s, s);
     this.drawSparkles(s, dt);
     this.drawFloats(s, dt);
@@ -469,6 +566,66 @@ export class Renderer {
     ctx.fillRect(x - 1, y - 1, w + 2, h + 2);
     ctx.fillStyle = tone(ratio > 0.5 ? "hp" : ratio > 0.25 ? "warn" : "danger");
     ctx.fillRect(x, y, Math.round(w * ratio), h);
+  }
+
+  // 行动中的单位：脚下一圈向外扩散的光环
+  private drawActorRing(p: Point, enemy: boolean, s: number) {
+    const ctx = this.ctx;
+    const cx = p.x * s + s / 2, cy = p.y * s + s / 2;
+    const rgb = enemy ? "255, 80, 70" : "90, 220, 140";
+    ctx.fillStyle = `rgba(${rgb}, ${0.22 + 0.1 * Math.sin(this.time * 6)})`;
+    ctx.fillRect(p.x * s + 1, p.y * s + 1, s - 2, s - 2);
+    ctx.lineWidth = Math.max(2, this.zoom);
+    for (let i = 0; i < 2; i++) {
+      const k = (this.time * 1.4 + i / 2) % 1;
+      ctx.strokeStyle = `rgba(${rgb}, ${(1 - k) * 0.9})`;
+      ctx.beginPath();
+      ctx.arc(cx, cy, s * (0.4 + 0.45 * k), 0, Math.PI * 2);
+      ctx.stroke();
+    }
+  }
+
+  // 瞄准：攻方到目标一条流动的虚线，目标上准星从大收紧，锁定后转动
+  private lockStart = 0;
+  private lockKey = "";
+  private drawLock(lock: Overlay["lock"], s: number) {
+    if (!lock) { this.lockKey = ""; return; }
+    const k = `${lock.to.x},${lock.to.y}`;
+    if (k !== this.lockKey) { this.lockKey = k; this.lockStart = this.time; }
+    const age = this.time - this.lockStart;
+    const ctx = this.ctx;
+    const ax = lock.from.x * s + s / 2, ay = lock.from.y * s + s / 2;
+    const tx = lock.to.x * s + s / 2, ty = lock.to.y * s + s / 2;
+    const grow = Math.min(1, age / 0.2);
+    ctx.save();
+    ctx.lineWidth = Math.max(2, this.zoom);
+    ctx.strokeStyle = "rgba(255, 90, 70, 0.85)";
+    ctx.setLineDash([s / 5, s / 7]);
+    ctx.lineDashOffset = -this.time * s;
+    ctx.beginPath();
+    ctx.moveTo(ax, ay);
+    ctx.lineTo(ax + (tx - ax) * grow, ay + (ty - ay) * grow);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    // 准星：0.25 秒从 1.8 倍收到 1 倍，之后慢慢转
+    const t = Math.min(1, age / 0.25);
+    const r = s * 0.55 * (1 + 0.8 * (1 - t) ** 2);
+    const locked = t >= 1;
+    ctx.translate(tx, ty);
+    ctx.rotate(locked ? (age - 0.25) * 1.5 : 0);
+    ctx.strokeStyle = locked ? `rgba(255, 70, 60, ${0.8 + 0.2 * Math.sin(this.time * 14)})` : "rgba(255, 200, 80, 0.9)";
+    ctx.lineWidth = Math.max(2, this.zoom * 1.5);
+    ctx.beginPath();
+    ctx.arc(0, 0, r, 0, Math.PI * 2);
+    ctx.stroke();
+    for (let i = 0; i < 4; i++) {
+      ctx.rotate(Math.PI / 2);
+      ctx.beginPath();
+      ctx.moveTo(r * 0.55, 0);
+      ctx.lineTo(r * 1.25, 0);
+      ctx.stroke();
+    }
+    ctx.restore();
   }
 
   private drawCursor(x: number, y: number, s: number) {

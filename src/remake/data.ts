@@ -225,6 +225,14 @@ interface TransformInfo { kind: "double" | "triple"; formIndex: number; baseId: 
 const transformOf = (id: number) => (units.get(id) as unknown as { transform?: TransformInfo | null })?.transform ?? null;
 
 // 这台机体能变成的所有形态（含自己），按形态顺序；不能变形时只有自己
+// 存档里的单位带着存档时的精神说明；读档后按当前数据刷新（说明文字改过时老存档也跟着变）
+export function refreshSpiritText(units: Unit[]) {
+  for (const u of units) for (const sp of u.spirits) {
+    const cur = spiritDb[sp.id as keyof typeof spiritDb] as { text: string } | undefined;
+    if (cur) sp.text = cur.text;
+  }
+}
+
 export function formsOf(unitId: number): number[] {
   const t = transformOf(unitId);
   if (!t) return [unitId];

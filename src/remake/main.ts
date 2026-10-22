@@ -1,6 +1,6 @@
 import "./style.css";
 import "./theme.ts";
-import { loadStage } from "./data.ts";
+import { loadStage, refreshSpiritText } from "./data.ts";
 import { Renderer } from "./render.ts";
 import { Input } from "./input.ts";
 import { UI } from "./ui.ts";
@@ -19,6 +19,7 @@ async function boot() {
   const save = pending !== null && pending !== "new" ? await readSave(pending) : null;
   const stage = loadStage(save?.stage ?? 1, save?.roster);
   if (save) stage.units.splice(0, stage.units.length, ...save.units);
+  if (save) refreshSpiritText(stage.units);
   const renderer = new Renderer(canvas);
   await renderer.setStage(stage);
   const ui = new UI();

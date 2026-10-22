@@ -18,6 +18,8 @@ export interface SaveData {
   rng: { mem: number[]; index: number };
   songs: { player: number; enemy: number };
   jamming: boolean;
+  // 本关交过手的敌方机体编号（旧存档没有，读成空）
+  scouted?: number[];
 }
 
 export interface SaveMeta {
