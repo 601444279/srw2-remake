@@ -1,0 +1,369 @@
+{
+ "resource": "0x31",
+ "note": "战斗台词：少量特殊喊话",
+ "bank": "0x0C",
+ "table": "0x191D3",
+ "entries": [
+  {
+   "index": 0,
+   "offset": "0x191F3",
+   "nodes": [
+    {
+     "offset": "0x191F3",
+     "random": [
+      [
+       {
+        "offset": "0x187C0",
+        "speaker": null,
+        "text": "别太得意！",
+        "raw": "别太得意！"
+       }
+      ],
+      [
+       {
+        "offset": "0x1907A",
+        "speaker": null,
+        "text": "打那！",
+        "raw": "打那！"
+       }
+      ],
+      [
+       {
+        "offset": "0x1919C",
+        "speaker": null,
+        "text": "打！",
+        "raw": "打！"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 1,
+   "offset": "0x191FB",
+   "nodes": [
+    {
+     "offset": "0x191FB",
+     "random": [
+      [
+       {
+        "offset": "0x19080",
+        "speaker": null,
+        "text": "还你！",
+        "raw": "还你！"
+       }
+      ],
+      [
+       {
+        "offset": "0x18D82",
+        "speaker": null,
+        "text": "打！",
+        "raw": "打！"
+       }
+      ],
+      [
+       {
+        "offset": "0x18D04",
+        "speaker": null,
+        "text": "看得起你！",
+        "raw": "看得起你！"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 2,
+   "offset": "0x19203",
+   "nodes": [
+    {
+     "offset": "0x19203",
+     "random": [
+      [
+       {
+        "offset": "0x18E6B",
+        "speaker": null,
+        "text": "别灰心！",
+        "raw": "别灰心！"
+       }
+      ],
+      [
+       {
+        "offset": "0x18F3F",
+        "speaker": null,
+        "text": "打着了！",
+        "raw": "打着了！"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 3,
+   "offset": "0x19209",
+   "nodes": [
+    {
+     "offset": "0x19209",
+     "random": [
+      [
+       {
+        "offset": "0x1885F",
+        "speaker": null,
+        "text": "再会！",
+        "raw": "再会！"
+       }
+      ],
+      [
+       {
+        "offset": "0x18F36",
+        "speaker": null,
+        "text": "拦住他！",
+        "raw": "拦住他！"
+       }
+      ],
+      [
+       {
+        "offset": "0x18F3F",
+        "speaker": null,
+        "text": "打着了！",
+        "raw": "打着了！"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 4,
+   "offset": "0x19211",
+   "nodes": [
+    {
+     "offset": "0x19211",
+     "random": [
+      [
+       {
+        "offset": "0x187C0",
+        "speaker": null,
+        "text": "别太得意！",
+        "raw": "别太得意！"
+       }
+      ],
+      [
+       {
+        "offset": "0x18832",
+        "speaker": null,
+        "text": "死了！",
+        "raw": "死了！"
+       }
+      ],
+      [
+       {
+        "offset": "0x18BE8",
+        "speaker": null,
+        "text": "好办！",
+        "raw": "好办！"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 5,
+   "offset": "0x19219",
+   "nodes": [
+    {
+     "offset": "0x19219",
+     "random": [
+      [
+       {
+        "offset": "0x1880A",
+        "speaker": null,
+        "text": "截下！",
+        "raw": "截下！"
+       }
+      ],
+      [
+       {
+        "offset": "0x188E6",
+        "speaker": null,
+        "text": "晚了！",
+        "raw": "晚了！"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 6,
+   "offset": "0x1921F",
+   "nodes": [
+    {
+     "offset": "0x1921F",
+     "random": [
+      [
+       {
+        "offset": "0x187EC",
+        "speaker": null,
+        "text": "打！",
+        "raw": "打！"
+       }
+      ],
+      [
+       {
+        "offset": "0x18899",
+        "speaker": null,
+        "text": "死！",
+        "raw": "死！"
+       }
+      ],
+      [
+       {
+        "offset": "0x18BEF",
+        "speaker": null,
+        "text": "滚开！",
+        "raw": "滚开！"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 7,
+   "offset": "0x19227",
+   "nodes": [
+    {
+     "offset": "0x19227",
+     "random": [
+      [
+       {
+        "offset": "0x18832",
+        "speaker": null,
+        "text": "死了！",
+        "raw": "死了！"
+       }
+      ],
+      [
+       {
+        "offset": "0x18A18",
+        "speaker": null,
+        "text": "消灭他！",
+        "raw": "消灭他！"
+       }
+      ],
+      [
+       {
+        "offset": "0x18D93",
+        "speaker": null,
+        "text": "见鬼去！",
+        "raw": "见鬼去！"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 8,
+   "offset": "0x1922F",
+   "nodes": [
+    {
+     "offset": "0x1880A",
+     "speaker": null,
+     "text": "截下！",
+     "raw": "截下！"
+    }
+   ]
+  },
+  {
+   "index": 9,
+   "offset": "0x19232",
+   "nodes": [
+    {
+     "offset": "0x19232",
+     "random": [
+      [
+       {
+        "offset": "0x187EC",
+        "speaker": null,
+        "text": "打！",
+        "raw": "打！"
+       }
+      ],
+      [
+       {
+        "offset": "0x18899",
+        "speaker": null,
+        "text": "死！",
+        "raw": "死！"
+       }
+      ],
+      [
+       {
+        "offset": "0x18A18",
+        "speaker": null,
+        "text": "消灭他！",
+        "raw": "消灭他！"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 10,
+   "offset": "0x1923A",
+   "stages": [
+    "第16关·过关"
+   ],
+   "nodes": [
+    {
+     "offset": "0x1923A",
+     "random": [
+      [
+       {
+        "offset": "0x18F3F",
+        "speaker": null,
+        "text": "打着了！",
+        "raw": "打着了！"
+       }
+      ],
+      [
+       {
+        "offset": "0x19098",
+        "speaker": null,
+        "text": "这个！",
+        "raw": "这个！"
+       }
+      ],
+      [
+       {
+        "offset": "0x191BF",
+        "speaker": null,
+        "text": "这东西！",
+        "raw": "这东西！"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 11,
+   "offset": "0x19242",
+   "nodes": [
+    {
+     "offset": "0x1880A",
+     "speaker": null,
+     "text": "截下！",
+     "raw": "截下！"
+    }
+   ]
+  }
+ ]
+}

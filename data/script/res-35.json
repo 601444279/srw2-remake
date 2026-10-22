@@ -1,0 +1,1432 @@
+{
+ "resource": "0x35",
+ "note": "战斗台词：被攻击方的反应（特殊）",
+ "bank": "0x0E",
+ "table": "0x1D238",
+ "entries": [
+  {
+   "index": 0,
+   "offset": "0x1D2B8",
+   "nodes": [
+    {
+     "offset": "0x1D2B8",
+     "random": [
+      [
+       {
+        "offset": "0x1C96E",
+        "speaker": null,
+        "text": "什么？就这点压力！",
+        "raw": "什么？就这点压力！"
+       }
+      ],
+      [
+       {
+        "offset": "0x1CDA5",
+        "speaker": null,
+        "text": "啊！完了，不妙！",
+        "raw": "啊！完了，不妙！"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 1,
+   "offset": "0x1D2BE",
+   "nodes": [
+    {
+     "offset": "0x1C78E",
+     "speaker": null,
+     "text": "完了 ！",
+     "raw": "完了 ！"
+    }
+   ]
+  },
+  {
+   "index": 2,
+   "offset": "0x1D2C1",
+   "nodes": [
+    {
+     "offset": "0x1C9B9",
+     "speaker": null,
+     "text": "太慢了",
+     "raw": "太慢了"
+    }
+   ]
+  },
+  {
+   "index": 3,
+   "offset": "0x1D2C4",
+   "nodes": [
+    {
+     "offset": "0x1CF3E",
+     "speaker": null,
+     "text": "水平太次了！",
+     "raw": "水平太次了！"
+    }
+   ]
+  },
+  {
+   "index": 4,
+   "offset": "0x1D2C7",
+   "nodes": [
+    {
+     "offset": "0x1D2C7",
+     "random": [
+      [
+       {
+        "offset": "0x1CA3C",
+        "speaker": null,
+        "text": "这家伙",
+        "raw": "这家伙"
+       }
+      ],
+      [
+       {
+        "offset": "0x1CA72",
+        "speaker": null,
+        "text": "就这两下子 ！",
+        "raw": "就这两下子 ！"
+       }
+      ],
+      [
+       {
+        "offset": "0x1D089",
+        "speaker": null,
+        "text": "太奇怪了！",
+        "raw": "太奇怪了！"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 5,
+   "offset": "0x1D2CF",
+   "nodes": [
+    {
+     "offset": "0x1D2CF",
+     "random": [
+      [
+       {
+        "offset": "0x1C87B",
+        "speaker": null,
+        "text": "呀！",
+        "raw": "呀！"
+       }
+      ],
+      [
+       {
+        "offset": "0x1CE8B",
+        "speaker": null,
+        "text": "差远了",
+        "raw": "差远了"
+       }
+      ],
+      [
+       {
+        "offset": "0x1CF2B",
+        "speaker": null,
+        "text": "还能打！",
+        "raw": "还能打！"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 6,
+   "offset": "0x1D2D7",
+   "nodes": [
+    {
+     "offset": "0x1D2D7",
+     "random": [
+      [
+       {
+        "offset": "0x1C853",
+        "speaker": null,
+        "text": "啊 ‥‥‥！",
+        "raw": "啊 ‥‥‥！"
+       }
+      ],
+      [
+       {
+        "offset": "0x1CBC7",
+        "speaker": null,
+        "text": "什么？火力！",
+        "raw": "什么？火力！"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 7,
+   "offset": "0x1D2DD",
+   "nodes": [
+    {
+     "offset": "0x1C982",
+     "speaker": null,
+     "text": "攻击 ！",
+     "raw": "攻击 ！"
+    }
+   ]
+  },
+  {
+   "index": 8,
+   "offset": "0x1D2E0",
+   "nodes": [
+    {
+     "offset": "0x1D2E0",
+     "random": [
+      [
+       {
+        "offset": "0x1C9B9",
+        "speaker": null,
+        "text": "太慢了",
+        "raw": "太慢了"
+       }
+      ],
+      [
+       {
+        "offset": "0x1CE32",
+        "speaker": null,
+        "text": "没打中！",
+        "raw": "没打中！"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 9,
+   "offset": "0x1D2E6",
+   "nodes": [
+    {
+     "offset": "0x1CE5F",
+     "speaker": null,
+     "text": "哎哟！不要紧的！",
+     "raw": "哎哟！不要紧的！"
+    }
+   ]
+  },
+  {
+   "index": 10,
+   "offset": "0x1D2E9",
+   "nodes": [
+    {
+     "offset": "0x1D2E9",
+     "random": [
+      [
+       {
+        "offset": "0x1C87B",
+        "speaker": null,
+        "text": "呀！",
+        "raw": "呀！"
+       }
+      ],
+      [
+       {
+        "offset": "0x1D095",
+        "speaker": null,
+        "text": "什么，擦了一下！",
+        "raw": "什么，擦了一下！"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 11,
+   "offset": "0x1D2EF",
+   "nodes": [
+    {
+     "offset": "0x1D2EF",
+     "random": [
+      [
+       {
+        "offset": "0x1CE8B",
+        "speaker": null,
+        "text": "差远了",
+        "raw": "差远了"
+       }
+      ],
+      [
+       {
+        "offset": "0x1CE92",
+        "speaker": null,
+        "text": "我还没死呢！",
+        "raw": "我还没死呢！"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 12,
+   "offset": "0x1D2F5",
+   "nodes": [
+    {
+     "offset": "0x1D2F5",
+     "random": [
+      [
+       {
+        "offset": "0x1C982",
+        "speaker": null,
+        "text": "攻击 ！",
+        "raw": "攻击 ！"
+       }
+      ],
+      [
+       {
+        "offset": "0x1CBC7",
+        "speaker": null,
+        "text": "什么？火力！",
+        "raw": "什么？火力！"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 13,
+   "offset": "0x1D2FB",
+   "nodes": [
+    {
+     "offset": "0x1C853",
+     "speaker": null,
+     "text": "啊 ‥‥‥！",
+     "raw": "啊 ‥‥‥！"
+    }
+   ]
+  },
+  {
+   "index": 14,
+   "offset": "0x1D2FE",
+   "nodes": [
+    {
+     "offset": "0x1D0A5",
+     "speaker": null,
+     "text": "没擦着呀！",
+     "raw": "没擦着呀！"
+    }
+   ]
+  },
+  {
+   "index": 15,
+   "offset": "0x1D301",
+   "nodes": [
+    {
+     "offset": "0x1C81A",
+     "speaker": null,
+     "text": "攻击无效 。",
+     "raw": "攻击无效 。"
+    }
+   ]
+  },
+  {
+   "index": 16,
+   "offset": "0x1D304",
+   "nodes": [
+    {
+     "offset": "0x1D304",
+     "random": [
+      [
+       {
+        "offset": "0x1CD1C",
+        "speaker": null,
+        "text": "就你那点儿能耐，\n比我差远了！",
+        "raw": "就你那点儿能耐，{F2}比我差远了！"
+       }
+      ],
+      [
+       {
+        "offset": "0x1CD8E",
+        "speaker": null,
+        "text": "就这水平！",
+        "raw": "就这水平！"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 17,
+   "offset": "0x1D30A",
+   "nodes": [
+    {
+     "offset": "0x1D30A",
+     "random": [
+      [
+       {
+        "offset": "0x1C94A",
+        "speaker": null,
+        "text": "打！",
+        "raw": "打！"
+       }
+      ],
+      [
+       {
+        "offset": "0x1CC6B",
+        "speaker": null,
+        "text": "攻击！",
+        "raw": "攻击！"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 18,
+   "offset": "0x1D310",
+   "nodes": [
+    {
+     "offset": "0x1D0B4",
+     "speaker": null,
+     "text": "什么？就这点儿能耐！",
+     "raw": "什么？就这点儿能耐！"
+    }
+   ]
+  },
+  {
+   "index": 19,
+   "offset": "0x1D313",
+   "nodes": [
+    {
+     "offset": "0x1D0CF",
+     "speaker": null,
+     "text": "混蛋！还想打败我吗‥‥‥？！",
+     "raw": "混蛋！还想打败我吗‥‥‥？！"
+    }
+   ]
+  },
+  {
+   "index": 20,
+   "offset": "0x1D316",
+   "nodes": [
+    {
+     "offset": "0x1D316",
+     "random": [
+      [
+       {
+        "offset": "0x1C9C0",
+        "speaker": null,
+        "text": "瞄准太差了！",
+        "raw": "瞄准太差了！"
+       }
+      ],
+      [
+       {
+        "offset": "0x1CAB3",
+        "speaker": null,
+        "text": "轮到我了！",
+        "raw": "轮到我了！"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 21,
+   "offset": "0x1D31C",
+   "nodes": [
+    {
+     "offset": "0x1C9DA",
+     "speaker": null,
+     "text": "什么！",
+     "raw": "什么！"
+    }
+   ]
+  },
+  {
+   "index": 22,
+   "offset": "0x1D31F",
+   "nodes": [
+    {
+     "offset": "0x1D31F",
+     "random": [
+      [
+       {
+        "offset": "0x1C838",
+        "speaker": null,
+        "text": "差太远了 ！",
+        "raw": "差太远了 ！"
+       }
+      ],
+      [
+       {
+        "offset": "0x1CE8B",
+        "speaker": null,
+        "text": "差远了",
+        "raw": "差远了"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 23,
+   "offset": "0x1D325",
+   "nodes": [
+    {
+     "offset": "0x1CA5E",
+     "speaker": null,
+     "text": "哎！ 左舷火力太弱！",
+     "raw": "哎！ 左舷火力太弱！"
+    }
+   ]
+  },
+  {
+   "index": 24,
+   "offset": "0x1D328",
+   "nodes": [
+    {
+     "offset": "0x1D328",
+     "random": [
+      [
+       {
+        "offset": "0x1D0EE",
+        "speaker": null,
+        "text": "哇！消息可靠！",
+        "raw": "哇！消息可靠！"
+       }
+      ],
+      [
+       {
+        "offset": "0x1D108",
+        "speaker": null,
+        "text": "哼，还没打胜？坚持住！",
+        "raw": "哼，还没打胜？坚持住！"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 25,
+   "offset": "0x1D32E",
+   "nodes": [
+    {
+     "offset": "0x1D078",
+     "speaker": null,
+     "text": "混蛋！直接进攻！",
+     "raw": "混蛋！直接进攻！"
+    }
+   ]
+  },
+  {
+   "index": 26,
+   "offset": "0x1D331",
+   "nodes": [
+    {
+     "offset": "0x1D331",
+     "random": [
+      [
+       {
+        "offset": "0x1C9B9",
+        "speaker": null,
+        "text": "太慢了",
+        "raw": "太慢了"
+       }
+      ],
+      [
+       {
+        "offset": "0x1CAB3",
+        "speaker": null,
+        "text": "轮到我了！",
+        "raw": "轮到我了！"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 27,
+   "offset": "0x1D337",
+   "nodes": [
+    {
+     "offset": "0x1C9DA",
+     "speaker": null,
+     "text": "什么！",
+     "raw": "什么！"
+    }
+   ]
+  },
+  {
+   "index": 28,
+   "offset": "0x1D33A",
+   "nodes": [
+    {
+     "offset": "0x1D33A",
+     "random": [
+      [
+       {
+        "offset": "0x1CC01",
+        "speaker": null,
+        "text": "打着了吧！",
+        "raw": "打着了吧！"
+       }
+      ],
+      [
+       {
+        "offset": "0x1CE8B",
+        "speaker": null,
+        "text": "差远了",
+        "raw": "差远了"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 29,
+   "offset": "0x1D340",
+   "nodes": [
+    {
+     "offset": "0x1D340",
+     "random": [
+      [
+       {
+        "offset": "0x1CDA5",
+        "speaker": null,
+        "text": "啊！完了，不妙！",
+        "raw": "啊！完了，不妙！"
+       }
+      ],
+      [
+       {
+        "offset": "0x1CE5F",
+        "speaker": null,
+        "text": "哎哟！不要紧的！",
+        "raw": "哎哟！不要紧的！"
+       }
+      ],
+      [
+       {
+        "offset": "0x1CF2B",
+        "speaker": null,
+        "text": "还能打！",
+        "raw": "还能打！"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 30,
+   "offset": "0x1D348",
+   "nodes": [
+    {
+     "offset": "0x1D348",
+     "random": [
+      [
+       {
+        "offset": "0x1C93D",
+        "speaker": null,
+        "text": "有这种事‥‥‥！",
+        "raw": "有这种事‥‥‥！"
+       }
+      ],
+      [
+       {
+        "offset": "0x1C932",
+        "speaker": null,
+        "text": "哎哟！不行！",
+        "raw": "哎哟！不行！"
+       }
+      ],
+      [
+       {
+        "offset": "0x1CAD5",
+        "speaker": null,
+        "text": "完了！ 直接攻击？",
+        "raw": "完了！ 直接攻击？"
+       }
+      ],
+      [
+       {
+        "offset": "0x1D108",
+        "speaker": null,
+        "text": "哼，还没打胜？坚持住！",
+        "raw": "哼，还没打胜？坚持住！"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 31,
+   "offset": "0x1D352",
+   "nodes": [
+    {
+     "offset": "0x1C7FD",
+     "speaker": null,
+     "text": "呜哇‥‥‥！",
+     "raw": "呜哇‥‥‥！"
+    }
+   ]
+  },
+  {
+   "index": 32,
+   "offset": "0x1D355",
+   "nodes": []
+  },
+  {
+   "index": 33,
+   "offset": "0x1D358",
+   "nodes": [
+    {
+     "offset": "0x1D358",
+     "random": [
+      [
+       {
+        "offset": "0x1C9B9",
+        "speaker": null,
+        "text": "太慢了",
+        "raw": "太慢了"
+       }
+      ],
+      [
+       {
+        "offset": "0x1D1D2",
+        "speaker": null,
+        "text": "笨蛋 ！",
+        "raw": "笨蛋 ！"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 34,
+   "offset": "0x1D35E",
+   "nodes": [
+    {
+     "offset": "0x1CEFC",
+     "speaker": null,
+     "text": "就这点能耐！",
+     "raw": "就这点能耐！"
+    }
+   ]
+  },
+  {
+   "index": 35,
+   "offset": "0x1D361",
+   "nodes": [
+    {
+     "offset": "0x1D361",
+     "random": [
+      [
+       {
+        "offset": "0x1D1C5",
+        "speaker": null,
+        "text": "哼，就这两下！",
+        "raw": "哼，就这两下！"
+       }
+      ],
+      [
+       {
+        "offset": "0x1D1DA",
+        "speaker": null,
+        "text": "哈哈，不灵啦！",
+        "raw": "哈哈，不灵啦！"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 36,
+   "offset": "0x1D367",
+   "nodes": [
+    {
+     "offset": "0x1D367",
+     "random": [
+      [
+       {
+        "offset": "0x1D1E8",
+        "speaker": null,
+        "text": "干掉这些废物！",
+        "raw": "干掉这些废物！"
+       }
+      ],
+      [
+       {
+        "offset": "0x1CBF5",
+        "speaker": null,
+        "text": "别太狂了！",
+        "raw": "别太狂了！"
+       }
+      ],
+      [
+       {
+        "offset": "0x1CA9F",
+        "speaker": null,
+        "text": "装模作样！",
+        "raw": "装模作样！"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 37,
+   "offset": "0x1D36F",
+   "nodes": [
+    {
+     "offset": "0x1D36F",
+     "random": [
+      [
+       {
+        "offset": "0x1CC6B",
+        "speaker": null,
+        "text": "攻击！",
+        "raw": "攻击！"
+       }
+      ],
+      [
+       {
+        "offset": "0x1CBD5",
+        "speaker": null,
+        "text": "这个妖怪！",
+        "raw": "这个妖怪！"
+       }
+      ],
+      [
+       {
+        "offset": "0x1C9E8",
+        "speaker": null,
+        "text": "混蛋 ！",
+        "raw": "混蛋 ！"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 38,
+   "offset": "0x1D377",
+   "nodes": [
+    {
+     "offset": "0x1C812",
+     "speaker": null,
+     "text": "什么 ！",
+     "raw": "什么 ！"
+    }
+   ]
+  },
+  {
+   "index": 39,
+   "offset": "0x1D37A",
+   "nodes": [
+    {
+     "offset": "0x1D37A",
+     "random": [
+      [
+       {
+        "offset": "0x1C9C0",
+        "speaker": null,
+        "text": "瞄准太差了！",
+        "raw": "瞄准太差了！"
+       }
+      ],
+      [
+       {
+        "offset": "0x1CE32",
+        "speaker": null,
+        "text": "没打中！",
+        "raw": "没打中！"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 40,
+   "offset": "0x1D380",
+   "nodes": [
+    {
+     "offset": "0x1C9AB",
+     "speaker": null,
+     "text": "不行",
+     "raw": "不行"
+    }
+   ]
+  },
+  {
+   "index": 41,
+   "offset": "0x1D383",
+   "nodes": [
+    {
+     "offset": "0x1D383",
+     "random": [
+      [
+       {
+        "offset": "0x1CC01",
+        "speaker": null,
+        "text": "打着了吧！",
+        "raw": "打着了吧！"
+       }
+      ],
+      [
+       {
+        "offset": "0x1CD8E",
+        "speaker": null,
+        "text": "就这水平！",
+        "raw": "就这水平！"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 42,
+   "offset": "0x1D389",
+   "nodes": [
+    {
+     "offset": "0x1D389",
+     "random": [
+      [
+       {
+        "offset": "0x1CF2B",
+        "speaker": null,
+        "text": "还能打！",
+        "raw": "还能打！"
+       }
+      ],
+      [
+       {
+        "offset": "0x1CF3E",
+        "speaker": null,
+        "text": "水平太次了！",
+        "raw": "水平太次了！"
+       }
+      ],
+      [
+       {
+        "offset": "0x1CE8B",
+        "speaker": null,
+        "text": "差远了",
+        "raw": "差远了"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 43,
+   "offset": "0x1D391",
+   "nodes": [
+    {
+     "offset": "0x1D391",
+     "random": [
+      [
+       {
+        "offset": "0x1D053",
+        "speaker": null,
+        "text": "这个不一般！",
+        "raw": "这个不一般！"
+       }
+      ],
+      [
+       {
+        "offset": "0x1D1F8",
+        "speaker": null,
+        "text": "再打呀！",
+        "raw": "再打呀！"
+       }
+      ],
+      [
+       {
+        "offset": "0x1D203",
+        "speaker": null,
+        "text": "太厉害了！",
+        "raw": "太厉害了！"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 44,
+   "offset": "0x1D399",
+   "nodes": [
+    {
+     "offset": "0x1D078",
+     "speaker": null,
+     "text": "混蛋！直接进攻！",
+     "raw": "混蛋！直接进攻！"
+    }
+   ]
+  },
+  {
+   "index": 45,
+   "offset": "0x1D39C",
+   "nodes": [
+    {
+     "offset": "0x1D39C",
+     "random": [
+      [
+       {
+        "offset": "0x1C9B9",
+        "speaker": null,
+        "text": "太慢了",
+        "raw": "太慢了"
+       }
+      ],
+      [
+       {
+        "offset": "0x1CE32",
+        "speaker": null,
+        "text": "没打中！",
+        "raw": "没打中！"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 46,
+   "offset": "0x1D3A2",
+   "nodes": [
+    {
+     "offset": "0x1D1C5",
+     "speaker": null,
+     "text": "哼，就这两下！",
+     "raw": "哼，就这两下！"
+    }
+   ]
+  },
+  {
+   "index": 47,
+   "offset": "0x1D3A5",
+   "nodes": [
+    {
+     "offset": "0x1D3A5",
+     "random": [
+      [
+       {
+        "offset": "0x1C7CB",
+        "speaker": null,
+        "text": "真差劲 ！",
+        "raw": "真差劲 ！"
+       }
+      ],
+      [
+       {
+        "offset": "0x1CA3C",
+        "speaker": null,
+        "text": "这家伙",
+        "raw": "这家伙"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 48,
+   "offset": "0x1D3AB",
+   "nodes": [
+    {
+     "offset": "0x1D3AB",
+     "random": [
+      [
+       {
+        "offset": "0x1CE8B",
+        "speaker": null,
+        "text": "差远了",
+        "raw": "差远了"
+       }
+      ],
+      [
+       {
+        "offset": "0x1D20E",
+        "speaker": null,
+        "text": "这水平",
+        "raw": "这水平"
+       }
+      ],
+      [
+       {
+        "offset": "0x1CF2B",
+        "speaker": null,
+        "text": "还能打！",
+        "raw": "还能打！"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 49,
+   "offset": "0x1D3B3",
+   "nodes": [
+    {
+     "offset": "0x1D3B3",
+     "random": [
+      [
+       {
+        "offset": "0x1C982",
+        "speaker": null,
+        "text": "攻击 ！",
+        "raw": "攻击 ！"
+       }
+      ],
+      [
+       {
+        "offset": "0x1CE92",
+        "speaker": null,
+        "text": "我还没死呢！",
+        "raw": "我还没死呢！"
+       }
+      ],
+      [
+       {
+        "offset": "0x1CF1D",
+        "speaker": null,
+        "text": "就这水平‥‥‥！",
+        "raw": "就这水平‥‥‥！"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 50,
+   "offset": "0x1D3BB",
+   "nodes": [
+    {
+     "offset": "0x1C853",
+     "speaker": null,
+     "text": "啊 ‥‥‥！",
+     "raw": "啊 ‥‥‥！"
+    }
+   ]
+  },
+  {
+   "index": 51,
+   "offset": "0x1D3BE",
+   "nodes": [
+    {
+     "offset": "0x1D3BE",
+     "random": [
+      [
+       {
+        "offset": "0x1D215",
+        "speaker": null,
+        "text": "混蛋‥‥‥往哪儿瞄！",
+        "raw": "混蛋‥‥‥往哪儿瞄！"
+       }
+      ],
+      [
+       {
+        "offset": "0x1D227",
+        "speaker": null,
+        "text": "真没用",
+        "raw": "真没用"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 52,
+   "offset": "0x1D3C4",
+   "nodes": [
+    {
+     "offset": "0x1C9AB",
+     "speaker": null,
+     "text": "不行",
+     "raw": "不行"
+    }
+   ]
+  },
+  {
+   "index": 53,
+   "offset": "0x1D3C7",
+   "nodes": [
+    {
+     "offset": "0x1D3C7",
+     "random": [
+      [
+       {
+        "offset": "0x1CA96",
+        "speaker": null,
+        "text": "自作聪明",
+        "raw": "自作聪明"
+       }
+      ],
+      [
+       {
+        "offset": "0x1D1C5",
+        "speaker": null,
+        "text": "哼，就这两下！",
+        "raw": "哼，就这两下！"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 54,
+   "offset": "0x1D3CD",
+   "nodes": [
+    {
+     "offset": "0x1D3CD",
+     "random": [
+      [
+       {
+        "offset": "0x1C787",
+        "speaker": null,
+        "text": "什么 ！",
+        "raw": "什么 ！"
+       }
+      ],
+      [
+       {
+        "offset": "0x1CD98",
+        "speaker": null,
+        "text": "打得真狠哪！",
+        "raw": "打得真狠哪！"
+       }
+      ],
+      [
+       {
+        "offset": "0x1D1E8",
+        "speaker": null,
+        "text": "干掉这些废物！",
+        "raw": "干掉这些废物！"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 55,
+   "offset": "0x1D3D5",
+   "nodes": [
+    {
+     "offset": "0x1D3D5",
+     "random": [
+      [
+       {
+        "offset": "0x1C78E",
+        "speaker": null,
+        "text": "完了 ！",
+        "raw": "完了 ！"
+       }
+      ],
+      [
+       {
+        "offset": "0x1CBD5",
+        "speaker": null,
+        "text": "这个妖怪！",
+        "raw": "这个妖怪！"
+       }
+      ],
+      [
+       {
+        "offset": "0x1CC6B",
+        "speaker": null,
+        "text": "攻击！",
+        "raw": "攻击！"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 56,
+   "offset": "0x1D3DD",
+   "nodes": [
+    {
+     "offset": "0x1C9E8",
+     "speaker": null,
+     "text": "混蛋 ！",
+     "raw": "混蛋 ！"
+    }
+   ]
+  },
+  {
+   "index": 57,
+   "offset": "0x1D3E0",
+   "nodes": [
+    {
+     "offset": "0x1D3E0",
+     "random": [
+      [
+       {
+        "offset": "0x1CAB3",
+        "speaker": null,
+        "text": "轮到我了！",
+        "raw": "轮到我了！"
+       }
+      ],
+      [
+       {
+        "offset": "0x1D215",
+        "speaker": null,
+        "text": "混蛋‥‥‥往哪儿瞄！",
+        "raw": "混蛋‥‥‥往哪儿瞄！"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 58,
+   "offset": "0x1D3E6",
+   "nodes": [
+    {
+     "offset": "0x1C890",
+     "speaker": null,
+     "text": "哼 ， 没事儿 ！",
+     "raw": "哼 ， 没事儿 ！"
+    }
+   ]
+  },
+  {
+   "index": 59,
+   "offset": "0x1D3E9",
+   "nodes": [
+    {
+     "offset": "0x1D3E9",
+     "random": [
+      [
+       {
+        "offset": "0x1CA9F",
+        "speaker": null,
+        "text": "装模作样！",
+        "raw": "装模作样！"
+       }
+      ],
+      [
+       {
+        "offset": "0x1CBF5",
+        "speaker": null,
+        "text": "别太狂了！",
+        "raw": "别太狂了！"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 60,
+   "offset": "0x1D3EF",
+   "nodes": [
+    {
+     "offset": "0x1D3EF",
+     "random": [
+      [
+       {
+        "offset": "0x1C806",
+        "speaker": null,
+        "text": "混蛋",
+        "raw": "混蛋"
+       }
+      ],
+      [
+       {
+        "offset": "0x1C86D",
+        "speaker": null,
+        "text": "糟糕，打着了！",
+        "raw": "糟糕，打着了！"
+       }
+      ],
+      [
+       {
+        "offset": "0x1C94A",
+        "speaker": null,
+        "text": "打！",
+        "raw": "打！"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 61,
+   "offset": "0x1D3F7",
+   "nodes": [
+    {
+     "offset": "0x1D3F7",
+     "random": [
+      [
+       {
+        "offset": "0x1C787",
+        "speaker": null,
+        "text": "什么 ！",
+        "raw": "什么 ！"
+       }
+      ],
+      [
+       {
+        "offset": "0x1C78E",
+        "speaker": null,
+        "text": "完了 ！",
+        "raw": "完了 ！"
+       }
+      ],
+      [
+       {
+        "offset": "0x1CC6B",
+        "speaker": null,
+        "text": "攻击！",
+        "raw": "攻击！"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 62,
+   "offset": "0x1D3FF",
+   "nodes": [
+    {
+     "offset": "0x1CAA9",
+     "speaker": null,
+     "text": "被打中了！",
+     "raw": "被打中了！"
+    }
+   ]
+  }
+ ]
+}

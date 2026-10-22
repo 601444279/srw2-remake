@@ -1,0 +1,3576 @@
+{
+ "note": "资源表里类型 1 的名字资源，FF 结尾；index 是游戏里的编号，空字符串是未使用的编号",
+ "tables": [
+  {
+   "resource": "0x10",
+   "name": "强化零件",
+   "table": "0x0D83A",
+   "items": [
+    {
+     "index": 0,
+     "offset": "0x0D86A",
+     "text": "超合金Z"
+    },
+    {
+     "index": 1,
+     "offset": "0x0D873",
+     "text": "磁性涂料"
+    },
+    {
+     "index": 2,
+     "offset": "0x0D87C",
+     "text": "传感器"
+    },
+    {
+     "index": 3,
+     "offset": "0x0D883",
+     "text": "C装甲"
+    },
+    {
+     "index": 4,
+     "offset": "0x0D88A",
+     "text": "超合金W"
+    },
+    {
+     "index": 5,
+     "offset": "0x0D893",
+     "text": "助推器"
+    },
+    {
+     "index": 6,
+     "offset": "0x0D89A",
+     "text": "喷气机翼"
+    },
+    {
+     "index": 7,
+     "offset": "0x0D8A3",
+     "text": "传感器Ⅱ"
+    },
+    {
+     "index": 8,
+     "offset": "0x0D8AD",
+     "text": "M合金"
+    },
+    {
+     "index": 9,
+     "offset": "0x0D8B3",
+     "text": "电子盾"
+    },
+    {
+     "index": 10,
+     "offset": "0x0D8BA",
+     "text": "米诺夫粒子"
+    },
+    {
+     "index": 11,
+     "offset": "0x0D8C5",
+     "text": "正义"
+    },
+    {
+     "index": 12,
+     "offset": "0x0D8CC",
+     "text": "医治"
+    },
+    {
+     "index": 13,
+     "offset": "0x0D8D5",
+     "text": "维修"
+    },
+    {
+     "index": 14,
+     "offset": "0x0D8DE",
+     "text": "斗志"
+    },
+    {
+     "index": 15,
+     "offset": "0x0D8E3",
+     "text": "疾风"
+    },
+    {
+     "index": 16,
+     "offset": "0x0D8EC",
+     "text": "勇气"
+    },
+    {
+     "index": 17,
+     "offset": "0x0D8F5",
+     "text": "愤怒"
+    },
+    {
+     "index": 18,
+     "offset": "0x0D8FE",
+     "text": "瞄准"
+    },
+    {
+     "index": 19,
+     "offset": "0x0D907",
+     "text": "根基"
+    },
+    {
+     "index": 20,
+     "offset": "0x0D910",
+     "text": "地雷"
+    },
+    {
+     "index": 21,
+     "offset": "0x0D915",
+     "text": "探雷器"
+    },
+    {
+     "index": 22,
+     "offset": "0x0D91C",
+     "text": "G零件"
+    },
+    {
+     "index": 23,
+     "offset": "0x0D923",
+     "text": "非尔卡"
+    }
+   ]
+  },
+  {
+   "resource": "0x11",
+   "name": "人物",
+   "table": "0x0D93C",
+   "items": [
+    {
+     "index": 0,
+     "offset": "0x0DA1C",
+     "text": ""
+    },
+    {
+     "index": 1,
+     "offset": "0x0DA1C",
+     "text": ""
+    },
+    {
+     "index": 2,
+     "offset": "0x0DA1C",
+     "text": ""
+    },
+    {
+     "index": 3,
+     "offset": "0x0DA1E",
+     "text": "士兵"
+    },
+    {
+     "index": 4,
+     "offset": "0x0DA23",
+     "text": ""
+    },
+    {
+     "index": 5,
+     "offset": "0x0DA25",
+     "text": "查里"
+    },
+    {
+     "index": 6,
+     "offset": "0x0DA2A",
+     "text": "大卫"
+    },
+    {
+     "index": 7,
+     "offset": "0x0DA2F",
+     "text": "加代"
+    },
+    {
+     "index": 8,
+     "offset": "0x0DA34",
+     "text": "龙"
+    },
+    {
+     "index": 9,
+     "offset": "0x0DA37",
+     "text": "欧文"
+    },
+    {
+     "index": 10,
+     "offset": "0x0DA3C",
+     "text": "路易"
+    },
+    {
+     "index": 11,
+     "offset": "0x0DA41",
+     "text": "卡姆"
+    },
+    {
+     "index": 12,
+     "offset": "0x0DA46",
+     "text": "希塔"
+    },
+    {
+     "index": 13,
+     "offset": "0x0DA4B",
+     "text": "布克"
+    },
+    {
+     "index": 14,
+     "offset": "0x0DA50",
+     "text": "马丁"
+    },
+    {
+     "index": 15,
+     "offset": "0x0DA55",
+     "text": "由美"
+    },
+    {
+     "index": 16,
+     "offset": "0x0DA5A",
+     "text": "发"
+    },
+    {
+     "index": 17,
+     "offset": "0x0DA5D",
+     "text": "杰克"
+    },
+    {
+     "index": 18,
+     "offset": "0x0DA62",
+     "text": "布西"
+    },
+    {
+     "index": 19,
+     "offset": "0x0DA67",
+     "text": "克娃"
+    },
+    {
+     "index": 20,
+     "offset": "0x0DA6C",
+     "text": "安东"
+    },
+    {
+     "index": 21,
+     "offset": "0x0DA71",
+     "text": "弗兰克"
+    },
+    {
+     "index": 22,
+     "offset": "0x0DA78",
+     "text": "凯"
+    },
+    {
+     "index": 23,
+     "offset": "0x0DA7B",
+     "text": "拉尔"
+    },
+    {
+     "index": 24,
+     "offset": "0x0DA80",
+     "text": "洛克"
+    },
+    {
+     "index": 25,
+     "offset": "0x0DA85",
+     "text": "萨拉"
+    },
+    {
+     "index": 26,
+     "offset": "0x0DA8A",
+     "text": "芬妮"
+    },
+    {
+     "index": 27,
+     "offset": "0x0DA8F",
+     "text": "伊娃"
+    },
+    {
+     "index": 28,
+     "offset": "0x0DA94",
+     "text": "普西"
+    },
+    {
+     "index": 29,
+     "offset": "0x0DA99",
+     "text": "马休"
+    },
+    {
+     "index": 30,
+     "offset": "0x0DA9E",
+     "text": "马斯"
+    },
+    {
+     "index": 31,
+     "offset": "0x0DAA3",
+     "text": "加纳"
+    },
+    {
+     "index": 32,
+     "offset": "0x0DAA8",
+     "text": "麦克"
+    },
+    {
+     "index": 33,
+     "offset": "0x0DAAD",
+     "text": "肯特"
+    },
+    {
+     "index": 34,
+     "offset": "0x0DAB2",
+     "text": "休"
+    },
+    {
+     "index": 35,
+     "offset": "0x0DAB5",
+     "text": "萨米"
+    },
+    {
+     "index": 36,
+     "offset": "0x0DABA",
+     "text": "保罗"
+    },
+    {
+     "index": 37,
+     "offset": "0x0DABF",
+     "text": "梅尔"
+    },
+    {
+     "index": 38,
+     "offset": "0x0DAC4",
+     "text": "布朗"
+    },
+    {
+     "index": 39,
+     "offset": "0x0DAC9",
+     "text": "琼"
+    },
+    {
+     "index": 40,
+     "offset": "0x0DACC",
+     "text": "亨利"
+    },
+    {
+     "index": 41,
+     "offset": "0x0DAD1",
+     "text": "诺思"
+    },
+    {
+     "index": 42,
+     "offset": "0x0DAD6",
+     "text": "温妮"
+    },
+    {
+     "index": 43,
+     "offset": "0x0DADB",
+     "text": "尼娜"
+    },
+    {
+     "index": 44,
+     "offset": "0x0DAE0",
+     "text": "卡尔"
+    },
+    {
+     "index": 45,
+     "offset": "0x0DAE5",
+     "text": "米奇尔"
+    },
+    {
+     "index": 46,
+     "offset": "0x0DAEC",
+     "text": "布扎"
+    },
+    {
+     "index": 47,
+     "offset": "0x0DAF1",
+     "text": "海伦"
+    },
+    {
+     "index": 48,
+     "offset": "0x0DAF6",
+     "text": "里卡"
+    },
+    {
+     "index": 49,
+     "offset": "0x0DAFB",
+     "text": "米亚"
+    },
+    {
+     "index": 50,
+     "offset": "0x0DB00",
+     "text": "格恩"
+    },
+    {
+     "index": 51,
+     "offset": "0x0DB05",
+     "text": "帕亚"
+    },
+    {
+     "index": 52,
+     "offset": "0x0DB0A",
+     "text": "珍妮"
+    },
+    {
+     "index": 53,
+     "offset": "0x0DB0F",
+     "text": "贝克"
+    },
+    {
+     "index": 54,
+     "offset": "0x0DB14",
+     "text": "乔"
+    },
+    {
+     "index": 55,
+     "offset": "0x0DB17",
+     "text": "乔治"
+    },
+    {
+     "index": 56,
+     "offset": "0x0DB1C",
+     "text": "麦斯"
+    },
+    {
+     "index": 57,
+     "offset": "0x0DB21",
+     "text": "约克"
+    },
+    {
+     "index": 58,
+     "offset": "0x0DB26",
+     "text": "西蒙"
+    },
+    {
+     "index": 59,
+     "offset": "0x0DB2B",
+     "text": "拉多"
+    },
+    {
+     "index": 60,
+     "offset": "0x0DB30",
+     "text": "男爵"
+    },
+    {
+     "index": 61,
+     "offset": "0x0DB35",
+     "text": "罗纳"
+    },
+    {
+     "index": 62,
+     "offset": "0x0DB3A",
+     "text": "凯"
+    },
+    {
+     "index": 63,
+     "offset": "0x0DB3D",
+     "text": "汤姆"
+    },
+    {
+     "index": 64,
+     "offset": "0x0DB42",
+     "text": "艾玛"
+    },
+    {
+     "index": 65,
+     "offset": "0x0DB47",
+     "text": "凯文"
+    },
+    {
+     "index": 66,
+     "offset": "0x0DB4C",
+     "text": "洛卡"
+    },
+    {
+     "index": 67,
+     "offset": "0x0DB51",
+     "text": "里纳"
+    },
+    {
+     "index": 68,
+     "offset": "0x0DB56",
+     "text": "奇恩"
+    },
+    {
+     "index": 69,
+     "offset": "0x0DB5B",
+     "text": "里德"
+    },
+    {
+     "index": 70,
+     "offset": "0x0DB60",
+     "text": "莫里"
+    },
+    {
+     "index": 71,
+     "offset": "0x0DB65",
+     "text": "尤里"
+    },
+    {
+     "index": 72,
+     "offset": "0x0DB6A",
+     "text": "瓦西"
+    },
+    {
+     "index": 73,
+     "offset": "0x0DB6F",
+     "text": "希拉"
+    },
+    {
+     "index": 74,
+     "offset": "0x0DB74",
+     "text": "布尔"
+    },
+    {
+     "index": 75,
+     "offset": "0x0DB79",
+     "text": "罗依"
+    },
+    {
+     "index": 76,
+     "offset": "0x0DB7E",
+     "text": "芬奇"
+    },
+    {
+     "index": 77,
+     "offset": "0x0DB83",
+     "text": "米拉"
+    },
+    {
+     "index": 78,
+     "offset": "0x0DB88",
+     "text": "艾玛"
+    },
+    {
+     "index": 79,
+     "offset": "0x0DB8D",
+     "text": "莫尼"
+    },
+    {
+     "index": 80,
+     "offset": "0x0DB92",
+     "text": "邓肯"
+    },
+    {
+     "index": 81,
+     "offset": "0x0DB97",
+     "text": "彼得"
+    },
+    {
+     "index": 82,
+     "offset": "0x0DB9C",
+     "text": "吉姆"
+    },
+    {
+     "index": 83,
+     "offset": "0x0DBA1",
+     "text": "狄克"
+    },
+    {
+     "index": 84,
+     "offset": "0x0DBA6",
+     "text": "杰夫"
+    },
+    {
+     "index": 85,
+     "offset": "0x0DBAB",
+     "text": "休斯"
+    },
+    {
+     "index": 86,
+     "offset": "0x0DBB0",
+     "text": "假马丁"
+    },
+    {
+     "index": 87,
+     "offset": "0x0DA1E",
+     "text": "士兵"
+    },
+    {
+     "index": 88,
+     "offset": "0x0DBB7",
+     "text": "吉尔"
+    },
+    {
+     "index": 89,
+     "offset": "0x0DBBC",
+     "text": ""
+    },
+    {
+     "index": 90,
+     "offset": "0x0DBBE",
+     "text": "米巴"
+    },
+    {
+     "index": 91,
+     "offset": "0x0DBBE",
+     "text": "米巴"
+    },
+    {
+     "index": 92,
+     "offset": "0x0DBBE",
+     "text": "米巴"
+    },
+    {
+     "index": 93,
+     "offset": "0x0DBBE",
+     "text": "米巴"
+    },
+    {
+     "index": 94,
+     "offset": "0x0DBBE",
+     "text": "米巴"
+    },
+    {
+     "index": 95,
+     "offset": "0x0DBBE",
+     "text": "米巴"
+    },
+    {
+     "index": 96,
+     "offset": "0x0DBC3",
+     "text": "帕依"
+    },
+    {
+     "index": 97,
+     "offset": "0x0DBC3",
+     "text": "帕依"
+    },
+    {
+     "index": 98,
+     "offset": "0x0DBC3",
+     "text": "帕依"
+    },
+    {
+     "index": 99,
+     "offset": "0x0DBC3",
+     "text": "帕依"
+    },
+    {
+     "index": 100,
+     "offset": "0x0DBC3",
+     "text": "帕依"
+    },
+    {
+     "index": 101,
+     "offset": "0x0DBC3",
+     "text": "帕依"
+    },
+    {
+     "index": 102,
+     "offset": "0x0DBC3",
+     "text": "帕依"
+    },
+    {
+     "index": 103,
+     "offset": "0x0DBC3",
+     "text": "帕依"
+    },
+    {
+     "index": 104,
+     "offset": "0x0DBC3",
+     "text": "帕依"
+    },
+    {
+     "index": 105,
+     "offset": "0x0DBC3",
+     "text": "帕依"
+    },
+    {
+     "index": 106,
+     "offset": "0x0DBC3",
+     "text": "帕依"
+    },
+    {
+     "index": 107,
+     "offset": "0x0DBC3",
+     "text": "帕依"
+    },
+    {
+     "index": 108,
+     "offset": "0x0DBC3",
+     "text": "帕依"
+    },
+    {
+     "index": 109,
+     "offset": "0x0DBC3",
+     "text": "帕依"
+    },
+    {
+     "index": 110,
+     "offset": "0x0DBC3",
+     "text": "帕依"
+    },
+    {
+     "index": 111,
+     "offset": "0x0DBC3",
+     "text": "帕依"
+    }
+   ]
+  },
+  {
+   "resource": "0x12",
+   "name": "人物（第二份）",
+   "table": "0x0DC7F",
+   "items": [
+    {
+     "index": 0,
+     "offset": "0x0DD5F",
+     "text": ""
+    },
+    {
+     "index": 1,
+     "offset": "0x0DD5F",
+     "text": ""
+    },
+    {
+     "index": 2,
+     "offset": "0x0DD5F",
+     "text": ""
+    },
+    {
+     "index": 3,
+     "offset": "0x0DD61",
+     "text": "士兵"
+    },
+    {
+     "index": 4,
+     "offset": "0x0DD66",
+     "text": ""
+    },
+    {
+     "index": 5,
+     "offset": "0x0DD68",
+     "text": "查里"
+    },
+    {
+     "index": 6,
+     "offset": "0x0DD6D",
+     "text": "大卫"
+    },
+    {
+     "index": 7,
+     "offset": "0x0DD72",
+     "text": "加代"
+    },
+    {
+     "index": 8,
+     "offset": "0x0DD77",
+     "text": "龙"
+    },
+    {
+     "index": 9,
+     "offset": "0x0DD7A",
+     "text": "欧文"
+    },
+    {
+     "index": 10,
+     "offset": "0x0DD7F",
+     "text": "路易"
+    },
+    {
+     "index": 11,
+     "offset": "0x0DD84",
+     "text": "卡姆"
+    },
+    {
+     "index": 12,
+     "offset": "0x0DD89",
+     "text": "希塔"
+    },
+    {
+     "index": 13,
+     "offset": "0x0DD8E",
+     "text": "布克"
+    },
+    {
+     "index": 14,
+     "offset": "0x0DD93",
+     "text": "马丁"
+    },
+    {
+     "index": 15,
+     "offset": "0x0DD98",
+     "text": "由美"
+    },
+    {
+     "index": 16,
+     "offset": "0x0DD9D",
+     "text": "发"
+    },
+    {
+     "index": 17,
+     "offset": "0x0DDA0",
+     "text": "杰克"
+    },
+    {
+     "index": 18,
+     "offset": "0x0DDA5",
+     "text": "布西"
+    },
+    {
+     "index": 19,
+     "offset": "0x0DDAA",
+     "text": "克娃"
+    },
+    {
+     "index": 20,
+     "offset": "0x0DDAF",
+     "text": "安东"
+    },
+    {
+     "index": 21,
+     "offset": "0x0DDB4",
+     "text": "弗兰克"
+    },
+    {
+     "index": 22,
+     "offset": "0x0DDBB",
+     "text": "凯"
+    },
+    {
+     "index": 23,
+     "offset": "0x0DDBE",
+     "text": "拉尔"
+    },
+    {
+     "index": 24,
+     "offset": "0x0DDC3",
+     "text": "洛克"
+    },
+    {
+     "index": 25,
+     "offset": "0x0DDC8",
+     "text": "萨拉"
+    },
+    {
+     "index": 26,
+     "offset": "0x0DDCD",
+     "text": "芬妮"
+    },
+    {
+     "index": 27,
+     "offset": "0x0DDD2",
+     "text": "伊娃"
+    },
+    {
+     "index": 28,
+     "offset": "0x0DDD7",
+     "text": "普西"
+    },
+    {
+     "index": 29,
+     "offset": "0x0DDDC",
+     "text": "马休"
+    },
+    {
+     "index": 30,
+     "offset": "0x0DDE1",
+     "text": "马斯"
+    },
+    {
+     "index": 31,
+     "offset": "0x0DDE6",
+     "text": "加纳"
+    },
+    {
+     "index": 32,
+     "offset": "0x0DDEB",
+     "text": "麦克"
+    },
+    {
+     "index": 33,
+     "offset": "0x0DDF0",
+     "text": "肯特"
+    },
+    {
+     "index": 34,
+     "offset": "0x0DDF5",
+     "text": "休"
+    },
+    {
+     "index": 35,
+     "offset": "0x0DDF8",
+     "text": "萨米"
+    },
+    {
+     "index": 36,
+     "offset": "0x0DDFD",
+     "text": "保罗"
+    },
+    {
+     "index": 37,
+     "offset": "0x0DE02",
+     "text": "梅尔"
+    },
+    {
+     "index": 38,
+     "offset": "0x0DE07",
+     "text": "布朗"
+    },
+    {
+     "index": 39,
+     "offset": "0x0DE0C",
+     "text": "琼"
+    },
+    {
+     "index": 40,
+     "offset": "0x0DE0F",
+     "text": "亨利"
+    },
+    {
+     "index": 41,
+     "offset": "0x0DE14",
+     "text": "诺思"
+    },
+    {
+     "index": 42,
+     "offset": "0x0DE19",
+     "text": "温妮"
+    },
+    {
+     "index": 43,
+     "offset": "0x0DE1E",
+     "text": "尼娜"
+    },
+    {
+     "index": 44,
+     "offset": "0x0DE23",
+     "text": "卡尔"
+    },
+    {
+     "index": 45,
+     "offset": "0x0DE28",
+     "text": "米奇尔"
+    },
+    {
+     "index": 46,
+     "offset": "0x0DE2F",
+     "text": "布扎"
+    },
+    {
+     "index": 47,
+     "offset": "0x0DE34",
+     "text": "海伦"
+    },
+    {
+     "index": 48,
+     "offset": "0x0DE39",
+     "text": "里卡"
+    },
+    {
+     "index": 49,
+     "offset": "0x0DE3E",
+     "text": "米亚"
+    },
+    {
+     "index": 50,
+     "offset": "0x0DE43",
+     "text": "格恩"
+    },
+    {
+     "index": 51,
+     "offset": "0x0DE48",
+     "text": "帕亚"
+    },
+    {
+     "index": 52,
+     "offset": "0x0DE4D",
+     "text": "珍妮"
+    },
+    {
+     "index": 53,
+     "offset": "0x0DE52",
+     "text": "贝克"
+    },
+    {
+     "index": 54,
+     "offset": "0x0DE57",
+     "text": "乔"
+    },
+    {
+     "index": 55,
+     "offset": "0x0DE5A",
+     "text": "乔治"
+    },
+    {
+     "index": 56,
+     "offset": "0x0DE5F",
+     "text": "麦斯"
+    },
+    {
+     "index": 57,
+     "offset": "0x0DE64",
+     "text": "约克"
+    },
+    {
+     "index": 58,
+     "offset": "0x0DE69",
+     "text": "西蒙"
+    },
+    {
+     "index": 59,
+     "offset": "0x0DE6E",
+     "text": "拉多"
+    },
+    {
+     "index": 60,
+     "offset": "0x0DE73",
+     "text": "男爵"
+    },
+    {
+     "index": 61,
+     "offset": "0x0DE78",
+     "text": "罗纳"
+    },
+    {
+     "index": 62,
+     "offset": "0x0DE7D",
+     "text": "凯"
+    },
+    {
+     "index": 63,
+     "offset": "0x0DE80",
+     "text": "汤姆"
+    },
+    {
+     "index": 64,
+     "offset": "0x0DE85",
+     "text": "艾玛"
+    },
+    {
+     "index": 65,
+     "offset": "0x0DE8A",
+     "text": "凯文"
+    },
+    {
+     "index": 66,
+     "offset": "0x0DE8F",
+     "text": "路"
+    },
+    {
+     "index": 67,
+     "offset": "0x0DE92",
+     "text": "里纳"
+    },
+    {
+     "index": 68,
+     "offset": "0x0DE97",
+     "text": "奇恩"
+    },
+    {
+     "index": 69,
+     "offset": "0x0DE9C",
+     "text": "里德"
+    },
+    {
+     "index": 70,
+     "offset": "0x0DEA1",
+     "text": "莫里"
+    },
+    {
+     "index": 71,
+     "offset": "0x0DEA6",
+     "text": "尤里"
+    },
+    {
+     "index": 72,
+     "offset": "0x0DEAB",
+     "text": "瓦西"
+    },
+    {
+     "index": 73,
+     "offset": "0x0DEB0",
+     "text": "希拉"
+    },
+    {
+     "index": 74,
+     "offset": "0x0DEB5",
+     "text": "布尔"
+    },
+    {
+     "index": 75,
+     "offset": "0x0DEBA",
+     "text": "罗依"
+    },
+    {
+     "index": 76,
+     "offset": "0x0DEBF",
+     "text": "芬奇"
+    },
+    {
+     "index": 77,
+     "offset": "0x0DEC4",
+     "text": "米拉"
+    },
+    {
+     "index": 78,
+     "offset": "0x0DEC9",
+     "text": "艾玛"
+    },
+    {
+     "index": 79,
+     "offset": "0x0DECE",
+     "text": "莫尼"
+    },
+    {
+     "index": 80,
+     "offset": "0x0DED3",
+     "text": "邓肯"
+    },
+    {
+     "index": 81,
+     "offset": "0x0DED8",
+     "text": "彼得"
+    },
+    {
+     "index": 82,
+     "offset": "0x0DEDD",
+     "text": "吉姆"
+    },
+    {
+     "index": 83,
+     "offset": "0x0DEE2",
+     "text": "狄克"
+    },
+    {
+     "index": 84,
+     "offset": "0x0DEE7",
+     "text": "杰夫"
+    },
+    {
+     "index": 85,
+     "offset": "0x0DEEC",
+     "text": "休斯"
+    },
+    {
+     "index": 86,
+     "offset": "0x0DEF1",
+     "text": "假马丁"
+    },
+    {
+     "index": 87,
+     "offset": "0x0DD61",
+     "text": "士兵"
+    },
+    {
+     "index": 88,
+     "offset": "0x0DEF8",
+     "text": "吉尔"
+    },
+    {
+     "index": 89,
+     "offset": "0x0DEFD",
+     "text": ""
+    },
+    {
+     "index": 90,
+     "offset": "0x0DEFF",
+     "text": "米巴"
+    },
+    {
+     "index": 91,
+     "offset": "0x0DEFF",
+     "text": "米巴"
+    },
+    {
+     "index": 92,
+     "offset": "0x0DEFF",
+     "text": "米巴"
+    },
+    {
+     "index": 93,
+     "offset": "0x0DEFF",
+     "text": "米巴"
+    },
+    {
+     "index": 94,
+     "offset": "0x0DEFF",
+     "text": "米巴"
+    },
+    {
+     "index": 95,
+     "offset": "0x0DEFF",
+     "text": "米巴"
+    },
+    {
+     "index": 96,
+     "offset": "0x0DF04",
+     "text": "帕依"
+    },
+    {
+     "index": 97,
+     "offset": "0x0DF04",
+     "text": "帕依"
+    },
+    {
+     "index": 98,
+     "offset": "0x0DF04",
+     "text": "帕依"
+    },
+    {
+     "index": 99,
+     "offset": "0x0DF04",
+     "text": "帕依"
+    },
+    {
+     "index": 100,
+     "offset": "0x0DF04",
+     "text": "帕依"
+    },
+    {
+     "index": 101,
+     "offset": "0x0DF04",
+     "text": "帕依"
+    },
+    {
+     "index": 102,
+     "offset": "0x0DF04",
+     "text": "帕依"
+    },
+    {
+     "index": 103,
+     "offset": "0x0DF04",
+     "text": "帕依"
+    },
+    {
+     "index": 104,
+     "offset": "0x0DF04",
+     "text": "帕依"
+    },
+    {
+     "index": 105,
+     "offset": "0x0DF04",
+     "text": "帕依"
+    },
+    {
+     "index": 106,
+     "offset": "0x0DF04",
+     "text": "帕依"
+    },
+    {
+     "index": 107,
+     "offset": "0x0DF04",
+     "text": "帕依"
+    },
+    {
+     "index": 108,
+     "offset": "0x0DF04",
+     "text": "帕依"
+    },
+    {
+     "index": 109,
+     "offset": "0x0DF04",
+     "text": "帕依"
+    },
+    {
+     "index": 110,
+     "offset": "0x0DF04",
+     "text": "帕依"
+    },
+    {
+     "index": 111,
+     "offset": "0x0DF04",
+     "text": "帕依"
+    }
+   ]
+  },
+  {
+   "resource": "0x13",
+   "name": "机体",
+   "table": "0x0DF22",
+   "items": [
+    {
+     "index": 0,
+     "offset": "0x0E33E",
+     "text": ""
+    },
+    {
+     "index": 1,
+     "offset": "0x0E0A2",
+     "text": "盖塔"
+    },
+    {
+     "index": 2,
+     "offset": "0x0E0A7",
+     "text": "盖塔1"
+    },
+    {
+     "index": 3,
+     "offset": "0x0E0AE",
+     "text": "盖塔2"
+    },
+    {
+     "index": 4,
+     "offset": "0x0E0B5",
+     "text": "盖塔3"
+    },
+    {
+     "index": 5,
+     "offset": "0x0E0A2",
+     "text": "盖塔"
+    },
+    {
+     "index": 6,
+     "offset": "0x0E0A7",
+     "text": "盖塔1"
+    },
+    {
+     "index": 7,
+     "offset": "0x0E0AE",
+     "text": "盖塔2"
+    },
+    {
+     "index": 8,
+     "offset": "0x0E0B5",
+     "text": "盖塔3"
+    },
+    {
+     "index": 9,
+     "offset": "0x0E0BC",
+     "text": "刚达"
+    },
+    {
+     "index": 10,
+     "offset": "0x0E0BC",
+     "text": "刚达"
+    },
+    {
+     "index": 11,
+     "offset": "0x0E0C1",
+     "text": "刚达Ⅱ"
+    },
+    {
+     "index": 12,
+     "offset": "0x0E0C1",
+     "text": "刚达Ⅱ"
+    },
+    {
+     "index": 13,
+     "offset": "0x0E0C8",
+     "text": "西马"
+    },
+    {
+     "index": 14,
+     "offset": "0x0E0C8",
+     "text": "西马"
+    },
+    {
+     "index": 15,
+     "offset": "0x0E0CD",
+     "text": "刚克"
+    },
+    {
+     "index": 16,
+     "offset": "0x0E0CD",
+     "text": "刚克"
+    },
+    {
+     "index": 17,
+     "offset": "0x0E0D2",
+     "text": "卡扎C"
+    },
+    {
+     "index": 18,
+     "offset": "0x0E0D2",
+     "text": "卡扎C"
+    },
+    {
+     "index": 19,
+     "offset": "0x0E0D9",
+     "text": "麦萨拉"
+    },
+    {
+     "index": 20,
+     "offset": "0x0E0D9",
+     "text": "麦萨拉"
+    },
+    {
+     "index": 21,
+     "offset": "0x0E0E0",
+     "text": "拉比"
+    },
+    {
+     "index": 22,
+     "offset": "0x0E0E0",
+     "text": "拉比"
+    },
+    {
+     "index": 23,
+     "offset": "0x0E0E5",
+     "text": "巴斯塔"
+    },
+    {
+     "index": 24,
+     "offset": "0x0E0EC",
+     "text": "巴得"
+    },
+    {
+     "index": 25,
+     "offset": "0x0E0E5",
+     "text": "巴斯塔"
+    },
+    {
+     "index": 26,
+     "offset": "0x0E0EC",
+     "text": "巴得"
+    },
+    {
+     "index": 27,
+     "offset": "0x0E0E5",
+     "text": "巴斯塔"
+    },
+    {
+     "index": 28,
+     "offset": "0x0E0EC",
+     "text": "巴得"
+    },
+    {
+     "index": 29,
+     "offset": "0x0E0F1",
+     "text": "金Z"
+    },
+    {
+     "index": 30,
+     "offset": "0x0E0F1",
+     "text": "金Z"
+    },
+    {
+     "index": 31,
+     "offset": "0x0E0F6",
+     "text": "金"
+    },
+    {
+     "index": 32,
+     "offset": "0x0E0F6",
+     "text": "金"
+    },
+    {
+     "index": 33,
+     "offset": "0x0E0F6",
+     "text": "金"
+    },
+    {
+     "index": 34,
+     "offset": "0x0E0F9",
+     "text": "阿波罗A"
+    },
+    {
+     "index": 35,
+     "offset": "0x0E102",
+     "text": "太勒"
+    },
+    {
+     "index": 36,
+     "offset": "0x0E107",
+     "text": "道尔"
+    },
+    {
+     "index": 37,
+     "offset": "0x0E107",
+     "text": "道尔"
+    },
+    {
+     "index": 38,
+     "offset": "0x0E10C",
+     "text": "盖塔Q"
+    },
+    {
+     "index": 39,
+     "offset": "0x0E113",
+     "text": "博思"
+    },
+    {
+     "index": 40,
+     "offset": "0x0E113",
+     "text": "博思"
+    },
+    {
+     "index": 41,
+     "offset": "0x0E113",
+     "text": "博思"
+    },
+    {
+     "index": 42,
+     "offset": "0x0E11C",
+     "text": "布达MZ"
+    },
+    {
+     "index": 43,
+     "offset": "0x0E125",
+     "text": "拉达K7"
+    },
+    {
+     "index": 44,
+     "offset": "0x0E12E",
+     "text": "米巴"
+    },
+    {
+     "index": 45,
+     "offset": "0x0E133",
+     "text": "拉英X"
+    },
+    {
+     "index": 46,
+     "offset": "0x0E13A",
+     "text": "诺巴M9"
+    },
+    {
+     "index": 47,
+     "offset": "0x0E143",
+     "text": "古塔"
+    },
+    {
+     "index": 48,
+     "offset": "0x0E148",
+     "text": "撞击器"
+    },
+    {
+     "index": 49,
+     "offset": "0x0E14F",
+     "text": "布X1"
+    },
+    {
+     "index": 50,
+     "offset": "0x0E156",
+     "text": "切克"
+    },
+    {
+     "index": 51,
+     "offset": "0x0E15B",
+     "text": "格尔"
+    },
+    {
+     "index": 52,
+     "offset": "0x0E160",
+     "text": "邦巴"
+    },
+    {
+     "index": 53,
+     "offset": "0x0E165",
+     "text": "基尔"
+    },
+    {
+     "index": 54,
+     "offset": "0x0E16A",
+     "text": "乍克"
+    },
+    {
+     "index": 55,
+     "offset": "0x0E16F",
+     "text": "古夫"
+    },
+    {
+     "index": 56,
+     "offset": "0x0E174",
+     "text": "德姆"
+    },
+    {
+     "index": 57,
+     "offset": "0x0E179",
+     "text": "加恩"
+    },
+    {
+     "index": 58,
+     "offset": "0x0E17E",
+     "text": "雷克"
+    },
+    {
+     "index": 59,
+     "offset": "0x0E183",
+     "text": "比克"
+    },
+    {
+     "index": 60,
+     "offset": "0x0E188",
+     "text": "艾文"
+    },
+    {
+     "index": 61,
+     "offset": "0x0E18D",
+     "text": "古恩"
+    },
+    {
+     "index": 62,
+     "offset": "0x0E18D",
+     "text": "古恩"
+    },
+    {
+     "index": 63,
+     "offset": "0x0E192",
+     "text": "斯特"
+    },
+    {
+     "index": 64,
+     "offset": "0x0E197",
+     "text": "哈衣"
+    },
+    {
+     "index": 65,
+     "offset": "0x0E19C",
+     "text": "吉伯"
+    },
+    {
+     "index": 66,
+     "offset": "0x0E1A1",
+     "text": "基奥"
+    },
+    {
+     "index": 67,
+     "offset": "0x0E1A6",
+     "text": "马登"
+    },
+    {
+     "index": 68,
+     "offset": "0x0E1AB",
+     "text": "帕拉"
+    },
+    {
+     "index": 69,
+     "offset": "0x0E1B0",
+     "text": "巴依"
+    },
+    {
+     "index": 70,
+     "offset": "0x0E1B5",
+     "text": "巴勒"
+    },
+    {
+     "index": 71,
+     "offset": "0x0E1BA",
+     "text": "吉米"
+    },
+    {
+     "index": 72,
+     "offset": "0x0E1BF",
+     "text": "盖马"
+    },
+    {
+     "index": 73,
+     "offset": "0x0E1C4",
+     "text": "伯希"
+    },
+    {
+     "index": 74,
+     "offset": "0x0E1C9",
+     "text": "巴乌"
+    },
+    {
+     "index": 75,
+     "offset": "0x0E1CE",
+     "text": "加姆"
+    },
+    {
+     "index": 76,
+     "offset": "0x0E1D3",
+     "text": "希卡"
+    },
+    {
+     "index": 77,
+     "offset": "0x0E1D8",
+     "text": "伯利"
+    },
+    {
+     "index": 78,
+     "offset": "0x0E1DD",
+     "text": "基格"
+    },
+    {
+     "index": 79,
+     "offset": "0x0E1E2",
+     "text": "亚克扎"
+    },
+    {
+     "index": 80,
+     "offset": "0x0E1E9",
+     "text": "扎比"
+    },
+    {
+     "index": 81,
+     "offset": "0x0E1EE",
+     "text": "阿尔"
+    },
+    {
+     "index": 82,
+     "offset": "0x0E1F3",
+     "text": "比纳"
+    },
+    {
+     "index": 83,
+     "offset": "0x0E1F8",
+     "text": "兹"
+    },
+    {
+     "index": 84,
+     "offset": "0x0E1FB",
+     "text": "巴得"
+    },
+    {
+     "index": 85,
+     "offset": "0x0E200",
+     "text": "扎依"
+    },
+    {
+     "index": 86,
+     "offset": "0x0E205",
+     "text": "宰恩Ⅱ"
+    },
+    {
+     "index": 87,
+     "offset": "0x0E20C",
+     "text": "达衣"
+    },
+    {
+     "index": 88,
+     "offset": "0x0E211",
+     "text": "希古"
+    },
+    {
+     "index": 89,
+     "offset": "0x0E216",
+     "text": "麦卡"
+    },
+    {
+     "index": 90,
+     "offset": "0x0E21B",
+     "text": "麦乔"
+    },
+    {
+     "index": 91,
+     "offset": "0x0E220",
+     "text": "科顿"
+    },
+    {
+     "index": 92,
+     "offset": "0x0E225",
+     "text": "坎普"
+    },
+    {
+     "index": 93,
+     "offset": "0x0E22A",
+     "text": "埃尔"
+    },
+    {
+     "index": 94,
+     "offset": "0x0E22A",
+     "text": "埃尔"
+    },
+    {
+     "index": 95,
+     "offset": "0x0E22F",
+     "text": "导弹"
+    },
+    {
+     "index": 96,
+     "offset": "0x0E234",
+     "text": "米巴×"
+    },
+    {
+     "index": 97,
+     "offset": "0x0E23B",
+     "text": "艾文"
+    },
+    {
+     "index": 98,
+     "offset": "0x0E240",
+     "text": "古连"
+    },
+    {
+     "index": 99,
+     "offset": "0x0E245",
+     "text": "斯帕"
+    },
+    {
+     "index": 100,
+     "offset": "0x0E240",
+     "text": "古连"
+    },
+    {
+     "index": 101,
+     "offset": "0x0E24C",
+     "text": "双帕"
+    },
+    {
+     "index": 102,
+     "offset": "0x0E240",
+     "text": "古连"
+    },
+    {
+     "index": 103,
+     "offset": "0x0E24C",
+     "text": "双帕"
+    },
+    {
+     "index": 104,
+     "offset": "0x0E253",
+     "text": "钻帕"
+    },
+    {
+     "index": 105,
+     "offset": "0x0E25A",
+     "text": "德帕"
+    },
+    {
+     "index": 106,
+     "offset": "0x0E261",
+     "text": "麦塔斯"
+    },
+    {
+     "index": 107,
+     "offset": "0x0E261",
+     "text": "麦塔斯"
+    },
+    {
+     "index": 108,
+     "offset": "0x0E261",
+     "text": "麦塔斯"
+    },
+    {
+     "index": 109,
+     "offset": "0x0E261",
+     "text": "麦塔斯"
+    },
+    {
+     "index": 110,
+     "offset": "0x0E261",
+     "text": "麦塔斯"
+    },
+    {
+     "index": 111,
+     "offset": "0x0E261",
+     "text": "麦塔斯"
+    },
+    {
+     "index": 112,
+     "offset": "0x0E261",
+     "text": "麦塔斯"
+    },
+    {
+     "index": 113,
+     "offset": "0x0E261",
+     "text": "麦塔斯"
+    },
+    {
+     "index": 114,
+     "offset": "0x0E26C",
+     "text": "盖塔"
+    },
+    {
+     "index": 115,
+     "offset": "0x0E271",
+     "text": "盖塔龙"
+    },
+    {
+     "index": 116,
+     "offset": "0x0E278",
+     "text": "盖塔虎"
+    },
+    {
+     "index": 117,
+     "offset": "0x0E27F",
+     "text": "盖塔海神"
+    },
+    {
+     "index": 118,
+     "offset": "0x0E26C",
+     "text": "盖塔"
+    },
+    {
+     "index": 119,
+     "offset": "0x0E271",
+     "text": "盖塔龙"
+    },
+    {
+     "index": 120,
+     "offset": "0x0E278",
+     "text": "盖塔虎"
+    },
+    {
+     "index": 121,
+     "offset": "0x0E27F",
+     "text": "盖塔海神"
+    },
+    {
+     "index": 122,
+     "offset": "0x0E26C",
+     "text": "盖塔"
+    },
+    {
+     "index": 123,
+     "offset": "0x0E271",
+     "text": "盖塔龙"
+    },
+    {
+     "index": 124,
+     "offset": "0x0E278",
+     "text": "盖塔虎"
+    },
+    {
+     "index": 125,
+     "offset": "0x0E27F",
+     "text": "盖塔海神"
+    },
+    {
+     "index": 126,
+     "offset": "0x0E288",
+     "text": "刚达"
+    },
+    {
+     "index": 127,
+     "offset": "0x0E28D",
+     "text": "阿马G"
+    },
+    {
+     "index": 128,
+     "offset": "0x0E288",
+     "text": "刚达"
+    },
+    {
+     "index": 129,
+     "offset": "0x0E28D",
+     "text": "阿马G"
+    },
+    {
+     "index": 130,
+     "offset": "0x0E294",
+     "text": "刚达Z"
+    },
+    {
+     "index": 131,
+     "offset": "0x0E29B",
+     "text": "韦尔"
+    },
+    {
+     "index": 132,
+     "offset": "0x0E294",
+     "text": "刚达Z"
+    },
+    {
+     "index": 133,
+     "offset": "0x0E29B",
+     "text": "韦尔"
+    },
+    {
+     "index": 134,
+     "offset": "0x0E294",
+     "text": "刚达Z"
+    },
+    {
+     "index": 135,
+     "offset": "0x0E29B",
+     "text": "韦尔"
+    },
+    {
+     "index": 136,
+     "offset": "0x0E294",
+     "text": "刚达Z"
+    },
+    {
+     "index": 137,
+     "offset": "0x0E29B",
+     "text": "韦尔"
+    },
+    {
+     "index": 138,
+     "offset": "0x0E294",
+     "text": "刚达Z"
+    },
+    {
+     "index": 139,
+     "offset": "0x0E29B",
+     "text": "韦尔"
+    },
+    {
+     "index": 140,
+     "offset": "0x0E2A0",
+     "text": "刚达R"
+    },
+    {
+     "index": 141,
+     "offset": "0x0E2A0",
+     "text": "刚达R"
+    },
+    {
+     "index": 142,
+     "offset": "0x0E2A0",
+     "text": "刚达R"
+    },
+    {
+     "index": 143,
+     "offset": "0x0E2A7",
+     "text": "F91"
+    },
+    {
+     "index": 144,
+     "offset": "0x0E2A7",
+     "text": "F91"
+    },
+    {
+     "index": 145,
+     "offset": "0x0E2A7",
+     "text": "F91"
+    },
+    {
+     "index": 146,
+     "offset": "0x0E2A7",
+     "text": "F91"
+    },
+    {
+     "index": 147,
+     "offset": "0x0E2AE",
+     "text": "刚达ZZ"
+    },
+    {
+     "index": 148,
+     "offset": "0x0E2B7",
+     "text": "齐扎"
+    },
+    {
+     "index": 149,
+     "offset": "0x0E2AE",
+     "text": "刚达ZZ"
+    },
+    {
+     "index": 150,
+     "offset": "0x0E2B7",
+     "text": "齐扎"
+    },
+    {
+     "index": 151,
+     "offset": "0x0E2AE",
+     "text": "刚达ZZ"
+    },
+    {
+     "index": 152,
+     "offset": "0x0E2B7",
+     "text": "齐扎"
+    },
+    {
+     "index": 153,
+     "offset": "0x0E2BC",
+     "text": "吉伯Ⅱ"
+    },
+    {
+     "index": 154,
+     "offset": "0x0E2C3",
+     "text": "伯利"
+    },
+    {
+     "index": 155,
+     "offset": "0x0E2C8",
+     "text": "比纳"
+    },
+    {
+     "index": 156,
+     "offset": "0x0E2CD",
+     "text": "刚达"
+    },
+    {
+     "index": 157,
+     "offset": "0x0E2CD",
+     "text": "刚达"
+    },
+    {
+     "index": 158,
+     "offset": "0x0E2D2",
+     "text": "吉尔"
+    },
+    {
+     "index": 159,
+     "offset": "0x0E2D7",
+     "text": "麦加金刚"
+    },
+    {
+     "index": 160,
+     "offset": "0x0E2E0",
+     "text": "瓦尔"
+    },
+    {
+     "index": 161,
+     "offset": "0x0E2E5",
+     "text": "怀特"
+    },
+    {
+     "index": 162,
+     "offset": "0x0E2EA",
+     "text": "阿格马"
+    },
+    {
+     "index": 163,
+     "offset": "0x0E2F1",
+     "text": "奈尔"
+    },
+    {
+     "index": 164,
+     "offset": "0x0E2F8",
+     "text": "拉姆"
+    },
+    {
+     "index": 165,
+     "offset": "0x0E2FD",
+     "text": "古尔"
+    },
+    {
+     "index": 166,
+     "offset": "0x0E302",
+     "text": "诺曼"
+    },
+    {
+     "index": 167,
+     "offset": "0x0E307",
+     "text": "刚达Ⅱ"
+    },
+    {
+     "index": 168,
+     "offset": "0x0E307",
+     "text": "刚达Ⅱ"
+    },
+    {
+     "index": 169,
+     "offset": "0x0E30E",
+     "text": "麦乔"
+    },
+    {
+     "index": 170,
+     "offset": "0x0E313",
+     "text": "盖塔Q"
+    },
+    {
+     "index": 171,
+     "offset": "0x0E31A",
+     "text": "炮台"
+    },
+    {
+     "index": 172,
+     "offset": "0x0E31F",
+     "text": "发电镜"
+    },
+    {
+     "index": 173,
+     "offset": "0x0E326",
+     "text": "希亚"
+    },
+    {
+     "index": 174,
+     "offset": "0x0E32B",
+     "text": "假古连"
+    },
+    {
+     "index": 175,
+     "offset": "0x0E16A",
+     "text": "乍克"
+    },
+    {
+     "index": 176,
+     "offset": "0x0E1C9",
+     "text": "巴乌"
+    },
+    {
+     "index": 177,
+     "offset": "0x0E332",
+     "text": "秀伯"
+    },
+    {
+     "index": 178,
+     "offset": "0x0E1DD",
+     "text": "基格"
+    },
+    {
+     "index": 179,
+     "offset": "0x0E1E2",
+     "text": "亚克扎"
+    },
+    {
+     "index": 180,
+     "offset": "0x0E337",
+     "text": "乍克Ⅲ"
+    },
+    {
+     "index": 181,
+     "offset": "0x0E33E",
+     "text": ""
+    },
+    {
+     "index": 182,
+     "offset": "0x0E33E",
+     "text": ""
+    },
+    {
+     "index": 183,
+     "offset": "0x0E33E",
+     "text": ""
+    },
+    {
+     "index": 184,
+     "offset": "0x0E33E",
+     "text": ""
+    },
+    {
+     "index": 185,
+     "offset": "0x0E33E",
+     "text": ""
+    },
+    {
+     "index": 186,
+     "offset": "0x0E33E",
+     "text": ""
+    },
+    {
+     "index": 187,
+     "offset": "0x0E33E",
+     "text": ""
+    },
+    {
+     "index": 188,
+     "offset": "0x0E33E",
+     "text": ""
+    },
+    {
+     "index": 189,
+     "offset": "0x0E33E",
+     "text": ""
+    },
+    {
+     "index": 190,
+     "offset": "0x0E33E",
+     "text": ""
+    },
+    {
+     "index": 191,
+     "offset": "0x0E33E",
+     "text": ""
+    }
+   ]
+  },
+  {
+   "resource": "0x14",
+   "name": "武器",
+   "table": "0x0E384",
+   "items": [
+    {
+     "index": 0,
+     "offset": "0x0E8D0",
+     "text": ""
+    },
+    {
+     "index": 1,
+     "offset": "0x0E504",
+     "text": "光剑"
+    },
+    {
+     "index": 2,
+     "offset": "0x0E504",
+     "text": "光剑"
+    },
+    {
+     "index": 3,
+     "offset": "0x0E504",
+     "text": "光剑"
+    },
+    {
+     "index": 4,
+     "offset": "0x0E504",
+     "text": "光剑"
+    },
+    {
+     "index": 5,
+     "offset": "0x0E504",
+     "text": "光剑"
+    },
+    {
+     "index": 6,
+     "offset": "0x0E509",
+     "text": "光束枪"
+    },
+    {
+     "index": 7,
+     "offset": "0x0E509",
+     "text": "光束枪"
+    },
+    {
+     "index": 8,
+     "offset": "0x0E509",
+     "text": "光束枪"
+    },
+    {
+     "index": 9,
+     "offset": "0x0E509",
+     "text": "光束枪"
+    },
+    {
+     "index": 10,
+     "offset": "0x0E509",
+     "text": "光束枪"
+    },
+    {
+     "index": 11,
+     "offset": "0x0E510",
+     "text": "导弹"
+    },
+    {
+     "index": 12,
+     "offset": "0x0E510",
+     "text": "导弹"
+    },
+    {
+     "index": 13,
+     "offset": "0x0E510",
+     "text": "导弹"
+    },
+    {
+     "index": 14,
+     "offset": "0x0E515",
+     "text": "穿甲弹"
+    },
+    {
+     "index": 15,
+     "offset": "0x0E51C",
+     "text": "光子射线"
+    },
+    {
+     "index": 16,
+     "offset": "0x0E525",
+     "text": "机械刀"
+    },
+    {
+     "index": 17,
+     "offset": "0x0E52C",
+     "text": "火焰喷射器"
+    },
+    {
+     "index": 18,
+     "offset": "0x0E537",
+     "text": "中子刀"
+    },
+    {
+     "index": 19,
+     "offset": "0x0E540",
+     "text": "原子钻"
+    },
+    {
+     "index": 20,
+     "offset": "0x0E547",
+     "text": "闪电"
+    },
+    {
+     "index": 21,
+     "offset": "0x0E54C",
+     "text": "光回旋镖"
+    },
+    {
+     "index": 22,
+     "offset": "0x0E555",
+     "text": "质子炮"
+    },
+    {
+     "index": 23,
+     "offset": "0x0E55C",
+     "text": "压力钻"
+    },
+    {
+     "index": 24,
+     "offset": "0x0E565",
+     "text": "盖塔战斧"
+    },
+    {
+     "index": 25,
+     "offset": "0x0E565",
+     "text": "盖塔战斧"
+    },
+    {
+     "index": 26,
+     "offset": "0x0E56E",
+     "text": "盖塔射线"
+    },
+    {
+     "index": 27,
+     "offset": "0x0E56E",
+     "text": "盖塔射线"
+    },
+    {
+     "index": 28,
+     "offset": "0x0E56E",
+     "text": "盖塔射线"
+    },
+    {
+     "index": 29,
+     "offset": "0x0E577",
+     "text": "回旋钻"
+    },
+    {
+     "index": 30,
+     "offset": "0x0E577",
+     "text": "回旋钻"
+    },
+    {
+     "index": 31,
+     "offset": "0x0E57E",
+     "text": "神风钻"
+    },
+    {
+     "index": 32,
+     "offset": "0x0E57E",
+     "text": "神风钻"
+    },
+    {
+     "index": 33,
+     "offset": "0x0E585",
+     "text": "冷冻液"
+    },
+    {
+     "index": 34,
+     "offset": "0x0E585",
+     "text": "冷冻液"
+    },
+    {
+     "index": 35,
+     "offset": "0x0E58C",
+     "text": "盖塔导弹"
+    },
+    {
+     "index": 36,
+     "offset": "0x0E58C",
+     "text": "盖塔导弹"
+    },
+    {
+     "index": 37,
+     "offset": "0x0E595",
+     "text": "远程激光炮"
+    },
+    {
+     "index": 38,
+     "offset": "0x0E595",
+     "text": "远程激光炮"
+    },
+    {
+     "index": 39,
+     "offset": "0x0E5A0",
+     "text": "高能光束枪"
+    },
+    {
+     "index": 40,
+     "offset": "0x0E5AB",
+     "text": "高能光剑"
+    },
+    {
+     "index": 41,
+     "offset": "0x0E5AB",
+     "text": "高能光剑"
+    },
+    {
+     "index": 42,
+     "offset": "0x0E5B4",
+     "text": "激光子母炮"
+    },
+    {
+     "index": 43,
+     "offset": "0x0E5B4",
+     "text": "激光子母炮"
+    },
+    {
+     "index": 44,
+     "offset": "0x0E5B4",
+     "text": "激光子母炮"
+    },
+    {
+     "index": 45,
+     "offset": "0x0E5BF",
+     "text": "中子炮"
+    },
+    {
+     "index": 46,
+     "offset": "0x0E5BF",
+     "text": "中子炮"
+    },
+    {
+     "index": 47,
+     "offset": "0x0E5C6",
+     "text": "手持光束枪"
+    },
+    {
+     "index": 48,
+     "offset": "0x0E5D1",
+     "text": "螺旋粉碎机"
+    },
+    {
+     "index": 49,
+     "offset": "0x0E5DC",
+     "text": "反重力暴风"
+    },
+    {
+     "index": 50,
+     "offset": "0x0E5E7",
+     "text": "十字镖"
+    },
+    {
+     "index": 51,
+     "offset": "0x0E5EE",
+     "text": "宇宙闪电"
+    },
+    {
+     "index": 52,
+     "offset": "0x0E5F7",
+     "text": "双面钩"
+    },
+    {
+     "index": 53,
+     "offset": "0x0E5FE",
+     "text": "双刃战斧"
+    },
+    {
+     "index": 54,
+     "offset": "0x0E5FE",
+     "text": "双刃战斧"
+    },
+    {
+     "index": 55,
+     "offset": "0x0E5FE",
+     "text": "双刃战斧"
+    },
+    {
+     "index": 56,
+     "offset": "0x0E607",
+     "text": "链子炮"
+    },
+    {
+     "index": 57,
+     "offset": "0x0E607",
+     "text": "链子炮"
+    },
+    {
+     "index": 58,
+     "offset": "0x0E607",
+     "text": "链子炮"
+    },
+    {
+     "index": 59,
+     "offset": "0x0E60E",
+     "text": "雷格导弹"
+    },
+    {
+     "index": 60,
+     "offset": "0x0E60E",
+     "text": "雷格导弹"
+    },
+    {
+     "index": 61,
+     "offset": "0x0E617",
+     "text": "气旋炮"
+    },
+    {
+     "index": 62,
+     "offset": "0x0E617",
+     "text": "气旋炮"
+    },
+    {
+     "index": 63,
+     "offset": "0x0E61E",
+     "text": "鱼雷"
+    },
+    {
+     "index": 64,
+     "offset": "0x0E61E",
+     "text": "鱼雷"
+    },
+    {
+     "index": 65,
+     "offset": "0x0E623",
+     "text": "组合刀"
+    },
+    {
+     "index": 66,
+     "offset": "0x0E62A",
+     "text": "脉冲波"
+    },
+    {
+     "index": 67,
+     "offset": "0x0E631",
+     "text": "组合刀"
+    },
+    {
+     "index": 68,
+     "offset": "0x0E638",
+     "text": "射线枪"
+    },
+    {
+     "index": 69,
+     "offset": "0x0E641",
+     "text": "锯齿刀"
+    },
+    {
+     "index": 70,
+     "offset": "0x0E648",
+     "text": "射线枪"
+    },
+    {
+     "index": 71,
+     "offset": "0x0E651",
+     "text": "萨斯剑"
+    },
+    {
+     "index": 72,
+     "offset": "0x0E658",
+     "text": "左轮手枪"
+    },
+    {
+     "index": 73,
+     "offset": "0x0E661",
+     "text": "激光枪"
+    },
+    {
+     "index": 74,
+     "offset": "0x0E661",
+     "text": "激光枪"
+    },
+    {
+     "index": 75,
+     "offset": "0x0E668",
+     "text": "火箭弹"
+    },
+    {
+     "index": 76,
+     "offset": "0x0E66F",
+     "text": "激光"
+    },
+    {
+     "index": 77,
+     "offset": "0x0E66F",
+     "text": "激光"
+    },
+    {
+     "index": 78,
+     "offset": "0x0E66F",
+     "text": "激光"
+    },
+    {
+     "index": 79,
+     "offset": "0x0E674",
+     "text": "高压电"
+    },
+    {
+     "index": 80,
+     "offset": "0x0E674",
+     "text": "高压电"
+    },
+    {
+     "index": 81,
+     "offset": "0x0E67B",
+     "text": "光刀"
+    },
+    {
+     "index": 82,
+     "offset": "0x0E680",
+     "text": "辆"
+    },
+    {
+     "index": 83,
+     "offset": "0x0E683",
+     "text": "步枪"
+    },
+    {
+     "index": 84,
+     "offset": "0x0E688",
+     "text": "手枪"
+    },
+    {
+     "index": 85,
+     "offset": "0x0E68D",
+     "text": "溶解液"
+    },
+    {
+     "index": 86,
+     "offset": "0x0E694",
+     "text": "角"
+    },
+    {
+     "index": 87,
+     "offset": "0x0E697",
+     "text": "战斧"
+    },
+    {
+     "index": 88,
+     "offset": "0x0E69C",
+     "text": "破坏光线"
+    },
+    {
+     "index": 89,
+     "offset": "0x0E69C",
+     "text": "破坏光线"
+    },
+    {
+     "index": 90,
+     "offset": "0x0E6A5",
+     "text": "矛"
+    },
+    {
+     "index": 91,
+     "offset": "0x0E6A8",
+     "text": "毒液"
+    },
+    {
+     "index": 92,
+     "offset": "0x0E6AD",
+     "text": "红外线"
+    },
+    {
+     "index": 93,
+     "offset": "0x0E6B4",
+     "text": "导弹"
+    },
+    {
+     "index": 94,
+     "offset": "0x0E6B9",
+     "text": "大炮"
+    },
+    {
+     "index": 95,
+     "offset": "0x0E6BE",
+     "text": "远程导弹"
+    },
+    {
+     "index": 96,
+     "offset": "0x0E6BE",
+     "text": "远程导弹"
+    },
+    {
+     "index": 97,
+     "offset": "0x0E6BE",
+     "text": "远程导弹"
+    },
+    {
+     "index": 98,
+     "offset": "0x0E6C7",
+     "text": "喷火器"
+    },
+    {
+     "index": 99,
+     "offset": "0x0E6C7",
+     "text": "喷火器"
+    },
+    {
+     "index": 100,
+     "offset": "0x0E6CE",
+     "text": "撞击器"
+    },
+    {
+     "index": 101,
+     "offset": "0x0E6D5",
+     "text": "三指叉"
+    },
+    {
+     "index": 102,
+     "offset": "0x0E6DC",
+     "text": "连发枪"
+    },
+    {
+     "index": 103,
+     "offset": "0x0E6E3",
+     "text": "75高射炮"
+    },
+    {
+     "index": 104,
+     "offset": "0x0E6EE",
+     "text": "热能剑"
+    },
+    {
+     "index": 105,
+     "offset": "0x0E6F5",
+     "text": "红外线枪"
+    },
+    {
+     "index": 106,
+     "offset": "0x0E6FE",
+     "text": "反坦克炮"
+    },
+    {
+     "index": 107,
+     "offset": "0x0E707",
+     "text": "扩散光炮"
+    },
+    {
+     "index": 108,
+     "offset": "0x0E707",
+     "text": "扩散光炮"
+    },
+    {
+     "index": 109,
+     "offset": "0x0E707",
+     "text": "扩散光炮"
+    },
+    {
+     "index": 110,
+     "offset": "0x0E710",
+     "text": "远程粒子炮"
+    },
+    {
+     "index": 111,
+     "offset": "0x0E71B",
+     "text": "防空粒子炮"
+    },
+    {
+     "index": 112,
+     "offset": "0x0E726",
+     "text": "粒子炮"
+    },
+    {
+     "index": 113,
+     "offset": "0x0E726",
+     "text": "粒子炮"
+    },
+    {
+     "index": 114,
+     "offset": "0x0E726",
+     "text": "粒子炮"
+    },
+    {
+     "index": 115,
+     "offset": "0x0E72D",
+     "text": "子母弹"
+    },
+    {
+     "index": 116,
+     "offset": "0x0E72D",
+     "text": "子母弹"
+    },
+    {
+     "index": 117,
+     "offset": "0x0E734",
+     "text": "高能光炮"
+    },
+    {
+     "index": 118,
+     "offset": "0x0E73D",
+     "text": "激光加农炮"
+    },
+    {
+     "index": 119,
+     "offset": "0x0E748",
+     "text": "手持导弹"
+    },
+    {
+     "index": 120,
+     "offset": "0x0E751",
+     "text": "机械爪"
+    },
+    {
+     "index": 121,
+     "offset": "0x0E758",
+     "text": "激光枪"
+    },
+    {
+     "index": 122,
+     "offset": "0x0E75F",
+     "text": "激光子母炮"
+    },
+    {
+     "index": 123,
+     "offset": "0x0E76A",
+     "text": "激光剑"
+    },
+    {
+     "index": 124,
+     "offset": "0x0E76A",
+     "text": "激光剑"
+    },
+    {
+     "index": 125,
+     "offset": "0x0E76A",
+     "text": "激光剑"
+    },
+    {
+     "index": 126,
+     "offset": "0x0E76A",
+     "text": "激光剑"
+    },
+    {
+     "index": 127,
+     "offset": "0x0E76A",
+     "text": "激光剑"
+    },
+    {
+     "index": 128,
+     "offset": "0x0E771",
+     "text": "扩散粒子炮"
+    },
+    {
+     "index": 129,
+     "offset": "0x0E76A",
+     "text": "激光剑"
+    },
+    {
+     "index": 130,
+     "offset": "0x0E77C",
+     "text": "三栖导弹"
+    },
+    {
+     "index": 131,
+     "offset": "0x0E77C",
+     "text": "三栖导弹"
+    },
+    {
+     "index": 132,
+     "offset": "0x0E77C",
+     "text": "三栖导弹"
+    },
+    {
+     "index": 133,
+     "offset": "0x0E77C",
+     "text": "三栖导弹"
+    },
+    {
+     "index": 134,
+     "offset": "0x0E785",
+     "text": "激光炮"
+    },
+    {
+     "index": 135,
+     "offset": "0x0E78C",
+     "text": "激光刀"
+    },
+    {
+     "index": 136,
+     "offset": "0x0E793",
+     "text": "激光战斧"
+    },
+    {
+     "index": 137,
+     "offset": "0x0E79C",
+     "text": "子母炮"
+    },
+    {
+     "index": 138,
+     "offset": "0x0E7A3",
+     "text": "近距导弹"
+    },
+    {
+     "index": 139,
+     "offset": "0x0E7AC",
+     "text": "超级粒子炮"
+    },
+    {
+     "index": 140,
+     "offset": "0x0E7B7",
+     "text": "激光剑"
+    },
+    {
+     "index": 141,
+     "offset": "0x0E7B7",
+     "text": "激光剑"
+    },
+    {
+     "index": 142,
+     "offset": "0x0E7B7",
+     "text": "激光剑"
+    },
+    {
+     "index": 143,
+     "offset": "0x0E7BE",
+     "text": "质子刀"
+    },
+    {
+     "index": 144,
+     "offset": "0x0E7C5",
+     "text": "激光枪"
+    },
+    {
+     "index": 145,
+     "offset": "0x0E7CC",
+     "text": "激光剑"
+    },
+    {
+     "index": 146,
+     "offset": "0x0E7D3",
+     "text": "尾巴"
+    },
+    {
+     "index": 147,
+     "offset": "0x0E7D8",
+     "text": "火焰弹"
+    },
+    {
+     "index": 148,
+     "offset": "0x0E7DF",
+     "text": "火箭弹"
+    },
+    {
+     "index": 149,
+     "offset": "0x0E7E6",
+     "text": "离子剑"
+    },
+    {
+     "index": 150,
+     "offset": "0x0E7ED",
+     "text": "冷冻光线"
+    },
+    {
+     "index": 151,
+     "offset": "0x0E7F6",
+     "text": "蝶型光枪"
+    },
+    {
+     "index": 152,
+     "offset": "0x0E7FF",
+     "text": "回旋镖"
+    },
+    {
+     "index": 153,
+     "offset": "0x0E7FF",
+     "text": "回旋镖"
+    },
+    {
+     "index": 154,
+     "offset": "0x0E806",
+     "text": "粉碎机"
+    },
+    {
+     "index": 155,
+     "offset": "0x0E80D",
+     "text": "G加农炮"
+    },
+    {
+     "index": 156,
+     "offset": "0x0E816",
+     "text": "激光剑"
+    },
+    {
+     "index": 157,
+     "offset": "0x0E81D",
+     "text": "能量球"
+    },
+    {
+     "index": 158,
+     "offset": "0x0E824",
+     "text": "激光剑"
+    },
+    {
+     "index": 159,
+     "offset": "0x0E82B",
+     "text": "离子波"
+    },
+    {
+     "index": 160,
+     "offset": "0x0E82B",
+     "text": "离子波"
+    },
+    {
+     "index": 161,
+     "offset": "0x0E832",
+     "text": "粒子加农炮"
+    },
+    {
+     "index": 162,
+     "offset": "0x0E832",
+     "text": "粒子加农炮"
+    },
+    {
+     "index": 163,
+     "offset": "0x0E844",
+     "text": "十字捣碎机"
+    },
+    {
+     "index": 164,
+     "offset": "0x0E84F",
+     "text": "修理装置"
+    },
+    {
+     "index": 165,
+     "offset": "0x0E858",
+     "text": "回转光束枪"
+    },
+    {
+     "index": 166,
+     "offset": "0x0E863",
+     "text": "热能炮"
+    },
+    {
+     "index": 167,
+     "offset": "0x0E86A",
+     "text": "气旋光束"
+    },
+    {
+     "index": 168,
+     "offset": "0x0E86A",
+     "text": "气旋光束"
+    },
+    {
+     "index": 169,
+     "offset": "0x0E873",
+     "text": "双刃刀"
+    },
+    {
+     "index": 170,
+     "offset": "0x0E873",
+     "text": "双刃刀"
+    },
+    {
+     "index": 171,
+     "offset": "0x0E87A",
+     "text": "马林导弹"
+    },
+    {
+     "index": 172,
+     "offset": "0x0E883",
+     "text": "离子刀"
+    },
+    {
+     "index": 173,
+     "offset": "0x0E88A",
+     "text": "神风导弹"
+    },
+    {
+     "index": 174,
+     "offset": "0x0E893",
+     "text": "紫外线枪"
+    },
+    {
+     "index": 175,
+     "offset": "0x0E89C",
+     "text": "20机枪"
+    },
+    {
+     "index": 176,
+     "offset": "0x0E89C",
+     "text": "20机枪"
+    },
+    {
+     "index": 177,
+     "offset": "0x0E89C",
+     "text": "20机枪"
+    },
+    {
+     "index": 178,
+     "offset": "0x0E89C",
+     "text": "20机枪"
+    },
+    {
+     "index": 179,
+     "offset": "0x0E8A5",
+     "text": "能量波"
+    },
+    {
+     "index": 180,
+     "offset": "0x0E8A5",
+     "text": "能量波"
+    },
+    {
+     "index": 181,
+     "offset": "0x0E8AC",
+     "text": "冲击波"
+    },
+    {
+     "index": 182,
+     "offset": "0x0E8AC",
+     "text": "冲击波"
+    },
+    {
+     "index": 183,
+     "offset": "0x0E60E",
+     "text": "雷格导弹"
+    },
+    {
+     "index": 184,
+     "offset": "0x0E638",
+     "text": "射线枪"
+    },
+    {
+     "index": 185,
+     "offset": "0x0E648",
+     "text": "射线枪"
+    },
+    {
+     "index": 186,
+     "offset": "0x0E8B3",
+     "text": "穿甲弹"
+    },
+    {
+     "index": 187,
+     "offset": "0x0E8BA",
+     "text": "高能穿甲弹"
+    },
+    {
+     "index": 188,
+     "offset": "0x0E8C5",
+     "text": "DX穿甲弹"
+    },
+    {
+     "index": 189,
+     "offset": "0x0E8D0",
+     "text": ""
+    },
+    {
+     "index": 190,
+     "offset": "0x0E8D0",
+     "text": ""
+    },
+    {
+     "index": 191,
+     "offset": "0x0E8D0",
+     "text": ""
+    }
+   ]
+  },
+  {
+   "resource": "0x15",
+   "name": "地形、菜单、精神指令",
+   "table": "0x0D6FA",
+   "items": [
+    {
+     "index": 0,
+     "offset": "0x0D760",
+     "text": "空"
+    },
+    {
+     "index": 1,
+     "offset": "0x0D763",
+     "text": "陆"
+    },
+    {
+     "index": 2,
+     "offset": "0x0D766",
+     "text": "海"
+    },
+    {
+     "index": 3,
+     "offset": "0x0D769",
+     "text": "移动"
+    },
+    {
+     "index": 4,
+     "offset": "0x0D76E",
+     "text": "状态"
+    },
+    {
+     "index": 5,
+     "offset": "0x0D773",
+     "text": "攻击"
+    },
+    {
+     "index": 6,
+     "offset": "0x0D778",
+     "text": "精神"
+    },
+    {
+     "index": 7,
+     "offset": "0x0D77D",
+     "text": "变形"
+    },
+    {
+     "index": 8,
+     "offset": "0x0D782",
+     "text": "劝降"
+    },
+    {
+     "index": 9,
+     "offset": "0x0D787",
+     "text": "待命"
+    },
+    {
+     "index": 10,
+     "offset": "0x0D78C",
+     "text": "搭载"
+    },
+    {
+     "index": 11,
+     "offset": "0x0D791",
+     "text": "起飞"
+    },
+    {
+     "index": 12,
+     "offset": null,
+     "text": null
+    },
+    {
+     "index": 13,
+     "offset": null,
+     "text": null
+    },
+    {
+     "index": 14,
+     "offset": "0x0D796",
+     "text": "驾驶员"
+    },
+    {
+     "index": 15,
+     "offset": "0x0D79D",
+     "text": "舰长"
+    },
+    {
+     "index": 16,
+     "offset": "0x0D7A2",
+     "text": "毅力"
+    },
+    {
+     "index": 17,
+     "offset": "0x0D7A7",
+     "text": "加速"
+    },
+    {
+     "index": 18,
+     "offset": "0x0D7AC",
+     "text": "瞄准"
+    },
+    {
+     "index": 19,
+     "offset": "0x0D7B1",
+     "text": "防守"
+    },
+    {
+     "index": 20,
+     "offset": "0x0D7B6",
+     "text": "强攻"
+    },
+    {
+     "index": 21,
+     "offset": "0x0D7BB",
+     "text": "友情"
+    },
+    {
+     "index": 22,
+     "offset": "0x0D7C0",
+     "text": "必杀"
+    },
+    {
+     "index": 23,
+     "offset": "0x0D7C5",
+     "text": "疾风"
+    },
+    {
+     "index": 24,
+     "offset": "0x0D7CA",
+     "text": "回避"
+    },
+    {
+     "index": 25,
+     "offset": "0x0D7CF",
+     "text": "潜力"
+    },
+    {
+     "index": 26,
+     "offset": "0x0D7D4",
+     "text": "热血"
+    },
+    {
+     "index": 27,
+     "offset": "0x0D7D9",
+     "text": "情义"
+    },
+    {
+     "index": 28,
+     "offset": "0x0D7DE",
+     "text": "传真"
+    },
+    {
+     "index": 29,
+     "offset": "0x0D7E3",
+     "text": "援助"
+    },
+    {
+     "index": 30,
+     "offset": "0x0D7E8",
+     "text": "怒"
+    },
+    {
+     "index": 31,
+     "offset": "0x0D7EB",
+     "text": "祈祷"
+    },
+    {
+     "index": 32,
+     "offset": "0x0D7F0",
+     "text": "干扰"
+    },
+    {
+     "index": 33,
+     "offset": "0x0D7F5",
+     "text": "狂怒"
+    },
+    {
+     "index": 34,
+     "offset": "0x0D7FA",
+     "text": "爱心"
+    }
+   ]
+  },
+  {
+   "resource": "0x16",
+   "name": "机体说明：高度（m）",
+   "table": "0x32C27",
+   "items": [
+    {
+     "index": 0,
+     "offset": "0x32C4B",
+     "text": "22"
+    },
+    {
+     "index": 1,
+     "offset": "0x32C51",
+     "text": "25"
+    },
+    {
+     "index": 2,
+     "offset": "0x32C57",
+     "text": "50"
+    },
+    {
+     "index": 3,
+     "offset": "0x32C57",
+     "text": "50"
+    },
+    {
+     "index": 4,
+     "offset": "0x32C5D",
+     "text": "40"
+    },
+    {
+     "index": 5,
+     "offset": "0x32C63",
+     "text": "18.1"
+    },
+    {
+     "index": 6,
+     "offset": "0x32C69",
+     "text": "40"
+    },
+    {
+     "index": 7,
+     "offset": "0x32C6F",
+     "text": "19.8"
+    },
+    {
+     "index": 8,
+     "offset": "0x32C75",
+     "text": "19.86"
+    },
+    {
+     "index": 9,
+     "offset": "0x32C7B",
+     "text": "15.2"
+    },
+    {
+     "index": 10,
+     "offset": "0x32C81",
+     "text": "30"
+    },
+    {
+     "index": 11,
+     "offset": "0x32C87",
+     "text": "12"
+    },
+    {
+     "index": 12,
+     "offset": "0x32C8D",
+     "text": "39.98"
+    },
+    {
+     "index": 13,
+     "offset": "0x32C93",
+     "text": "39.2"
+    },
+    {
+     "index": 14,
+     "offset": "0x32C99",
+     "text": "28.48"
+    },
+    {
+     "index": 15,
+     "offset": "0x32C9F",
+     "text": "27.3"
+    },
+    {
+     "index": 16,
+     "offset": "0x32CA5",
+     "text": "57"
+    },
+    {
+     "index": 17,
+     "offset": "0x32CAB",
+     "text": "？？？？？"
+    }
+   ]
+  },
+  {
+   "resource": "0x17",
+   "name": "机体说明：重量（t）",
+   "table": "0x32CB1",
+   "items": [
+    {
+     "index": 0,
+     "offset": "0x32CD5",
+     "text": "27.9"
+    },
+    {
+     "index": 1,
+     "offset": "0x32CDB",
+     "text": "32"
+    },
+    {
+     "index": 2,
+     "offset": "0x32CE1",
+     "text": "330"
+    },
+    {
+     "index": 3,
+     "offset": "0x32CE1",
+     "text": "330"
+    },
+    {
+     "index": 4,
+     "offset": "0x32CE1",
+     "text": "330"
+    },
+    {
+     "index": 5,
+     "offset": "0x32CE7",
+     "text": "27.8"
+    },
+    {
+     "index": 6,
+     "offset": "0x32CED",
+     "text": "214.1"
+    },
+    {
+     "index": 7,
+     "offset": "0x32CF3",
+     "text": "28.7"
+    },
+    {
+     "index": 8,
+     "offset": "0x32CF9",
+     "text": "32.7"
+    },
+    {
+     "index": 9,
+     "offset": "0x32CFF",
+     "text": "7.8"
+    },
+    {
+     "index": 10,
+     "offset": "0x32D05",
+     "text": "280"
+    },
+    {
+     "index": 11,
+     "offset": "0x32D0B",
+     "text": "95"
+    },
+    {
+     "index": 12,
+     "offset": "0x32D11",
+     "text": "187.8"
+    },
+    {
+     "index": 13,
+     "offset": "0x32D17",
+     "text": "143.2"
+    },
+    {
+     "index": 14,
+     "offset": "0x32D1D",
+     "text": "38.4"
+    },
+    {
+     "index": 15,
+     "offset": "0x32D23",
+     "text": "42.8"
+    },
+    {
+     "index": 16,
+     "offset": "0x32D29",
+     "text": "550"
+    },
+    {
+     "index": 17,
+     "offset": "0x32D2F",
+     "text": "？？？？？"
+    }
+   ]
+  }
+ ]
+}
