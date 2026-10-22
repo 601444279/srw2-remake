@@ -1,7 +1,7 @@
 // 游戏流程：我方回合（移动、攻击、精神、待机）、敌方回合、剧情。
 // 战斗、命中、伤害、经验等规则在 rules.ts 里调用原版规则代码；
 // 关卡事件（对话、援军、胜负、过关）和敌人 AI 由原版脚本驱动，见 events.ts。
-import { applyLevel, type Stage, type Unit, type Weapon } from "./data.ts";
+import { applyLevel, formIndexOf, formsOf, mechName, pilotForForm, transformUnit, type Stage, type Unit, type Weapon } from "./data.ts";
 import { StageEvents } from "./events.ts";
 import { key, pathTo, rangeFrom, reachable, inBounds, MOVE_TYPE_ROW, type Point, type Reach } from "./grid.ts";
 import type { Action } from "./input.ts";
@@ -502,9 +502,50 @@ export class Game implements DrawState {
     const items: MenuItem[] = [
       { label: "攻击", disabled: !canAttack, detail: canAttack ? "" : "无目标", run: () => this.chooseWeapon(unit) },
       { label: "精神", disabled: !canSpirit, detail: unit.maxSp ? `SP ${unit.sp}` : "", run: () => this.openSpiritMenu(unit) },
+      // 原版只在移动前的单位菜单里有「变形」，变形不消耗行动
+      ...(!this.moved && formsOf(unit.unitId).length > 1 ? [{ label: "变形", run: () => this.openTransformMenu(unit) }] : []),
       { label: "待机", run: () => this.finishAction(unit) },
     ];
     this.openMenu(items, unit, () => this.undoMove(unit));
+  }
+
+  // ---------- 变形 ----------
+  private openTransformMenu(unit: Unit) {
+    const labels = { air: "空", land: "陆", sea: "海" } as const;
+    const items: MenuItem[] = formsOf(unit.unitId)
+      .filter((id) => id !== unit.unitId)
+      .map((id) => {
+        const preview = this.previewForm(unit, id);
+        return {
+          label: mechName(id),
+          detail: `${labels[preview.moveType]} · 机动 ${preview.move}`,
+          hint: preview.weapons.map((w) => w.name).join("、") + (preview.pilotName !== unit.pilotName ? ` · 驾驶员 ${preview.pilotName}` : ""),
+          run: () => void this.transform(unit, id),
+        };
+      });
+    this.openMenu(items, unit, () => this.openActionMenu(unit));
+  }
+
+  // 预览新形态的数值（不改原单位）
+  private previewForm(unit: Unit, id: number) {
+    const copy = structuredClone(unit);
+    transformUnit({ ...this.stage, roster: [] }, copy, id);
+    return copy;
+  }
+
+  private async transform(unit: Unit, id: number) {
+    this.setMode("busy");
+    const scenes = transformLines(unit.pilotId, id);
+    for (const scene of scenes) await this.playScene(scene);
+    transformUnit(this.stage, unit, id);
+    await this.renderer.loadUnit(unit);
+    this.renderer.hitUnit(unit);
+    this.renderer.float(unit, "变形", "#8fd3ff");
+    this.dangerCache = null;
+    this.refreshInfo();
+    await wait(0.3 / this.speed());
+    // 变形不消耗行动，回到选移动的状态（移动力、地形适性都变了）
+    this.select(unit);
   }
 
   // 菜单里取消：回到移动前的位置，重新选择
@@ -882,6 +923,19 @@ export class Game implements DrawState {
     for (const u of this.enemies()) for (const k of this.threat(u, this.unitReach(u))) out.add(k);
     return out;
   }
+}
+
+// 变形台词（文本资源 0x37）：当前驾驶员「开机，到位！」（27–29：龙、欧文、路易），
+// 新形态的驾驶员「盖塔N号点火！变形！」（盖塔 30–32，盖塔G 33–35）。其他机体没有专门台词
+function transformLines(pilotId: number, to: number): SceneRef[] {
+  const team = [8, 9, 10];
+  if (!team.includes(pilotId) || !formIndexOf(to)) return [];
+  const getterG = to >= 114 && to <= 125;
+  const newPilot = pilotForForm(pilotId, to);
+  return [
+    { res: "37", index: 27 + team.indexOf(pilotId), who: pilotId },
+    { res: "37", index: (getterG ? 33 : 30) + formIndexOf(to) - 1, who: newPilot },
+  ];
 }
 
 function minus(a: Set<number>, b: { has(k: number): boolean }) {

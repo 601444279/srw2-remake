@@ -5,6 +5,15 @@ import type { GridMap, MoveType } from "./grid.ts";
 import { computeStats, type GrowthCurve, type PilotDef, type UnitDef } from "./stats.ts";
 import { traitOf, type Trait } from "./traits.ts";
 import { personName } from "./story.ts";
+import nameTables from "../../data/script/names.json";
+
+// 机体名、武器名：data/units.json、weapons.json 里有不少没解出来，用剧情文本会话导出的名字表补上
+// （资源 0x13 机体名、0x14 武器名，下标就是编号）
+const nameTable = (res: string) =>
+  new Map(((nameTables as { tables: { resource: string; items: { index: number; text: string | null }[] }[] }).tables
+    .find((t) => t.resource === res)?.items ?? []).map((i) => [i.index, i.text || ""]));
+const mechNames = nameTable("0x13");
+const weaponNames = nameTable("0x14");
 import environments from "../../data/environments.json";
 import terrainNames from "../../data/terrain-names.json";
 import deployments from "../../data/deployments.json";
@@ -127,10 +136,11 @@ const pick = <T>(files: Record<string, unknown>, suffix: string) => {
 
 function weaponOf(id: number): Weapon | null {
   const w = weapons.get(id);
-  if (!w || !w.name) return null;
+  const name = w?.name || weaponNames.get(id);
+  if (!w || !name) return null;
   return {
     id: w.id,
-    name: w.name,
+    name,
     range: w.range,
     hit: w.hit,
     power: { air: w.power.air, land: w.power.land, sea: w.power.sea },
@@ -184,7 +194,7 @@ export function createUnit(stage: Stage, p: Placement): Unit {
     bits: 0,
     npc: !!p.npc,
     roster: p.roster ?? null,
-    name: def.name ?? `机体 ${p.unitId}`,
+    name: def.name || mechNames.get(p.unitId) || `机体 ${p.unitId}`,
     // 驾驶员数据表里有些名字没解出来，用剧情的人名表（下标同样是人物编号）补上
     pilotName: pilot.name || personName(p.pilotId) || (p.side === "enemy" ? "" : `驾驶员 ${p.pilotId}`),
     level: p.level + 1,
@@ -206,6 +216,49 @@ export function createUnit(stage: Stage, p: Placement): Unit {
     trait: traitOf(p.pilotId),
     acted: false,
   };
+}
+
+// ---------- 变形 ----------
+// 机体表第 0 字节：两段变形（形态 0、1）或盖塔式三段变形（形态 1–3，形态 0 是全 0 的占位记录）。
+// 组首编号 = 编号 − 形态序号（docs/notes-units.md「机体表」）
+interface TransformInfo { kind: "double" | "triple"; formIndex: number; baseId: number }
+const transformOf = (id: number) => (units.get(id) as unknown as { transform?: TransformInfo | null })?.transform ?? null;
+
+// 这台机体能变成的所有形态（含自己），按形态顺序；不能变形时只有自己
+export function formsOf(unitId: number): number[] {
+  const t = transformOf(unitId);
+  if (!t) return [unitId];
+  const ids = t.kind === "triple" ? [t.baseId + 1, t.baseId + 2, t.baseId + 3] : [t.baseId, t.baseId + 1];
+  return ids.filter((id) => units.has(id) && (units.get(id)!.hp > 0));
+}
+
+export function formIndexOf(unitId: number) {
+  return transformOf(unitId)?.formIndex ?? 0;
+}
+
+export function mechName(unitId: number) {
+  return units.get(unitId)?.name || mechNames.get(unitId) || `机体 ${unitId}`;
+}
+
+// 盖塔三人（龙 8、欧文 9、路易 10）：盖塔式三段变形时，形态 1/2/3 的主驾驶员分别是他们（原版实测）
+const GETTER_TEAM = [8, 9, 10];
+export function pilotForForm(pilotId: number, unitId: number) {
+  const t = transformOf(unitId);
+  if (t?.kind === "triple" && GETTER_TEAM.includes(pilotId)) return GETTER_TEAM[t.formIndex - 1] ?? pilotId;
+  return pilotId;
+}
+
+// 变形：换机体（和盖塔的主驾驶员），能力值、武器、精神、特性、图标换成新的；HP、SP 保留（不超过新的上限）
+export function transformUnit(stage: Stage, unit: Unit, newUnitId: number) {
+  const pilotId = pilotForForm(unit.pilotId, newUnitId);
+  const fresh = createUnit(stage, { side: unit.side, npc: unit.npc, roster: unit.roster ?? undefined, x: unit.x, y: unit.y, unitId: newUnitId, pilotId, level: unit.levelIndex, aiScript: unit.aiScript });
+  const keep = { id: unit.id, index: unit.index, hp: unit.hp, sp: unit.sp, exp: unit.exp, spirit: unit.spirit, bits: unit.bits, acted: unit.acted };
+  Object.assign(unit, fresh, keep);
+  unit.hp = Math.min(unit.hp, unit.maxHp);
+  unit.sp = Math.min(unit.sp, unit.maxSp);
+  // 名册也记成新形态，下一关出击时保持
+  const m = stage.roster.find((r) => r.member === unit.roster);
+  if (m) { m.unit = newUnitId; m.pilot = pilotId; }
 }
 
 export const AI_SCRIPTS = (aiDb as unknown as { scripts: Record<string, Script> }).scripts;
