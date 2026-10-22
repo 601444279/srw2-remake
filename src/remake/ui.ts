@@ -1,5 +1,5 @@
 // 界面：顶栏、信息面板、菜单、回合横幅、按键提示。都是叠在地图上的 HTML，不切换画面。
-import type { Unit } from "./data.ts";
+import { TYPE_LABEL, type Unit } from "./data.ts";
 
 export interface MenuItem {
   label: string;
@@ -36,25 +36,35 @@ export class UI {
     $("#hints").innerHTML = hints.map(([k, v]) => `<span><kbd>${k}</kbd>${v}</span>`).join("");
   }
 
-  showInfo(unit: Unit | null, terrain: TerrainInfo | null) {
+  showInfo(unit: Unit | null, iconUrl: string, terrain: TerrainInfo | null) {
     const el = $("#info");
     if (!unit && !terrain) { el.hidden = true; return; }
     el.hidden = false;
     let html = "";
     if (unit) {
       const ratio = Math.max(0, unit.hp / unit.maxHp);
+      // 原版状态画面显示的火力 = 武器火力 + 机体强度
+      const fire = (p: number | null) => (p === null ? "—" : String(p + unit.strength));
+      const weapons = unit.weapons.map((w) => `
+        <tr><td>${w.name}</td><td>${w.range}</td><td>${w.hit}</td><td>${fire(w.power.air)}</td><td>${fire(w.power.land)}</td><td>${fire(w.power.sea)}</td></tr>`).join("");
+      const spirits = unit.spirits.length
+        ? `<div class="spirits">${unit.spirits.map((s) => `<span title="${s.text}" class="${s.cost > unit.sp ? "off" : ""}">${s.name}<i>${s.cost}</i></span>`).join("")}</div>`
+        : "";
       html += `
         <div class="unit ${unit.side}">
-          <img src="${unit.iconUrl}" alt="">
+          <img src="${iconUrl}" alt="">
           <div class="body">
-            <div class="name">${unit.name}${unit.acted ? '<span class="tag">已行动</span>' : ""}</div>
+            <div class="name">${unit.name}<span class="tag">${TYPE_LABEL[unit.moveType]}</span><span class="tag">Lv ${unit.level}</span>${unit.acted ? '<span class="tag">已行动</span>' : ""}</div>
+            ${unit.pilotName ? `<div class="pilot">驾驶员 ${unit.pilotName}${unit.maxSp ? `<span>SP ${unit.sp} / ${unit.maxSp}</span>` : ""}</div>` : ""}
             <div class="hp"><div class="bar"><i style="width:${ratio * 100}%"></i></div><span>${unit.hp} / ${unit.maxHp}</span></div>
             <div class="stats">
               <span>机动 <b>${unit.move}</b></span><span>强度 <b>${unit.strength}</b></span>
               <span>防卫 <b>${unit.defense}</b></span><span>速度 <b>${unit.speed}</b></span>
             </div>
           </div>
-        </div>`;
+        </div>
+        <table class="weapons"><tr><th>武器</th><th>射程</th><th>命中</th><th>空</th><th>陆</th><th>海</th></tr>${weapons}</table>
+        ${spirits}`;
     }
     if (terrain) {
       const costs = terrain.costs.map((c) => `${c.label} ${c.cost === 0 ? "×" : c.cost}`).join(" · ");

@@ -23,7 +23,7 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); c
 #phase[data-phase="enemy"] { color: var(--enemy); }
 #objective { color: var(--muted); font-size: 13px; }
 
-#info { position: fixed; left: 12px; bottom: 52px; width: 300px; border-radius: var(--radius); padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+#info { position: fixed; left: 12px; bottom: 52px; width: 340px; border-radius: var(--radius); padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
 #info .unit { display: flex; gap: 10px; }
 #info .unit img { width: 48px; height: 48px; image-rendering: pixelated; background: rgba(255,255,255,0.06); border-radius: 6px; }
 #info .unit .body { flex: 1; display: flex; flex-direction: column; gap: 4px; }
@@ -31,6 +31,15 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); c
 #info .unit.player .name { color: var(--player); }
 #info .unit.enemy .name { color: var(--enemy); }
 #info .tag { font-size: 11px; font-weight: 500; color: var(--muted); border: 1px solid var(--panel-border); border-radius: 4px; padding: 0 4px; }
+#info .pilot { font-size: 12px; color: var(--muted); display: flex; justify-content: space-between; }
+#info .weapons { width: 100%; border-collapse: collapse; font-size: 12px; }
+#info .weapons th { color: var(--muted); font-weight: 500; text-align: right; padding: 0 4px; }
+#info .weapons td { text-align: right; padding: 1px 4px; font-variant-numeric: tabular-nums; }
+#info .weapons th:first-child, #info .weapons td:first-child { text-align: left; padding-left: 0; }
+#info .spirits { display: flex; flex-wrap: wrap; gap: 4px; }
+#info .spirits span { font-size: 12px; padding: 1px 6px; border-radius: 4px; background: rgba(255,255,255,0.08); }
+#info .spirits span.off { opacity: .4; }
+#info .spirits i { font-style: normal; color: var(--muted); margin-left: 4px; font-size: 11px; }
 #info .hp { display: flex; align-items: center; gap: 8px; font: 12px ui-monospace, monospace; }
 #info .bar { flex: 1; height: 6px; background: rgba(255,255,255,0.12); border-radius: 3px; overflow: hidden; }
 #info .bar i { display: block; height: 100%; background: #4cd964; }

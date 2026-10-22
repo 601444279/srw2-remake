@@ -9,8 +9,6 @@ import type { UI, MenuItem } from "./ui.ts";
 type Mode = "browse" | "selected" | "moving" | "menu" | "busy";
 
 const MOVE_TILES_PER_SEC = 14;
-// 武器射程还没提取，敌方威胁范围暂时按射程 1 计算
-const PLACEHOLDER_RANGE = 1;
 
 interface MoveAnim {
   unit: Unit;
@@ -56,11 +54,11 @@ export class Game implements DrawState {
     if (this.inspected) {
       const r = this.unitReach(this.inspected);
       o.move = r.stops;
-      o.attack = minus(rangeFrom(this.stage.map, r.stops, 1, PLACEHOLDER_RANGE), r.stops);
+      o.attack = minus(this.threat(this.inspected, r), r.stops);
     }
     if (this.selected && this.reach && (this.mode === "selected" || this.mode === "moving")) {
       o.move = this.reach.stops;
-      o.attack = minus(rangeFrom(this.stage.map, this.reach.stops, 1, PLACEHOLDER_RANGE), this.reach.cost);
+      o.attack = minus(this.threat(this.selected, this.reach), this.reach.cost);
       if (this.mode === "selected" && this.reach.stops.has(key(this.stage.map, this.cursor.x, this.cursor.y))) {
         o.path = pathTo(this.stage.map, this.reach, this.cursor);
       }
@@ -263,7 +261,7 @@ export class Game implements DrawState {
     const unit = this.unitAt(this.cursor) ?? (this.mode === "selected" ? this.selected : null);
     const t = this.stage.map.terrain[this.cursor.y][this.cursor.x];
     const labels = { air: "空", land: "陆", sea: "海" } as const;
-    this.ui.showInfo(unit ?? null, {
+    this.ui.showInfo(unit ?? null, unit ? this.renderer.iconUrl(unit) : "", {
       name: this.stage.terrainNames[t],
       defense: defenseBonus(this.stage.terrainEffect[t]),
       costs: (Object.keys(labels) as (keyof typeof labels)[]).map((m) => ({ label: labels[m], cost: this.stage.map.moveCost[MOVE_TYPE_ROW[m]][t] })),
@@ -304,12 +302,20 @@ export class Game implements DrawState {
     return reachable(this.stage.map, unit, unit.move, unit.moveType, unit.side, this.units.filter((u) => u !== unit && u.hp > 0));
   }
 
+  // 威胁范围：移动后能用的武器从所有可停留的格子算射程，其他武器只能在原地使用（规则待战斗规则会话确认）
+  private threat(unit: Unit, reach: Reach) {
+    const map = this.stage.map;
+    const maxRange = (ws: Unit["weapons"]) => ws.reduce((m, w) => Math.max(m, w.range), 0);
+    const afterMove = maxRange(unit.weapons.filter((w) => w.usableAfterMove));
+    const standing = maxRange(unit.weapons);
+    const out = afterMove ? rangeFrom(map, reach.stops, 1, afterMove) : new Set<number>();
+    if (standing) for (const k of rangeFrom(map, [key(map, unit.x, unit.y)], 1, standing)) out.add(k);
+    return out;
+  }
+
   private dangerZone(units: Unit[]) {
     const out = new Set<number>();
-    for (const u of units) {
-      const r = this.unitReach(u);
-      for (const k of rangeFrom(this.stage.map, r.stops, 1, PLACEHOLDER_RANGE)) out.add(k);
-    }
+    for (const u of units) for (const k of this.threat(u, this.unitReach(u))) out.add(k);
     return out;
   }
 }

@@ -6,6 +6,7 @@
 //   data/environments.json       地图环境
 //   data/deployments.json        每关敌我单位初始配置
 //   assets/original/terrain/env-N.png   每个环境的 16 种地形图块（16x16，横排）
+//   assets/original/units/bank-NN-{player,enemy}.png   单位地图图标，每个 1KB CHR bank 16 个（16x16，横排）
 //   extracted/maps/stageNN.png   地图预览图（不进仓库）
 //
 // ROM 结构见 docs/notes-maps.md。
@@ -19,9 +20,15 @@ const STAGE_COUNT = 27;
 // PRG 偏移。地图相关数据在 8KB bank 2/3，载入时分别映射在 $8000/$A000
 const MAP_POINTERS = 0x5a9f; // CPU $9A9F，27 个地图指针
 const ENV_POINTERS = 0x6d8c; // CPU $AD8C，27 个环境指针
+// 每关一条单位图块记录（19 字节）：16 字节用途待确认，后 3 字节是 R2、R3、R4，
+// 即图块号 $00–$3F、$40–$7F、$80–$BF 所在的 1KB CHR bank
+const UNIT_CHR_POINTERS = 0x6f1c; // CPU $AF1C，bank 3
 const DEPLOY_POINTERS = 0x701a; // CPU $B01A，bank 3 映射在 $A000，32 个部署块指针
 const DEPLOY_COUNT = 32;
 const cpuToPrg = (addr) => 0x4000 + (addr - 0x8000);
+
+// 单位图标是背景图块：我方用 2 号色板，敌方用 3 号，0 号色是黑底（整格替换地形）
+const UNIT_PALETTES = { player: 2, enemy: 3 };
 
 // 背景色板：0、2、3 号固定，1 号由环境决定（见固定 bank 里 $B2B0 附近的色板脚本）
 const BG_PALETTES = [
@@ -89,6 +96,18 @@ function tilePixels(chr, bank1k, tileIndex) {
     for (let x = 0; x < 8; x++) px.push(((lo >> (7 - x)) & 1) | (((hi >> (7 - x)) & 1) << 1));
   }
   return px;
+}
+
+function drawSprite(png, dx, chr, bank1k, sprite, palette) {
+  for (let q = 0; q < 4; q++) {
+    const px = tilePixels(chr, bank1k, sprite * 4 + q);
+    const ox = dx + (q & 1) * 8, oy = (q >> 1) * 8;
+    for (let i = 0; i < 64; i++) {
+      const [r, g, b] = rgb(palette[px[i]]);
+      const p = ((oy + (i >> 3)) * png.width + ox + (i & 7)) * 4;
+      png.data[p] = r; png.data[p + 1] = g; png.data[p + 2] = b; png.data[p + 3] = 255;
+    }
+  }
 }
 
 // 地形 n 的 16x16 图块由 CHR 里第 4n..4n+3 个 8x8 图块拼成（左上、右上、左下、右下）
@@ -163,7 +182,21 @@ function main(romFile = path.join(ROOT, "rom/srw2.nes")) {
     writeFile(`assets/original/terrain/env-${env.id}.png`, PNG.sync.write(png));
   }
 
-  for (const { stage, mapAddr, envAddr } of stages) {
+  const unitBanks = new Set();
+  for (const st of stages) {
+    const rec = bank3ToPrg(word(prg, UNIT_CHR_POINTERS + (st.stage - 1) * 2));
+    st.unitChrBanks = Array.from(prg.subarray(rec + 16, rec + 19));
+    st.unitChrBanks.forEach((b) => unitBanks.add(b));
+  }
+  for (const bank of unitBanks) {
+    for (const [side, pal] of Object.entries(UNIT_PALETTES)) {
+      const png = new PNG({ width: 16 * 16, height: 16 });
+      for (let i = 0; i < 16; i++) drawSprite(png, i * 16, chr, bank, i, BG_PALETTES[pal]);
+      writeFile(`assets/original/units/bank-${bank}-${side}.png`, PNG.sync.write(png));
+    }
+  }
+
+  for (const { stage, mapAddr, envAddr, unitChrBanks } of stages) {
     const map = decodeMap(prg, mapAddr);
     const environment = envAddrs.indexOf(envAddr);
     const name = `stage${String(stage).padStart(2, "0")}`;
@@ -172,6 +205,7 @@ function main(romFile = path.join(ROOT, "rom/srw2.nes")) {
       width: map.width,
       height: map.height,
       environment,
+      unitChrBanks,
       romAddress: `$${mapAddr.toString(16)}`,
       terrain: map.terrain,
     };

@@ -3,6 +3,7 @@
   "width": 16,
   "height": 20,
   "environment": 0,
+  "unitChrBanks": [52, 53, 56],
   "romAddress": "$9ad5",
   "terrain": [
     [4, 1, 1, 4, 4, 7, 7, 7, 2, 4, 4, 4, 4, 4, 4, 4],

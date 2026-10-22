@@ -27,7 +27,10 @@ export interface DrawState {
 interface Sprite {
   normal: HTMLCanvasElement;
   gray: HTMLCanvasElement;
+  url?: string;
 }
+
+const spriteKey = (u: Unit) => `${u.icon.sheetUrl}#${u.icon.index}`;
 
 export class Renderer {
   private ctx: CanvasRenderingContext2D;
@@ -71,12 +74,22 @@ export class Renderer {
     const g = c.getContext("2d")!;
     terrain.forEach((row, y) => row.forEach((t, x) => g.drawImage(sheet, t * TILE, 0, TILE, TILE, x * TILE, y * TILE, TILE, TILE)));
     this.terrain = c;
-    await Promise.all(stage.units.map(async (u) => {
-      if (!this.sprites.has(u.iconUrl)) this.sprites.set(u.iconUrl, makeSprite(await loadImage(u.iconUrl)));
-    }));
+    const sheets = new Map<string, HTMLImageElement>();
+    for (const u of stage.units) {
+      const url = u.icon.sheetUrl;
+      if (!sheets.has(url)) sheets.set(url, await loadImage(url));
+      const k = spriteKey(u);
+      if (!this.sprites.has(k)) this.sprites.set(k, makeSprite(sheets.get(url)!, u.icon.index));
+    }
     // 默认缩放：让视野里大约能看到 18 格宽
     const ideal = this.cssW / (18 * TILE);
     this.zoomIndex = ZOOM_LEVELS.reduce((best, z, i) => (Math.abs(z - ideal) < Math.abs(ZOOM_LEVELS[best] - ideal) ? i : best), 0);
+  }
+
+  // 信息面板用的单位图标
+  iconUrl(unit: Unit): string {
+    const sprite = this.sprites.get(spriteKey(unit))!;
+    return (sprite.url ??= sprite.normal.toDataURL());
   }
 
   setZoom(delta: number) {
@@ -162,7 +175,7 @@ export class Renderer {
 
     for (const u of state.units) {
       const pos = state.unitPos(u);
-      const sprite = this.sprites.get(u.iconUrl)!;
+      const sprite = this.sprites.get(spriteKey(u))!;
       const px = pos.x * s, py = pos.y * s;
       const lift = u === state.selected ? Math.round(Math.sin(this.time * 8) * this.zoom) - this.zoom : 0;
       ctx.drawImage(u.acted ? sprite.gray : sprite.normal, px, py + lift, s, s);
@@ -234,17 +247,16 @@ function loadImage(url: string): Promise<HTMLImageElement> {
 }
 
 // 已行动的单位显示为灰色；手动处理像素，不依赖 ctx.filter（部分浏览器不支持）
-function makeSprite(img: HTMLImageElement): Sprite {
+// 图标表是 16 个 16x16 图标横排，取第 index 个
+function makeSprite(sheet: HTMLImageElement, index: number): Sprite {
   const normal = document.createElement("canvas");
-  normal.width = img.width;
-  normal.height = img.height;
-  normal.getContext("2d")!.drawImage(img, 0, 0);
+  normal.width = normal.height = TILE;
+  normal.getContext("2d")!.drawImage(sheet, index * TILE, 0, TILE, TILE, 0, 0, TILE, TILE);
   const gray = document.createElement("canvas");
-  gray.width = img.width;
-  gray.height = img.height;
+  gray.width = gray.height = TILE;
   const g = gray.getContext("2d")!;
-  g.drawImage(img, 0, 0);
-  const data = g.getImageData(0, 0, img.width, img.height);
+  g.drawImage(normal, 0, 0);
+  const data = g.getImageData(0, 0, TILE, TILE);
   for (let i = 0; i < data.data.length; i += 4) {
     const l = (data.data[i] * 0.3 + data.data[i + 1] * 0.59 + data.data[i + 2] * 0.11) * 0.65;
     data.data[i] = data.data[i + 1] = data.data[i + 2] = l;
