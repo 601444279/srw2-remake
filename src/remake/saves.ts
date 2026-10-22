@@ -1,0 +1,90 @@
+// 存档：自动存档（每个我方回合开始）+ 3 个手动存档位。存在浏览器的 IndexedDB 里
+// （带截图的存档有几十 KB，localStorage 不够稳）。
+import type { RosterMember, Unit } from "./data.ts";
+import type { EventsState } from "./events.ts";
+
+export const SAVE_VERSION = 1;
+export type SlotId = "auto" | 1 | 2 | 3;
+export const SLOTS: SlotId[] = ["auto", 1, 2, 3];
+
+export interface SaveData {
+  version: number;
+  stage: number;
+  turn: number;
+  money: number;
+  units: Unit[];
+  roster: RosterMember[];
+  events: EventsState;
+  rng: { mem: number[]; index: number };
+  songs: { player: number; enemy: number };
+  jamming: boolean;
+}
+
+export interface SaveMeta {
+  slot: SlotId;
+  savedAt: number;
+  stage: number;
+  turn: number;
+  title: string;
+  thumb: string;
+}
+
+const DB = "srw2-remake";
+const STORE = "saves";
+
+function open(): Promise<IDBDatabase> {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB, 1);
+    req.onupgradeneeded = () => req.result.createObjectStore(STORE);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function run<T>(mode: IDBTransactionMode, fn: (s: IDBObjectStore) => IDBRequest<T>): Promise<T> {
+  const db = await open();
+  return new Promise((resolve, reject) => {
+    const req = fn(db.transaction(STORE, mode).objectStore(STORE));
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+export async function writeSave(slot: SlotId, data: SaveData, meta: Omit<SaveMeta, "slot" | "savedAt">) {
+  await run("readwrite", (s) => s.put(data, `data:${slot}`));
+  await run("readwrite", (s) => s.put({ ...meta, slot, savedAt: Date.now() }, `meta:${slot}`));
+}
+
+export async function readSave(slot: SlotId): Promise<SaveData | null> {
+  const d = (await run("readonly", (s) => s.get(`data:${slot}`))) as SaveData | undefined;
+  return d && d.version === SAVE_VERSION ? d : null;
+}
+
+export async function listSaves(): Promise<SaveMeta[]> {
+  const out: SaveMeta[] = [];
+  for (const slot of SLOTS) {
+    const m = (await run("readonly", (s) => s.get(`meta:${slot}`))) as SaveMeta | undefined;
+    if (m) out.push(m);
+  }
+  return out;
+}
+
+// 读档时整页重新载入，用 sessionStorage 带上要读的存档位（干净地重建所有状态）
+const PENDING = "srw2-remake:load";
+export function requestLoad(slot: SlotId | "new") {
+  sessionStorage.setItem(PENDING, String(slot));
+  location.reload();
+}
+export function takePendingLoad(): SlotId | "new" | null {
+  const v = sessionStorage.getItem(PENDING);
+  sessionStorage.removeItem(PENDING);
+  if (v === null) return null;
+  if (v === "new" || v === "auto") return v;
+  return Number(v) as SlotId;
+}
+
+export function describeTime(t: number) {
+  const d = new Date(t);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getMonth() + 1}/${d.getDate()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}

@@ -4,7 +4,7 @@
 //   enemyPhase  每个敌方回合开始（敌人行动之前）
 //   check       每个单位行动结束后、每个我方回合开始（胜负判定、过关都在这里）
 import { AI_SCRIPTS, createUnit, type Stage, type Unit, type Weapon } from "./data.ts";
-import { ScriptRunner, type ScriptHost } from "./script.ts";
+import { ScriptRunner, type ScriptHost, type RunnerState } from "./script.ts";
 import { samePilot, type AiPlan, type Rules } from "./rules.ts";
 import type { Point } from "./grid.ts";
 import type { SceneRef } from "./story.ts";
@@ -23,6 +23,17 @@ export interface EventApi {
   wait(seconds: number): Promise<void>;
   music(kind: "player" | "enemy" | "now", song: number | "stop" | "restore"): void;
   finish(result: "clear" | "gameover" | "ending"): Promise<void>;
+}
+
+// 存档用：三段关卡脚本、每个单位的 AI / NPC 脚本的进度（按单位 id），标志位，上一场战斗
+export interface EventsState {
+  start: RunnerState;
+  enemyPhase: RunnerState;
+  check: RunnerState;
+  units: Record<number, RunnerState>;
+  flags: number[];
+  battleRecord: BattleRecord | null;
+  finished: boolean;
 }
 
 // 上一场战斗（条件 battle 用）：攻守双方驾驶员和是否被击破
@@ -64,13 +75,43 @@ export class StageEvents implements ScriptHost {
     return this.api.stage.units;
   }
 
+  snapshot(): EventsState {
+    const units: Record<number, RunnerState> = {};
+    for (const [u, r] of this.unitScripts) units[u.id] = r.snapshot();
+    return {
+      start: this.start.snapshot(),
+      enemyPhase: this.enemyPhase.snapshot(),
+      check: this.check.snapshot(),
+      units,
+      flags: [...this.flags],
+      battleRecord: this.battleRecord,
+      finished: this.finished,
+    };
+  }
+
+  // 读档后恢复（单位已经换成存档里的那批）
+  restore(s: EventsState) {
+    this.start.restore(s.start);
+    this.enemyPhase.restore(s.enemyPhase);
+    this.check.restore(s.check);
+    this.unitScripts.clear();
+    for (const [id, state] of Object.entries(s.units)) {
+      const u = this.units.find((x) => x.id === Number(id));
+      if (!u) continue;
+      this.runnerFor(u).restore(state);
+    }
+    this.flags = new Set(s.flags);
+    this.battleRecord = s.battleRecord;
+    this.finished = s.finished;
+  }
+
   // ---------- 运行时机 ----------
   runStart() { return this.start.resume(); }
   runEnemyPhase() { return this.enemyPhase.resume(); }
   async runCheck() { if (!this.finished) await this.check.resume(); }
 
   // 一个敌人或友军 NPC 的行动：从它的脚本上次停下的地方继续
-  async runUnit(unit: Unit) {
+  private runnerFor(unit: Unit) {
     let runner = this.unitScripts.get(unit);
     if (!runner) {
       const scripts = unit.npc ? this.api.stage.events.npcScripts : AI_SCRIPTS;
@@ -78,6 +119,11 @@ export class StageEvents implements ScriptHost {
       runner = new ScriptRunner(script, this);
       this.unitScripts.set(unit, runner);
     }
+    return runner;
+  }
+
+  async runUnit(unit: Unit) {
+    const runner = this.runnerFor(unit);
     this.self = unit;
     this.plan = {};
     this.movedThisAction = false;

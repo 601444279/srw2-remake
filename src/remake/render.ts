@@ -157,6 +157,18 @@ export class Renderer {
     for (const u of units) await this.loadUnit(u);
   }
 
+  // 存档缩略图：当前画面缩小成 240 宽的 JPEG
+  thumbnail(): string {
+    // 画面被隐藏时画布尺寸为 0，不带截图
+    if (!this.canvas.width || !this.canvas.height) return "";
+    const w = 240, h = Math.round((240 * this.canvas.height) / this.canvas.width);
+    const c = document.createElement("canvas");
+    c.width = w;
+    c.height = h;
+    c.getContext("2d")!.drawImage(this.canvas, 0, 0, w, h);
+    return c.toDataURL("image/jpeg", 0.7);
+  }
+
   // 信息面板用的单位图标
   iconUrl(unit: Unit): string {
     const sprite = this.sprites.get(spriteKey(unit))!;

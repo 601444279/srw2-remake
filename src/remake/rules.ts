@@ -20,6 +20,13 @@ crypto.getRandomValues(seed);
 const rng = new OriginalRng(seed);
 export const rand = (n: number) => rng.rand(n);
 
+// 存档用：随机数表和下标（读档后结果和存档时一致）
+export const rngState = () => ({ mem: Array.from(rng.mem as Uint8Array), index: rng.index as number });
+export function setRngState(s: { mem: number[]; index: number }) {
+  rng.mem = Uint8Array.from(s.mem);
+  rng.index = s.index;
+}
+
 interface RuleUnit {
   index: number;
   side: number;

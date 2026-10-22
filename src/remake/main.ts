@@ -8,10 +8,15 @@ import { Sfx } from "./sfx.ts";
 import { Music } from "./music.ts";
 import { SettingsPanel } from "./settings-panel.ts";
 import { settings } from "./settings.ts";
+import { readSave, takePendingLoad } from "./saves.ts";
 
 async function boot() {
   const canvas = document.getElementById("map") as HTMLCanvasElement;
-  const stage = loadStage(1);
+  // 读档是整页重新载入：先看有没有要读的存档，有的话用存档里的关卡、名册和单位
+  const pending = takePendingLoad();
+  const save = pending !== null && pending !== "new" ? await readSave(pending) : null;
+  const stage = loadStage(save?.stage ?? 1, save?.roster);
+  if (save) stage.units.splice(0, stage.units.length, ...save.units);
   const renderer = new Renderer(canvas);
   await renderer.setStage(stage);
   const ui = new UI();
@@ -58,7 +63,9 @@ async function boot() {
     requestAnimationFrame(frame);
   };
   requestAnimationFrame(frame);
-  await game.start();
+  if (save) await game.resumeFromSave(save);
+  else if (pending === "new") await game.start();
+  else await game.showStartMenu();
 }
 
 boot().catch((e) => {

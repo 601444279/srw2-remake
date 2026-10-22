@@ -78,6 +78,12 @@ export interface ScriptHost {
 
 const hex = (s: string) => parseInt(s, 16);
 
+export interface RunnerState {
+  pc: number;
+  cond: boolean;
+  finished: boolean;
+}
+
 export class ScriptRunner {
   private index = new Map<number, number>();
   private pc: number;
@@ -98,6 +104,17 @@ export class ScriptRunner {
     const i = this.index.get(hex(addr));
     if (i === undefined) throw new Error(`脚本跳转到不存在的地址 ${addr}`);
     return i;
+  }
+
+  // 存档用：脚本进度（当前指令、条件寄存器、是否已结束）
+  snapshot(): RunnerState {
+    return { pc: this.pc, cond: this.cond, finished: this.finished };
+  }
+
+  restore(s: RunnerState) {
+    this.pc = s.pc;
+    this.cond = s.cond;
+    this.finished = s.finished;
   }
 
   // 运行到下一个暂停点

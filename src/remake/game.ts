@@ -7,7 +7,8 @@ import { key, pathTo, rangeFrom, reachable, inBounds, MOVE_TYPE_ROW, type Point,
 import type { Action } from "./input.ts";
 import type { DrawState, Overlay, Renderer } from "./render.ts";
 import type { UI, MenuItem } from "./ui.ts";
-import { Rules, SPIRIT_FLAG } from "./rules.ts";
+import { Rules, SPIRIT_FLAG, rngState, setRngState } from "./rules.ts";
+import { describeTime, listSaves, readSave, requestLoad, writeSave, SAVE_VERSION, type SaveData, type SlotId } from "./saves.ts";
 import { strikeSound, type Sfx } from "./sfx.ts";
 import { MUSIC, type Music } from "./music.ts";
 import { keyLabel, settings, TEXT_SPEEDS, type BindAction } from "./settings.ts";
@@ -156,6 +157,102 @@ export class Game implements DrawState {
     this.music.play(this.songs.player);
     await this.ui.banner(`第 ${this.turn} 回合`, "我方回合", "player");
     this.setMode("browse");
+    this.saveTo("auto").catch((e) => console.warn("自动存档失败", e));
+  }
+
+  // ---------- 存档 ----------
+  snapshot(): SaveData {
+    return {
+      version: SAVE_VERSION,
+      stage: this.stage.number,
+      turn: this.turn,
+      money: this.money.value,
+      units: structuredClone(this.units),
+      roster: structuredClone(this.stage.roster),
+      events: this.events.snapshot(),
+      rng: rngState(),
+      songs: { ...this.songs },
+      jamming: this.rules.jamming,
+    };
+  }
+
+  private async saveTo(slot: SlotId) {
+    const story = STAGE_STORY[this.stage.number];
+    await writeSave(slot, this.snapshot(), {
+      stage: this.stage.number,
+      turn: this.turn,
+      title: `第${this.stage.number}关${story ? ` ${story.subtitle}` : ""}`,
+      thumb: this.renderer.thumbnail(),
+    });
+    if (slot !== "auto") this.ui.toast(`已存到存档 ${slot}`);
+  }
+
+  // 读档：单位和名册在建 Game 之前已经换成存档里的（main.ts），这里恢复其余状态，直接进入我方回合
+  async resumeFromSave(save: SaveData) {
+    this.turn = save.turn;
+    this.money.value = save.money;
+    this.songs = { ...save.songs };
+    this.rules.jamming = save.jamming;
+    setRngState(save.rng);
+    this.events.restore(save.events);
+    this.phase = "player";
+    const first = this.players().find((u) => !u.acted) ?? this.players()[0];
+    this.cursor = { x: first.x, y: first.y };
+    this.renderer.centerOn(this.cursor);
+    this.ui.setObjective(`胜利条件：${this.stage.events.victoryText.replace(/。$/, "")}`);
+    this.ui.setTurn(this.turn, "player");
+    this.music.play(this.songs.player);
+    this.setMode("browse");
+    this.refreshInfo();
+    this.ui.toast(`已读取存档 · 第 ${this.turn} 回合`);
+  }
+
+  private async openSaveMenu() {
+    const metas = await listSaves();
+    const items: MenuItem[] = ([1, 2, 3] as SlotId[]).map((slot) => {
+      const m = metas.find((x) => x.slot === slot);
+      return {
+        label: `存档 ${slot}`,
+        detail: m ? describeTime(m.savedAt) : "空",
+        hint: m ? `${m.title} · 第 ${m.turn} 回合（覆盖）` : undefined,
+        run: async () => {
+          try { await this.saveTo(slot); } catch (e) { console.warn(e); this.ui.toast("存档失败"); }
+          this.setMode("browse");
+        },
+      };
+    });
+    this.openMenu(items, this.cursor, () => this.openMapMenu());
+  }
+
+  // 读档列表（地图菜单和开始菜单共用）。onCancel 为空时不能取消
+  async openLoadMenu(onCancel: () => void) {
+    const metas = await listSaves();
+    const items: MenuItem[] = metas.map((m) => ({
+      label: m.slot === "auto" ? "自动存档" : `存档 ${m.slot}`,
+      detail: describeTime(m.savedAt),
+      hint: `${m.title} · 第 ${m.turn} 回合`,
+      run: () => requestLoad(m.slot),
+    }));
+    if (!items.length) { this.ui.toast("还没有存档"); onCancel(); return; }
+    this.openMenu(items, this.cursor, onCancel);
+  }
+
+  // 打开游戏时有存档：开始菜单（继续 / 读档 / 新游戏）
+  async showStartMenu(): Promise<void> {
+    const metas = await listSaves();
+    if (!metas.length) return this.start();
+    const latest = metas.reduce((a, b) => (b.savedAt > a.savedAt ? b : a));
+    return new Promise<void>((resolve) => {
+      const show = () => {
+        this.setMode("menu");
+        this.ui.openMenu([
+          { label: "继续", detail: describeTime(latest.savedAt), hint: `${latest.title} · 第 ${latest.turn} 回合`, run: () => requestLoad(latest.slot) },
+          { label: "读档", run: () => void this.openLoadMenu(show) },
+          { label: "新游戏", run: () => { resolve(); void this.start(); } },
+        ], innerWidth / 2 - 90, innerHeight / 2 - 60, show);
+      };
+      show();
+    });
   }
 
   // ---------- 剧情 ----------
@@ -682,6 +779,8 @@ export class Game implements DrawState {
     this.openMenu([
       { label: "结束回合", run: () => this.endTurn() },
       { label: this.dangerOn ? "隐藏敌方范围" : "显示敌方范围", run: () => { this.toggleDanger(); back(); } },
+      { label: "存档", run: () => void this.openSaveMenu() },
+      { label: "读档", run: () => void this.openLoadMenu(() => this.openMapMenu()) },
       { label: "设置", detail: "按键 · 声音", run: () => { back(); this.onOpenSettings(); } },
       { label: "返回", run: back },
     ], this.cursor, back);
