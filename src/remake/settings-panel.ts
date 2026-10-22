@@ -1,5 +1,6 @@
 // 设置窗口：鼠标开关、按键绑定。可以用鼠标点，也可以全程用键盘：
 //   ↑↓←→ 移动焦点，Enter / 空格 开始改键或切换开关，改键时按下新键完成，Esc 取消，Delete 清空这个位置。
+import { exportAll, importAll, type Backup } from "./saves.ts";
 import { BIND_ACTIONS, DEFAULT_KEYS, MUSIC_STYLES, TEXT_SPEEDS, VOLUMES, bindKey, keyName, settings, volumeLabel, type BindAction, ART_STYLES, BATTLE_STYLES } from "./settings.ts";
 
 export class SettingsPanel {
@@ -84,9 +85,39 @@ export class SettingsPanel {
         ${rows}
         <p class="set-hint">点按键框（或用方向键选中后按 Enter），再按下新的键。和其他功能冲突时会互换。Delete 清空，Esc 取消。</p>
         <button class="reset" data-nav>恢复默认按键</button>
+        <div class="set-group">存档和设置</div>
+        <p class="set-hint">存档和设置保存在这个浏览器里，而且按网址分开（端口不同就是另一份）。导出成文件可以备份，或者在另一个网址导入。</p>
+        <div class="set-row toggle"><span>导出<small>所有存档和设置存成一个文件</small></span><button class="cycle" data-nav data-io="export">导出</button></div>
+        <div class="set-row toggle"><span>导入<small>同名存档位会被覆盖，设置整份换掉，导入后重新载入</small></span><button class="cycle" data-nav data-io="import">导入</button></div>
+        <input type="file" accept=".json,application/json" hidden data-io-file>
       </section>`;
 
     this.dialog.querySelector(".close")!.addEventListener("click", () => this.dialog.close());
+    this.dialog.querySelector("[data-io=export]")!.addEventListener("click", async () => {
+      const data = await exportAll();
+      const d = new Date();
+      const pad = (n: number) => String(n).padStart(2, "0");
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(new Blob([JSON.stringify(data)], { type: "application/json" }));
+      a.download = `srw2-存档备份-${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}-${pad(d.getHours())}${pad(d.getMinutes())}.json`;
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    });
+    const file = this.dialog.querySelector("[data-io-file]") as HTMLInputElement;
+    this.dialog.querySelector("[data-io=import]")!.addEventListener("click", () => file.click());
+    file.addEventListener("change", async () => {
+      const f = file.files?.[0];
+      if (!f) return;
+      try {
+        const data = JSON.parse(await f.text()) as Backup;
+        await importAll(data);
+        alert(`已导入 ${Object.keys(data.saves ?? {}).filter((k) => k.startsWith("data:")).length} 个存档和设置，马上重新载入`);
+        location.reload();
+      } catch (e) {
+        alert(`导入失败：${(e as Error).message}`);
+      }
+      file.value = "";
+    });
     this.dialog.querySelector(".reset")!.addEventListener("click", () => {
       settings.update({ keys: structuredClone(DEFAULT_KEYS) });
       this.render();

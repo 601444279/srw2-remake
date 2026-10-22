@@ -20,7 +20,7 @@
 | 16–31 | 战斗画面的大机体图（以拼图形式存放）和特效图块，见 `docs/notes-battle-gfx.md` |
 
 ## 运行与截图
-- 网页播放器：`npm run dev`，打开 http://localhost:5173
+- 网页播放器：`npm run dev`，打开 http://localhost:5174
 - 无界面脚本：`node tools/emu.js 脚本.txt`，指令见文件头注释，可截图、存档、导出 PPU 状态
 - 第一关：第1篇「救出刚达Z」
 

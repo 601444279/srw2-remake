@@ -17,8 +17,8 @@ npm run dev
 ```
 需要先把 ROM 放到 `rom/srw2.nes`。
 
-- **重制版**：http://localhost:5173 （开发中，见 `docs/design.md` 的开发路线）
-- **原版模拟器**：http://localhost:5173/emu.html ，用来对照原版和逆向。按 Esc 打开菜单：即时存档、自定义按键、画面设置、加速、全屏
+- **重制版**：http://localhost:5174 （开发中，见 `docs/design.md` 的开发路线）
+- **原版模拟器**：http://localhost:5174/emu.html ，用来对照原版和逆向。按 Esc 打开菜单：即时存档、自定义按键、画面设置、加速、全屏
 
 ### 重制版操作
 | 按键 | 作用 |

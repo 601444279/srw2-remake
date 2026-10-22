@@ -69,6 +69,38 @@ export async function listSaves(): Promise<SaveMeta[]> {
   return out;
 }
 
+// ---------- 导出 / 导入 ----------
+// 存档和设置都存在浏览器里，而且按网址（包括端口）分开：换了端口就看不到原来的。
+// 导出成一个 JSON 文件（所有存档 + 设置），在另一个网址导入，或者留作备份
+const SETTINGS_KEY = "srw2-remake:settings";
+
+export interface Backup { format: "srw2-remake-backup"; version: 1; exportedAt: number; settings: unknown; saves: Record<string, unknown> }
+
+export async function exportAll(): Promise<Backup> {
+  const db = await open();
+  const saves = await new Promise<Record<string, unknown>>((resolve, reject) => {
+    const out: Record<string, unknown> = {};
+    const req = db.transaction(STORE, "readonly").objectStore(STORE).openCursor();
+    req.onsuccess = () => {
+      const c = req.result;
+      if (!c) { resolve(out); return; }
+      out[String(c.key)] = c.value;
+      c.continue();
+    };
+    req.onerror = () => reject(req.error);
+  });
+  let settings: unknown = null;
+  try { settings = JSON.parse(localStorage.getItem(SETTINGS_KEY) ?? "null"); } catch { /* 没有设置 */ }
+  return { format: "srw2-remake-backup", version: 1, exportedAt: Date.now(), settings, saves };
+}
+
+// 导入：同名的存档位被覆盖，设置整份换掉
+export async function importAll(data: Backup) {
+  if (data?.format !== "srw2-remake-backup") throw new Error("不是本游戏导出的文件");
+  for (const [key, value] of Object.entries(data.saves ?? {})) await run("readwrite", (s) => s.put(value, key));
+  if (data.settings) localStorage.setItem(SETTINGS_KEY, JSON.stringify(data.settings));
+}
+
 // 读档时整页重新载入，用 sessionStorage 带上要读的存档位（干净地重建所有状态）
 const PENDING = "srw2-remake:load";
 export function requestLoad(slot: SlotId | "new") {
