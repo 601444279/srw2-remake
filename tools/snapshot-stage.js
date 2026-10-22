@@ -49,7 +49,7 @@ function renderIcon(chr, bank1k, code, palette) {
         const p = (((q >> 1) * 8 + y) * 16 + (q & 1) * 8 + x) * 4;
         const c = NES_COLORS[palette[v]];
         png.data[p] = c & 0xff; png.data[p + 1] = (c >> 8) & 0xff; png.data[p + 2] = (c >> 16) & 0xff;
-        png.data[p + 3] = v === 0 ? 0 : 255; // 0 号色透明，叠在地形上
+        png.data[p + 3] = 255; // 原版单位是背景图块，整格替换地形，0 号色就是黑底
       }
     }
   }
