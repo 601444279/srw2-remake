@@ -1,5 +1,6 @@
 // 剧情：读取对话脚本（data/script/res-XX.json，tools/extract-text.js 导出），整理成逐句播放的台词。
 import names from "../../data/script/names.json";
+import portraitDb from "../../data/portraits.json";
 
 const scriptFiles = import.meta.glob("../../data/script/res-*.json", { eager: true, import: "default" });
 const portraitFiles = import.meta.glob("../../assets/original/portraits/*.png", { eager: true, import: "default", query: "?url" });
@@ -33,9 +34,14 @@ export function personName(id: number | null) {
   return id === null ? "" : people[id] ?? "";
 }
 
+// 头像（tools/extract-portraits.js 导出）：空图和拼错的乱图不用，对话框里显示名字首字占位
+const usablePortraits = new Set(
+  (portraitDb.portraits as { id: number; blank?: boolean; mixed?: boolean }[]).filter((p) => !p.blank && !p.mixed).map((p) => p.id),
+);
+
 export function portraitUrl(face: number | null): string | null {
-  if (face === null) return null;
-  const hit = Object.entries(portraitFiles).find(([p]) => p.endsWith(`/${String(face).padStart(2, "0")}.png`) || p.endsWith(`/${face}.png`));
+  if (face === null || !usablePortraits.has(face)) return null;
+  const hit = Object.entries(portraitFiles).find(([p]) => p.endsWith(`/${String(face).padStart(2, "0")}.png`));
   return hit ? (hit[1] as string) : null;
 }
 
