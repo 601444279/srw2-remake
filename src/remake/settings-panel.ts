@@ -77,7 +77,7 @@ export class SettingsPanel {
         <div class="set-row toggle"><span>音效音量</span>
           <button class="cycle" data-nav data-cycle="sfxVolume">${volumeLabel(s.sfxVolume)}</button>
         </div>
-        <label class="set-row toggle"><span>命中音效<small>打中时按武器类型补一声命中音；关闭为原版（只有攻击动画自带的音效，有的武器打中没声）</small></span>
+        <label class="set-row toggle"><span>命中音效<small>打中时补一声命中音；关闭为原版（只有攻击动画自带的音效，有的武器打中没声）</small></span>
           <button class="switch${s.hitSfx ? " on" : ""}" data-nav data-toggle="hitSfx" role="switch" aria-checked="${s.hitSfx}"><i></i></button>
         </label>
         <div class="set-cols"><span></span><small>主键</small><small>副键</small></div>

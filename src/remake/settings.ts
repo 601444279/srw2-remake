@@ -72,7 +72,7 @@ export interface Settings {
   musicStyle: MusicStyle;
   musicVolume: number;
   sfxVolume: number;
-  // 命中音效：打中时按武器类型补一声（原版只放攻击动画自带的音效，有的武器打中没声）
+  // 命中音效：打中时补一声（原版只放攻击动画自带的音效，有的武器打中没声）
   hitSfx: boolean;
 }
 

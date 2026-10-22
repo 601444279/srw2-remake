@@ -59,12 +59,12 @@ export function strikeSound(weaponName: string): StrikeSound {
 const IMPACTS = new Set([0x03, 0x0c, 0x0e, 0x06]);
 
 // 重制版补的命中音（设置里可关）：原版只放攻击动画自带的音效，命中那一刻不出声，
-// 只有开火声的动画（左轮、机枪、离子波等）打中就是哑的。按武器类型选命中声，没配的当弹道命中 03。
-// 动画最后一声已经是命中声的不再补，免得响两遍
-export function hitSoundFor(weaponName: string, animSounds: [number, number][] | null): number | null {
-  const last = animSounds?.at(-1)?.[1];
-  if (last !== undefined && IMPACTS.has(last)) return null;
-  return strikeSound(weaponName).impact ?? 0x03;
+// 只有开火声的动画（左轮、机枪、离子波等）打中就是哑的。动画最后一声已经是命中声的不再补，免得响两遍。
+// 缺命中声的动画全是远程开火（砍击动画都自带 0E），一律补原版的弹道命中 03。
+// 不按武器名查 BY_NAME：那张表是没有动画数据时的配音，有的和动画对不上（乍克的连发枪动画是机枪 07，表里却是大炮的 0C）
+export function hitSoundFor(animSounds: [number, number][]): number | null {
+  const last = animSounds.at(-1)?.[1];
+  return last !== undefined && IMPACTS.has(last) ? null : 0x03;
 }
 
 export type UiSound = "ok" | "move";
