@@ -73,6 +73,8 @@ interface Sprite {
 
 const spriteKey = (u: Unit) => `${u.icon.sheetUrl}#${u.icon.index}`;
 
+export type SpiritMark = "comet" | "flower" | "ring" | "bolt" | "jam";
+
 export class Renderer {
   private ctx: CanvasRenderingContext2D;
   private terrain: HTMLCanvasElement | null = null;
@@ -93,6 +95,7 @@ export class Renderer {
   // 修理的闪光：原版是 4 颗星绕着被修理的单位转（地图上，不进战斗画面）
   private sparkles: { x: number; y: number; t: number; dur: number }[] = [];
   private wipes: { x: number; y: number; t: number; dur: number }[] = [];
+  private marks: { kind: SpiritMark; x: number; y: number; t: number; dur: number; seed: number }[] = [];
   // 飞行时留下的尾烟（格子坐标）
   private smoke: { x: number; y: number; t: number }[] = [];
   // 击破爆炸：每个爆炸一组粒子（火球、火花、黑烟），格子坐标，t 秒
@@ -143,6 +146,16 @@ export class Renderer {
   // 精神：原版在单位格子上刷过一道蓝色横纹（前沿一条白亮竖线），盖满停一下再恢复。一次刷一遍，seconds 秒
   spiritWipe(p: Point, seconds: number) {
     this.wipes.push({ x: p.x, y: p.y, t: 0, dur: seconds });
+  }
+
+  // 精神在地图上的演出（原版模拟器逐个核对，见 game.ts castSpirit）：
+  //   comet  瞄准 / 必杀 / 回避：一颗黄色流星从右上飞进单位
+  //   flower 防守：单位周围一圈粉色花瓣形光圈
+  //   ring   强攻 / 热血：单位周围一圈蓝色圆环（先小后撑开）
+  //   bolt   怒 / 狂怒：绿色闪电从天上劈到敌人身上，一闪一闪
+  //   jam    干扰：敌人身上一个白色圆环从中心撑开，再散成虚线
+  mark(kind: SpiritMark, p: Point, seconds: number) {
+    this.marks.push({ kind, x: p.x, y: p.y, t: 0, dur: seconds, seed: Math.random() * 1000 });
   }
 
   // 修理：被修理的单位周围星星绕圈 + 一圈淡绿光环，持续 seconds 秒
@@ -433,6 +446,7 @@ export class Renderer {
     this.drawCursor(this.cursorDraw.x * s, this.cursorDraw.y * s, s);
     this.drawSparkles(s, dt);
     this.drawWipes(s, dt);
+    this.drawMarks(s, dt);
     this.drawFloats(s, dt);
   }
 
@@ -520,6 +534,83 @@ export class Renderer {
     this.wipes = this.wipes.filter((w) => w.t < w.dur);
   }
 
+  private drawMarks(s: number, dt: number) {
+    const ctx = this.ctx;
+    const px = Math.max(2, Math.round(s / 16)); // 一个原版像素
+    for (const m of this.marks) {
+      m.t += dt;
+      const k = Math.min(1, m.t / m.dur);
+      const cx = m.x * s + s / 2, cy = m.y * s + s / 2;
+      const fade = Math.min(1, (1 - k) * 5);
+      ctx.save();
+      ctx.globalAlpha = fade;
+      if (m.kind === "comet") {
+        // 前 60% 飞进来，之后在单位上闪一下
+        const f = Math.min(1, k / 0.6);
+        const hx = cx + (1 - f) * s * 1.6, hy = cy - (1 - f) * s * 1.6;
+        const g = ctx.createLinearGradient(hx + s * 0.9, hy - s * 0.9, hx, hy);
+        g.addColorStop(0, "rgba(255, 210, 60, 0)");
+        g.addColorStop(1, "#ffe066");
+        ctx.strokeStyle = g;
+        ctx.lineWidth = px * 2;
+        ctx.beginPath();
+        ctx.moveTo(hx + s * 0.9, hy - s * 0.9);
+        ctx.lineTo(hx, hy);
+        ctx.stroke();
+        ctx.fillStyle = "#fff6c0";
+        ctx.fillRect(hx - px * 1.5, hy - px * 1.5, px * 3, px * 3);
+        if (k > 0.6) {
+          const b = (k - 0.6) / 0.4;
+          ctx.globalAlpha = (1 - b) * 0.9;
+          ctx.fillStyle = "#ffe066";
+          ctx.beginPath();
+          ctx.arc(cx, cy, s * (0.2 + b * 0.4), 0, Math.PI * 2);
+          ctx.fill();
+        }
+      } else if (m.kind === "flower" || m.kind === "ring") {
+        const grow = Math.min(1, k / 0.25);
+        const r = s * (0.25 + 0.33 * grow) * (1 + 0.03 * Math.sin(m.t * 20));
+        ctx.strokeStyle = m.kind === "flower" ? "#ff7ae0" : "#4aa8ff";
+        ctx.lineWidth = px * 1.5;
+        ctx.beginPath();
+        for (let i = 0; i <= 64; i++) {
+          const a = (i / 64) * Math.PI * 2;
+          const rr = m.kind === "flower" ? r * (1 + 0.12 * Math.cos(a * 8)) : r;
+          const x = cx + Math.cos(a) * rr, y = cy + Math.sin(a) * rr;
+          if (i) ctx.lineTo(x, y); else ctx.moveTo(x, y);
+        }
+        ctx.stroke();
+      } else if (m.kind === "bolt") {
+        // 每 3 帧换一次折线，一闪一闪
+        if (Math.floor(m.t * 20) % 3 !== 2) {
+          let seed = m.seed + Math.floor(m.t * 20);
+          const rnd = () => ((seed = (seed * 9301 + 49297) % 233280) / 233280);
+          const top = cy - s * 9;
+          ctx.strokeStyle = "#5dff5d";
+          ctx.lineWidth = px * 2;
+          ctx.beginPath();
+          ctx.moveTo(cx, top);
+          for (let y = top; y < cy; y += s * 0.4) ctx.lineTo(cx + (rnd() - 0.5) * s * 0.35, y);
+          ctx.lineTo(cx, cy);
+          ctx.stroke();
+          ctx.strokeStyle = "#eaffea";
+          ctx.lineWidth = px * 0.7;
+          ctx.stroke();
+        }
+      } else if (m.kind === "jam") {
+        const r = s * 0.5 * Math.min(1, k / 0.4) + px;
+        ctx.strokeStyle = "#fff";
+        ctx.lineWidth = px * 1.5;
+        if (k > 0.55) ctx.setLineDash([px * 3, px * 2]);
+        ctx.beginPath();
+        if (k < 0.15) ctx.fillStyle = "#fff", ctx.arc(cx, cy, r * 0.6, 0, Math.PI * 2), ctx.fill();
+        else { ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke(); }
+      }
+      ctx.restore();
+    }
+    this.marks = this.marks.filter((m) => m.t < m.dur);
+  }
+
   // 四角星：白芯、蓝边
   private drawStar(x: number, y: number, r: number, alpha: number) {
     const ctx = this.ctx;
@@ -544,20 +635,17 @@ export class Renderer {
     ctx.textBaseline = "middle";
     for (const f of this.floats) {
       f.t += dt;
-      const rise = Math.min(1, f.t * 3) * s * 0.5 + f.t * s * 0.15;
+      // 从机体上方弹出来再慢慢升（不压在机体上），最后淡出
+      const rise = Math.min(1, f.t * 6) * s * 0.15 + f.t * s * 0.12;
       ctx.globalAlpha = f.t < 0.8 ? 1 : Math.max(0, 1 - (f.t - 0.8) / 0.4);
-      const x = Math.round(f.x * s + s / 2), y = Math.round(f.y * s + s / 2 - rise);
-      const { font, size } = floatFont(f.text, s);
+      const { font, size, px } = floatFont(f.text, s);
+      const x = Math.round(f.x * s + s / 2), y = Math.round(f.y * s - size * 0.35 - rise);
       ctx.font = font;
-      // 硬描边：往 8 个方向各偏 2 像素画黑字，再加右下投影，和界面上的 text-shadow 一致
-      const o = Math.max(2, Math.round(size / 12));
-      ctx.fillStyle = "rgba(0, 0, 0, 0.9)";
-      for (const [dx, dy] of [[-1, -1], [0, -1], [1, -1], [-1, 0], [1, 0], [-1, 1], [0, 1], [1, 1], [2, 2]]) ctx.fillText(f.text, x + dx * o, y + dy * o);
-      // 上白下色的竖向渐变，同界面上的大数字
-      const g = ctx.createLinearGradient(0, y - size / 2, 0, y + size / 2);
-      g.addColorStop(0.2, "#fff");
-      g.addColorStop(0.75, tone(f.tone));
-      ctx.fillStyle = g;
+      // 像素描边：往 8 个方向各偏一个字体像素画黑字（同战斗画面伤害数字的 text-shadow）
+      ctx.fillStyle = "#000";
+      for (const [dx, dy] of [[-1, -1], [0, -1], [1, -1], [-1, 0], [1, 0], [-1, 1], [0, 1], [1, 1]]) ctx.fillText(f.text, x + dx * px, y + dy * px);
+      // 纯色：伤害白、其他按语气取规范里的颜色（回复 HP 绿……）
+      ctx.fillStyle = f.tone === "danger" ? "#fff" : tone(f.tone);
       ctx.fillText(f.text, x, y);
     }
     ctx.globalAlpha = 1;

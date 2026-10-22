@@ -20,18 +20,15 @@ export function tone(name: Tone): string {
 }
 
 const PIXEL = '"Fusion Pixel 12px Proportional SC", "PingFang SC", sans-serif';
-const NUMBER = '"Saira Condensed", "Fusion Pixel 12px Proportional SC", sans-serif';
 
-// 地图上飘的字：纯数字 / 英文用窄体斜体（同 num-l），带中文的用像素字，字号取 12 的整数倍
-export function floatFont(text: string, cell: number): { font: string; size: number } {
-  if (/^[-+0-9A-Z ]+$/.test(text)) {
-    const size = Math.max(22, Math.round(cell * 0.6));
-    return { font: `italic 800 ${size}px ${NUMBER}`, size };
-  }
-  const size = 12 * Math.max(1, Math.round((cell * 0.45) / 12));
-  return { font: `400 ${size}px ${PIXEL}`, size };
+// 地图上飘的字：和战斗画面的伤害数字同一规范（style.css --f-dmg）——像素字，只取 12px 原字的整数倍，
+// 纯色，一圈正好一个字体像素宽的黑描边。px = 放大倍数（一个字体像素是几个屏幕像素）
+export function floatFont(text: string, cell: number): { font: string; size: number; px: number } {
+  const digits = /^[-+0-9A-Z ]+$/.test(text);
+  const px = Math.max(2, Math.round((cell * (digits ? 0.55 : 0.45)) / 12));
+  const size = 12 * px;
+  return { font: `400 ${size}px ${PIXEL}`, size, px };
 }
 
-// canvas 只在字体加载完以后才用得上它，先把地图要用的两种字体拉下来
+// canvas 只在字体加载完以后才用得上它，先把地图要用的像素字拉下来
 document.fonts.load(`400 24px ${PIXEL}`);
-document.fonts.load(`italic 800 24px ${NUMBER}`);

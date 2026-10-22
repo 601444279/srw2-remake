@@ -919,28 +919,66 @@ export class Game implements DrawState {
 
   private async castSpirit(unit: Unit, spiritId: number, target?: Unit) {
     const r = this.rules.useSpirit(unit, spiritId, this.units, target);
-    // 原版：被施加的单位格子上刷过蓝色横纹 3 遍，每遍一声 1D（约 16 帧一遍），刷完才出消息。
-    // 回复类刷在被回复的单位上，其他（加速、必杀、怒……）刷在使用者身上
+    // 演出照原版（模拟器里 19 个精神逐个核对过，演出和音效分几类）：
+    //   回复（毅力、潜力、友情、情义、援助、祈祷、爱心）：被回复的单位一个一个来，星星绕圈 04 → 回复量 05（同修理）
+    //   怒、狂怒：敌人一个一个来，绿色闪电劈下 09 → 伤害数字 05
+    //   干扰：敌人一个一个来，白色圆环撑开，各一声 17
+    //   加速、疾风：使用者格子上蓝色横纹刷 3 遍，每遍一声 1D
+    //   瞄准、必杀、回避：黄色流星飞进使用者，1C
+    //   防守：粉色花瓣光圈，1B；强攻、热血：蓝色圆环，1B
+    //   最后才出提示消息
     this.setMode("busy");
-    const healed = r.affected.filter((a) => a.kind === "heal").map((a) => a.unit);
-    const marks = healed.length ? healed : [unit];
-    this.setCursor(marks[0].x, marks[0].y);
-    const pass = 16 / 60 / this.speed();
-    for (let i = 0; i < 3; i++) {
-      this.sfx.play(0x1d);
-      for (const u of marks) this.renderer.spiritWipe(u, pass);
-      await wait(pass);
+    const sp = () => this.speed();
+    const focus = (u: Unit) => this.setCursor(u.x, u.y);
+    const heals = r.affected.filter((a) => a.kind === "heal");
+    const hits = r.affected.filter((a) => a.kind === "damage");
+    if (heals.length) {
+      for (const a of heals) {
+        focus(a.unit);
+        this.sfx.play(0x04);
+        this.renderer.repairFx(a.unit, 1.0 / sp());
+        await wait(1.0 / sp());
+        this.sfx.play(0x05);
+        this.renderer.float(a.unit, `+${a.amount}`, "hp");
+        this.refreshInfo();
+        await wait(0.45 / sp());
+      }
+    } else if (hits.length) {
+      for (const a of hits) {
+        focus(a.unit);
+        this.sfx.play(0x09);
+        this.renderer.mark("bolt", a.unit, 0.85 / sp());
+        await wait(0.85 / sp());
+        this.sfx.play(0x05);
+        this.renderer.float(a.unit, `-${a.amount}`, "danger");
+        this.renderer.impact(a.unit, a.unit.hp === 0 ? 1 : Math.min(1, (a.amount / a.unit.maxHp) * 2));
+        if (a.unit.hp === 0) { this.sfx.explode(); this.renderer.explode(a.unit); }
+        await wait(0.45 / sp());
+      }
+    } else if (spiritId === 16) {
+      for (const e of this.enemies()) {
+        focus(e);
+        this.sfx.play(0x17);
+        this.renderer.mark("jam", e, 0.35 / sp());
+        await wait(0.35 / sp());
+      }
+    } else if (spiritId === 1 || spiritId === 7) {
+      focus(unit);
+      const pass = 16 / 60 / sp();
+      for (let i = 0; i < 3; i++) {
+        this.sfx.play(0x1d);
+        this.renderer.spiritWipe(unit, pass);
+        await wait(pass);
+      }
+    } else {
+      const kind = spiritId === 3 ? "flower" : spiritId === 4 || spiritId === 10 ? "ring" : "comet";
+      focus(unit);
+      this.sfx.play(kind === "comet" ? 0x1c : 0x1b);
+      const dur = kind === "comet" ? 0.45 : 0.75;
+      this.renderer.mark(kind, unit, dur / sp());
+      await wait(dur / sp());
     }
     this.ui.toast(r.text);
-    for (const a of r.affected) {
-      this.renderer.float(a.unit, a.kind === "heal" ? `+${a.amount}` : `-${a.amount}`, a.kind === "heal" ? "hp" : "danger");
-      if (a.kind === "damage") {
-        const power = a.unit.hp === 0 ? 1 : Math.min(1, (a.amount / a.unit.maxHp) * 2);
-        this.sfx.play(0x03);
-        this.renderer.impact(a.unit, power);
-        if (a.unit.hp === 0) { this.sfx.explode(); this.renderer.explode(a.unit); }
-      }
-    }
     this.dangerCache = null;
     this.refreshInfo();
     // 精神「怒」「狂怒」可能打掉敌人，跑一次检查脚本
