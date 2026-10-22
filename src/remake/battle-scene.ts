@@ -295,22 +295,6 @@ export class BattleScene {
     this.setHp(a, hpAfter);
   }
 
-  // 修理回血：镜头推近被修理的机体，慢镜头 + 绿光，飘出回复量，血条涨上去
-  async heal(u: Unit, amount: number, hpAfter: number) {
-    const a = this.actor(u);
-    if (this.skipped()) { this.setHp(a, hpAfter); return; }
-    const stage = $(".bs-stage", this.root);
-    stage.style.setProperty("--fx", `${((this.screenX(a) + a.w / 2) / W) * 100}%`);
-    stage.style.setProperty("--fy", `${((a.y + a.h / 2) / H) * 100}%`);
-    stage.classList.add("healing");
-    await wait(0.35 / this.speed());
-    this.pop(a, `+${amount}`, "heal");
-    this.setHp(a, hpAfter);
-    await wait(1.1 / this.speed());
-    stage.classList.remove("healing");
-    await wait(0.3 / this.speed());
-  }
-
   miss(u: Unit) {
     const a = this.actor(u);
     const dir = a.side === "left" ? -1 : 1;

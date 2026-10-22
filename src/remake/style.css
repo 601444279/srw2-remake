@@ -399,7 +399,3 @@ body.no-mouse #title { cursor: none; }
 #fade { position: fixed; inset: 0; z-index: 14; background: #000; opacity: 0; pointer-events: none; transition: opacity .5s ease; }
 #fade.on { opacity: 1; }
 
-/* 修理回血：镜头推近被修理的机体，绿光 */
-#battle-scene .bs-stage.healing canvas { transform: scale(1.5) translate(calc(50% - var(--fx, 50%)), calc(50% - var(--fy, 50%))); filter: brightness(1.15) saturate(1.2); }
-#battle-scene .bs-stage.healing .bs-spot { opacity: 1; background: radial-gradient(ellipse 30% 55% at 50% 50%, rgba(109, 255, 138, .22) 0%, transparent 45%, rgba(0, 0, 0, .7) 100%); }
-#battle-scene .bs-pop.heal { color: #6dff8a; }

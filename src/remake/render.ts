@@ -70,6 +70,8 @@ export class Renderer {
   private cursorDraw = { x: 0, y: 0 };
   private time = 0;
   private floats: FloatText[] = [];
+  // 修理的闪光：原版是 4 颗星绕着被修理的单位转（地图上，不进战斗画面）
+  private sparkles: { x: number; y: number; t: number; dur: number }[] = [];
   private fx = new Map<Unit, UnitFx>();
   private hitstop = 0;
   // 震屏：amp 单位是原版像素，随时间按平方衰减
@@ -113,6 +115,11 @@ export class Renderer {
   }
 
   // ---------- 特效 ----------
+  // 修理：被修理的单位周围星星绕圈 + 一圈淡绿光环，持续 seconds 秒
+  repairFx(p: Point, seconds: number) {
+    this.sparkles.push({ x: p.x, y: p.y, t: 0, dur: seconds });
+  }
+
   float(p: Point, text: string, color = "#fff") {
     this.floats.push({ x: p.x, y: p.y, text, color, t: 0 });
   }
@@ -312,7 +319,52 @@ export class Renderer {
     }
 
     this.drawCursor(this.cursorDraw.x * s, this.cursorDraw.y * s, s);
+    this.drawSparkles(s, dt);
     this.drawFloats(s, dt);
+  }
+
+  private drawSparkles(s: number, dt: number) {
+    const ctx = this.ctx;
+    for (const sp of this.sparkles) {
+      sp.t += dt;
+      const k = sp.t / sp.dur;
+      const cx = sp.x * s + s / 2, cy = sp.y * s + s / 2;
+      // 进出时淡入淡出
+      const fade = Math.min(1, k * 6, (1 - k) * 6);
+      // 淡绿光环
+      ctx.globalAlpha = 0.6 * fade;
+      ctx.strokeStyle = "#6dff8a";
+      ctx.lineWidth = Math.max(2, s / 10);
+      ctx.beginPath();
+      ctx.ellipse(cx, cy, s * 0.5, s * 0.5, 0, 0, Math.PI * 2);
+      ctx.stroke();
+      // 4 颗星绕圈转（约一圈半），一闪一闪
+      for (let i = 0; i < 4; i++) {
+        const a = k * Math.PI * 3 + (i * Math.PI) / 2;
+        const r = s * (0.42 + 0.06 * Math.sin(sp.t * 9 + i));
+        const size = s * (0.17 + 0.08 * Math.abs(Math.sin(sp.t * 12 + i * 1.7)));
+        this.drawStar(cx + Math.cos(a) * r, cy + Math.sin(a) * r * 0.85, size, fade);
+      }
+    }
+    ctx.globalAlpha = 1;
+    this.sparkles = this.sparkles.filter((sp) => sp.t < sp.dur);
+  }
+
+  // 四角星：白芯、蓝边
+  private drawStar(x: number, y: number, r: number, alpha: number) {
+    const ctx = this.ctx;
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = "#8fc4ff";
+    ctx.beginPath();
+    for (let i = 0; i < 8; i++) {
+      const a = (i * Math.PI) / 4;
+      const rr = i % 2 ? r * 0.28 : r;
+      ctx.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr);
+    }
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(x - r * 0.18, y - r * 0.18, r * 0.36, r * 0.36);
   }
 
   // 伤害、回复数字：从格子中间往上飘，1 秒后消失
