@@ -9,7 +9,7 @@ import type { DrawState, Overlay, Renderer } from "./render.ts";
 import type { GrowthStats, UI, MenuItem } from "./ui.ts";
 import { Rules, SPIRIT_FLAG, isRepair, rngState, setRngState, type BattleEvent } from "./rules.ts";
 import { describeTime, listSaves, readSave, requestLoad, writeSave, SAVE_VERSION, type SaveData, type SlotId } from "./saves.ts";
-import { hitSoundFor, strikeSound, type Sfx } from "./sfx.ts";
+import { hitSoundFor, splitAttackSounds, strikeSound, type Sfx } from "./sfx.ts";
 import { MUSIC, type Music } from "./music.ts";
 import { keyLabel, settings, TEXT_SPEEDS, type BindAction } from "./settings.ts";
 import { attackShout, damageCase, reactionShout } from "./shouts.ts";
@@ -981,7 +981,8 @@ export class Game implements DrawState {
       // 放原版这段攻击动画的音效（按原版帧号），放完再出结果；没有动画数据的用按武器名配的音效
       const seq = attackSounds(e.from.unitId, e.weapon.id);
       const sound = strikeSound(e.weapon.name);
-      if (seq) await this.playSounds(seq);
+      // 动画末尾的命中声留到真正命中时放（sfx.ts splitAttackSounds）
+      if (seq) await this.playSounds(splitAttackSounds(seq).lead);
       else {
         if (!this.skipBattle) this.sfx.attack(sound);
         await wait(sound.travel / this.speed());
@@ -996,6 +997,7 @@ export class Game implements DrawState {
         e.to.hp = e.hpAfter;
         this.renderer.float(e.to, `-${e.damage}`, "#ff6b6b");
       } else {
+        if (seq) this.missSound(seq);
         this.renderer.float(e.to, "MISS", "#c8c8d0");
       }
       this.ui.battleSay(e.to, reactionShout(e.to.pilotId, damageCase(e.hit, e.damage, e.hpAfter, e.to.maxHp)));
@@ -1045,11 +1047,18 @@ export class Game implements DrawState {
     this.setMode(prev);
   }
 
-  // 重制版补的命中音：原版命中时不出声，只有开火声的武器打中是哑的（sfx.ts hitSoundFor）
+  // 命中那一刻的音效：动画自带的命中声挪到这里放，没有的按设置补 03（sfx.ts hitSoundFor）
   private hitSound(animSounds: [number, number][] | null) {
-    if (this.skipBattle || !settings.get().hitSfx || !animSounds) return;
-    const id = hitSoundFor(animSounds);
+    if (this.skipBattle || !animSounds) return;
+    const id = hitSoundFor(animSounds, settings.get().hitSfx);
     if (id !== null) this.sfx.impact(id);
+  }
+
+  // 没打中：命中声不放；动画里只有那一声的（格斗挥砍）照原样放，免得整段没声
+  private missSound(animSounds: [number, number][]) {
+    if (this.skipBattle) return;
+    const { lead, impact } = splitAttackSounds(animSounds);
+    if (!lead.length && impact !== null) this.sfx.play(impact);
   }
 
   // 按原版帧号依次放音效（60 帧 = 1 秒，跟着演出倍速），跳过战斗时停
@@ -1082,11 +1091,13 @@ export class Game implements DrawState {
       await wait(0.55 / this.speed());
       // 音效由原版动画数据按帧触发（scene.attack 里）；原版命中、落空之后不另放音效
       // 打中时另补一声命中音（重制版，设置里可关，见 hitSound）
-      await scene.attack(e.from, e.weapon.id);
+      const anim = attackSounds(e.from.unitId, e.weapon.id);
+      await scene.attack(e.from, e.weapon.id, anim ? splitAttackSounds(anim).lead : undefined);
       if (e.hit) {
-        this.hitSound(attackSounds(e.from.unitId, e.weapon.id));
+        this.hitSound(anim);
         scene.hit(e.to, e.damage, e.hpAfter, e.hpAfter === 0 ? 1 : Math.min(1, (e.damage / e.to.maxHp) * 2));
       } else {
+        if (anim) this.missSound(anim);
         scene.miss(e.to);
       }
       if (e.hpAfter === 0) {
