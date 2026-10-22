@@ -11,15 +11,19 @@ async function boot() {
   const renderer = new Renderer(canvas);
   await renderer.setStage(stage);
   const ui = new UI();
-  const game = new Game(stage, renderer, ui);
+  let input: Input | null = null;
+  const game = new Game(stage, renderer, ui, () => input?.isFast ?? false);
 
-  const input = new Input(canvas, {
+  input = new Input(canvas, {
     onMove: (dx, dy) => game.move(dx, dy),
     onAction: (a) => game.action(a),
     onPointerTile: (x, y) => game.pointerTile(renderer.screenToTile(x, y)),
     onPointerClick: (x, y, button) => game.pointerClick(renderer.screenToTile(x, y), button),
     onWheel: (d) => game.action(d < 0 ? "zoomIn" : "zoomOut"),
   });
+
+  // 开发时方便在控制台里调试
+  if (import.meta.env.DEV) Object.assign(window, { game, renderer });
 
   let last = performance.now();
   const frame = (now: number) => {

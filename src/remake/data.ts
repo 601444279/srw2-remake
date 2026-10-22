@@ -16,16 +16,21 @@ const terrainSheets = import.meta.glob("../../assets/original/terrain/env-*.png"
 const unitSheets = import.meta.glob("../../assets/original/units/bank-*.png", { eager: true, import: "default", query: "?url" });
 
 export interface Weapon {
+  id: number;
   name: string;
   range: number;
   hit: number;
   // 对空 / 陆 / 海目标的火力，null 表示打不到
   power: Record<MoveType, number | null>;
-  // 原版只有射程 1 的武器和标记为「移动后可用」的武器能在移动后使用（待战斗规则确认）
+  // 射程 1 的武器和 E 类远程武器能在移动后使用；其他远程武器移动后不能用，也打不到相邻格（docs/notes-rules.md 1.1）
   usableAfterMove: boolean;
+  // 原版武器表字节：第 0 字节（射程 - 1 和类型）、距离命中衰减曲线
+  rangeByte: number;
+  curve: number;
 }
 
 export interface Spirit {
+  id: number;
   name: string;
   cost: number;
   text: string;
@@ -33,7 +38,20 @@ export interface Spirit {
 
 export interface Unit {
   id: number;
+  // 原版单位编号：我方 0–10，敌方 14 起。精神状态只对我方 0–10 有效，规则代码靠它区分阵营
+  index: number;
   side: "player" | "enemy";
+  unitId: number;
+  pilotId: number;
+  levelIndex: number; // 原版内部等级，从 0 开始
+  exp: number;
+  expBase: number; // 被击破时给对方的基础经验
+  money: number; // 被击破时给对方的资金
+  // 精神状态标志（src/rules/spirits.js FLAG）
+  spirit: number;
+  aiScript: number;
+  // 待机型敌人在第 waitUntilTurn 回合前不移动
+  waitUntilTurn: number;
   name: string;
   pilotName: string;
   level: number; // 显示用，从 1 开始
@@ -82,11 +100,14 @@ function weaponOf(id: number): Weapon | null {
   const w = weapons.get(id);
   if (!w || !w.name) return null;
   return {
+    id: w.id,
     name: w.name,
     range: w.range,
     hit: w.hit,
     power: { air: w.power.air, land: w.power.land, sea: w.power.sea },
     usableAfterMove: w.range === 1 || w.kind === "moveAndFire",
+    rangeByte: parseInt(w.raw.slice(0, 2), 16),
+    curve: w.hitFalloff,
   };
 }
 
@@ -97,7 +118,14 @@ interface Placement {
   unitId: number;
   pilotId: number;
   level: number;
+  aiScript: number;
 }
+
+// 第一关用到的 AI 脚本（docs/notes-rules.md 5.2）：$05、$0C 是待机型，分别在 $750C = 7、11 那回合起开始行动
+const WAIT_SCRIPTS: Record<number, number> = { 0x05: 8, 0x0c: 12 };
+
+let playerIndex = 0;
+let enemyIndex = 14;
 
 function buildUnit(id: number, p: Placement, unitChrBanks: number[]): Unit {
   const def = units.get(p.unitId);
@@ -109,7 +137,17 @@ function buildUnit(id: number, p: Placement, unitChrBanks: number[]): Unit {
   const moveType = MOVE_TYPES.includes(def.type as MoveType) ? (def.type as MoveType) : "land";
   return {
     id,
+    index: p.side === "player" ? playerIndex++ : enemyIndex++,
     side: p.side,
+    unitId: p.unitId,
+    pilotId: p.pilotId,
+    levelIndex: p.level,
+    exp: 0,
+    expBase: (def as unknown as { expBase: number }).expBase,
+    money: (def as unknown as { money: number }).money,
+    spirit: 0,
+    aiScript: p.aiScript,
+    waitUntilTurn: WAIT_SCRIPTS[p.aiScript] ?? 0,
     name: def.name ?? `机体 ${p.unitId}`,
     pilotName: pilot.name ?? (p.side === "enemy" ? "" : `驾驶员 ${p.pilotId}`),
     level: p.level + 1,
@@ -123,10 +161,11 @@ function buildUnit(id: number, p: Placement, unitChrBanks: number[]): Unit {
     speed: stats.speed,
     hp: stats.maxHp,
     maxHp: stats.maxHp,
-    sp: stats.maxSp,
-    maxSp: stats.maxSp,
+    // 原版只有我方单位有精神点数（$7822，0–10 号）
+    sp: p.side === "player" ? stats.maxSp : 0,
+    maxSp: p.side === "player" ? stats.maxSp : 0,
     weapons: def.weapons.map(weaponOf).filter((w): w is Weapon => !!w),
-    spirits: pilot.spirits.map((s) => spiritDb[s]).filter(Boolean).map((s) => ({ name: s.name, cost: s.cost, text: s.text })),
+    spirits: pilot.spirits.map((s) => spiritDb[s]).filter(Boolean).map((s) => ({ id: s.id, name: s.name, cost: s.cost, text: s.text })),
     acted: false,
   };
 }
@@ -140,10 +179,12 @@ export function loadStage(number: number): Stage {
   const placements: Placement[] = [];
   for (const p of deploy.players) {
     const member = roster.members.find((m) => m.member === p.order);
-    if (member) placements.push({ side: "player", x: p.x, y: p.y, unitId: member.unit, pilotId: member.pilot, level: member.level });
+    if (member) placements.push({ side: "player", x: p.x, y: p.y, unitId: member.unit, pilotId: member.pilot, level: member.level, aiScript: 0 });
   }
-  // 敌人记录：参数 a = 驾驶员，参数 b = 等级（从 0 开始）
-  for (const e of deploy.enemies) placements.push({ side: "enemy", x: e.x, y: e.y, unitId: e.unit, pilotId: e.a, level: e.b });
+  // 敌人记录：参数 a = 驾驶员，b = 等级（从 0 开始），c = AI 脚本
+  for (const e of deploy.enemies) placements.push({ side: "enemy", x: e.x, y: e.y, unitId: e.unit, pilotId: e.a, level: e.b, aiScript: e.c });
+  playerIndex = 0;
+  enemyIndex = 14;
 
   return {
     number,
@@ -154,6 +195,18 @@ export function loadStage(number: number): Stage {
     terrainEffect: env.terrainEffectRaw,
     units: placements.map((p, i) => buildUnit(i, p, raw.unitChrBanks)),
   };
+}
+
+// 升级后重算能力：只提高上限，当前 HP / SP 不变（原版实测，docs/notes-rules.md 2.2）
+export function applyLevel(unit: Unit, levelIndex: number) {
+  const stats = computeStats(units.get(unit.unitId)!, pilots.get(unit.pilotId)!, levelIndex, curves);
+  unit.levelIndex = levelIndex;
+  unit.level = levelIndex + 1;
+  unit.speed = stats.speed;
+  unit.strength = stats.strength;
+  unit.defense = stats.defense;
+  unit.maxHp = stats.maxHp;
+  unit.maxSp = stats.maxSp;
 }
 
 // 地形效果原始值：0x64 = 100。推测是「受到伤害的百分比」，低于 100 就是防御加成；最高位含义未知，先忽略

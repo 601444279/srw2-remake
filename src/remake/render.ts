@@ -13,6 +13,22 @@ export interface Overlay {
   attack?: Set<number>;
   danger?: Set<number>;
   path?: Point[];
+  // 可以攻击 / 选择的目标格（选目标时闪烁的框）
+  targets?: Point[];
+}
+
+interface FloatText {
+  x: number;
+  y: number;
+  text: string;
+  color: string;
+  t: number;
+}
+
+interface UnitFx {
+  flash: number; // 受击闪白剩余时间
+  shake: number;
+  fade: number; // 击破后淡出：1 → 0
 }
 
 export interface DrawState {
@@ -45,6 +61,8 @@ export class Renderer {
   private cameraTarget = { x: 0, y: 0 };
   private cursorDraw = { x: 0, y: 0 };
   private time = 0;
+  private floats: FloatText[] = [];
+  private fx = new Map<Unit, UnitFx>();
 
   constructor(private canvas: HTMLCanvasElement) {
     this.ctx = canvas.getContext("2d")!;
@@ -84,6 +102,27 @@ export class Renderer {
     // 默认缩放：让视野里大约能看到 18 格宽
     const ideal = this.cssW / (18 * TILE);
     this.zoomIndex = ZOOM_LEVELS.reduce((best, z, i) => (Math.abs(z - ideal) < Math.abs(ZOOM_LEVELS[best] - ideal) ? i : best), 0);
+  }
+
+  // ---------- 特效 ----------
+  float(p: Point, text: string, color = "#fff") {
+    this.floats.push({ x: p.x, y: p.y, text, color, t: 0 });
+  }
+
+  hitUnit(u: Unit) {
+    const f = this.unitFx(u);
+    f.flash = 0.18;
+    f.shake = 0.25;
+  }
+
+  killUnit(u: Unit) {
+    this.unitFx(u).fade = 1;
+  }
+
+  private unitFx(u: Unit) {
+    let f = this.fx.get(u);
+    if (!f) this.fx.set(u, (f = { flash: 0, shake: 0, fade: -1 }));
+    return f;
   }
 
   // 信息面板用的单位图标
@@ -173,16 +212,59 @@ export class Renderer {
     fill(state.overlay.move, `rgba(70, 140, 255, ${0.45 * pulse})`);
     if (state.overlay.path && state.overlay.path.length > 1) this.drawPath(state.overlay.path, s);
 
+    if (state.overlay.targets) {
+      ctx.strokeStyle = `rgba(255, 90, 90, ${0.6 + 0.4 * Math.sin(this.time * 8)})`;
+      ctx.lineWidth = Math.max(2, this.zoom);
+      for (const t of state.overlay.targets) ctx.strokeRect(t.x * s + 2, t.y * s + 2, s - 4, s - 4);
+    }
+
     for (const u of state.units) {
+      const f = this.fx.get(u);
+      if (f) {
+        f.flash = Math.max(0, f.flash - dt);
+        f.shake = Math.max(0, f.shake - dt);
+        if (f.fade >= 0) f.fade = Math.max(0, f.fade - dt * 1.6);
+      }
+      if (u.hp <= 0 && (!f || f.fade <= 0)) continue;
       const pos = state.unitPos(u);
       const sprite = this.sprites.get(spriteKey(u))!;
-      const px = pos.x * s, py = pos.y * s;
+      const shake = f && f.shake > 0 ? Math.sin(this.time * 90) * this.zoom * 1.5 : 0;
+      const px = pos.x * s + shake, py = pos.y * s;
       const lift = u === state.selected ? Math.round(Math.sin(this.time * 8) * this.zoom) - this.zoom : 0;
+      ctx.globalAlpha = f && f.fade >= 0 ? f.fade : 1;
       ctx.drawImage(u.acted ? sprite.gray : sprite.normal, px, py + lift, s, s);
-      this.drawHpBar(u, px, py, s);
+      if (f && f.flash > 0) {
+        ctx.fillStyle = `rgba(255,255,255,${f.flash / 0.18 * 0.8})`;
+        ctx.fillRect(px, py + lift, s, s);
+      }
+      if (u.hp > 0) this.drawHpBar(u, px, py, s);
+      ctx.globalAlpha = 1;
     }
 
     this.drawCursor(this.cursorDraw.x * s, this.cursorDraw.y * s, s);
+    this.drawFloats(s, dt);
+  }
+
+  // 伤害、回复数字：从格子中间往上飘，1 秒后消失
+  private drawFloats(s: number, dt: number) {
+    const ctx = this.ctx;
+    const size = Math.max(14, s * 0.42);
+    ctx.font = `800 ${size}px "PingFang SC", "Microsoft YaHei", sans-serif`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.lineWidth = Math.max(3, size / 5);
+    ctx.strokeStyle = "rgba(0,0,0,0.85)";
+    for (const f of this.floats) {
+      f.t += dt;
+      const rise = Math.min(1, f.t * 3) * s * 0.5 + f.t * s * 0.15;
+      ctx.globalAlpha = f.t < 0.8 ? 1 : Math.max(0, 1 - (f.t - 0.8) / 0.4);
+      const x = f.x * s + s / 2, y = f.y * s + s / 2 - rise;
+      ctx.strokeText(f.text, x, y);
+      ctx.fillStyle = f.color;
+      ctx.fillText(f.text, x, y);
+    }
+    ctx.globalAlpha = 1;
+    this.floats = this.floats.filter((f) => f.t < 1.2);
   }
 
   private drawPath(path: Point[], s: number) {

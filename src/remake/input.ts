@@ -107,6 +107,11 @@ export class Input {
     }
   }
 
+  // 按住 Shift / 手柄 X：光标高速移动、演出加速
+  get isFast() {
+    return this.fast;
+  }
+
   update(now: number) {
     this.pollGamepad();
     this.step(now);
