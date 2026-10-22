@@ -53,6 +53,13 @@ export class SettingsPanel {
         <div class="set-row toggle"><span>战斗演出<small>完整：原版战斗画面和武器特效；简略：在地图上快速结算</small></span>
           <button class="cycle" data-nav data-cycle="battleStyle">${BATTLE_STYLES.find((b) => b.id === s.battleStyle)?.label}</button>
         </div>
+        <div class="set-group">成长</div>
+        <label class="set-row toggle"><span>特性成长<small>驾驶员到 Lv 10 / 20 / 30 时机师特性强化一档</small></span>
+          <button class="switch${s.traitGrowth ? " on" : ""}" data-nav data-toggle="traitGrowth" role="switch" aria-checked="${s.traitGrowth}"><i></i></button>
+        </label>
+        <label class="set-row toggle"><span>击破连击<small>同一阶段里连续击破，每多一次经验 +10%（最多 +50%）</small></span>
+          <button class="switch${s.killCombo ? " on" : ""}" data-nav data-toggle="killCombo" role="switch" aria-checked="${s.killCombo}"><i></i></button>
+        </label>
         <div class="set-group">剧情</div>
         <div class="set-row toggle"><span>文字速度<small>对话逐字显示的速度</small></span>
           <button class="cycle" data-nav data-cycle="textSpeed">${TEXT_SPEEDS.find((t) => t.id === s.textSpeed)?.label}</button>
@@ -85,6 +92,14 @@ export class SettingsPanel {
       this.render();
       this.focus("[data-toggle=mouse]");
     });
+    for (const key of ["traitGrowth", "killCombo"] as const) {
+      this.dialog.querySelector(`[data-toggle=${key}]`)!.addEventListener("click", (e) => {
+        e.preventDefault();
+        settings.update({ [key]: !settings.get()[key] });
+        this.render();
+        this.focus(`[data-toggle=${key}]`);
+      });
+    }
     this.dialog.querySelector("[data-cycle=artStyle]")!.addEventListener("click", () => {
       const i = ART_STYLES.findIndex((a) => a.id === settings.get().artStyle);
       settings.update({ artStyle: ART_STYLES[(i + 1) % ART_STYLES.length].id });

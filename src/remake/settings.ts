@@ -63,6 +63,9 @@ export interface Settings {
   mouse: boolean;
   artStyle: ArtStyle;
   battleStyle: BattleStyle;
+  // 重制版的成长加成：特性成长（Lv 10 / 20 / 30 强化）、击破连击（同一阶段连续击破经验递增）
+  traitGrowth: boolean;
+  killCombo: boolean;
   textSpeed: TextSpeed;
   musicStyle: MusicStyle;
   musicVolume: number;
@@ -93,7 +96,7 @@ const listeners = new Set<() => void>();
 
 function load(): Settings {
   const fallback: Settings = {
-    keys: structuredClone(DEFAULT_KEYS), mouse: true, artStyle: "original", battleStyle: "full", textSpeed: "normal",
+    keys: structuredClone(DEFAULT_KEYS), mouse: true, artStyle: "original", battleStyle: "full", traitGrowth: true, killCombo: true, textSpeed: "normal",
     musicStyle: "enhanced", musicVolume: 0.6, sfxVolume: 0.8,
   };
   try {

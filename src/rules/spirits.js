@@ -68,7 +68,7 @@ export function healAmount(amount, unit, rand) {
     case "50": return 50;
     case "100": return 100;
     case "50-200": return 50 + rand(151);
-    case "full": return 9999;
+    case "full": return Infinity; // 原版 9999（HP 上限）；重制版 HP 没有上限
     case "half": return unit.maxHp >> 1;
     default: throw new Error(`未知回复量 ${amount}`);
   }

@@ -1,16 +1,239 @@
 {
-  "note": "机师特性（重制版新增，原版没有）。初版按原作形象、驾驶的机体和自带精神分配，边玩边改。pilots 的键是驾驶员编号（= 人物编号）",
+  "note": "机师特性（重制版新增，原版没有）。初版按原作形象、驾驶的机体和自带精神分配，边玩边改。pilots 的键是驾驶员编号（= 人物编号）。growth = 特性成长：驾驶员到这个等级（显示等级）时特性强化，后面的档覆盖前面的数值和说明（设置里可以关掉）",
   "traits": {
-    "newtype": { "name": "新人类", "text": "命中 +10，敌人对他的命中 −10", "hit": 10, "evade": 10 },
-    "hotblood": { "name": "热血", "text": "HP 30% 以下时伤害 +20%", "lowHpDamage": 1.2, "lowHp": 0.3 },
-    "fighting": { "name": "斗志", "text": "每击破一个敌人 SP +5", "spOnKill": 5 },
-    "quick": { "name": "快攻", "text": "速度 +10（影响命中、回避和再攻击）", "speed": 10 },
-    "ironwall": { "name": "铁壁", "text": "受到的伤害 −10%", "damageTaken": 0.9 },
-    "guts": { "name": "根性", "text": "HP 30% 以下时受到的伤害 −20%", "lowHpDamageTaken": 0.8, "lowHp": 0.3 },
-    "sniper": { "name": "神射", "text": "射程 2 以上的武器命中 +10", "rangedHit": 10 },
-    "support": { "name": "支援", "text": "每回合开始 SP +5", "spPerTurn": 5 },
-    "command": { "name": "指挥", "text": "周围 2 格内的我方单位命中 +5", "auraHit": 5, "auraRange": 2 },
-    "resilience": { "name": "底力", "text": "每回合开始回复 5% HP", "hpPerTurn": 0.05 }
+    "newtype": {
+      "name": "新人类",
+      "text": "命中 +10，敌人对他的命中 −10",
+      "hit": 10,
+      "evade": 10,
+      "growth": [
+        {
+          "level": 10,
+          "text": "命中 +13，敌人对他的命中 −13",
+          "hit": 13,
+          "evade": 13
+        },
+        {
+          "level": 20,
+          "text": "命中 +16，敌人对他的命中 −16",
+          "hit": 16,
+          "evade": 16
+        },
+        {
+          "level": 30,
+          "text": "命中 +20，敌人对他的命中 −20",
+          "hit": 20,
+          "evade": 20
+        }
+      ]
+    },
+    "hotblood": {
+      "name": "热血",
+      "text": "HP 30% 以下时伤害 +20%",
+      "lowHpDamage": 1.2,
+      "lowHp": 0.3,
+      "growth": [
+        {
+          "level": 10,
+          "text": "HP 30% 以下时伤害 +30%",
+          "lowHpDamage": 1.3
+        },
+        {
+          "level": 20,
+          "text": "HP 40% 以下时伤害 +35%",
+          "lowHpDamage": 1.35,
+          "lowHp": 0.4
+        },
+        {
+          "level": 30,
+          "text": "HP 50% 以下时伤害 +40%",
+          "lowHpDamage": 1.4,
+          "lowHp": 0.5
+        }
+      ]
+    },
+    "fighting": {
+      "name": "斗志",
+      "text": "每击破一个敌人 SP +5",
+      "spOnKill": 5,
+      "growth": [
+        {
+          "level": 10,
+          "text": "每击破一个敌人 SP +8",
+          "spOnKill": 8
+        },
+        {
+          "level": 20,
+          "text": "每击破一个敌人 SP +11",
+          "spOnKill": 11
+        },
+        {
+          "level": 30,
+          "text": "每击破一个敌人 SP +15",
+          "spOnKill": 15
+        }
+      ]
+    },
+    "quick": {
+      "name": "快攻",
+      "text": "速度 +10（影响命中、回避和再攻击）",
+      "speed": 10,
+      "growth": [
+        {
+          "level": 10,
+          "text": "速度 +15（影响命中、回避和再攻击）",
+          "speed": 15
+        },
+        {
+          "level": 20,
+          "text": "速度 +20（影响命中、回避和再攻击）",
+          "speed": 20
+        },
+        {
+          "level": 30,
+          "text": "速度 +30（影响命中、回避和再攻击）",
+          "speed": 30
+        }
+      ]
+    },
+    "ironwall": {
+      "name": "铁壁",
+      "text": "受到的伤害 −10%",
+      "damageTaken": 0.9,
+      "growth": [
+        {
+          "level": 10,
+          "text": "受到的伤害 −15%",
+          "damageTaken": 0.85
+        },
+        {
+          "level": 20,
+          "text": "受到的伤害 −20%",
+          "damageTaken": 0.8
+        },
+        {
+          "level": 30,
+          "text": "受到的伤害 −25%",
+          "damageTaken": 0.75
+        }
+      ]
+    },
+    "guts": {
+      "name": "根性",
+      "text": "HP 30% 以下时受到的伤害 −20%",
+      "lowHpDamageTaken": 0.8,
+      "lowHp": 0.3,
+      "growth": [
+        {
+          "level": 10,
+          "text": "HP 30% 以下时受到的伤害 −25%",
+          "lowHpDamageTaken": 0.75
+        },
+        {
+          "level": 20,
+          "text": "HP 40% 以下时受到的伤害 −30%",
+          "lowHpDamageTaken": 0.7,
+          "lowHp": 0.4
+        },
+        {
+          "level": 30,
+          "text": "HP 50% 以下时受到的伤害 −35%",
+          "lowHpDamageTaken": 0.65,
+          "lowHp": 0.5
+        }
+      ]
+    },
+    "sniper": {
+      "name": "神射",
+      "text": "射程 2 以上的武器命中 +10",
+      "rangedHit": 10,
+      "growth": [
+        {
+          "level": 10,
+          "text": "射程 2 以上的武器命中 +13",
+          "rangedHit": 13
+        },
+        {
+          "level": 20,
+          "text": "射程 2 以上的武器命中 +16",
+          "rangedHit": 16
+        },
+        {
+          "level": 30,
+          "text": "射程 2 以上的武器命中 +20",
+          "rangedHit": 20
+        }
+      ]
+    },
+    "support": {
+      "name": "支援",
+      "text": "每回合开始 SP +5",
+      "spPerTurn": 5,
+      "growth": [
+        {
+          "level": 10,
+          "text": "每回合开始 SP +7",
+          "spPerTurn": 7
+        },
+        {
+          "level": 20,
+          "text": "每回合开始 SP +9",
+          "spPerTurn": 9
+        },
+        {
+          "level": 30,
+          "text": "每回合开始 SP +12",
+          "spPerTurn": 12
+        }
+      ]
+    },
+    "command": {
+      "name": "指挥",
+      "text": "周围 2 格内的我方单位命中 +5",
+      "auraHit": 5,
+      "auraRange": 2,
+      "growth": [
+        {
+          "level": 10,
+          "text": "周围 2 格内的我方单位命中 +7",
+          "auraHit": 7
+        },
+        {
+          "level": 20,
+          "text": "周围 3 格内的我方单位命中 +8",
+          "auraHit": 8,
+          "auraRange": 3
+        },
+        {
+          "level": 30,
+          "text": "周围 3 格内的我方单位命中 +10",
+          "auraHit": 10,
+          "auraRange": 3
+        }
+      ]
+    },
+    "resilience": {
+      "name": "底力",
+      "text": "每回合开始回复 5% HP",
+      "hpPerTurn": 0.05,
+      "growth": [
+        {
+          "level": 10,
+          "text": "每回合开始回复 7% HP",
+          "hpPerTurn": 0.07
+        },
+        {
+          "level": 20,
+          "text": "每回合开始回复 9% HP",
+          "hpPerTurn": 0.09
+        },
+        {
+          "level": 30,
+          "text": "每回合开始回复 12% HP",
+          "hpPerTurn": 0.12
+        }
+      ]
+    }
   },
   "pilots": {
     "6": "newtype",

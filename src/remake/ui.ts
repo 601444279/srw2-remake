@@ -3,6 +3,7 @@ import { TYPE_LABEL, type Unit, type Weapon } from "./data.ts";
 import type { Forecast, BattleEvent } from "./rules.ts";
 import { settings } from "./settings.ts";
 import { smoothUrl } from "./upscale.ts";
+import { traitLabel, type Trait } from "./traits.ts";
 
 export interface MenuItem {
   label: string;
@@ -35,6 +36,9 @@ export interface GrowthData {
   barBefore: number;
   barAfter: number | null;
   toNext: number | null;
+  combo?: { count: number; bonus: number } | null;
+  traitBefore?: Trait | null;
+  traitAfter?: Trait | null;
 }
 
 export interface TerrainInfo {
@@ -85,8 +89,8 @@ export class UI {
           <img src="${iconUrl}" alt="">
           <div class="body">
             <div class="name">${unit.name}<span class="tag">${TYPE_LABEL[unit.moveType]}</span><span class="tag">Lv ${unit.level}</span>${unit.acted ? '<span class="tag">已行动</span>' : ""}</div>
-            ${unit.pilotName ? `<div class="pilot"><span>驾驶员 ${unit.pilotName}${unit.trait ? `<em class="trait" title="${unit.trait.text}">${unit.trait.name}</em>` : ""}</span>${unit.maxSp ? `<span>SP ${unit.sp} / ${unit.maxSp}</span>` : ""}</div>` : ""}
-            ${unit.trait ? `<div class="trait-text">${unit.trait.name}：${unit.trait.text}</div>` : ""}
+            ${unit.pilotName ? `<div class="pilot"><span>驾驶员 ${unit.pilotName}${unit.trait ? `<em class="trait" title="${unit.trait.text}">${traitLabel(unit.trait)}</em>` : ""}</span>${unit.maxSp ? `<span>SP ${unit.sp} / ${unit.maxSp}</span>` : ""}</div>` : ""}
+            ${unit.trait ? `<div class="trait-text">${traitLabel(unit.trait)}：${unit.trait.text}</div>` : ""}
             <div class="hp"><div class="bar"><i style="width:${ratio * 100}%"></i></div><span>${unit.hp} / ${unit.maxHp}</span></div>
             <div class="stats">
               <span>机动 <b>${unit.move}</b></span><span>强度 <b>${unit.strength}</b></span>
@@ -137,7 +141,7 @@ export class UI {
           <div class="st-pbody">
             <div class="st-pname">${unit.pilotName}<span class="tag">Lv ${unit.level}</span>${unit.side === "player" ? `<span class="muted">经验 ${unit.exp} · ${exp}</span>` : ""}</div>
             ${unit.maxSp ? `<div class="st-sp">SP <b>${unit.sp} / ${unit.maxSp}</b></div>` : ""}
-            ${unit.trait ? `<div class="st-trait"><em>${unit.trait.name}</em>${unit.trait.text}</div>` : ""}
+            ${unit.trait ? `<div class="st-trait"><em>${traitLabel(unit.trait)}</em>${unit.trait.text}${unit.trait.next ? `<div class="st-next">Lv ${unit.trait.next.level} 强化：${unit.trait.next.text}</div>` : ""}</div>` : ""}
           </div>
         </div>` : ""}
         ${spirits ? `<ul class="st-spirits">${spirits}</ul>` : ""}
@@ -185,11 +189,11 @@ export class UI {
             <b>${d.unit.pilotName || d.unit.name}</b><small>${d.unit.name}</small>
             <div class="gr-level">Lv <span>${d.before.level}</span>${up ? `<i>→</i><span class="new">${d.after.level}</span>` : ""}</div>
           </div>
-          <div class="gr-exp">EXP <b>+${d.gained}</b></div>
+          <div class="gr-exp">EXP <b>+${d.gained}</b>${d.combo ? `<span class="gr-combo">${d.combo.count} 连击 · +${d.combo.bonus}%</span>` : ""}</div>
         </div>
         <div class="gr-bar"><i style="width:${d.barBefore * 100}%"></i></div>
         <div class="gr-next">${d.toNext === null ? "已达到最高等级" : `下一级还需 ${d.toNext}`}</div>
-        ${up ? `<ul class="gr-stats">${statRows}</ul><div class="gr-hint">按确定继续</div>` : ""}
+        ${up ? `<ul class="gr-stats">${statRows}</ul>${traitRow(d)}<div class="gr-hint">按确定继续</div>` : ""}
       </div>`;
     el.hidden = false;
     // 经验条：升级时先涨满，再从新等级的进度开始
@@ -472,4 +476,13 @@ export class UI {
     clearTimeout(Number(el.dataset.timer));
     el.dataset.timer = String(setTimeout(() => el.classList.remove("show"), 1600));
   }
+}
+
+// 升级卡片里的特性一行：这次强化了就高亮，否则预告下一档
+function traitRow(d: GrowthData) {
+  const a = d.traitAfter, b = d.traitBefore;
+  if (!a) return "";
+  if (b && a.tier > b.tier) return `<div class="gr-trait up" style="--i:6"><em>特性强化</em><b>${traitLabel(b)} → ${traitLabel(a)}</b><span>${a.text}</span></div>`;
+  if (a.next) return `<div class="gr-trait" style="--i:6"><em>${traitLabel(a)}</em><span>Lv ${a.next.level} 强化：${a.next.text}</span></div>`;
+  return "";
 }

@@ -71,6 +71,12 @@ async function boot() {
     if (!game.autoplaying || performance.now() - lastFrame < 200) return;
     game.update(0.05);
   }, 50);
+  // 升级动画演示：地址加 ?demo=levelup
+  const params0 = new URLSearchParams(location.search);
+  if (params0.get("demo") === "levelup") {
+    await game.demoLevelUp();
+    return;
+  }
   // 自动测试（开发时）：地址加 ?autoplay，可带 &turns=30&speed=8&battle=full|simple&sound=1
   const params = new URLSearchParams(location.search);
   if (import.meta.env.DEV && params.has("autoplay")) {

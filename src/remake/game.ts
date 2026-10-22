@@ -13,6 +13,8 @@ import { strikeSound, type Sfx } from "./sfx.ts";
 import { MUSIC, type Music } from "./music.ts";
 import { keyLabel, settings, TEXT_SPEEDS, type BindAction } from "./settings.ts";
 import { attackShout, damageCase, reactionShout } from "./shouts.ts";
+import { traitOf, type Trait } from "./traits.ts";
+import { levelForExp } from "./stats.ts";
 import { AutoTester, type AutoOptions, type AutoReport } from "./autotest.ts";
 import { BattleScene, attackSounds, battleLayout, battleSpriteUrl } from "./battle-scene.ts";
 import { loadScene, personName, portraitUrl, STAGE_STORY, type SceneRef } from "./story.ts";
@@ -73,6 +75,8 @@ export class Game implements DrawState {
   // 我方 / 敌方回合曲（脚本的 playerBgm / enemyBgm 会改），phase 是现在是谁的回合
   private songs = { player: 7, enemy: 8 };
   private phase: "player" | "enemy" = "player";
+  // 这一阶段我方的击破数（击破连击）
+  private combo = 0;
   // 战斗演出中（可以按键跳过）
   private inBattle = false;
   private skipBattle = false;
@@ -109,6 +113,7 @@ export class Game implements DrawState {
   }
 
   private async addUnit(u: Unit) {
+    if (u.side === "player") this.syncTrait(u);
     await this.renderer.loadUnit(u);
     this.units.push(u);
     this.dangerCache = null;
@@ -139,6 +144,7 @@ export class Game implements DrawState {
   }
 
   async start() {
+    this.syncTraits();
     const first = this.players()[0];
     this.cursor = { x: first.x, y: first.y };
     this.renderer.centerOn(this.cursor);
@@ -167,6 +173,7 @@ export class Game implements DrawState {
   private async playerPhaseStart() {
     this.setMode("busy");
     this.phase = "player";
+    this.combo = 0;
     await this.events.runStart();
     await this.events.runCheck();
     if (this.mode === "over") return;
@@ -206,6 +213,7 @@ export class Game implements DrawState {
 
   // 读档：单位和名册在建 Game 之前已经换成存档里的（main.ts），这里恢复其余状态，直接进入我方回合
   async resumeFromSave(save: SaveData) {
+    this.syncTraits();
     this.turn = save.turn;
     this.money.value = save.money;
     this.songs = { ...save.songs };
@@ -654,6 +662,7 @@ export class Game implements DrawState {
     const scenes = transformLines(unit.pilotId, id);
     for (const scene of scenes) await this.playScene(scene);
     transformUnit(this.stage, unit, id);
+    this.syncTrait(unit);
     await this.renderer.loadUnit(unit);
     this.renderer.hitUnit(unit);
     this.renderer.float(unit, "变形", "#8fd3ff");
@@ -788,16 +797,26 @@ export class Game implements DrawState {
       if (!full) this.sfx.explode();
       this.renderer.killUnit(victim);
       this.renderer.float(victim, "击破", "#ffd257");
-      const before = { stats: growthStats(killer), levelIndex: killer.levelIndex, exp: killer.exp };
-      const r = this.rules.reward(killer, victim, this.money);
+      const before = { stats: growthStats(killer), levelIndex: killer.levelIndex, exp: killer.exp, trait: killer.trait };
+      // 击破连击：同一阶段里我方第 n 次击破，经验 +10% × (n − 1)，最多 +50%
+      let combo: { count: number; bonus: number } | null = null;
+      if (killer.side === "player" && settings.get().killCombo) {
+        this.combo++;
+        if (this.combo >= 2) {
+          combo = { count: this.combo, bonus: Math.min(50, (this.combo - 1) * 10) };
+          this.renderer.float(killer, `${this.combo} 连击！`, "#ff9f43");
+        }
+      }
+      const r = this.rules.reward(killer, victim, this.money, combo?.bonus ?? 0);
       if (r.exp) {
         await wait(0.35 / this.speed());
         if (r.levels > 0 && r.newLevel !== undefined) {
           applyLevel(killer, r.newLevel);
+          this.syncTrait(killer);
           // 原版升级时插播 0x0E 号小号角（系统消息里的 FD CE），放完接回原来的音乐
           this.music.jingle(LEVEL_UP_JINGLE);
         }
-        await this.showGrowth(killer, r.exp, before);
+        await this.showGrowth(killer, r.exp, before, combo);
       }
       await wait(0.5 / this.speed());
     }
@@ -851,7 +870,7 @@ export class Game implements DrawState {
   }
 
   // 战斗后的经验 / 升级卡片（ui.showGrowth）。升级卡等玩家按确定，自动测试时直接关
-  private async showGrowth(unit: Unit, gained: number, before: { stats: GrowthStats; levelIndex: number; exp: number }) {
+  private async showGrowth(unit: Unit, gained: number, before: { stats: GrowthStats; levelIndex: number; exp: number; trait: Trait | null }, combo: { count: number; bonus: number } | null = null) {
     const bar = (li: number, exp: number) => { const p = expProgress(li, exp); return p ? Math.min(1, p.into / p.span) : null; };
     const card = this.ui.showGrowth({
       unit,
@@ -862,6 +881,9 @@ export class Game implements DrawState {
       barBefore: bar(before.levelIndex, before.exp) ?? 1,
       barAfter: bar(unit.levelIndex, unit.exp),
       toNext: expToNext(unit),
+      combo,
+      traitBefore: before.trait,
+      traitAfter: unit.trait,
     }, this.speed());
     const up = unit.levelIndex > before.levelIndex;
     if (!up) { await card.done; return; }
@@ -924,6 +946,40 @@ export class Game implements DrawState {
     await scene.close();
     if (back === null) this.music.stop();
     else this.music.play(back);
+  }
+
+  // 演示升级卡片（地址加 ?demo=levelup）：Lv 9 → 11（跨过 Lv 10 特性强化），带 3 连击；然后一张没升级的小卡。按确定重播
+  async demoLevelUp() {
+    this.setMode("busy");
+    const src = this.players().find((u) => u.trait) ?? this.players()[0];
+    const u = structuredClone(src);
+    this.ui.toast("升级动画演示：按确定继续 / 重播");
+    for (;;) {
+      applyLevel(u, 8);
+      u.exp = 2300;
+      this.syncTrait(u);
+      const before = { stats: growthStats(u), levelIndex: u.levelIndex, exp: u.exp, trait: u.trait };
+      const gained = 800;
+      u.exp += gained;
+      applyLevel(u, levelForExp(u.exp, u.levelIndex));
+      this.syncTrait(u);
+      this.music.jingle(LEVEL_UP_JINGLE);
+      await this.showGrowth(u, gained, before, { count: 3, bonus: 20 });
+      await wait(0.4);
+      const small = { stats: growthStats(u), levelIndex: u.levelIndex, exp: u.exp, trait: u.trait };
+      u.exp += 120;
+      await this.showGrowth(u, 120, small, { count: 2, bonus: 10 });
+      await wait(0.6);
+    }
+  }
+
+  // 特性档位跟着等级和「特性成长」设置走
+  private syncTrait(u: Unit) {
+    u.trait = traitOf(u.pilotId, u.level, settings.get().traitGrowth);
+  }
+
+  private syncTraits() {
+    for (const u of this.units) if (u.side === "player") this.syncTrait(u);
   }
 
   // 战斗中按确定 / 取消（或点一下）：跳过演出，直接出结果
@@ -1030,6 +1086,7 @@ export class Game implements DrawState {
   // 敌方回合：先跑本关的敌方阶段脚本（援军多半在这里），再按原版顺序让每个敌人跑自己的 AI 脚本，
   // 每个敌人行动完都跑一次检查脚本。友军 NPC 在敌人之后行动
   private async enemyPhase() {
+    this.combo = 0;
     this.repairOnBases("enemy");
     this.turnStartTraits("enemy");
     await this.events.runEnemyPhase();
@@ -1170,6 +1227,8 @@ export class Game implements DrawState {
   // 设置改了按键之后刷新提示
   settingsChanged() {
     this.refreshHints();
+    this.syncTraits();
+    this.refreshInfo();
   }
 
   // 底部按键提示，显示玩家当前绑定的键

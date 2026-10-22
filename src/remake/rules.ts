@@ -2,7 +2,8 @@
 // 把重制版的单位、武器转换成规则代码用的原版格式，再把结果转换回来。规则本身不在这里重写。
 import type { Stage, Unit, Weapon } from "./data.ts";
 import { previewBattle, extraAttacker, resolveStrike, distance, inRange, FLAG_LETHAL, FLAG_VALID } from "../rules/battle.js";
-import { expForKill, levelForExp, addExp, addMoney } from "../rules/growth.js";
+import { expForKill } from "../rules/growth.js";
+import { levelForExp } from "./stats.ts";
 import { SPIRITS, USABLE, FLAG, healAmount, applyHeal, spiritDamage } from "../rules/spirits.js";
 import { OriginalRng } from "../rules/rng.js";
 import { distanceGrid, mobilityOf, BLOCKED } from "../rules/move.js";
@@ -184,14 +185,16 @@ export class Rules {
   }
 
   // 击破奖励：经验（只有我方击破才有）和资金。返回升了几级
-  reward(killer: Unit, victim: Unit, money: { value: number }) {
+  // bonus：经验加成百分比（击破连击）
+  reward(killer: Unit, victim: Unit, money: { value: number }, bonus = 0) {
     if (killer.side !== "player") return { exp: 0, levels: 0 };
-    const gain = expForKill(victim.expBase, victim.levelIndex, killer.levelIndex);
-    killer.exp = addExp(killer.exp, gain);
-    money.value = addMoney(money.value, victim.money);
+    const gain = Math.floor((expForKill(victim.expBase, victim.levelIndex, killer.levelIndex) * (100 + bonus)) / 100);
+    // 重制版不设上限（原版经验 65535、资金 9999）
+    killer.exp += gain;
+    money.value += victim.money;
     // 特性「斗志」：击破后 SP 回复
     if (killer.trait?.spOnKill) killer.sp = Math.min(killer.maxSp, killer.sp + killer.trait.spOnKill);
-    const newLevel = levelForExp(killer.exp, killer.levelIndex, 0);
+    const newLevel = levelForExp(killer.exp, killer.levelIndex);
     return { exp: gain, levels: newLevel - killer.levelIndex, newLevel };
   }
 

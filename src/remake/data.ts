@@ -2,7 +2,7 @@
 //   地图、地图环境、部署：data/maps、data/environments.json、data/deployments.json（tools/extract-maps.js）
 //   机体、驾驶员、武器、精神：data/units.json、data/weapons.json、data/spirits.json（tools/extract-units.js）
 import type { GridMap, MoveType } from "./grid.ts";
-import { computeStats, type GrowthCurve, type PilotDef, type UnitDef } from "./stats.ts";
+import { computeStats, expThreshold, type GrowthCurve, type PilotDef, type UnitDef } from "./stats.ts";
 import { traitOf, type Trait } from "./traits.ts";
 import { personName } from "./story.ts";
 import nameTables from "../../data/script/names.json";
@@ -26,7 +26,6 @@ const mapFiles = import.meta.glob("../../data/maps/stage*.json", { eager: true, 
 const terrainSheets = import.meta.glob("../../assets/original/terrain/env-*.png", { eager: true, import: "default", query: "?url" });
 const unitSheets = import.meta.glob("../../assets/original/units/bank-*.png", { eager: true, import: "default", query: "?url" });
 const eventFiles = import.meta.glob("../../data/events/stage*.json", { eager: true, import: "default" });
-import { EXP_TABLE_A } from "../rules/growth.js";
 import aiDb from "../../data/events/ai.json";
 import type { Script } from "./script.ts";
 
@@ -214,7 +213,7 @@ export function createUnit(stage: Stage, p: Placement): Unit {
     maxSp: isPlayer ? stats.maxSp : 0,
     weapons: def.weapons.map(weaponOf).filter((w): w is Weapon => !!w),
     spirits: isPlayer ? pilot.spirits.map((s) => spiritDb[s]).filter(Boolean).map((s) => ({ id: s.id, name: s.name, cost: s.cost, text: s.text })) : [],
-    trait: traitOf(p.pilotId),
+    trait: traitOf(p.pilotId, p.level + 1),
     acted: false,
   };
 }
@@ -264,15 +263,13 @@ export function transformUnit(stage: Stage, unit: Unit, newUnitId: number) {
 
 // 升到下一级还差多少经验（门槛表 A，现有驾驶员都用它）；满级返回 null
 export function expToNext(unit: Unit): number | null {
-  const need = EXP_TABLE_A[unit.levelIndex];
-  return need === undefined ? null : Math.max(0, need - unit.exp);
+  return Math.max(0, expThreshold(unit.levelIndex) - unit.exp);
 }
 
 // 当前等级里的经验进度：已得 / 这一级共需（满级时 null）
 export function expProgress(levelIndex: number, exp: number): { into: number; span: number } | null {
-  const need = EXP_TABLE_A[levelIndex];
-  if (need === undefined) return null;
-  const from = EXP_TABLE_A[levelIndex - 1] ?? 0;
+  const need = expThreshold(levelIndex);
+  const from = levelIndex > 0 ? expThreshold(levelIndex - 1) : 0;
   return { into: Math.max(0, exp - from), span: Math.max(1, need - from) };
 }
 

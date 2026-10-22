@@ -265,7 +265,7 @@ export class StageEvents implements ScriptHost {
     }
     // 地图上的单位换乘要重建（数值、武器、图标都变），等需要时再做
   }
-  money(amount: number) { this.api.money.value = Math.min(9999, this.api.money.value + amount); }
+  money(amount: number) { this.api.money.value += amount; }
 
   // 原版换曲代码：$80+n / $C0+n 放第 n 首；FA 停止，FB 恢复当前回合曲，FC / FD 我方 / 敌方回合曲
   bgm(kind: "player" | "enemy" | "now", track: number) {
