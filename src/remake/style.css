@@ -351,7 +351,8 @@ body.story #info, body.story #forecast { display: none !important; }
 #growth .tu-effect { position: relative; font-size: 15px; color: var(--fg); }
 #growth .tu-effect .num { font-variant-numeric: tabular-nums; font-weight: 700; }
 #growth .tu-card.effect .tu-effect .num.up { color: #6dff8a; display: inline-block; animation: gr-bump .12s ease-out infinite; }
-#growth .tu-effect .num.up.done { animation: gr-num .35s ease-out; text-shadow: 0 0 10px rgba(109, 255, 138, .6); }
+/* 跳完：停下，发一下光（选择器要比上面跳动中的那条更具体） */
+#growth .tu-card.effect .tu-effect .num.up.done { animation: gr-num .35s ease-out 1 both; text-shadow: 0 0 10px rgba(109, 255, 138, .6); }
 #status .st-next { margin-top: 2px; color: var(--muted); opacity: .8; }
 /* 慢镜头：镜头移到被击破的机体（--fx / --fy 是它在画面里的位置），放大，四周压暗 */
 #battle-scene canvas { transition: transform .45s cubic-bezier(.2, .8, .3, 1), filter .45s ease-out; transform-origin: 50% 50%; }
