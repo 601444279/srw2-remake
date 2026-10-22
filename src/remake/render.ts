@@ -63,6 +63,9 @@ export class Renderer {
   private time = 0;
   private floats: FloatText[] = [];
   private fx = new Map<Unit, UnitFx>();
+  private hitstop = 0;
+  // 震屏：amp 单位是原版像素，随时间按平方衰减
+  private quake = { amp: 0, t: 0, dur: 0 };
 
   constructor(private canvas: HTMLCanvasElement) {
     this.ctx = canvas.getContext("2d")!;
@@ -113,6 +116,15 @@ export class Renderer {
     const f = this.unitFx(u);
     f.flash = 0.18;
     f.shake = 0.25;
+  }
+
+  // 重击：顿帧（整个画面停住，被打的单位保持闪白）+ 之后震屏。power 0~1，返回顿帧时长（秒）
+  impact(u: Unit, power: number, speed = 1): number {
+    const p = Math.max(0, Math.min(1, power));
+    this.hitUnit(u);
+    this.hitstop = (0.05 + p * 0.08) / Math.sqrt(speed);
+    this.quake = { amp: 1 + p * 3, t: 0, dur: 0.15 + p * 0.25 };
+    return this.hitstop;
   }
 
   killUnit(u: Unit) {
@@ -177,8 +189,11 @@ export class Renderer {
     this.camera.y = this.cameraTarget.y = clamp(p.y * s - this.cssH / 2, this.cssH, map.height * s);
   }
 
-  draw(state: DrawState, dt: number) {
+  draw(state: DrawState, realDt: number) {
     if (!this.stage || !this.terrain) return;
+    // 顿帧期间所有动画都停住
+    let dt = realDt;
+    if (this.hitstop > 0) { this.hitstop -= realDt; dt = 0; }
     this.time += dt;
     this.follow(state.cursor, false);
     const ease = (speed: number) => 1 - Math.exp(-speed * dt);
@@ -195,8 +210,14 @@ export class Renderer {
     ctx.fillStyle = "#0b0b10";
     ctx.fillRect(0, 0, this.cssW, this.cssH);
     // 镜头位置按设备像素取整，避免图块之间出现缝隙和抖动
-    const camX = Math.round(this.camera.x * this.dpr) / this.dpr;
-    const camY = Math.round(this.camera.y * this.dpr) / this.dpr;
+    let qx = 0, qy = 0;
+    if (this.quake.t < this.quake.dur) {
+      this.quake.t += dt;
+      const k = Math.max(0, 1 - this.quake.t / this.quake.dur) ** 2 * this.quake.amp * this.zoom;
+      if (dt > 0) { qx = (Math.random() * 2 - 1) * k; qy = (Math.random() * 2 - 1) * k; }
+    }
+    const camX = Math.round((this.camera.x + qx) * this.dpr) / this.dpr;
+    const camY = Math.round((this.camera.y + qy) * this.dpr) / this.dpr;
     ctx.translate(-camX, -camY);
     ctx.drawImage(this.terrain, 0, 0, map.width * s, map.height * s);
 

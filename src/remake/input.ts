@@ -1,7 +1,8 @@
-// 输入：键盘、鼠标、手柄统一转换成游戏动作。
-// 方向键支持 8 方向（同时按两个方向就斜走），长按会逐渐加速，按住 Shift / 手柄 X 键高速移动。
+// 输入：键盘、鼠标、手柄统一转换成游戏动作。按键绑定和鼠标开关来自设置（settings.ts），改了立即生效。
+// 方向键支持 8 方向（同时按两个方向就斜走），长按会逐渐加速，按住「快速」键 / 手柄 X 键高速移动。
+import { settings, type BindAction } from "./settings.ts";
 
-export type Action = "confirm" | "cancel" | "next" | "prev" | "danger" | "menu" | "zoomIn" | "zoomOut";
+export type Action = "confirm" | "cancel" | "next" | "prev" | "danger" | "menu" | "zoomIn" | "zoomOut" | "settings";
 
 export interface InputHandlers {
   onMove(dx: number, dy: number): void;
@@ -11,19 +12,11 @@ export interface InputHandlers {
   onWheel(delta: number): void;
 }
 
-const DIRS: Record<string, [number, number]> = {
-  ArrowUp: [0, -1], KeyW: [0, -1],
-  ArrowDown: [0, 1], KeyS: [0, 1],
-  ArrowLeft: [-1, 0], KeyA: [-1, 0],
-  ArrowRight: [1, 0], KeyD: [1, 0],
+const DIRS: Partial<Record<BindAction, [number, number]>> = {
+  up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0],
 };
-const ACTIONS: Record<string, Action> = {
-  KeyX: "confirm", Enter: "confirm", Space: "confirm",
-  KeyZ: "cancel", Backspace: "cancel", Escape: "cancel",
-  KeyE: "next", Tab: "next", KeyQ: "prev",
-  KeyR: "danger", KeyM: "menu",
-  Equal: "zoomIn", NumpadAdd: "zoomIn", Minus: "zoomOut", NumpadSubtract: "zoomOut",
-};
+// 长按会重复触发的功能
+const REPEATABLE = new Set<Action>(["zoomIn", "zoomOut"]);
 // 标准手柄布局
 const PAD_BUTTONS: Record<number, Action> = { 0: "confirm", 1: "cancel", 4: "prev", 5: "next", 3: "danger", 9: "menu" };
 const PAD_FAST = 2;
@@ -43,38 +36,48 @@ export class Input {
   private lastDir = "";
   private padPrev: boolean[] = [];
   private padDir: [number, number] = [0, 0];
+  private handlers: InputHandlers;
+  // 返回 true 时游戏不接收输入（例如设置窗口打开时）
+  private paused: () => boolean;
 
-  constructor(private target: HTMLElement, private handlers: InputHandlers) {
+  constructor(target: HTMLElement, handlers: InputHandlers, paused: () => boolean) {
+    this.handlers = handlers;
+    this.paused = paused;
     addEventListener("keydown", (e) => this.keyDown(e));
     addEventListener("keyup", (e) => this.keyUp(e));
-    addEventListener("blur", () => this.held.clear());
-    target.addEventListener("pointermove", (e) => handlers.onPointerTile(e.offsetX, e.offsetY));
-    target.addEventListener("pointerdown", (e) => handlers.onPointerClick(e.offsetX, e.offsetY, e.button));
+    addEventListener("blur", () => this.releaseAll());
+    const mouse = () => settings.get().mouse && !this.paused();
+    target.addEventListener("pointermove", (e) => { if (mouse()) handlers.onPointerTile(e.offsetX, e.offsetY); });
+    target.addEventListener("pointerdown", (e) => { if (mouse()) handlers.onPointerClick(e.offsetX, e.offsetY, e.button); });
     target.addEventListener("contextmenu", (e) => e.preventDefault());
-    target.addEventListener("wheel", (e) => { e.preventDefault(); handlers.onWheel(Math.sign(e.deltaY)); }, { passive: false });
+    target.addEventListener("wheel", (e) => { e.preventDefault(); if (mouse()) handlers.onWheel(Math.sign(e.deltaY)); }, { passive: false });
+  }
+
+  releaseAll() {
+    this.held.clear();
+    this.fast = false;
   }
 
   private keyDown(e: KeyboardEvent) {
+    if (this.paused()) return;
     if (e.target instanceof HTMLInputElement || e.target instanceof HTMLSelectElement) return;
-    if (e.key === "Shift") this.fast = true;
-    const dir = DIRS[e.code];
+    const action = settings.actionFor(e.code);
+    if (!action) return;
+    e.preventDefault();
+    if (action === "fast") { this.fast = true; return; }
+    const dir = DIRS[action];
     if (dir) {
-      e.preventDefault();
       if (e.repeat) return;
       this.held.set(e.code, dir);
       this.step(performance.now(), true);
       return;
     }
-    let action = ACTIONS[e.code];
-    if (e.code === "Tab" && e.shiftKey) action = "prev";
-    if (action) {
-      e.preventDefault();
-      if (!e.repeat || action === "zoomIn" || action === "zoomOut") this.handlers.onAction(action);
-    }
+    const a = action as Action;
+    if (!e.repeat || REPEATABLE.has(a)) this.handlers.onAction(a);
   }
 
   private keyUp(e: KeyboardEvent) {
-    if (e.key === "Shift") this.fast = false;
+    if (settings.actionFor(e.code) === "fast") this.fast = false;
     this.held.delete(e.code);
   }
 
@@ -113,6 +116,7 @@ export class Input {
   }
 
   update(now: number) {
+    if (this.paused()) return;
     this.pollGamepad();
     this.step(now);
   }

@@ -1,0 +1,145 @@
+// 设置窗口：鼠标开关、按键绑定。可以用鼠标点，也可以全程用键盘：
+//   ↑↓←→ 移动焦点，Enter / 空格 开始改键或切换开关，改键时按下新键完成，Esc 取消，Delete 清空这个位置。
+import { BIND_ACTIONS, DEFAULT_KEYS, bindKey, keyName, settings, type BindAction } from "./settings.ts";
+
+export class SettingsPanel {
+  private dialog = document.getElementById("settings") as HTMLDialogElement;
+  private listening: { action: BindAction; slot: 0 | 1 } | null = null;
+  private onClose: () => void = () => {};
+
+  constructor() {
+    this.dialog.addEventListener("keydown", (e) => this.keyDown(e));
+    this.dialog.addEventListener("cancel", (e) => {
+      // 改键时 Esc 只取消改键，不关窗口
+      if (this.listening) { e.preventDefault(); this.stopListening(); }
+    });
+    this.dialog.addEventListener("close", () => this.onClose());
+  }
+
+  get isOpen() {
+    return this.dialog.open;
+  }
+
+  open(onClose: () => void) {
+    this.onClose = onClose;
+    this.render();
+    this.dialog.showModal();
+    (this.dialog.querySelector("[data-nav]") as HTMLElement | null)?.focus();
+  }
+
+  private render() {
+    const s = settings.get();
+    let group = "";
+    const rows = BIND_ACTIONS.map(({ id, label, group: g }) => {
+      const head = g !== group ? `<div class="set-group">${(group = g)}</div>` : "";
+      const slot = (i: 0 | 1) => {
+        const on = this.listening?.action === id && this.listening.slot === i;
+        return `<button class="key${on ? " listening" : ""}" data-nav data-action="${id}" data-slot="${i}">${on ? "按下新按键…" : keyName(s.keys[id][i])}</button>`;
+      };
+      return `${head}<div class="set-row"><span>${label}</span>${slot(0)}${slot(1)}</div>`;
+    }).join("");
+
+    this.dialog.innerHTML = `
+      <header><b>设置</b><button class="close" data-nav aria-label="关闭">✕</button></header>
+      <section>
+        <div class="set-group">鼠标</div>
+        <label class="set-row toggle"><span>鼠标操作<small>关闭后地图上的悬停、点击、右键和滚轮都不起作用</small></span>
+          <button class="switch${s.mouse ? " on" : ""}" data-nav data-toggle="mouse" role="switch" aria-checked="${s.mouse}"><i></i></button>
+        </label>
+        <div class="set-cols"><span></span><small>主键</small><small>副键</small></div>
+        ${rows}
+        <p class="set-hint">点按键框（或用方向键选中后按 Enter），再按下新的键。和其他功能冲突时会互换。Delete 清空，Esc 取消。</p>
+        <button class="reset" data-nav>恢复默认按键</button>
+      </section>`;
+
+    this.dialog.querySelector(".close")!.addEventListener("click", () => this.dialog.close());
+    this.dialog.querySelector(".reset")!.addEventListener("click", () => {
+      settings.update({ keys: structuredClone(DEFAULT_KEYS) });
+      this.render();
+      this.focus(".reset");
+    });
+    this.dialog.querySelector("[data-toggle=mouse]")!.addEventListener("click", (e) => {
+      e.preventDefault();
+      settings.update({ mouse: !settings.get().mouse });
+      this.render();
+      this.focus("[data-toggle=mouse]");
+    });
+    this.dialog.querySelectorAll<HTMLButtonElement>("button.key").forEach((b) =>
+      b.addEventListener("click", () => {
+        this.listening = { action: b.dataset.action as BindAction, slot: Number(b.dataset.slot) as 0 | 1 };
+        this.render();
+        this.focusKey(this.listening.action, this.listening.slot);
+      }),
+    );
+  }
+
+  private keyDown(e: KeyboardEvent) {
+    if (this.listening) {
+      e.preventDefault();
+      e.stopPropagation();
+      if (e.code === "Escape") { this.stopListening(); return; }
+      const { action, slot } = this.listening;
+      const code = e.code === "Delete" ? null : e.code;
+      this.listening = null;
+      const swapped = bindKey(action, slot, code);
+      this.render();
+      this.focusKey(action, slot);
+      if (swapped) this.flash(swapped);
+      return;
+    }
+    // 方向键在可选项之间移动焦点：上下按行，左右在同一行的两个按键之间
+    const nav = [...this.dialog.querySelectorAll<HTMLElement>("[data-nav]")];
+    const i = nav.indexOf(document.activeElement as HTMLElement);
+    const move = (to: number) => { e.preventDefault(); nav[Math.max(0, Math.min(nav.length - 1, to))]?.focus(); };
+    const cur = nav[i];
+    // 玩家自己绑定的确定、取消、方向键在窗口里也能用
+    const bound = settings.actionFor(e.code);
+    if (bound === "confirm" && e.code !== "Enter" && e.code !== "Space") { e.preventDefault(); cur?.click(); return; }
+    if (bound === "cancel" && e.code !== "Escape") { e.preventDefault(); this.dialog.close(); return; }
+    const arrows: Partial<Record<BindAction, string>> = { up: "ArrowUp", down: "ArrowDown", left: "ArrowLeft", right: "ArrowRight" };
+    const code = (bound && arrows[bound]) || e.code;
+    switch (code) {
+      case "ArrowDown":
+        return move(this.vertical(nav, i, 1));
+      case "ArrowUp":
+        return move(this.vertical(nav, i, -1));
+      case "ArrowRight":
+        return move(cur?.dataset.slot === "0" ? i + 1 : i);
+      case "ArrowLeft":
+        return move(cur?.dataset.slot === "1" ? i - 1 : i);
+    }
+  }
+
+  // 上下移动：按键格停在同一列（主键 / 副键），遇到开关、按钮这类单独一行的就停在它上面
+  private vertical(nav: HTMLElement[], i: number, dir: 1 | -1) {
+    const slot = nav[i]?.dataset.slot;
+    for (let j = i + dir; j >= 0 && j < nav.length; j += dir) {
+      const s = nav[j].dataset.slot;
+      if (s === undefined || slot === undefined || s === slot) return j;
+    }
+    return i;
+  }
+
+  private stopListening() {
+    const l = this.listening;
+    this.listening = null;
+    this.render();
+    if (l) this.focusKey(l.action, l.slot);
+  }
+
+  private focus(sel: string) {
+    (this.dialog.querySelector(sel) as HTMLElement | null)?.focus();
+  }
+
+  private focusKey(action: BindAction, slot: number) {
+    this.focus(`button.key[data-action="${action}"][data-slot="${slot}"]`);
+  }
+
+  // 被互换了按键的功能闪一下，提示玩家
+  private flash(action: BindAction) {
+    this.dialog.querySelectorAll(`button.key[data-action="${action}"]`).forEach((b) => {
+      b.classList.add("swapped");
+      setTimeout(() => b.classList.remove("swapped"), 900);
+    });
+  }
+}

@@ -6,6 +6,8 @@ import type { Action } from "./input.ts";
 import type { DrawState, Overlay, Renderer } from "./render.ts";
 import type { UI, MenuItem } from "./ui.ts";
 import { Rules, SPIRIT_FLAG } from "./rules.ts";
+import type { Sfx } from "./sfx.ts";
+import { keyLabel, type BindAction } from "./settings.ts";
 
 type Mode = "browse" | "selected" | "moving" | "menu" | "target" | "allyTarget" | "busy" | "over";
 
@@ -47,8 +49,9 @@ export class Game implements DrawState {
   private turn = 1;
   private money = { value: 0 };
   private rules: Rules;
+  onOpenSettings: () => void = () => {};
 
-  constructor(private stage: Stage, private renderer: Renderer, private ui: UI, private fast: () => boolean) {
+  constructor(private stage: Stage, private renderer: Renderer, private ui: UI, private sfx: Sfx, private fast: () => boolean) {
     this.units = stage.units;
     this.rules = new Rules(stage);
   }
@@ -149,6 +152,7 @@ export class Game implements DrawState {
 
   action(a: Action) {
     if (a === "zoomIn" || a === "zoomOut") { this.renderer.setZoom(a === "zoomIn" ? 1 : -1); return; }
+    if (a === "settings") { if (this.mode === "browse" || this.mode === "selected") this.onOpenSettings(); return; }
     switch (this.mode) {
       case "menu":
         if (a === "confirm") this.ui.menuConfirm();
@@ -326,7 +330,9 @@ export class Game implements DrawState {
     for (const a of r.affected) {
       this.renderer.float(a.unit, a.kind === "heal" ? `+${a.amount}` : `-${a.amount}`, a.kind === "heal" ? "#6dff8a" : "#ff6b6b");
       if (a.kind === "damage") {
-        this.renderer.hitUnit(a.unit);
+        const power = a.unit.hp === 0 ? 1 : Math.min(1, (a.amount / a.unit.maxHp) * 2);
+        this.sfx.hit(power);
+        this.renderer.impact(a.unit, power);
         if (a.unit.hp === 0) this.renderer.killUnit(a.unit);
       }
     }
@@ -360,11 +366,16 @@ export class Game implements DrawState {
     this.ui.battleStart(attacker, this.renderer.iconUrl(attacker), defender, this.renderer.iconUrl(defender));
     await wait(0.25 / this.speed());
     for (const e of events) {
-      e.to.hp = e.hpAfter;
       if (e.hit) {
-        this.renderer.hitUnit(e.to);
+        // 伤害占最大 HP 的比例决定打击力度：一半血以上或击破就是满力度
+        const power = e.hpAfter === 0 ? 1 : Math.min(1, (e.damage / e.to.maxHp) * 2);
+        this.sfx.hit(power);
+        // 先顿帧，再扣血、飘数字、震屏
+        await wait(this.renderer.impact(e.to, power, this.speed()));
+        e.to.hp = e.hpAfter;
         this.renderer.float(e.to, `-${e.damage}`, "#ff6b6b");
       } else {
+        this.sfx.miss();
         this.renderer.float(e.to, "MISS", "#c8c8d0");
       }
       await this.ui.battleStrike(e, 0.75 / this.speed());
@@ -503,6 +514,7 @@ export class Game implements DrawState {
     this.openMenu([
       { label: "结束回合", run: () => this.endTurn() },
       { label: this.dangerOn ? "隐藏敌方范围" : "显示敌方范围", run: () => { this.toggleDanger(); back(); } },
+      { label: "设置", detail: "按键 · 鼠标", run: () => { back(); this.onOpenSettings(); } },
       { label: "返回", run: back },
     ], this.cursor, back);
   }
@@ -543,15 +555,23 @@ export class Game implements DrawState {
     });
   }
 
+  // 设置改了按键之后刷新提示
+  settingsChanged() {
+    this.refreshHints();
+  }
+
+  // 底部按键提示，显示玩家当前绑定的键
   private refreshHints() {
+    const k = (a: BindAction) => keyLabel(a);
+    const move = `${k("up")}${k("down")}${k("left")}${k("right")}`;
     const hints: Record<Mode, [string, string][]> = {
-      browse: [["X", "选择"], ["E / Q", "切换单位"], ["R", "敌方范围"], ["M", "菜单"], ["+ / −", "缩放"], ["Shift", "快速移动"]],
-      selected: [["X", "移动 / 点敌人直接攻击"], ["Z", "取消"], ["R", "敌方范围"]],
-      moving: [["按住 Shift", "加速"]],
-      menu: [["↑↓", "选择"], ["X", "确定"], ["Z", "返回"]],
-      target: [["←→", "切换目标"], ["X", "攻击"], ["Z", "返回"]],
-      allyTarget: [["←→", "切换"], ["X", "确定"], ["Z", "返回"]],
-      busy: [["按住 Shift", "加速"]],
+      browse: [[k("confirm"), "选择"], [`${k("next")} / ${k("prev")}`, "切换单位"], [k("danger"), "敌方范围"], [k("menu"), "菜单"], [`${k("zoomIn")} / ${k("zoomOut")}`, "缩放"], [k("fast"), "快速移动"], [k("settings"), "设置"]],
+      selected: [[k("confirm"), "移动 / 点敌人直接攻击"], [k("cancel"), "取消"], [k("danger"), "敌方范围"]],
+      moving: [[`按住 ${k("fast")}`, "加速"]],
+      menu: [[move, "选择"], [k("confirm"), "确定"], [k("cancel"), "返回"]],
+      target: [[move, "切换目标"], [k("confirm"), "攻击"], [k("cancel"), "返回"]],
+      allyTarget: [[move, "切换"], [k("confirm"), "确定"], [k("cancel"), "返回"]],
+      busy: [[`按住 ${k("fast")}`, "加速"]],
       over: [],
     };
     this.ui.setHints(hints[this.mode]);
