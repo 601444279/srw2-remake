@@ -16,6 +16,9 @@ import roster from "../../data/roster.json";
 const mapFiles = import.meta.glob("../../data/maps/stage*.json", { eager: true, import: "default" });
 const terrainSheets = import.meta.glob("../../assets/original/terrain/env-*.png", { eager: true, import: "default", query: "?url" });
 const unitSheets = import.meta.glob("../../assets/original/units/bank-*.png", { eager: true, import: "default", query: "?url" });
+const eventFiles = import.meta.glob("../../data/events/stage*.json", { eager: true, import: "default" });
+import aiDb from "../../data/events/ai.json";
+import type { Script } from "./script.ts";
 
 export interface Weapon {
   id: number;
@@ -51,9 +54,14 @@ export interface Unit {
   money: number; // 被击破时给对方的资金
   // 精神状态标志（src/rules/spirits.js FLAG）
   spirit: number;
+  // 敌人的 AI 脚本号 / 友军 NPC 的行动脚本号（data/events）
   aiScript: number;
-  // 待机型敌人在第 waitUntilTurn 回合前不移动
-  waitUntilTurn: number;
+  // 脚本用的状态位（原版 $7757 低 6 位）：bit 5 = 不移动，bit 3、4 由各关脚本自定义
+  bits: number;
+  // 友军 NPC：我方阵营，但由脚本控制，玩家不能操作
+  npc: boolean;
+  // 我方单位对应的名册号
+  roster: number | null;
   name: string;
   pilotName: string;
   level: number; // 显示用，从 1 开始
@@ -77,8 +85,25 @@ export interface Unit {
   acted: boolean;
 }
 
+export interface RosterMember {
+  member: number;
+  pilot: number;
+  unit: number;
+  level: number;
+}
+
+export interface StageEvents {
+  victoryText: string;
+  scripts: { start: Script; enemyPhase: Script; check: Script };
+  npcScripts: Record<string, Script>;
+}
+
 export interface Stage {
   number: number;
+  events: StageEvents;
+  unitChrBanks: number[];
+  // 当前队伍名册（脚本的入队、离队会改它）
+  roster: RosterMember[];
   map: GridMap;
   environment: number;
   terrainSheetUrl: string;
@@ -115,8 +140,10 @@ function weaponOf(id: number): Weapon | null {
   };
 }
 
-interface Placement {
+export interface Placement {
   side: Unit["side"];
+  npc?: boolean;
+  roster?: number;
   x: number;
   y: number;
   unitId: number;
@@ -125,23 +152,26 @@ interface Placement {
   aiScript: number;
 }
 
-// 第一关用到的 AI 脚本（docs/notes-rules.md 5.2）：$05、$0C 是待机型，分别在 $750C = 7、11 那回合起开始行动
-const WAIT_SCRIPTS: Record<number, number> = { 0x05: 8, 0x0c: 12 };
+// 单位编号：我方 0–10、友军 NPC 11–13、敌方 14–31（原版单位槽），用于规则里区分阵营
+function nextIndex(stage: Stage, p: Placement) {
+  const [from, to] = p.side === "enemy" ? [14, 31] : p.npc ? [11, 13] : [0, 10];
+  for (let i = from; i <= to; i++) if (!stage.units.some((u) => u.index === i && u.hp > 0)) return i;
+  return to;
+}
 
-let playerIndex = 0;
-let enemyIndex = 14;
-
-function buildUnit(id: number, p: Placement, unitChrBanks: number[]): Unit {
+// 生成一个单位（开局部署和脚本中途出场都用它）
+export function createUnit(stage: Stage, p: Placement): Unit {
   const def = units.get(p.unitId);
   const pilot = pilots.get(p.pilotId);
-  if (!def || !pilot) throw new Error(`第 ${id} 个单位缺数据：机体 ${p.unitId}，驾驶员 ${p.pilotId}`);
+  if (!def || !pilot) throw new Error(`单位缺数据：机体 ${p.unitId}，驾驶员 ${p.pilotId}`);
   const stats = computeStats(def, pilot, p.level, curves);
   // 地图图标号：高 2 位决定在哪个 1KB CHR bank（每关不同），低 6 位 ÷ 4 是 bank 内序号
-  const bank = unitChrBanks[def.sprite >> 6];
+  const bank = stage.unitChrBanks[def.sprite >> 6];
   const moveType = MOVE_TYPES.includes(def.type as MoveType) ? (def.type as MoveType) : "land";
+  const isPlayer = p.side === "player" && !p.npc;
   return {
-    id,
-    index: p.side === "player" ? playerIndex++ : enemyIndex++,
+    id: Math.max(-1, ...stage.units.map((u) => u.id)) + 1,
+    index: nextIndex(stage, p),
     side: p.side,
     unitId: p.unitId,
     pilotId: p.pilotId,
@@ -151,14 +181,16 @@ function buildUnit(id: number, p: Placement, unitChrBanks: number[]): Unit {
     money: (def as unknown as { money: number }).money,
     spirit: 0,
     aiScript: p.aiScript,
-    waitUntilTurn: WAIT_SCRIPTS[p.aiScript] ?? 0,
+    bits: 0,
+    npc: !!p.npc,
+    roster: p.roster ?? null,
     name: def.name ?? `机体 ${p.unitId}`,
     // 驾驶员数据表里有些名字没解出来，用剧情的人名表（下标同样是人物编号）补上
     pilotName: pilot.name || personName(p.pilotId) || (p.side === "enemy" ? "" : `驾驶员 ${p.pilotId}`),
     level: p.level + 1,
     x: p.x,
     y: p.y,
-    icon: { sheetUrl: pick<string>(unitSheets, `bank-${bank}-${p.side}.png`), index: (def.sprite & 0x3f) >> 2 },
+    icon: { sheetUrl: pick<string>(unitSheets, `bank-${bank}-${p.side === "enemy" ? "enemy" : "player"}.png`), index: (def.sprite & 0x3f) >> 2 },
     moveType,
     move: stats.move,
     strength: stats.strength,
@@ -167,40 +199,49 @@ function buildUnit(id: number, p: Placement, unitChrBanks: number[]): Unit {
     hp: stats.maxHp,
     maxHp: stats.maxHp,
     // 原版只有我方单位有精神点数（$7822，0–10 号）
-    sp: p.side === "player" ? stats.maxSp : 0,
-    maxSp: p.side === "player" ? stats.maxSp : 0,
+    sp: isPlayer ? stats.maxSp : 0,
+    maxSp: isPlayer ? stats.maxSp : 0,
     weapons: def.weapons.map(weaponOf).filter((w): w is Weapon => !!w),
-    spirits: pilot.spirits.map((s) => spiritDb[s]).filter(Boolean).map((s) => ({ id: s.id, name: s.name, cost: s.cost, text: s.text })),
+    spirits: isPlayer ? pilot.spirits.map((s) => spiritDb[s]).filter(Boolean).map((s) => ({ id: s.id, name: s.name, cost: s.cost, text: s.text })) : [],
     trait: traitOf(p.pilotId),
     acted: false,
   };
 }
 
-export function loadStage(number: number): Stage {
+export const AI_SCRIPTS = (aiDb as unknown as { scripts: Record<string, Script> }).scripts;
+
+export function loadStage(number: number, rosterMembers: RosterMember[] = roster.members): Stage {
   const raw = pick<{ width: number; height: number; environment: number; unitChrBanks: number[]; terrain: number[][] }>(mapFiles, `stage${pad(number)}.json`);
   const env = environments[raw.environment];
-  // 部署块和关卡的对应关系待确认，目前按序号对应（第一关已核对）
+  const events = pick<StageEvents>(eventFiles, `stage${pad(number)}.json`);
+  // 部署块第 n 块 = 第 n 关（docs/notes-events.md 第 1 节）
   const deploy = deployments[number - 1];
 
-  const placements: Placement[] = [];
-  for (const p of deploy.players) {
-    const member = roster.members.find((m) => m.member === p.order);
-    if (member) placements.push({ side: "player", x: p.x, y: p.y, unitId: member.unit, pilotId: member.pilot, level: member.level, aiScript: 0 });
-  }
-  // 敌人记录：参数 a = 驾驶员，b = 等级（从 0 开始），c = AI 脚本
-  for (const e of deploy.enemies) placements.push({ side: "enemy", x: e.x, y: e.y, unitId: e.unit, pilotId: e.a, level: e.b, aiScript: e.c });
-  playerIndex = 0;
-  enemyIndex = 14;
-
-  return {
+  const stage: Stage = {
     number,
+    events,
+    unitChrBanks: raw.unitChrBanks,
+    roster: rosterMembers.map((m) => ({ ...m })),
     environment: raw.environment,
     map: { width: raw.width, height: raw.height, terrain: raw.terrain, moveCost: env.moveCostRaw },
     terrainSheetUrl: pick<string>(terrainSheets, `env-${raw.environment}.png`),
     terrainNames: terrainNames.environments[raw.environment],
     terrainEffect: env.terrainEffectRaw,
-    units: placements.map((p, i) => buildUnit(i, p, raw.unitChrBanks)),
+    units: [],
   };
+
+  const placements: Placement[] = [];
+  // 我方：部署第 4 段的第三个字节是名册号，名册里有人才出击
+  for (const p of deploy.players) {
+    const member = stage.roster.find((m) => m.member === p.order);
+    if (member) placements.push({ side: "player", roster: member.member, x: p.x, y: p.y, unitId: member.unit, pilotId: member.pilot, level: member.level, aiScript: 0 });
+  }
+  // 敌人记录：参数 a = 驾驶员，b = 等级（从 0 开始），c = AI 脚本
+  for (const e of deploy.enemies) placements.push({ side: "enemy", x: e.x, y: e.y, unitId: e.unit, pilotId: e.a, level: e.b, aiScript: e.c });
+  // 部署第 3 段：开局就在场的友军 NPC，最后一字节是行动脚本号
+  for (const n of deploy.extra2) placements.push({ side: "player", npc: true, x: n.x, y: n.y, unitId: n.unit, pilotId: n.a, level: n.b, aiScript: n.c });
+  for (const p of placements) stage.units.push(createUnit(stage, p));
+  return stage;
 }
 
 // 升级后重算能力：只提高上限，当前 HP / SP 不变（原版实测，docs/notes-rules.md 2.2）

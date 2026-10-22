@@ -5,6 +5,7 @@ import { Input } from "./input.ts";
 import { UI } from "./ui.ts";
 import { Game } from "./game.ts";
 import { Sfx } from "./sfx.ts";
+import { Music } from "./music.ts";
 import { SettingsPanel } from "./settings-panel.ts";
 import { settings } from "./settings.ts";
 
@@ -16,7 +17,7 @@ async function boot() {
   const ui = new UI();
   const panel = new SettingsPanel();
   let input: Input | null = null;
-  const game = new Game(stage, renderer, ui, new Sfx(), () => input?.isFast ?? false);
+  const game = new Game(stage, renderer, ui, new Sfx(), new Music(), () => input?.isFast ?? false);
 
   // 关闭鼠标操作时隐藏指针、菜单也不响应鼠标
   const applyMouse = () => document.body.classList.toggle("no-mouse", !settings.get().mouse);

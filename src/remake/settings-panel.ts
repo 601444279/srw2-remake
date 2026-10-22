@@ -1,6 +1,6 @@
 // 设置窗口：鼠标开关、按键绑定。可以用鼠标点，也可以全程用键盘：
 //   ↑↓←→ 移动焦点，Enter / 空格 开始改键或切换开关，改键时按下新键完成，Esc 取消，Delete 清空这个位置。
-import { BIND_ACTIONS, DEFAULT_KEYS, TEXT_SPEEDS, bindKey, keyName, settings, type BindAction } from "./settings.ts";
+import { BIND_ACTIONS, DEFAULT_KEYS, MUSIC_STYLES, TEXT_SPEEDS, VOLUMES, bindKey, keyName, settings, volumeLabel, type BindAction } from "./settings.ts";
 
 export class SettingsPanel {
   private dialog = document.getElementById("settings") as HTMLDialogElement;
@@ -50,6 +50,16 @@ export class SettingsPanel {
         <div class="set-row toggle"><span>文字速度<small>对话逐字显示的速度</small></span>
           <button class="cycle" data-nav data-cycle="textSpeed">${TEXT_SPEEDS.find((t) => t.id === s.textSpeed)?.label}</button>
         </div>
+        <div class="set-group">声音</div>
+        <div class="set-row toggle"><span>音乐版本<small>增强版：原版乐谱重新合成的立体声；原版：FC 原声录音</small></span>
+          <button class="cycle" data-nav data-cycle="musicStyle">${MUSIC_STYLES.find((m) => m.id === s.musicStyle)?.label}</button>
+        </div>
+        <div class="set-row toggle"><span>音乐音量</span>
+          <button class="cycle" data-nav data-cycle="musicVolume">${volumeLabel(s.musicVolume)}</button>
+        </div>
+        <div class="set-row toggle"><span>音效音量</span>
+          <button class="cycle" data-nav data-cycle="sfxVolume">${volumeLabel(s.sfxVolume)}</button>
+        </div>
         <div class="set-cols"><span></span><small>主键</small><small>副键</small></div>
         ${rows}
         <p class="set-hint">点按键框（或用方向键选中后按 Enter），再按下新的键。和其他功能冲突时会互换。Delete 清空，Esc 取消。</p>
@@ -74,6 +84,20 @@ export class SettingsPanel {
       this.render();
       this.focus("[data-cycle=textSpeed]");
     });
+    this.dialog.querySelector("[data-cycle=musicStyle]")!.addEventListener("click", () => {
+      const i = MUSIC_STYLES.findIndex((m) => m.id === settings.get().musicStyle);
+      settings.update({ musicStyle: MUSIC_STYLES[(i + 1) % MUSIC_STYLES.length].id });
+      this.render();
+      this.focus("[data-cycle=musicStyle]");
+    });
+    for (const key of ["musicVolume", "sfxVolume"] as const) {
+      this.dialog.querySelector(`[data-cycle=${key}]`)!.addEventListener("click", () => {
+        const i = VOLUMES.indexOf(settings.get()[key]);
+        settings.update({ [key]: VOLUMES[(i + 1) % VOLUMES.length] });
+        this.render();
+        this.focus(`[data-cycle=${key}]`);
+      });
+    }
     this.dialog.querySelectorAll<HTMLButtonElement>("button.key").forEach((b) =>
       b.addEventListener("click", () => {
         this.listening = { action: b.dataset.action as BindAction, slot: Number(b.dataset.slot) as 0 | 1 };

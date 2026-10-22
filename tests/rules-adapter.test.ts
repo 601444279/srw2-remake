@@ -8,7 +8,7 @@ const weapon = (name: string, hit: number, power: [number | null, number | null,
   id: 0, name, range: 1, hit, power: { air: power[0], land: power[1], sea: power[2] }, usableAfterMove: true, rangeByte: 0, curve: 0,
 });
 const unit = (o: Partial<Unit>): Unit => ({
-  id: 0, index: 0, side: "player", unitId: 0, pilotId: 0, levelIndex: 0, exp: 0, expBase: 0, money: 0, spirit: 0, aiScript: 0, waitUntilTurn: 0,
+  id: 0, index: 0, side: "player", unitId: 0, pilotId: 0, levelIndex: 0, exp: 0, expBase: 0, money: 0, spirit: 0, aiScript: 0, bits: 0, npc: false, roster: null,
   name: "", pilotName: "", level: 1, x: 0, y: 0, icon: { sheetUrl: "", index: 0 }, moveType: "land", move: 5,
   strength: 0, defense: 0, speed: 0, hp: 100, maxHp: 100, sp: 0, maxSp: 0, weapons: [], spirits: [], trait: null, acted: false, ...o,
 });

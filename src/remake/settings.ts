@@ -1,4 +1,4 @@
-// 玩家设置：按键绑定（每个功能两个键）、鼠标开关。保存在 localStorage。
+// 玩家设置：按键绑定（每个功能两个键）、鼠标开关、文字速度、音乐和音效。保存在 localStorage。
 
 export type BindAction =
   | "up" | "down" | "left" | "right"
@@ -33,10 +33,22 @@ export const TEXT_SPEEDS: { id: TextSpeed; label: string; cps: number }[] = [
   { id: "instant", label: "瞬间", cps: Infinity },
 ];
 
+export type MusicStyle = "enhanced" | "original";
+export const MUSIC_STYLES: { id: MusicStyle; label: string }[] = [
+  { id: "enhanced", label: "增强版" },
+  { id: "original", label: "原版" },
+];
+// 音量档位
+export const VOLUMES = [0, 0.2, 0.4, 0.6, 0.8, 1];
+export const volumeLabel = (v: number) => (v === 0 ? "关" : `${Math.round(v * 100)}%`);
+
 export interface Settings {
   keys: Record<BindAction, Binding>;
   mouse: boolean;
   textSpeed: TextSpeed;
+  musicStyle: MusicStyle;
+  musicVolume: number;
+  sfxVolume: number;
 }
 
 export const DEFAULT_KEYS: Record<BindAction, Binding> = {
@@ -60,11 +72,14 @@ const STORAGE_KEY = "srw2-remake:settings";
 const listeners = new Set<() => void>();
 
 function load(): Settings {
-  const fallback: Settings = { keys: structuredClone(DEFAULT_KEYS), mouse: true, textSpeed: "normal" };
+  const fallback: Settings = {
+    keys: structuredClone(DEFAULT_KEYS), mouse: true, textSpeed: "normal",
+    musicStyle: "enhanced", musicVolume: 0.6, sfxVolume: 0.8,
+  };
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "null");
     if (!saved) return fallback;
-    return { keys: { ...fallback.keys, ...saved.keys }, mouse: saved.mouse ?? true, textSpeed: saved.textSpeed ?? "normal" };
+    return { ...fallback, ...saved, keys: { ...fallback.keys, ...saved.keys } };
   } catch {
     return fallback;
   }

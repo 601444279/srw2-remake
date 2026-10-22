@@ -95,13 +95,7 @@ export class Renderer {
     const g = c.getContext("2d")!;
     terrain.forEach((row, y) => row.forEach((t, x) => g.drawImage(sheet, t * TILE, 0, TILE, TILE, x * TILE, y * TILE, TILE, TILE)));
     this.terrain = c;
-    const sheets = new Map<string, HTMLImageElement>();
-    for (const u of stage.units) {
-      const url = u.icon.sheetUrl;
-      if (!sheets.has(url)) sheets.set(url, await loadImage(url));
-      const k = spriteKey(u);
-      if (!this.sprites.has(k)) this.sprites.set(k, makeSprite(sheets.get(url)!, u.icon.index));
-    }
+    for (const u of stage.units) await this.loadUnit(u);
     // 默认缩放：让视野里大约能看到 18 格宽
     const ideal = this.cssW / (18 * TILE);
     this.zoomIndex = ZOOM_LEVELS.reduce((best, z, i) => (Math.abs(z - ideal) < Math.abs(ZOOM_LEVELS[best] - ideal) ? i : best), 0);
@@ -135,6 +129,15 @@ export class Renderer {
     let f = this.fx.get(u);
     if (!f) this.fx.set(u, (f = { flash: 0, shake: 0, fade: -1 }));
     return f;
+  }
+
+  // 载入单位图标（开局和中途出场的单位都要先载入才能画）
+  private sheets = new Map<string, Promise<HTMLImageElement>>();
+  async loadUnit(u: Unit) {
+    const url = u.icon.sheetUrl;
+    if (!this.sheets.has(url)) this.sheets.set(url, loadImage(url));
+    const k = spriteKey(u);
+    if (!this.sprites.has(k)) this.sprites.set(k, makeSprite(await this.sheets.get(url)!, u.icon.index));
   }
 
   // 信息面板用的单位图标

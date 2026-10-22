@@ -1,0 +1,417 @@
+{
+  "note": "由 tools/extract-music.js 生成。曲号 = 驱动里的编号；原版录音在 assets/original/music/，增强版在 assets/music/，文件名相同、循环点相同（秒）",
+  "tracks": [
+    {
+      "id": 0,
+      "file": "bgm-00.ogg",
+      "loop": {
+        "start": 0.5,
+        "end": 38.700958
+      }
+    },
+    {
+      "id": 1,
+      "file": "bgm-01.ogg",
+      "loop": {
+        "start": 0.5,
+        "end": 55.712458
+      }
+    },
+    {
+      "id": 2,
+      "file": "bgm-02.ogg",
+      "loop": {
+        "start": 0.5,
+        "end": 52.449979
+      }
+    },
+    {
+      "id": 3,
+      "file": "bgm-03.ogg",
+      "loop": {
+        "start": 0.5,
+        "end": 55.346271
+      }
+    },
+    {
+      "id": 4,
+      "file": "bgm-04.ogg",
+      "loop": {
+        "start": 0.5,
+        "end": 36.337333
+      }
+    },
+    {
+      "id": 5,
+      "file": "bgm-05.ogg",
+      "loop": {
+        "start": 0.5,
+        "end": 53.781604
+      }
+    },
+    {
+      "id": 6,
+      "file": "bgm-06.ogg",
+      "loop": {
+        "start": 0.5,
+        "end": 50.103
+      }
+    },
+    {
+      "id": 7,
+      "file": "bgm-07.ogg",
+      "loop": {
+        "start": 0.5,
+        "end": 45.675333
+      }
+    },
+    {
+      "id": 8,
+      "file": "bgm-08.ogg",
+      "loop": {
+        "start": 0.5,
+        "end": 38.867417
+      }
+    },
+    {
+      "id": 9,
+      "file": "bgm-09.ogg",
+      "loop": {
+        "start": 0.5,
+        "end": 85.074771
+      }
+    },
+    {
+      "id": 10,
+      "file": "bgm-0a.ogg",
+      "loop": {
+        "start": 0.5,
+        "end": 34.756021
+      }
+    },
+    {
+      "id": 11,
+      "file": "bgm-0b.ogg",
+      "loop": {
+        "start": 0.5,
+        "end": 18.809833
+      }
+    },
+    {
+      "id": 12,
+      "file": "bgm-0c.ogg",
+      "loop": {
+        "start": 0.5,
+        "end": 46.457667
+      }
+    },
+    {
+      "id": 13,
+      "file": "bgm-0d.ogg",
+      "loop": {
+        "start": 0.5,
+        "end": 14.199083
+      }
+    },
+    {
+      "id": 14,
+      "file": "bgm-0e.ogg",
+      "loop": {
+        "start": 0.5,
+        "end": 3.313063
+      }
+    },
+    {
+      "id": 15,
+      "file": "bgm-0f.ogg",
+      "loop": {
+        "start": 0.5,
+        "end": 32.475625
+      }
+    },
+    {
+      "id": 16,
+      "file": "bgm-10.ogg",
+      "loop": {
+        "start": 0.5,
+        "end": 22.055667
+      }
+    },
+    {
+      "id": 17,
+      "file": "bgm-11.ogg",
+      "loop": {
+        "start": 0.5,
+        "end": 51.085062
+      }
+    },
+    {
+      "id": 18,
+      "file": "bgm-12.ogg",
+      "loop": {
+        "start": 0.5,
+        "end": 3.113313
+      }
+    },
+    {
+      "id": 19,
+      "file": "bgm-13.ogg",
+      "loop": {
+        "start": 0.5,
+        "end": 57.060729
+      }
+    },
+    {
+      "id": 20,
+      "file": "bgm-14.ogg",
+      "loop": null
+    }
+  ],
+  "stages": [
+    {
+      "player": 7,
+      "enemy": 8,
+      "clear": [
+        9,
+        11
+      ]
+    },
+    {
+      "player": 7,
+      "enemy": 8,
+      "clear": [
+        9,
+        11
+      ]
+    },
+    {
+      "player": 7,
+      "enemy": 8,
+      "clear": [
+        9,
+        11
+      ]
+    },
+    {
+      "player": 7,
+      "enemy": 8,
+      "clear": [
+        9,
+        11
+      ]
+    },
+    {
+      "player": 7,
+      "enemy": 8,
+      "clear": [
+        9,
+        11
+      ]
+    },
+    {
+      "player": 7,
+      "enemy": 8,
+      "clear": [
+        9,
+        11
+      ]
+    },
+    {
+      "player": 7,
+      "enemy": 8,
+      "clear": [
+        11,
+        9
+      ]
+    },
+    {
+      "player": 7,
+      "enemy": 8,
+      "clear": [
+        9,
+        11,
+        2
+      ]
+    },
+    {
+      "player": 7,
+      "enemy": 8,
+      "clear": [
+        9,
+        11
+      ]
+    },
+    {
+      "player": 7,
+      "enemy": 8,
+      "clear": [
+        9,
+        11
+      ]
+    },
+    {
+      "player": 7,
+      "enemy": 8,
+      "clear": [
+        9,
+        11
+      ]
+    },
+    {
+      "player": 7,
+      "enemy": 8,
+      "clear": [
+        9,
+        11
+      ]
+    },
+    {
+      "player": 7,
+      "enemy": 8,
+      "clear": [
+        9,
+        11
+      ]
+    },
+    {
+      "player": 12,
+      "enemy": 17,
+      "clear": [
+        9,
+        11
+      ]
+    },
+    {
+      "player": 7,
+      "enemy": 8,
+      "clear": [
+        9,
+        11
+      ]
+    },
+    {
+      "player": 12,
+      "enemy": 17,
+      "clear": [
+        9,
+        11,
+        9
+      ]
+    },
+    {
+      "player": 12,
+      "enemy": 17,
+      "clear": [
+        9,
+        11
+      ]
+    },
+    {
+      "player": 7,
+      "enemy": 8,
+      "clear": [
+        9,
+        11
+      ]
+    },
+    {
+      "player": 12,
+      "enemy": 17,
+      "clear": [
+        9,
+        11
+      ]
+    },
+    {
+      "player": 12,
+      "enemy": 17,
+      "clear": [
+        9,
+        11
+      ]
+    },
+    {
+      "player": 7,
+      "enemy": 8,
+      "clear": [
+        9
+      ]
+    },
+    {
+      "player": 12,
+      "enemy": 17,
+      "clear": [
+        9,
+        11
+      ]
+    },
+    {
+      "player": 7,
+      "enemy": 8,
+      "clear": [
+        9,
+        11
+      ]
+    },
+    {
+      "player": 7,
+      "enemy": 8,
+      "clear": [
+        9,
+        11,
+        4
+      ]
+    },
+    {
+      "player": 7,
+      "enemy": 8,
+      "clear": [
+        9,
+        11
+      ]
+    },
+    {
+      "player": 7,
+      "enemy": 8,
+      "clear": [
+        19,
+        11
+      ]
+    }
+  ],
+  "battle": {
+    "boss": {
+      "pilot": 53,
+      "song": 16
+    },
+    "byPilot": {
+      "6": 0,
+      "7": 2,
+      "8": 1,
+      "9": 1,
+      "10": 1,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 3,
+      "15": 2,
+      "16": 0,
+      "17": 1,
+      "18": 2,
+      "19": 0,
+      "20": 5,
+      "27": 0,
+      "28": 0,
+      "35": 0,
+      "43": 0,
+      "44": 1,
+      "45": 1,
+      "49": 0,
+      "52": 0,
+      "54": 0,
+      "55": 0,
+      "95": 2
+    },
+    "default": 5
+  }
+}

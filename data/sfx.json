@@ -1,0 +1,160 @@
+{
+  "note": "由 tools/extract-sfx.js 生成。原版音效录音在 assets/original/sfx/，编号 = 驱动里的音效号",
+  "sfx": [
+    {
+      "id": 1,
+      "file": "se-01.ogg",
+      "duration": 4.994
+    },
+    {
+      "id": 2,
+      "file": "se-02.ogg",
+      "duration": 0.95
+    },
+    {
+      "id": 3,
+      "file": "se-03.ogg",
+      "duration": 0.183
+    },
+    {
+      "id": 4,
+      "file": "se-04.ogg",
+      "duration": 1.367
+    },
+    {
+      "id": 5,
+      "file": "se-05.ogg",
+      "duration": 0.833
+    },
+    {
+      "id": 6,
+      "file": "se-06.ogg",
+      "duration": 0.533
+    },
+    {
+      "id": 7,
+      "file": "se-07.ogg",
+      "duration": 0.833
+    },
+    {
+      "id": 8,
+      "file": "se-08.ogg",
+      "duration": 0.567
+    },
+    {
+      "id": 9,
+      "file": "se-09.ogg",
+      "duration": 0.8
+    },
+    {
+      "id": 10,
+      "file": "se-0a.ogg",
+      "duration": 0.683
+    },
+    {
+      "id": 11,
+      "file": "se-0b.ogg",
+      "duration": 0.383
+    },
+    {
+      "id": 12,
+      "file": "se-0c.ogg",
+      "duration": 0.433
+    },
+    {
+      "id": 13,
+      "file": "se-0d.ogg",
+      "duration": 0.85
+    },
+    {
+      "id": 14,
+      "file": "se-0e.ogg",
+      "duration": 0.217
+    },
+    {
+      "id": 15,
+      "file": "se-0f.ogg",
+      "duration": 0.95
+    },
+    {
+      "id": 16,
+      "file": "se-10.ogg",
+      "duration": 1.083
+    },
+    {
+      "id": 17,
+      "file": "se-11.ogg",
+      "duration": 0.95
+    },
+    {
+      "id": 18,
+      "file": "se-12.ogg",
+      "duration": 0.583
+    },
+    {
+      "id": 19,
+      "file": "se-13.ogg",
+      "duration": 1.033
+    },
+    {
+      "id": 20,
+      "file": "se-14.ogg",
+      "duration": 2.283
+    },
+    {
+      "id": 21,
+      "file": "se-15.ogg",
+      "duration": 1.133
+    },
+    {
+      "id": 22,
+      "file": "se-16.ogg",
+      "duration": 0.35
+    },
+    {
+      "id": 23,
+      "file": "se-17.ogg",
+      "duration": 0.417
+    },
+    {
+      "id": 24,
+      "file": "se-18.ogg",
+      "duration": 1.933
+    },
+    {
+      "id": 25,
+      "file": "se-19.ogg",
+      "duration": 1.683
+    },
+    {
+      "id": 26,
+      "file": "se-1a.ogg",
+      "duration": 3.533
+    },
+    {
+      "id": 27,
+      "file": "se-1b.ogg",
+      "duration": 0.533
+    },
+    {
+      "id": 28,
+      "file": "se-1c.ogg",
+      "duration": 0.183
+    },
+    {
+      "id": 29,
+      "file": "se-1d.ogg",
+      "duration": 0.167
+    },
+    {
+      "id": 30,
+      "file": "se-1e.ogg",
+      "duration": 0.6
+    },
+    {
+      "id": 31,
+      "file": "se-1f.ogg",
+      "duration": 0.317
+    }
+  ]
+}

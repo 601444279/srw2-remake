@@ -236,8 +236,8 @@ export class Rules {
     return mobilityOf(unit.move, unit.side === "player" ? unit.spirit : 0);
   }
 
-  // ---------- 敌方 AI ----------
-  // 行动顺序：按到最近我方单位的空中距离从近到远
+  // ---------- AI（敌人和友军 NPC，由 AI 脚本调用） ----------
+  // 行动顺序：按到最近我方单位的空中距离从近到远（原版只给敌方排序）
   enemyOrder(units: Unit[]) {
     const map = this.stage.map;
     const enemies = units.filter((u) => u.side === "enemy" && u.hp > 0);
@@ -250,48 +250,68 @@ export class Rules {
     return order.map((i) => enemies.find((e) => e.index === i)!);
   }
 
-  // 一个敌人这回合做什么：攻击（可能先移动到目标旁边）或者向我方移动
-  enemyPlan(enemy: Unit, units: Unit[], turn: number): EnemyPlan {
-    const map = this.stage.map;
-    const costs = map.moveCost[MOVE_TYPE_ROW[enemy.moveType]];
-    const players = units.filter((u) => u.side === "player" && u.hp > 0);
-    const blocked = new Set(players.map((p) => `${p.x},${p.y}`));
-    const occupied = new Set(units.filter((u) => u.hp > 0 && u !== enemy).map((u) => `${u.x},${u.y}`));
-    const mobility = this.mobility(enemy);
-    const grid = distanceGrid({ terrain: map.terrain, costs, start: enemy, mobility, blocked });
-    const canMove = turn >= enemy.waitUntilTurn;
-    // $0A 用模式 3，$0B 用 5，待机型（$05、$0C）用 0；其他脚本还没解析，按主动型模式 3 处理
-    const mode = enemy.waitUntilTurn ? 0 : enemy.aiScript === 0x0b ? 5 : 3;
-    const targets = players.map(toRule);
-    const ruleWeapons = enemy.weapons.map(toRuleWeapon);
-    type Choice = { x: number; y: number; weapon: number; target: number };
-    const best = chooseAttack({
-      unit: toRule(enemy),
-      weapons: ruleWeapons,
-      targets,
-      mode,
-      canMove,
-      grid,
-      mobility,
-      occupied,
-      evaluate: (w: unknown, t: RuleUnit, pos: Point, moved: boolean) => {
-        const target = players.find((p) => p.index === t.index)!;
-        const weapon = enemy.weapons[ruleWeapons.indexOf(w as (typeof ruleWeapons)[number])];
-        return this.preview(enemy, weapon, target, pos, moved);
-      },
-    }) as Choice | null;
-    if (best) {
-      return { kind: "attack", to: { x: best.x, y: best.y }, weapon: enemy.weapons[best.weapon], target: players.find((p) => p.index === best.target)! };
-    }
-    if (!canMove) return { kind: "wait" };
-    const goal = moveGoal(targets, grid, occupied);
-    if (!goal) return { kind: "wait" };
-    const gridFromGoal = distanceGrid({ terrain: map.terrain, costs, start: goal, mobility: 0xfc, blocked });
-    const to = moveStep({ grid, gridFromGoal, mobility, occupied, self: enemy, rand });
-    if (grid[to.y][to.x] === BLOCKED || (to.x === enemy.x && to.y === enemy.y)) return { kind: "wait" };
-    return { kind: "move", to };
+  private foes(unit: Unit, units: Unit[]) {
+    return units.filter((u) => u.hp > 0 && u.side !== unit.side);
   }
 
+  // 本单位的距离图：敌对单位挡路
+  private gridOf(unit: Unit, units: Unit[], start: Point = unit, mobility = this.mobility(unit)) {
+    const map = this.stage.map;
+    const costs = map.moveCost[MOVE_TYPE_ROW[unit.moveType]];
+    const blocked = new Set(this.foes(unit, units).map((p) => `${p.x},${p.y}`));
+    return distanceGrid({ terrain: map.terrain, costs, start, mobility, blocked });
+  }
+
+  private occupiedBy(unit: Unit, units: Unit[]) {
+    return new Set(units.filter((u) => u.hp > 0 && u !== unit).map((u) => `${u.x},${u.y}`));
+  }
+
+  // 脚本指令「选攻击」（$1A）：canMove 为假时只考虑原地能打的；onlyPilot 限定目标（「攻击指定单位」）
+  pickAttack(unit: Unit, units: Unit[], mode: number, canMove: boolean, onlyPilot?: number): AiPlan | null {
+    const foes = this.foes(unit, units).filter((u) => onlyPilot === undefined || samePilot(u.pilotId, onlyPilot));
+    if (!foes.length) return null;
+    const ruleWeapons = unit.weapons.map(toRuleWeapon);
+    type Choice = { x: number; y: number; weapon: number; target: number };
+    const best = chooseAttack({
+      unit: toRule(unit),
+      weapons: ruleWeapons,
+      targets: foes.map(toRule),
+      mode,
+      canMove,
+      grid: this.gridOf(unit, units),
+      mobility: this.mobility(unit),
+      occupied: this.occupiedBy(unit, units),
+      evaluate: (w: unknown, t: RuleUnit, pos: Point, moved: boolean) => {
+        const target = foes.find((p) => p.index === t.index)!;
+        const weapon = unit.weapons[ruleWeapons.indexOf(w as (typeof ruleWeapons)[number])];
+        return this.preview(unit, weapon, target, pos, moved);
+      },
+    }) as Choice | null;
+    if (!best) return null;
+    return { to: { x: best.x, y: best.y }, weapon: unit.weapons[best.weapon], target: foes.find((p) => p.index === best.target)! };
+  }
+
+  // 脚本指令「接近」（$14）：向最近的敌对单位（或指定单位）旁边移动，本回合走得到的最近一格
+  approach(unit: Unit, units: Unit[], onlyPilot?: number): Point | null {
+    const targets = this.foes(unit, units).filter((u) => onlyPilot === undefined || samePilot(u.pilotId, onlyPilot));
+    const all = onlyPilot === undefined ? targets : units.filter((u) => u.hp > 0 && samePilot(u.pilotId, onlyPilot));
+    if (!all.length) return null;
+    const grid = this.gridOf(unit, units);
+    const goal = moveGoal(all.map(toRule), grid, this.occupiedBy(unit, units));
+    return goal ? this.stepToward(unit, units, goal, grid) : null;
+  }
+
+  // 脚本指令「移动到 (x,y)」：本回合能停的格里离目标最近的
+  moveToward(unit: Unit, units: Unit[], goal: Point): Point | null {
+    return this.stepToward(unit, units, goal, this.gridOf(unit, units));
+  }
+
+  private stepToward(unit: Unit, units: Unit[], goal: Point, grid: number[][]): Point | null {
+    const gridFromGoal = this.gridOf(unit, units, goal, 0xfc);
+    const to: Point = moveStep({ grid, gridFromGoal, mobility: this.mobility(unit), occupied: this.occupiedBy(unit, units), self: unit, rand });
+    if (grid[to.y][to.x] === BLOCKED || (to.x === unit.x && to.y === unit.y)) return null;
+    return to;
+  }
 }
 
 export interface BattleEvent {
@@ -303,7 +323,12 @@ export interface BattleEvent {
   hpAfter: number;
 }
 
-export type EnemyPlan =
-  | { kind: "attack"; to: Point; weapon: Weapon; target: Unit }
-  | { kind: "move"; to: Point }
-  | { kind: "wait" };
+// AI 选好的攻击：先移动到 to，再用 weapon 打 target
+export interface AiPlan {
+  to: Point;
+  weapon: Weapon;
+  target: Unit;
+}
+
+// 驾驶员 8、9、10（盖塔三人）在脚本比较时都当作 8（docs/notes-events.md 第 2 节）
+export const samePilot = (a: number, b: number) => (a >= 8 && a <= 10 ? 8 : a) === (b >= 8 && b <= 10 ? 8 : b);

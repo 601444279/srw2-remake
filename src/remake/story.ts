@@ -65,13 +65,7 @@ export function loadScene(ref: SceneRef): Line[] {
   });
 }
 
-// 第一关的剧情流程。事件脚本解析完成后由 data/events 取代
-export const STAGE_STORY: Record<number, { title: string; subtitle: string; prologue: SceneRef[]; opening: SceneRef[]; clear: SceneRef[] }> = {
-  1: {
-    title: "第1篇",
-    subtitle: "救出刚达Z",
-    prologue: [{ res: "38", index: 0, who: 54 }],
-    opening: [{ res: "38", index: 1, who: 54, focusUnit: true }],
-    clear: [{ res: "38", index: 2, who: 11 }],
-  },
+// 关卡标题卡（原版是 CHR 里现成的字形图块，还没提取排列表，先手写已知的）
+export const STAGE_STORY: Record<number, { title: string; subtitle: string }> = {
+  1: { title: "第1篇", subtitle: "救出刚达Z" },
 };

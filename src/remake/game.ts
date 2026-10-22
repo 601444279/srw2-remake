@@ -1,18 +1,24 @@
-// 游戏流程（P2）：我方回合（移动、攻击、精神、待机）、敌方回合（原版 AI）、胜负判定。
-// 战斗、命中、伤害、经验、AI 等规则都在 rules.ts 里调用原版规则代码。
+// 游戏流程：我方回合（移动、攻击、精神、待机）、敌方回合、剧情。
+// 战斗、命中、伤害、经验等规则在 rules.ts 里调用原版规则代码；
+// 关卡事件（对话、援军、胜负、过关）和敌人 AI 由原版脚本驱动，见 events.ts。
 import { applyLevel, type Stage, type Unit, type Weapon } from "./data.ts";
+import { StageEvents } from "./events.ts";
 import { key, pathTo, rangeFrom, reachable, inBounds, MOVE_TYPE_ROW, type Point, type Reach } from "./grid.ts";
 import type { Action } from "./input.ts";
 import type { DrawState, Overlay, Renderer } from "./render.ts";
 import type { UI, MenuItem } from "./ui.ts";
 import { Rules, SPIRIT_FLAG } from "./rules.ts";
-import type { Sfx } from "./sfx.ts";
+import { strikeSound, type Sfx } from "./sfx.ts";
+import { MUSIC, type Music } from "./music.ts";
 import { keyLabel, settings, TEXT_SPEEDS, type BindAction } from "./settings.ts";
 import { loadScene, personName, portraitUrl, STAGE_STORY, type SceneRef } from "./story.ts";
 
 type Mode = "browse" | "selected" | "moving" | "menu" | "target" | "allyTarget" | "busy" | "dialog" | "title" | "over";
 
 const MOVE_TILES_PER_SEC = 14;
+// 剧情对话时的音乐：原版开新游戏后，开场剧情和进地图后的开场对话都放 9 号，第 1 回合开始才换成我方回合曲
+const STORY_BGM = 0x09;
+const LEVEL_UP_JINGLE = 0x0e;
 const TYPE_LABELS = { air: "空", land: "陆", sea: "海" } as const;
 // 建筑 / 基地格每回合开始回复 30% HP（docs/notes-rules.md 1.6）
 const REPAIR_TERRAIN = 10;
@@ -54,29 +60,100 @@ export class Game implements DrawState {
   // 对话播放中：等玩家按确定翻页
   private talk: { next: () => void; skip: () => void; autoAt: number } | null = null;
   private titleSkip: (() => void) | null = null;
+  private events: StageEvents;
+  // 我方 / 敌方回合曲（脚本的 playerBgm / enemyBgm 会改），phase 是现在是谁的回合
+  private songs = { player: 7, enemy: 8 };
+  private phase: "player" | "enemy" = "player";
 
-  constructor(private stage: Stage, private renderer: Renderer, private ui: UI, private sfx: Sfx, private fast: () => boolean) {
+  constructor(private stage: Stage, private renderer: Renderer, private ui: UI, private sfx: Sfx, private music: Music, private fast: () => boolean) {
     this.units = stage.units;
     this.rules = new Rules(stage);
+    const bgm = MUSIC.stage(stage.number);
+    this.songs = { player: bgm.player, enemy: bgm.enemy };
+    this.events = new StageEvents({
+      stage,
+      rules: this.rules,
+      turn: () => this.turn,
+      money: this.money,
+      playScene: (ref) => this.playScene(ref),
+      focus: (p) => this.focus(p),
+      moveUnit: (u, to) => this.moveUnit(u, to),
+      battle: (a, w, d, moved) => this.battle(a, w, d, moved),
+      addUnit: (u) => this.addUnit(u),
+      removeUnit: (u) => this.removeUnit(u),
+      wait: (s) => wait(s / this.speed()),
+      music: (kind, song) => this.scriptMusic(kind, song),
+      finish: (r) => this.finishStage(r),
+    });
+  }
+
+  // ---------- 事件脚本需要的能力 ----------
+  // 镜头移到某格，停一下让玩家看清
+  private async focus(p: Point) {
+    this.setCursor(p.x, p.y);
+    await wait(0.2 / this.speed());
+  }
+
+  private async addUnit(u: Unit) {
+    await this.renderer.loadUnit(u);
+    this.units.push(u);
+    this.dangerCache = null;
+    this.setCursor(u.x, u.y);
+    this.renderer.float(u, u.side === "enemy" ? "出现" : "加入", u.side === "enemy" ? "#ff8a8a" : "#8fd3ff");
+    await wait(0.35 / this.speed());
+  }
+
+  // 撤退 / 离场：淡出，不算击破，不给经验
+  private async removeUnit(u: Unit) {
+    this.renderer.float(u, "撤退", "#c8c8d0");
+    this.renderer.killUnit(u);
+    u.hp = 0;
+    this.dangerCache = null;
+    await wait(0.5 / this.speed());
+  }
+
+  // 原版换曲代码交给音乐模块
+  private scriptMusic(kind: "player" | "enemy" | "now", song: number | "stop" | "restore") {
+    if (song === "stop") { this.music.stop(); return; }
+    // playerBgm / enemyBgm 只记下回合曲（原版 $7529 / $752A），到那一方的回合开始时才换
+    if (kind !== "now") {
+      if (song === "restore") this.music.play(this.songs[kind]);
+      else this.songs[kind] = song;
+      return;
+    }
+    this.music.play(song === "restore" ? this.songs[this.phase] : song);
   }
 
   async start() {
     const first = this.players()[0];
     this.cursor = { x: first.x, y: first.y };
     this.renderer.centerOn(this.cursor);
-    this.ui.setObjective("胜利条件：击破所有敌人　失败条件：我方全灭");
+    this.ui.setObjective(`胜利条件：${this.stage.events.victoryText.replace(/。$/, "")}`);
     this.ui.setTurn(this.turn, "player");
     this.refreshInfo();
+    const bgm = MUSIC.stage(this.stage.number);
+    this.music.preload([bgm.player, bgm.enemy, STORY_BGM]);
+    // 进关：开场脚本跑到第一个暂停点（出击前的剧情），然后是关卡标题，之后进入第 1 回合
+    this.music.play(STORY_BGM);
+    this.setMode("busy");
+    await this.events.runStart();
     const story = STAGE_STORY[this.stage.number];
-    if (story) {
-      for (const scene of story.prologue) await this.playScene(scene);
-      this.setMode("title");
-      const card = this.ui.titleCard(story.title, story.subtitle, 2.4);
-      this.titleSkip = card.skip;
-      await card.done;
-      this.titleSkip = null;
-      for (const scene of story.opening) await this.playScene(scene);
-    }
+    this.setMode("title");
+    const card = this.ui.titleCard(story?.title ?? `第${this.stage.number}篇`, story?.subtitle ?? "", 2.4);
+    this.titleSkip = card.skip;
+    await card.done;
+    this.titleSkip = null;
+    await this.playerPhaseStart();
+  }
+
+  // 我方回合开始：开场脚本和检查脚本各继续一次（地图上的开场对话、回合触发的事件），然后横幅
+  private async playerPhaseStart() {
+    this.setMode("busy");
+    this.phase = "player";
+    await this.events.runStart();
+    await this.events.runCheck();
+    if (this.mode === "over") return;
+    this.music.play(this.songs.player);
     await this.ui.banner(`第 ${this.turn} 回合`, "我方回合", "player");
     this.setMode("browse");
   }
@@ -171,8 +248,8 @@ export class Game implements DrawState {
 
   // ---------- 输入 ----------
   move(dx: number, dy: number) {
-    if (this.mode === "menu") { this.ui.menuMove(dy || dx); return; }
-    if (this.mode === "target" || this.mode === "allyTarget") { this.cyclePick(dx + dy > 0 ? 1 : -1); return; }
+    if (this.mode === "menu") { this.ui.menuMove(dy || dx); this.sfx.ui("move"); return; }
+    if (this.mode === "target" || this.mode === "allyTarget") { this.cyclePick(dx + dy > 0 ? 1 : -1); this.sfx.ui("move"); return; }
     if (this.mode !== "browse" && this.mode !== "selected") return;
     this.setCursor(this.cursor.x + dx, this.cursor.y + dy);
   }
@@ -213,13 +290,13 @@ export class Game implements DrawState {
         if (a === "confirm" || a === "cancel") this.titleSkip?.();
         return;
       case "menu":
-        if (a === "confirm") this.ui.menuConfirm();
+        if (a === "confirm") { this.sfx.ui("ok"); this.ui.menuConfirm(); }
         if (a === "cancel") this.ui.closeMenu();
         return;
       case "target":
       case "allyTarget": {
         const pick = this.pick!;
-        if (a === "confirm") { this.pick = null; pick.confirm(pick.candidates[pick.index]); }
+        if (a === "confirm") { this.sfx.ui("ok"); this.pick = null; pick.confirm(pick.candidates[pick.index]); }
         if (a === "cancel") { this.pick = null; pick.cancel(); }
         if (a === "next" || a === "prev") this.cyclePick(a === "next" ? 1 : -1);
         return;
@@ -235,6 +312,7 @@ export class Game implements DrawState {
     const here = this.unitAt(this.cursor);
     switch (a) {
       case "confirm":
+        this.sfx.ui("ok");
         if (here?.side === "player" && !here.acted) return this.select(here);
         if (here?.side === "enemy") { this.inspected = this.inspected === here ? null : here; return; }
         if (this.inspected) { this.inspected = null; return; }
@@ -262,6 +340,7 @@ export class Game implements DrawState {
         if (this.cursor.x === unit.x && this.cursor.y === unit.y) return this.openActionMenu(unit);
         const k = key(this.stage.map, this.cursor.x, this.cursor.y);
         if (!this.reach!.stops.has(k)) { this.ui.toast("无法移动到这里"); return; }
+        this.sfx.ui("ok");
         return this.moveSelected(this.cursor, () => this.openActionMenu(unit));
       }
       case "cancel":
@@ -382,30 +461,41 @@ export class Game implements DrawState {
     this.openMenu(items, unit, () => this.openActionMenu(unit));
   }
 
-  private castSpirit(unit: Unit, spiritId: number, target?: Unit) {
+  private async castSpirit(unit: Unit, spiritId: number, target?: Unit) {
     const r = this.rules.useSpirit(unit, spiritId, this.units, target);
     this.ui.toast(r.text);
     for (const a of r.affected) {
       this.renderer.float(a.unit, a.kind === "heal" ? `+${a.amount}` : `-${a.amount}`, a.kind === "heal" ? "#6dff8a" : "#ff6b6b");
       if (a.kind === "damage") {
         const power = a.unit.hp === 0 ? 1 : Math.min(1, (a.amount / a.unit.maxHp) * 2);
-        this.sfx.hit(power);
+        this.sfx.play(0x03);
         this.renderer.impact(a.unit, power);
-        if (a.unit.hp === 0) this.renderer.killUnit(a.unit);
+        if (a.unit.hp === 0) { this.sfx.explode(); this.renderer.killUnit(a.unit); }
       }
     }
     this.dangerCache = null;
     this.refreshInfo();
-    if (this.checkEnd()) return;
+    // 精神「怒」「狂怒」可能打掉敌人，跑一次检查脚本
+    if (r.affected.some((a) => a.kind === "damage" && a.unit.hp === 0)) {
+      const moved = this.moved;
+      this.setMode("busy");
+      await this.events.runCheck();
+      if (this.mode === "over") return;
+      this.moved = moved;
+    }
     // 没移动过就回到选移动的状态（加速、疾风会扩大移动范围）；移动过回到行动菜单
     if (this.moved) this.openActionMenu(unit);
     else this.select(unit);
   }
 
-  private finishAction(unit: Unit) {
+  // 我方单位行动结束：跑检查脚本（胜负、过关、行动触发的事件），再跳到下一个没行动的单位
+  private async finishAction(unit: Unit) {
     unit.acted = true;
     this.deselect();
-    if (this.checkEnd()) return;
+    this.setMode("busy");
+    await this.events.runCheck();
+    if (this.mode === "over") return;
+    this.setMode("browse");
     const next = this.players().find((u) => !u.acted);
     if (next) { this.setCursor(next.x, next.y); return; }
     this.endTurn();
@@ -424,16 +514,19 @@ export class Game implements DrawState {
     this.ui.battleStart(attacker, this.renderer.iconUrl(attacker), defender, this.renderer.iconUrl(defender));
     await wait(0.25 / this.speed());
     for (const e of events) {
+      // 先放开火声，等“弹道飞到”再命中（音效是原版的，见 sfx.ts）
+      const sound = strikeSound(e.weapon.name);
+      this.sfx.attack(sound);
+      await wait(sound.travel / this.speed());
       if (e.hit) {
         // 伤害占最大 HP 的比例决定打击力度：一半血以上或击破就是满力度
         const power = e.hpAfter === 0 ? 1 : Math.min(1, (e.damage / e.to.maxHp) * 2);
-        this.sfx.hit(power);
+        this.sfx.hit(sound);
         // 先顿帧，再扣血、飘数字、震屏
         await wait(this.renderer.impact(e.to, power, this.speed()));
         e.to.hp = e.hpAfter;
         this.renderer.float(e.to, `-${e.damage}`, "#ff6b6b");
       } else {
-        this.sfx.miss();
         this.renderer.float(e.to, "MISS", "#c8c8d0");
       }
       await this.ui.battleStrike(e, 0.75 / this.speed());
@@ -445,6 +538,7 @@ export class Game implements DrawState {
     // 击破、经验、升级
     for (const [victim, killer] of [[defender, attacker], [attacker, defender]] as const) {
       if (victim.hp > 0) continue;
+      this.sfx.explode();
       this.renderer.killUnit(victim);
       this.renderer.float(victim, "击破", "#ffd257");
       const r = this.rules.reward(killer, victim, this.money);
@@ -454,12 +548,16 @@ export class Game implements DrawState {
         if (r.levels > 0 && r.newLevel !== undefined) {
           applyLevel(killer, r.newLevel);
           this.ui.toast(`${killer.name} 升到 Lv ${killer.level}！`);
+          // 原版升级时插播 0x0E 号小号角（系统消息里的 FD CE），放完接回原来的音乐
+          this.music.jingle(LEVEL_UP_JINGLE);
           await wait(0.3 / this.speed());
           this.renderer.float(killer, "LEVEL UP", "#ffd257");
         }
       }
       await wait(0.5 / this.speed());
     }
+    // 记下这场战斗，检查脚本的 battle 条件会用
+    this.events.battleRecord = { attacker: attacker.pilotId, defender: defender.pilotId, attackerDown: attacker.hp <= 0, defenderDown: defender.hp <= 0 };
     // 一次性精神打完一场就清除
     for (const u of [attacker, defender]) if (u.side === "player") u.spirit &= ~ONE_SHOT_SPIRITS;
     this.dangerCache = null;
@@ -473,47 +571,47 @@ export class Game implements DrawState {
     this.setMode("busy");
     for (const u of this.players()) u.spirit &= ~(SPIRIT_FLAG.ACCEL | SPIRIT_FLAG.GALE);
     this.ui.setTurn(this.turn, "enemy");
+    this.phase = "enemy";
+    this.music.play(this.songs.enemy);
     await this.ui.banner("敌方回合", "", "enemy");
     await this.enemyPhase();
     if (this.mode === "over") return;
 
     this.turn++;
     this.rules.jamming = false;
-    for (const u of this.players()) u.acted = false;
+    for (const u of this.units) u.acted = false;
     this.repairOnBases("player");
     this.turnStartTraits("player");
     this.ui.setTurn(this.turn, "player");
     const first = this.players()[0];
-    this.setCursor(first.x, first.y);
-    await this.ui.banner(`第 ${this.turn} 回合`, "我方回合", "player");
-    this.setMode("browse");
+    if (first) this.setCursor(first.x, first.y);
+    await this.playerPhaseStart();
   }
 
+  // 敌方回合：先跑本关的敌方阶段脚本（援军多半在这里），再按原版顺序让每个敌人跑自己的 AI 脚本，
+  // 每个敌人行动完都跑一次检查脚本。友军 NPC 在敌人之后行动
   private async enemyPhase() {
     this.repairOnBases("enemy");
     this.turnStartTraits("enemy");
+    await this.events.runEnemyPhase();
     for (const enemy of this.rules.enemyOrder(this.units)) {
-      if (enemy.hp <= 0) continue;
-      const plan = this.rules.enemyPlan(enemy, this.units, this.turn);
-      // 不动也不打的敌人不移镜头
-      if (plan.kind === "wait") continue;
-      this.setCursor(enemy.x, enemy.y);
-      await wait(0.25 / this.speed());
-      const moved = plan.to.x !== enemy.x || plan.to.y !== enemy.y;
-      if (moved) await this.moveEnemy(enemy, plan.to);
-      if (plan.kind === "attack" && plan.target.hp > 0) {
-        await this.battle(enemy, plan.weapon, plan.target, moved);
-        if (this.checkEnd()) return;
-      }
-      await wait(0.1 / this.speed());
+      if (enemy.hp <= 0 || enemy.side !== "enemy") continue;
+      await this.events.runUnit(enemy);
+      await this.events.runCheck();
+      if (this.mode === "over") return;
+    }
+    for (const npc of this.units.filter((u) => u.npc && u.hp > 0)) {
+      await this.events.runUnit(npc);
+      await this.events.runCheck();
+      if (this.mode === "over") return;
     }
   }
 
-  private moveEnemy(enemy: Unit, to: Point) {
-    const path = pathTo(this.stage.map, this.unitReach(enemy), to);
+  private moveUnit(unit: Unit, to: Point) {
+    const path = pathTo(this.stage.map, this.unitReach(unit), to);
     return new Promise<void>((resolve) => {
-      if (path.length < 2) { enemy.x = to.x; enemy.y = to.y; this.dangerCache = null; resolve(); return; }
-      this.anim = { unit: enemy, path, t: 0, done: resolve };
+      if (path.length < 2) { unit.x = to.x; unit.y = to.y; this.dangerCache = null; resolve(); return; }
+      this.anim = { unit, path, t: 0, done: resolve };
     });
   }
 
@@ -541,24 +639,14 @@ export class Game implements DrawState {
     }
   }
 
-  private checkEnd() {
-    if (!this.enemies().length) { this.gameOver(true); return true; }
-    if (!this.players().length) { this.gameOver(false); return true; }
-    return false;
-  }
-
-  private async gameOver(win: boolean) {
+  // 检查脚本走到「过关」「失败」「结局」。过关剧情、换曲都已经由脚本做完了
+  private async finishStage(result: "clear" | "gameover" | "ending") {
     this.setMode("over");
     this.ui.closeMenu(false);
     this.ui.hideForecast();
     const lines = [`回合数　${this.turn}`, `获得资金　${this.money.value * 10}G`];
-    await wait(0.8);
-    const story = STAGE_STORY[this.stage.number];
-    if (win && story) {
-      for (const scene of story.clear) await this.playScene(scene);
-      this.setMode("over");
-    }
-    this.ui.showResult(win, lines, () => location.reload());
+    await wait(0.6);
+    this.ui.showResult(result !== "gameover", lines, () => location.reload());
   }
 
   // ---------- 目标选择 ----------
@@ -594,7 +682,7 @@ export class Game implements DrawState {
     this.openMenu([
       { label: "结束回合", run: () => this.endTurn() },
       { label: this.dangerOn ? "隐藏敌方范围" : "显示敌方范围", run: () => { this.toggleDanger(); back(); } },
-      { label: "设置", detail: "按键 · 鼠标", run: () => { back(); this.onOpenSettings(); } },
+      { label: "设置", detail: "按键 · 声音", run: () => { back(); this.onOpenSettings(); } },
       { label: "返回", run: back },
     ], this.cursor, back);
   }
@@ -701,4 +789,4 @@ function minus(a: Set<number>, b: { has(k: number): boolean }) {
   return new Set([...a].filter((k) => !b.has(k)));
 }
 
-const wait = (s: number) => new Promise((r) => setTimeout(r, s * 1000));
+const wait = (s: number) => new Promise<void>((r) => setTimeout(r, s * 1000));
