@@ -12,6 +12,7 @@ import { describeTime, listSaves, readSave, requestLoad, writeSave, SAVE_VERSION
 import { strikeSound, type Sfx } from "./sfx.ts";
 import { MUSIC, type Music } from "./music.ts";
 import { keyLabel, settings, TEXT_SPEEDS, type BindAction } from "./settings.ts";
+import { attackShout, damageCase, reactionShout } from "./shouts.ts";
 import { loadScene, personName, portraitUrl, STAGE_STORY, type SceneRef } from "./story.ts";
 
 type Mode = "browse" | "selected" | "moving" | "menu" | "target" | "allyTarget" | "busy" | "dialog" | "title" | "over";
@@ -651,7 +652,12 @@ export class Game implements DrawState {
 
     this.ui.battleStart(attacker, this.renderer.iconUrl(attacker), defender, this.renderer.iconUrl(defender));
     await wait(0.25 / this.speed());
-    for (const e of events) {
+    let attacks = 0;
+    for (const [i, e] of events.entries()) {
+      // 战斗台词（原版规则，见 shouts.ts）：出手前喊招式，第一次是攻击 / 反击，攻方第二次出手是再攻击
+      const kind = e.from === attacker ? (attacks++ ? "extra" : "attack") : "counter";
+      this.ui.battleSay(e.from, attackShout(e.from.pilotId, kind, e.weapon.id));
+      await wait(0.35 / this.speed());
       // 先放开火声，等“弹道飞到”再命中（音效是原版的，见 sfx.ts）
       const sound = strikeSound(e.weapon.name);
       this.sfx.attack(sound);
@@ -667,7 +673,13 @@ export class Game implements DrawState {
       } else {
         this.renderer.float(e.to, "MISS", "#c8c8d0");
       }
+      this.ui.battleSay(e.to, reactionShout(e.to.pilotId, damageCase(e.hit, e.damage, e.hpAfter, e.to.maxHp)));
       await this.ui.battleStrike(e, 0.75 / this.speed());
+      // 攻方打完、守方还活着却没有反击：守方说「无法反击」的台词
+      if (i === 0 && e.hpAfter > 0 && events[1]?.from !== defender) {
+        this.ui.battleSay(defender, reactionShout(defender.pilotId, "cannotCounter"));
+        await wait(0.6 / this.speed());
+      }
     }
     for (const [u, hp] of after) u.hp = hp;
     await wait(0.2 / this.speed());

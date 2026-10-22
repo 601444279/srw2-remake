@@ -194,9 +194,21 @@ export class UI {
           <div class="bt-hp"><div class="bar"><i style="width:${(u.hp / u.maxHp) * 100}%"></i></div><span>${u.hp} / ${u.maxHp}</span></div>
         </div>
         <div class="bt-pop"></div>
+        <div class="bt-say"></div>
       </div>`;
     el.innerHTML = card(atk, atkIcon, "攻击") + card(def, defIcon, "防守") + '<div class="bt-weapon"></div>';
     el.hidden = false;
+  }
+
+  // 战斗台词：显示在说话一方的卡片下方，直到下一句
+  battleSay(u: Unit, text: string | null) {
+    if (!text) return;
+    const box = $("#battle").querySelector(`[data-unit="${u.id}"] .bt-say`) as HTMLElement | null;
+    if (!box) return;
+    box.textContent = `${u.pilotName ? `${u.pilotName}：` : ""}${text}`;
+    box.classList.remove("show");
+    void box.offsetWidth;
+    box.classList.add("show");
   }
 
   // 显示一次出手，duration 秒后完成

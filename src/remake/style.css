@@ -128,6 +128,10 @@ body.no-mouse #menu { pointer-events: none; }
 .bt-side { flex: 1; position: relative; display: flex; gap: 8px; align-items: center; }
 .bt-body { flex: 1; display: flex; flex-direction: column; gap: 4px; }
 .bt-name { display: flex; gap: 6px; align-items: baseline; }
+.bt-say { position: absolute; left: 48px; right: 0; top: 100%; margin-top: 4px; font-size: 13px; color: var(--fg); opacity: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bt-say.show { animation: say-in .2s ease-out both; }
+@keyframes say-in { from { opacity: 0; transform: translateY(-3px); } to { opacity: 1; transform: none; } }
+.bt-side { margin-bottom: 18px; }
 .bt-weapon { width: 100%; text-align: center; font-size: 13px; color: var(--accent); }
 .bt-pop { position: absolute; right: 8px; top: -6px; font-size: 22px; font-weight: 800; opacity: 0; }
 .bt-pop.hit { color: #ff5a5a; }
