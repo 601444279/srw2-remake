@@ -33,6 +33,7 @@ const THRUST = { takeoff: 0.6, accel: 1, cruise: 0.7, brake: 0.4, hover: 0.18 };
 const HOVER_MODES: Mode[] = ["selected", "moving", "menu", "target", "allyTarget"];
 // 剧情对话时的音乐：原版开新游戏后，开场剧情和进地图后的开场对话都放 9 号，第 1 回合开始才换成我方回合曲
 const STORY_BGM = 0x09;
+const STAGE_CARD_BGM = 0x12;
 const LEVEL_UP_JINGLE = 0x0e;
 const TYPE_LABELS = { air: "空", land: "陆", sea: "海" } as const;
 // 建筑 / 基地格每回合开始回复 30% HP（docs/notes-rules.md 1.6）
@@ -168,7 +169,7 @@ export class Game implements DrawState {
     const bgm = MUSIC.stage(this.stage.number);
     // 战斗音乐也先下载，进战斗时不卡
     const battleSongs = this.players().map((u) => MUSIC.battle(u.pilotId, -1));
-    this.music.preload([bgm.player, bgm.enemy, STORY_BGM, ...new Set(battleSongs)]);
+    this.music.preload([bgm.player, bgm.enemy, STORY_BGM, STAGE_CARD_BGM, ...new Set(battleSongs)]);
     // 进关：开场脚本跑到第一个暂停点（出击前的剧情），然后是关卡标题，之后进入第 1 回合
     this.music.play(STORY_BGM);
     this.setMode("busy");
@@ -178,11 +179,14 @@ export class Game implements DrawState {
     this.ui.hideWorldMap();
     const story = STAGE_STORY[this.stage.number];
     this.setMode("title");
+    // 原版：关卡标题出现时换 18 号短曲，标题过后回到剧情曲（地图上的对话），我方回合开始再换回合曲
+    this.music.play(STAGE_CARD_BGM);
     const card = this.ui.titleCard(story?.title ?? `第${this.stage.number}篇`, story?.subtitle ?? "", 2.4);
     this.titleSkip = card.skip;
     if (this.auto) card.skip();
     await card.done;
     this.titleSkip = null;
+    this.music.play(STORY_BGM);
     await this.playerPhaseStart();
   }
 
