@@ -9,7 +9,7 @@ import type { DrawState, Overlay, Renderer } from "./render.ts";
 import type { GrowthStats, UI, MenuItem } from "./ui.ts";
 import { Rules, SPIRIT_FLAG, rngState, setRngState, type BattleEvent } from "./rules.ts";
 import { describeTime, listSaves, readSave, requestLoad, writeSave, SAVE_VERSION, type SaveData, type SlotId } from "./saves.ts";
-import { strikeSound, type Sfx } from "./sfx.ts";
+import { hitSoundFor, strikeSound, type Sfx } from "./sfx.ts";
 import { MUSIC, type Music } from "./music.ts";
 import { keyLabel, settings, TEXT_SPEEDS, type BindAction } from "./settings.ts";
 import { attackShout, damageCase, reactionShout } from "./shouts.ts";
@@ -907,6 +907,7 @@ export class Game implements DrawState {
         // 伤害占最大 HP 的比例决定打击力度：一半血以上或击破就是满力度
         const power = e.hpAfter === 0 ? 1 : Math.min(1, (e.damage / e.to.maxHp) * 2);
         if (!seq && !this.skipBattle) this.sfx.hit(sound);
+        if (seq) this.hitSound(e.weapon.name, seq);
         // 先顿帧，再扣血、飘数字、震屏
         await wait(this.renderer.impact(e.to, power, this.speed()));
         e.to.hp = e.hpAfter;
@@ -961,6 +962,13 @@ export class Game implements DrawState {
     this.setMode(prev);
   }
 
+  // 重制版补的命中音：原版命中时不出声，只有开火声的武器打中是哑的（sfx.ts hitSoundFor）
+  private hitSound(weaponName: string, animSounds: [number, number][] | null) {
+    if (this.skipBattle || !settings.get().hitSfx) return;
+    const id = hitSoundFor(weaponName, animSounds);
+    if (id !== null) this.sfx.impact(id);
+  }
+
   // 按原版帧号依次放音效（60 帧 = 1 秒，跟着演出倍速），跳过战斗时停
   private async playSounds(seq: [number, number][]) {
     let frame = 0;
@@ -990,8 +998,10 @@ export class Game implements DrawState {
       scene.say(e.from, attackShout(e.from.pilotId, kind, e.weapon.id) ?? `${e.weapon.name}！`);
       await wait(0.55 / this.speed());
       // 音效由原版动画数据按帧触发（scene.attack 里）；原版命中、落空之后不另放音效
+      // 打中时另补一声命中音（重制版，设置里可关，见 hitSound）
       await scene.attack(e.from, e.weapon.id);
       if (e.hit) {
+        this.hitSound(e.weapon.name, attackSounds(e.from.unitId, e.weapon.id));
         scene.hit(e.to, e.damage, e.hpAfter, e.hpAfter === 0 ? 1 : Math.min(1, (e.damage / e.to.maxHp) * 2));
       } else {
         scene.miss(e.to);

@@ -55,6 +55,18 @@ export function strikeSound(weaponName: string): StrikeSound {
   return BY_NAME[weaponName.trim()] ?? shot(0x0a, 0x03, 0.3);
 }
 
+// 原版用作命中声的音效：弹道 03、炸开 0C、砍击 0E、离子剑 06
+const IMPACTS = new Set([0x03, 0x0c, 0x0e, 0x06]);
+
+// 重制版补的命中音（设置里可关）：原版只放攻击动画自带的音效，命中那一刻不出声，
+// 只有开火声的动画（左轮、机枪、离子波等）打中就是哑的。按武器类型选命中声，没配的当弹道命中 03。
+// 动画最后一声已经是命中声的不再补，免得响两遍
+export function hitSoundFor(weaponName: string, animSounds: [number, number][] | null): number | null {
+  const last = animSounds?.at(-1)?.[1];
+  if (last !== undefined && IMPACTS.has(last)) return null;
+  return strikeSound(weaponName).impact ?? 0x03;
+}
+
 export type UiSound = "ok" | "move";
 
 export class Sfx {
@@ -62,6 +74,7 @@ export class Sfx {
   private out: GainNode | null = null;
   private buffers = new Map<number, AudioBuffer>();
   private voice: AudioBufferSourceNode | null = null;
+  private impactVoice: AudioBufferSourceNode | null = null;
   private jet: Jet | null = null;
   private thrust = 0;
 
@@ -91,16 +104,30 @@ export class Sfx {
 
   // 播放 id 号音效，delay 秒后开始；会打断正在放的音效
   play(id: number, delay = 0) {
+    const src = this.start(id, delay, this.voice);
+    if (!src) return;
+    src.onended = () => { if (this.voice === src) this.voice = null; };
+    this.voice = src;
+  }
+
+  // 补的命中音（hitSoundFor）：单独一路，不打断攻击动画还在响的尾音
+  impact(id: number) {
+    const src = this.start(id, 0, this.impactVoice);
+    if (!src) return;
+    src.onended = () => { if (this.impactVoice === src) this.impactVoice = null; };
+    this.impactVoice = src;
+  }
+
+  private start(id: number, delay: number, prev: AudioBufferSourceNode | null) {
     const ctx = this.ctx, buf = this.buffers.get(id);
-    if (!ctx || !this.out || !buf || ctx.state !== "running") return;
+    if (!ctx || !this.out || !buf || ctx.state !== "running") return null;
     const t = ctx.currentTime + delay;
     const src = ctx.createBufferSource();
     src.buffer = buf;
     src.connect(this.out);
-    this.voice?.stop(t);
+    prev?.stop(t);
     src.start(t);
-    src.onended = () => { if (this.voice === src) this.voice = null; };
-    this.voice = src;
+    return src;
   }
 
   // 出手：开火声（连发的话按间隔重新触发）

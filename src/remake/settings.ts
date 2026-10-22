@@ -72,6 +72,8 @@ export interface Settings {
   musicStyle: MusicStyle;
   musicVolume: number;
   sfxVolume: number;
+  // 命中音效：打中时按武器类型补一声（原版只放攻击动画自带的音效，有的武器打中没声）
+  hitSfx: boolean;
 }
 
 export const DEFAULT_KEYS: Record<BindAction, Binding> = {
@@ -99,7 +101,7 @@ const listeners = new Set<() => void>();
 function load(): Settings {
   const fallback: Settings = {
     keys: structuredClone(DEFAULT_KEYS), mouse: true, artStyle: "original", battleStyle: "full", flight: true, traitGrowth: true, killCombo: true, textSpeed: "normal",
-    musicStyle: "enhanced", musicVolume: 0.6, sfxVolume: 0.8,
+    musicStyle: "enhanced", musicVolume: 0.6, sfxVolume: 0.8, hitSfx: true,
   };
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "null");

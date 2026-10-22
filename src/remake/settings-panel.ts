@@ -77,6 +77,9 @@ export class SettingsPanel {
         <div class="set-row toggle"><span>音效音量</span>
           <button class="cycle" data-nav data-cycle="sfxVolume">${volumeLabel(s.sfxVolume)}</button>
         </div>
+        <label class="set-row toggle"><span>命中音效<small>打中时按武器类型补一声命中音；关闭为原版（只有攻击动画自带的音效，有的武器打中没声）</small></span>
+          <button class="switch${s.hitSfx ? " on" : ""}" data-nav data-toggle="hitSfx" role="switch" aria-checked="${s.hitSfx}"><i></i></button>
+        </label>
         <div class="set-cols"><span></span><small>主键</small><small>副键</small></div>
         ${rows}
         <p class="set-hint">点按键框（或用方向键选中后按 Enter），再按下新的键。和其他功能冲突时会互换。Delete 清空，Esc 取消。</p>
@@ -95,7 +98,7 @@ export class SettingsPanel {
       this.render();
       this.focus("[data-toggle=mouse]");
     });
-    for (const key of ["flight", "traitGrowth", "killCombo"] as const) {
+    for (const key of ["flight", "traitGrowth", "killCombo", "hitSfx"] as const) {
       this.dialog.querySelector(`[data-toggle=${key}]`)!.addEventListener("click", (e) => {
         e.preventDefault();
         settings.update({ [key]: !settings.get()[key] });
