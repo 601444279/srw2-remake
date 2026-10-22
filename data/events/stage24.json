@@ -1,0 +1,140 @@
+{
+  "stage": 24,
+  "index": 23,
+  "victoryText": "消灭吉尔金刚就是胜利。",
+  "map": 23,
+  "deployment": 24,
+  "bgm": {"player":135,"enemy":136},
+  "npcDeploy": [],
+  "aiScripts": [1,10,11,24],
+  "scripts": {
+    "start": {
+      "entry": "96BF",
+      "ops": [
+        {"at":"96BF","op":"playerBgm","track":135},
+        {"at":"96C1","op":"enemyBgm","track":136},
+        {"at":"96C3","op":"talk","dialog":"res-33#17","face":7,"note":"加代｜加代：拉姆要是移动起来，可要费点功夫。"},
+        {"at":"96C7","op":"inRoster","pilot":27,"note":"伊娃"},
+        {"at":"96C9","op":"jumpIfFalse","to":"96D0"},
+        {"at":"96CC","op":"talk","dialog":"res-33#18","face":27,"note":"伊娃｜伊娃：我想洗澡。"},
+        {"at":"96D0","op":"talk","pause":true,"dialog":"res-33#19","face":13,"note":"布克｜布克：喔！好象有人来了啦！"},
+        {"at":"96D4","op":"talkAt","dialog":"res-33#20","pilot":26,"note":"芬妮｜芬妮：马上你们就要服法了。"},
+        {"at":"96D8","op":"talkAt","dialog":"res-33#21","pilot":8,"note":"龙｜龙： 吉尔？"},
+        {"at":"96DC","op":"talkAt","dialog":"res-33#22","pilot":7,"note":"加代｜加代：那家伙真该死了！"},
+        {"at":"96E0","op":"talkAt","dialog":"res-33#23","pilot":26,"note":"芬妮｜芬妮：哼，你要拥有我们D.C的科学技术，就都明白了。"},
+        {"at":"96E4","op":"closeWindow"},
+        {"at":"96E5","op":"stop","pause":true}
+      ]
+    },
+    "enemyPhase": {
+      "entry": "A3FF",
+      "ops": [
+        {"at":"A3FF","op":"turnIs","turn":5},
+        {"at":"A401","op":"jumpIfTrue","to":"A407"},
+        {"at":"A404","op":"jump","pause":true,"to":"A3FF"},
+        {"at":"A407","op":"bgm","track":205},
+        {"at":"A409","op":"cursorTo","x":18,"y":21},
+        {"at":"A40C","op":"window","mode":15},
+        {"at":"A40E","op":"narrate","dialog":"res-37#49","note":" 敌方援军出现了。"},
+        {"at":"A411","op":"closeWindow"},
+        {"at":"A412","op":"spawnEnemy","x":18,"y":21,"pilot":4,"mech":95,"level":35,"ai":10,"note":"人物4 / 导弹 / 等级 36"},
+        {"at":"A419","op":"cursorTo","x":1,"y":21},
+        {"at":"A41C","op":"wait","n":30},
+        {"at":"A41E","op":"spawnEnemy","x":1,"y":21,"pilot":4,"mech":95,"level":35,"ai":1,"note":"人物4 / 导弹 / 等级 36"},
+        {"at":"A425","op":"wait","n":30},
+        {"at":"A427","op":"stop","pause":true}
+      ]
+    },
+    "check": {
+      "entry": "AD50",
+      "ops": [
+        {"at":"AD50","op":"flag","flag":15,"note":"关卡标志15"},
+        {"at":"AD52","op":"jumpIfTrue","to":"AD9C"},
+        {"at":"AD55","op":"exists","pilot":88,"note":"吉尔"},
+        {"at":"AD57","op":"jumpIfFalse","to":"AD82"},
+        {"at":"AD5A","op":"alliesAtLeast","n":1},
+        {"at":"AD5C","op":"jumpIfFalse","to":"AD7C"},
+        {"at":"AD5F","op":"jump","pause":true,"to":"AD50"},
+        {"at":"AD62","op":"talk","dialog":"res-3B#6","face":14,"note":"马丁｜马丁：终于收拾完了。"},
+        {"at":"AD66","op":"closeWindow"},
+        {"at":"AD67","op":"inRoster","pilot":27,"note":"伊娃"},
+        {"at":"AD69","op":"jumpIfFalse","to":"AD74"},
+        {"at":"AD6C","op":"talk","dialog":"res-36#65","face":27,"note":"伊娃｜伊娃：看，我发现了什么！"},
+        {"at":"AD70","op":"closeWindow"},
+        {"at":"AD71","op":"changeMech","pilot":27,"mech":77,"note":"伊娃 → 伯利"},
+        {"at":"AD74","op":"bgm","track":250},
+        {"at":"AD76","op":"wait","n":60},
+        {"at":"AD78","op":"bgm","track":137},
+        {"at":"AD7A","op":"stageClear"},
+        {"at":"AD7B","op":"stop","pause":true},
+        {"at":"AD7C","op":"bgm","track":139},
+        {"at":"AD7E","op":"wait","n":60},
+        {"at":"AD80","op":"gameOver"},
+        {"at":"AD81","op":"stop","pause":true},
+        {"at":"AD82","op":"bgm","track":132},
+        {"at":"AD84","op":"talk","dialog":"res-33#12","face":88,"note":"吉尔｜吉尔：哈哈，这样也算胜了吗！"},
+        {"at":"AD88","op":"closeWindow"},
+        {"at":"AD89","op":"cursorTo","x":8,"y":11},
+        {"at":"AD8C","op":"wait","n":30},
+        {"at":"AD8E","op":"spawnEnemy","x":8,"y":11,"pilot":88,"mech":159,"level":45,"ai":11,"note":"吉尔 / 麦加金刚 / 等级 46"},
+        {"at":"AD95","op":"wait","n":30},
+        {"at":"AD97","op":"setFlag","flag":15,"note":"关卡标志15"},
+        {"at":"AD99","op":"jump","pause":true,"to":"AD50"},
+        {"at":"AD9C","op":"alliesAtLeast","n":1},
+        {"at":"AD9E","op":"jumpIfFalse","to":"AD7C"},
+        {"at":"ADA1","op":"exists","pilot":88,"note":"吉尔"},
+        {"at":"ADA3","op":"jumpIfFalse","to":"AD62"},
+        {"at":"ADA6","op":"jump","pause":true,"to":"AD50"}
+      ]
+    }
+  },
+  "npcScripts": {},
+  "persuade": [],
+  "tiles": [{"x":5,"y":4,"pilot":null,"shop":2,"greeting":"res-3F#48","parts":[1,3,16,19]}],
+  "summary": {
+    "victory": [["关卡标志15已置位","吉尔 不在场","我方 ≥ 1"]],
+    "defeat": [["吉尔 在场","我方全灭"],["关卡标志15已置位","我方全灭"]],
+    "units": [
+      {
+        "source": "enemyPhase",
+        "at": "A412",
+        "when": [["第 5 回合"]],
+        "op": "spawnEnemy",
+        "x": 18,
+        "y": 21,
+        "pilot": 4,
+        "mech": 95,
+        "level": 35,
+        "ai": 10,
+        "note": "人物4 / 导弹 / 等级 36"
+      },
+      {
+        "source": "enemyPhase",
+        "at": "A41E",
+        "when": [["第 5 回合"]],
+        "op": "spawnEnemy",
+        "x": 1,
+        "y": 21,
+        "pilot": 4,
+        "mech": 95,
+        "level": 35,
+        "ai": 1,
+        "note": "人物4 / 导弹 / 等级 36"
+      },
+      {
+        "source": "check",
+        "at": "AD8E",
+        "when": [["关卡标志15未置位","吉尔 不在场"]],
+        "op": "spawnEnemy",
+        "x": 8,
+        "y": 11,
+        "pilot": 88,
+        "mech": 159,
+        "level": 45,
+        "ai": 11,
+        "note": "吉尔 / 麦加金刚 / 等级 46"
+      }
+    ],
+    "roster": [{"source":"check","at":"AD71","when":[["伊娃 在名册中","关卡标志15已置位","吉尔 不在场","我方 ≥ 1"]],"change":"mech","pilot":27,"mech":77,"note":"伊娃 → 伯利"}]
+  }
+}

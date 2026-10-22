@@ -1,0 +1,180 @@
+{
+  "stage": 16,
+  "index": 15,
+  "victoryText": "全部安全撤离。",
+  "map": 15,
+  "deployment": 16,
+  "bgm": {"player":140,"enemy":145},
+  "npcDeploy": [],
+  "aiScripts": [1,10,11,26,28],
+  "scripts": {
+    "start": {
+      "entry": "95D8",
+      "ops": [
+        {"at":"95D8","op":"playerBgm","track":140},
+        {"at":"95DA","op":"enemyBgm","track":145},
+        {"at":"95DC","op":"talk","pause":true,"dialog":"res-39#7","face":54,"note":"乔｜乔：K6中心确实有封闭的殖民地。"},
+        {"at":"95E0","op":"talkAt","dialog":"res-39#78","pilot":20,"note":"安东｜安东：哇‥‥‥！这帮家伙不简单！"},
+        {"at":"95E4","op":"talkAt","dialog":"res-39#79","pilot":61,"note":"罗纳｜罗纳：哈哈‥‥‥训练中碰上这么好的猎物。"},
+        {"at":"95E8","op":"talkAt","dialog":"res-39#80","pilot":14,"note":"马丁｜马丁：塔利？不好！大家快逃！"},
+        {"at":"95EC","op":"talkAt","dialog":"res-39#81","pilot":8,"note":"龙｜龙：真这么厉害吗？"},
+        {"at":"95F0","op":"talkAt","dialog":"res-39#82","pilot":14,"note":"马丁｜马丁：是的‥‥‥以前也较量过，从没胜过。"},
+        {"at":"95F4","op":"talkAt","dialog":"res-39#83","pilot":7,"note":"加代｜加代：嗯！不就是塔利吗。它们算什么，我们已经今非昔比了！"},
+        {"at":"95F8","op":"talkAt","dialog":"res-39#84","pilot":6,"note":"大卫｜大卫：站住！对手确实很厉害！而且这里压强不对！"},
+        {"at":"95FC","op":"talkAt","dialog":"res-39#85","pilot":10,"note":"路易｜路易：但是逃往哪儿呢？"},
+        {"at":"9600","op":"talkAt","dialog":"res-39#86","pilot":20,"note":"安东｜安东：交给我吧！用巴斯塔的普拉电脑制定一条逃脱路线！"},
+        {"at":"9604","op":"wait","n":10},
+        {"at":"9606","op":"cursorTo","x":31,"y":8},
+        {"at":"9609","op":"talk","dialog":"res-39#87","face":20,"note":"安东｜安东：记住了！"},
+        {"at":"960D","op":"talkAt","dialog":"res-39#88","pilot":8,"note":"龙｜龙：我真不高兴让敌人看着我们逃走，快走吧！"},
+        {"at":"9611","op":"closeWindow"},
+        {"at":"9612","op":"stop","pause":true}
+      ]
+    },
+    "enemyPhase": {
+      "entry": "9FB1",
+      "ops": [
+        {"at":"9FB1","op":"turnIs","turn":1},
+        {"at":"9FB3","op":"jumpIfTrue","to":"9FB9"},
+        {"at":"9FB6","op":"jump","pause":true,"to":"9FB1"},
+        {"at":"9FB9","op":"exists","pilot":52,"note":"珍妮"},
+        {"at":"9FBB","op":"jumpIfFalse","pause":true,"to":"9FB1"},
+        {"at":"9FBE","op":"talkAt","dialog":"res-3B#1","pilot":52,"note":"珍妮｜珍妮：布克‥‥‥真的死了吗‥‥‥？"},
+        {"at":"9FC2","op":"closeWindow"},
+        {"at":"9FC3","op":"jump","pause":true,"to":"9FB1"}
+      ]
+    },
+    "check": {
+      "entry": "AB0E",
+      "ops": [
+        {"at":"AB0E","op":"exists","pilot":52,"note":"珍妮"},
+        {"at":"AB10","op":"jumpIfFalse","to":"AB8C"},
+        {"at":"AB13","op":"exists","pilot":13,"note":"布克"},
+        {"at":"AB15","op":"jumpIfFalse","to":"AB30"},
+        {"at":"AB18","op":"select","pilot":13,"note":"布克"},
+        {"at":"AB1A","op":"selfAdjacent","who":52,"note":"珍妮"},
+        {"at":"AB1C","op":"jumpIfFalse","to":"AB30"},
+        {"at":"AB1F","op":"flag","flag":133,"note":"全程标志5"},
+        {"at":"AB21","op":"jumpIfFalse","to":"AB5A"},
+        {"at":"AB24","op":"flag","flag":15,"note":"关卡标志15"},
+        {"at":"AB26","op":"jumpIfTrue","to":"AB30"},
+        {"at":"AB29","op":"talkAt","dialog":"res-32#83","pilot":52,"note":"珍妮｜珍妮：布克！快逃！"},
+        {"at":"AB2D","op":"closeWindow"},
+        {"at":"AB2E","op":"setFlag","flag":15,"note":"关卡标志15"},
+        {"at":"AB30","op":"enemiesAtLeast","n":1},
+        {"at":"AB32","op":"jumpIfFalse","to":"AB42"},
+        {"at":"AB35","op":"flag","flag":10,"note":"关卡标志10"},
+        {"at":"AB37","op":"jumpIfTrue","to":"AB42"},
+        {"at":"AB3A","op":"alliesAtLeast","n":1},
+        {"at":"AB3C","op":"jumpIfFalse","to":"AB54"},
+        {"at":"AB3F","op":"jump","pause":true,"to":"AB0E"},
+        {"at":"AB42","op":"flag","flag":130,"note":"全程标志2"},
+        {"at":"AB44","op":"jumpIfTrue","to":"ABA0"},
+        {"at":"AB47","op":"talk","dialog":"res-33#1","face":13,"note":"布克｜布克：珍妮，我答应一定救你‥‥‥"},
+        {"at":"AB4B","op":"closeWindow"},
+        {"at":"AB4C","op":"bgm","track":250},
+        {"at":"AB4E","op":"wait","n":60},
+        {"at":"AB50","op":"bgm","track":137},
+        {"at":"AB52","op":"stageClear"},
+        {"at":"AB53","op":"stop","pause":true},
+        {"at":"AB54","op":"bgm","track":139},
+        {"at":"AB56","op":"wait","n":60},
+        {"at":"AB58","op":"gameOver"},
+        {"at":"AB59","op":"stop","pause":true},
+        {"at":"AB5A","op":"talkAt","dialog":"res-39#116","pilot":13,"note":"布克｜布克：这不是珍妮吗？"},
+        {"at":"AB5E","op":"talkAt","dialog":"res-39#117","pilot":52,"note":"珍妮｜珍妮：布克？你还活着！？"},
+        {"at":"AB62","op":"talkAt","dialog":"res-39#118","pilot":13,"note":"布克｜布克：珍妮！你怎么在这！？"},
+        {"at":"AB66","op":"talkAt","dialog":"res-39#119","pilot":52,"note":"珍妮｜珍妮：这‥‥‥我‥‥‥"},
+        {"at":"AB6A","op":"talkAt","dialog":"res-39#120","pilot":61,"note":"罗纳｜罗纳：你在干嘛！杀了他！拜拉！"},
+        {"at":"AB6E","op":"talkAt","dialog":"res-39#121","pilot":13,"note":"布克｜布克：你是拜拉？"},
+        {"at":"AB72","op":"talkAt","dialog":"res-39#122","pilot":52,"note":"珍妮｜珍妮：布克！快逃吧！"},
+        {"at":"AB76","op":"talkAt","dialog":"res-39#123","pilot":13,"note":"布克｜布克：但珍妮你？"},
+        {"at":"AB7A","op":"talkAt","dialog":"res-39#124","pilot":52,"note":"珍妮｜珍妮：我没事儿，你快逃！"},
+        {"at":"AB7E","op":"talkAt","dialog":"res-39#125","pilot":13,"note":"布克｜布克：我一定来救你！等着我！珍妮！"},
+        {"at":"AB82","op":"talkAt","dialog":"res-39#126","pilot":52,"note":"珍妮｜珍妮：布克‥‥‥"},
+        {"at":"AB86","op":"closeWindow"},
+        {"at":"AB87","op":"setFlag","flag":133,"note":"全程标志5"},
+        {"at":"AB89","op":"jump","pause":true,"to":"AB0E"},
+        {"at":"AB8C","op":"flag","flag":130,"note":"全程标志2"},
+        {"at":"AB8E","op":"jumpIfTrue","to":"AB13"},
+        {"at":"AB91","op":"exists","pilot":61,"note":"罗纳"},
+        {"at":"AB93","op":"jumpIfFalse","to":"AB9B"},
+        {"at":"AB96","op":"talkAt","dialog":"res-3B#2","pilot":61,"note":"罗纳｜罗纳：拜拉！怎么了！？稍会点技巧你就骄傲了！"},
+        {"at":"AB9A","op":"closeWindow"},
+        {"at":"AB9B","op":"setFlag","flag":130,"note":"全程标志2"},
+        {"at":"AB9D","op":"jump","to":"AB13"},
+        {"at":"ABA0","op":"talk","dialog":"res-3B#3","face":13,"note":"布克｜布克：珍妮‥‥‥对不起‥‥‥"},
+        {"at":"ABA4","op":"closeWindow"},
+        {"at":"ABA5","op":"bgm","track":250},
+        {"at":"ABA7","op":"wait","n":60},
+        {"at":"ABA9","op":"bgm","track":137},
+        {"at":"ABAB","op":"stageClear"},
+        {"at":"ABAC","op":"stop","pause":true}
+      ]
+    }
+  },
+  "npcScripts": {},
+  "persuade": [
+    {
+      "pilot": 13,
+      "target": 52,
+      "note": "布克 劝降 珍妮",
+      "index": 7,
+      "script": {
+        "entry": "B642",
+        "ops": [
+          {"at":"B642","op":"flag","flag":133,"note":"全程标志5"},
+          {"at":"B644","op":"jumpIfFalse","to":"B653"},
+          {"at":"B647","op":"talkAt","dialog":"res-32#83","pilot":52,"note":"珍妮｜珍妮：布克！快逃！"},
+          {"at":"B64B","op":"closeWindow"},
+          {"at":"B64C","op":"select","pilot":13,"note":"布克"},
+          {"at":"B64E","op":"jumpIfFalse","to":"B652"},
+          {"at":"B651","op":"endAction"},
+          {"at":"B652","op":"stop","pause":true},
+          {"at":"B653","op":"talkAt","dialog":"res-39#116","pilot":13,"note":"布克｜布克：这不是珍妮吗？"},
+          {"at":"B657","op":"talkAt","dialog":"res-39#117","pilot":52,"note":"珍妮｜珍妮：布克？你还活着！？"},
+          {"at":"B65B","op":"talkAt","dialog":"res-39#118","pilot":13,"note":"布克｜布克：珍妮！你怎么在这！？"},
+          {"at":"B65F","op":"talkAt","dialog":"res-39#119","pilot":52,"note":"珍妮｜珍妮：这‥‥‥我‥‥‥"},
+          {"at":"B663","op":"talkAt","dialog":"res-39#120","pilot":61,"note":"罗纳｜罗纳：你在干嘛！杀了他！拜拉！"},
+          {"at":"B667","op":"talkAt","dialog":"res-39#121","pilot":13,"note":"布克｜布克：你是拜拉？"},
+          {"at":"B66B","op":"talkAt","dialog":"res-39#122","pilot":52,"note":"珍妮｜珍妮：布克！快逃吧！"},
+          {"at":"B66F","op":"talkAt","dialog":"res-39#123","pilot":13,"note":"布克｜布克：但珍妮你？"},
+          {"at":"B673","op":"talkAt","dialog":"res-39#124","pilot":52,"note":"珍妮｜珍妮：我没事儿，你快逃！"},
+          {"at":"B677","op":"talkAt","dialog":"res-39#125","pilot":13,"note":"布克｜布克：我一定来救你！等着我！珍妮！"},
+          {"at":"B67B","op":"talkAt","dialog":"res-39#126","pilot":52,"note":"珍妮｜珍妮：布克‥‥‥"},
+          {"at":"B67F","op":"closeWindow"},
+          {"at":"B680","op":"setFlag","flag":133,"note":"全程标志5"},
+          {"at":"B682","op":"select","pilot":13,"note":"布克"},
+          {"at":"B684","op":"jumpIfFalse","to":"B688"},
+          {"at":"B687","op":"endAction"},
+          {"at":"B688","op":"stop","pause":true}
+        ]
+      }
+    }
+  ],
+  "tiles": [
+    {"x":7,"y":4,"pilot":null,"shop":2,"greeting":"res-3F#48","parts":[1,3,16,19]},
+    {
+      "x": 31,
+      "y": 8,
+      "pilot": null,
+      "tileScript": 0,
+      "script": {
+        "entry": "B7A4",
+        "ops": [
+          {"at":"B7A4","op":"removeSelf"},
+          {"at":"B7A5","op":"alliesAtLeast","n":1},
+          {"at":"B7A7","op":"jumpIfTrue","to":"B7AC"},
+          {"at":"B7AA","op":"setFlag","flag":10,"note":"关卡标志10"},
+          {"at":"B7AC","op":"stop","pause":true}
+        ]
+      }
+    }
+  ],
+  "summary": {
+    "victory": [["布克 不在场","敌人全灭"],["敌人全灭","并非（本单位与珍妮相邻）"],["全程标志5已置位","敌人全灭"],["关卡标志10已置位","布克 不在场"],["关卡标志10已置位","并非（本单位与珍妮相邻）"],["全程标志5已置位","关卡标志10已置位"]],
+    "defeat": [["关卡标志10未置位","布克 不在场","我方全灭","敌人 ≥ 1"],["关卡标志10未置位","我方全灭","敌人 ≥ 1","并非（本单位与珍妮相邻）"],["全程标志5已置位","关卡标志10未置位","我方全灭","敌人 ≥ 1"]],
+    "units": [],
+    "roster": []
+  }
+}

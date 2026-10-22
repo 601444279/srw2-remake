@@ -1,0 +1,61 @@
+{
+  "stage": 26,
+  "index": 25,
+  "victoryText": "全力以赴消灭瓦尔。",
+  "map": 25,
+  "deployment": 26,
+  "bgm": {"player":135,"enemy":136},
+  "npcDeploy": [],
+  "aiScripts": [11,30],
+  "scripts": {
+    "start": {
+      "entry": "96FC",
+      "ops": [
+        {"at":"96FC","op":"playerBgm","track":135},
+        {"at":"96FE","op":"enemyBgm","track":136},
+        {"at":"9700","op":"talk","pause":true,"dialog":"res-3A#4","face":6,"note":"大卫｜大卫：接近尾声了。"},
+        {"at":"9704","op":"talkAt","dialog":"res-3A#5","pilot":53,"note":"贝克｜贝克：到底来了，形势发展出人意料的快。"},
+        {"at":"9708","op":"talkAt","dialog":"res-3A#6","pilot":20,"note":"安东｜安东：呵！你也一起吗！"},
+        {"at":"970C","op":"talkAt","dialog":"res-3A#7","pilot":34,"note":"休｜休：可能是冤家吧。"},
+        {"at":"9710","op":"flag","flag":129,"note":"全程标志1"},
+        {"at":"9712","op":"jumpIfFalse","to":"9719"},
+        {"at":"9715","op":"talkAt","dialog":"res-3A#8","pilot":34,"note":"休｜休：请大伙不要再乱跑了。"},
+        {"at":"9719","op":"closeWindow"},
+        {"at":"971A","op":"stop","pause":true}
+      ]
+    },
+    "enemyPhase": {"entry":"A495","ops":[{"at":"A495","op":"stop","pause":true}]},
+    "check": {
+      "entry": "ADC4",
+      "ops": [
+        {"at":"ADC4","op":"exists","pilot":53,"note":"贝克"},
+        {"at":"ADC6","op":"jumpIfFalse","to":"ADD1"},
+        {"at":"ADC9","op":"alliesAtLeast","n":1},
+        {"at":"ADCB","op":"jumpIfFalse","to":"ADF0"},
+        {"at":"ADCE","op":"jump","pause":true,"to":"ADC4"},
+        {"at":"ADD1","op":"exists","pilot":34,"note":"休"},
+        {"at":"ADD3","op":"jumpIfFalse","to":"ADDE"},
+        {"at":"ADD6","op":"talk","dialog":"res-3A#0","face":34,"note":"休｜休：怎么了，好象我们败了。"},
+        {"at":"ADDA","op":"closeWindow"},
+        {"at":"ADDB","op":"selectCamera","pilot":34,"note":"休"},
+        {"at":"ADDD","op":"removeSelf"},
+        {"at":"ADDE","op":"talk","dialog":"res-32#89","face":53,"note":"贝克｜贝克：好，居然发展得这么强大了‥‥‥那就没问题了‥‥‥"},
+        {"at":"ADE2","op":"wait","n":60},
+        {"at":"ADE4","op":"talk","dialog":"res-32#90","face":6,"note":"大卫｜大卫：干掉了吗‥‥‥"},
+        {"at":"ADE8","op":"closeWindow"},
+        {"at":"ADE9","op":"bgm","track":250},
+        {"at":"ADEB","op":"wait","n":60},
+        {"at":"ADED","op":"bgm","track":147},
+        {"at":"ADEF","op":"ending","pause":true},
+        {"at":"ADF0","op":"bgm","track":139},
+        {"at":"ADF2","op":"wait","n":60},
+        {"at":"ADF4","op":"gameOver"},
+        {"at":"ADF5","op":"stop","pause":true}
+      ]
+    }
+  },
+  "npcScripts": {},
+  "persuade": [],
+  "tiles": [],
+  "summary": {"victory":[["贝克 不在场"]],"defeat":[["我方全灭","贝克 在场"]],"units":[],"roster":[]}
+}

@@ -1,0 +1,282 @@
+{
+  "stage": 21,
+  "index": 20,
+  "victoryText": "15回合内必须全部\n从下面的出口逃出。",
+  "map": 20,
+  "deployment": 21,
+  "bgm": {"player":135,"enemy":136},
+  "npcDeploy": [],
+  "aiScripts": [1,10,11],
+  "scripts": {
+    "start": {
+      "entry": "9672",
+      "ops": [
+        {"at":"9672","op":"playerBgm","track":135},
+        {"at":"9674","op":"enemyBgm","track":136},
+        {"at":"9676","op":"talk","pause":true,"dialog":"res-39#66","face":6,"note":"大卫｜大卫：乔，敌人还在反抗吗？"},
+        {"at":"967A","op":"talkAt","dialog":"res-39#67","pilot":7,"note":"加代｜加代：这不是空城计吗！"},
+        {"at":"967E","op":"talkAt","dialog":"res-39#68","pilot":6,"note":"大卫｜大卫：是陷井？"},
+        {"at":"9682","op":"talkAt","dialog":"res-39#69","pilot":53,"note":"贝克｜贝克：很遗憾，各位。"},
+        {"at":"9686","op":"talkAt","dialog":"res-39#70","pilot":11,"note":"卡姆｜卡姆：瓦尔！"},
+        {"at":"968A","op":"talkAt","dialog":"res-39#71","pilot":53,"note":"贝克｜贝克：这个基地一个人也没有，我就用它把你们引诱过来了。"},
+        {"at":"968E","op":"talkAt","dialog":"res-39#72","pilot":6,"note":"大卫｜大卫：‥‥‥"},
+        {"at":"9692","op":"talkAt","dialog":"res-39#73","pilot":7,"note":"加代｜加代：呕！"},
+        {"at":"9696","op":"talkAt","dialog":"res-32#38","pilot":13,"note":"布克｜布克：真烦人！还要我说几遍！"},
+        {"at":"969A","op":"talkAt","dialog":"res-39#74","pilot":8,"note":"龙｜龙：即使目的正确，使用这种恶劣手段也不道德！"},
+        {"at":"969E","op":"talkAt","dialog":"res-39#75","pilot":53,"note":"贝克｜贝克：是么‥‥‥太可惜了，我不得不眼看着你们死去。"},
+        {"at":"96A2","op":"closeWindow"},
+        {"at":"96A3","op":"selectCamera","pilot":53,"note":"贝克"},
+        {"at":"96A5","op":"actor"},
+        {"at":"96A6","op":"removeSelf"},
+        {"at":"96A7","op":"stop","pause":true}
+      ]
+    },
+    "enemyPhase": {
+      "entry": "A22B",
+      "ops": [
+        {"at":"A22B","op":"turnIs","turn":1},
+        {"at":"A22D","op":"jumpIfTrue","to":"A24C"},
+        {"at":"A230","op":"turnIs","turn":2},
+        {"at":"A232","op":"jumpIfTrue","to":"A263"},
+        {"at":"A235","op":"turnIs","turn":3},
+        {"at":"A237","op":"jumpIfTrue","to":"A279"},
+        {"at":"A23A","op":"turnIs","turn":4},
+        {"at":"A23C","op":"jumpIfTrue","to":"A299"},
+        {"at":"A23F","op":"turnIs","turn":10},
+        {"at":"A241","op":"jumpIfTrue","to":"A2D7"},
+        {"at":"A244","op":"turnIs","turn":15},
+        {"at":"A246","op":"jumpIfTrue","to":"A304"},
+        {"at":"A249","op":"jump","pause":true,"to":"A22B"},
+        {"at":"A24C","op":"bgm","track":205},
+        {"at":"A24E","op":"cursorTo","x":13,"y":5},
+        {"at":"A251","op":"window","mode":15},
+        {"at":"A253","op":"narrate","dialog":"res-37#49","note":" 敌方援军出现了。"},
+        {"at":"A256","op":"closeWindow"},
+        {"at":"A257","op":"spawnEnemy","x":13,"y":5,"pilot":2,"mech":91,"level":32,"ai":10,"note":"人物2 / 科顿 / 等级 33"},
+        {"at":"A25E","op":"wait","n":30},
+        {"at":"A260","op":"jump","pause":true,"to":"A22B"},
+        {"at":"A263","op":"exists","pilot":8,"note":"龙"},
+        {"at":"A265","op":"jumpIfFalse","to":"A26C"},
+        {"at":"A268","op":"talkAt","dialog":"res-33#69","pilot":8,"note":"龙｜龙：为什么那家伙不马上引爆基地？"},
+        {"at":"A26C","op":"exists","pilot":12,"note":"希塔"},
+        {"at":"A26E","op":"jumpIfFalse","to":"A275"},
+        {"at":"A271","op":"talkAt","dialog":"res-33#70","pilot":12,"note":"希塔｜希塔：只有13分钟了，赶快！"},
+        {"at":"A275","op":"closeWindow"},
+        {"at":"A276","op":"jump","pause":true,"to":"A22B"},
+        {"at":"A279","op":"bgm","track":205},
+        {"at":"A27B","op":"cursorTo","x":5,"y":13},
+        {"at":"A27E","op":"window","mode":15},
+        {"at":"A280","op":"narrate","dialog":"res-37#49","note":" 敌方援军出现了。"},
+        {"at":"A283","op":"closeWindow"},
+        {"at":"A284","op":"spawnEnemy","x":5,"y":13,"pilot":2,"mech":52,"level":32,"ai":11,"note":"人物2 / 邦巴 / 等级 33"},
+        {"at":"A28B","op":"wait","n":30},
+        {"at":"A28D","op":"spawnEnemy","x":6,"y":13,"pilot":2,"mech":49,"level":32,"ai":1,"note":"人物2 / 布X1 / 等级 33"},
+        {"at":"A294","op":"wait","n":30},
+        {"at":"A296","op":"jump","pause":true,"to":"A22B"},
+        {"at":"A299","op":"inRoster","pilot":35,"note":"萨米"},
+        {"at":"A29B","op":"jumpIfFalse","to":"A2C1"},
+        {"at":"A29E","op":"bgm","track":133},
+        {"at":"A2A0","op":"cursorTo","x":13,"y":31},
+        {"at":"A2A3","op":"spawnNpc","x":13,"y":31,"pilot":35,"mech":9,"level":40,"script":4,"note":"萨米 / 刚达 / 等级 41"},
+        {"at":"A2AA","op":"wait","n":15},
+        {"at":"A2AC","op":"talkAt","dialog":"res-33#71","pilot":35,"note":"萨米｜萨米：这边！快！"},
+        {"at":"A2B0","op":"exists","pilot":11,"note":"卡姆"},
+        {"at":"A2B2","op":"jumpIfFalse","to":"A2B9"},
+        {"at":"A2B5","op":"talkAt","dialog":"res-33#72","pilot":11,"note":"卡姆｜卡姆：萨米！"},
+        {"at":"A2B9","op":"talkAt","dialog":"res-33#73","pilot":35,"note":"萨米｜萨米：好，终于赶上了，出口在这边。只有11分钟了！"},
+        {"at":"A2BD","op":"closeWindow"},
+        {"at":"A2BE","op":"jump","pause":true,"to":"A22B"},
+        {"at":"A2C1","op":"bgm","track":133},
+        {"at":"A2C3","op":"cursorTo","x":13,"y":31},
+        {"at":"A2C6","op":"spawnNpc","x":13,"y":31,"pilot":65,"mech":162,"level":40,"script":4,"note":"凯文 / 阿格马 / 等级 41"},
+        {"at":"A2CD","op":"wait","n":15},
+        {"at":"A2CF","op":"talkAt","dialog":"res-33#74","pilot":65,"note":"凯文｜凯文：喂，这边！快逃！离爆炸只有13分钟了！"},
+        {"at":"A2D3","op":"closeWindow"},
+        {"at":"A2D4","op":"jump","pause":true,"to":"A22B"},
+        {"at":"A2D7","op":"exists","pilot":7,"note":"加代"},
+        {"at":"A2D9","op":"jumpIfFalse","pause":true,"to":"A22B"},
+        {"at":"A2DC","op":"talkAt","dialog":"res-32#110","pilot":7,"note":"加代｜加代：混蛋！只剩下5分钟了！"},
+        {"at":"A2E0","op":"closeWindow"},
+        {"at":"A2E1","op":"jump","pause":true,"to":"A22B"},
+        {"at":"A304","op":"bgm","track":139},
+        {"at":"A306","op":"wait","n":60},
+        {"at":"A308","op":"gameOver"},
+        {"at":"A309","op":"stop","pause":true}
+      ]
+    },
+    "check": {
+      "entry": "ACC1",
+      "ops": [
+        {"at":"A304","op":"bgm","track":139},
+        {"at":"A306","op":"wait","n":60},
+        {"at":"A308","op":"gameOver"},
+        {"at":"A309","op":"stop","pause":true},
+        {"at":"ACC1","op":"flag","flag":10,"note":"关卡标志10"},
+        {"at":"ACC3","op":"jumpIfTrue","to":"ACCE"},
+        {"at":"ACC6","op":"alliesAtLeast","n":1},
+        {"at":"ACC8","op":"jumpIfFalse","to":"A304"},
+        {"at":"ACCB","op":"jump","pause":true,"to":"ACC1"},
+        {"at":"ACCE","op":"talk","dialog":"res-3B#0","face":20,"note":"安东｜安东：我们的行动已被发现了‥‥‥对方的本领很高强吗‥‥‥"},
+        {"at":"ACD2","op":"changeMech","pilot":54,"mech":164,"note":"乔 → 拉姆"},
+        {"at":"ACD5","op":"bgm","track":250},
+        {"at":"ACD7","op":"wait","n":60},
+        {"at":"ACD9","op":"bgm","track":137},
+        {"at":"ACDB","op":"stageClear"},
+        {"at":"ACDC","op":"stop","pause":true}
+      ]
+    }
+  },
+  "npcScripts": {
+    "4": {
+      "entry": "AEA0",
+      "ops": [
+        {"at":"AEA0","op":"setSelfBit","bit":5},
+        {"at":"AEA2","op":"wait","n":1},
+        {"at":"AEA4","op":"aiPickAttack","mode":3},
+        {"at":"AEA6","op":"jumpIfFalse","to":"AEAA"},
+        {"at":"AEA9","op":"aiExec"},
+        {"at":"AEAA","op":"endAction"},
+        {"at":"AEAB","op":"jump","pause":true,"to":"AEA2"}
+      ]
+    }
+  },
+  "persuade": [],
+  "tiles": [
+    {
+      "x": 13,
+      "y": 31,
+      "pilot": null,
+      "tileScript": 0,
+      "script": {
+        "entry": "B7A4",
+        "ops": [
+          {"at":"B7A4","op":"removeSelf"},
+          {"at":"B7A5","op":"alliesAtLeast","n":1},
+          {"at":"B7A7","op":"jumpIfTrue","to":"B7AC"},
+          {"at":"B7AA","op":"setFlag","flag":10,"note":"关卡标志10"},
+          {"at":"B7AC","op":"stop","pause":true}
+        ]
+      }
+    },
+    {
+      "x": 14,
+      "y": 31,
+      "pilot": null,
+      "tileScript": 0,
+      "script": {
+        "entry": "B7A4",
+        "ops": [
+          {"at":"B7A4","op":"removeSelf"},
+          {"at":"B7A5","op":"alliesAtLeast","n":1},
+          {"at":"B7A7","op":"jumpIfTrue","to":"B7AC"},
+          {"at":"B7AA","op":"setFlag","flag":10,"note":"关卡标志10"},
+          {"at":"B7AC","op":"stop","pause":true}
+        ]
+      }
+    },
+    {
+      "x": 15,
+      "y": 31,
+      "pilot": null,
+      "tileScript": 0,
+      "script": {
+        "entry": "B7A4",
+        "ops": [
+          {"at":"B7A4","op":"removeSelf"},
+          {"at":"B7A5","op":"alliesAtLeast","n":1},
+          {"at":"B7A7","op":"jumpIfTrue","to":"B7AC"},
+          {"at":"B7AA","op":"setFlag","flag":10,"note":"关卡标志10"},
+          {"at":"B7AC","op":"stop","pause":true}
+        ]
+      }
+    },
+    {
+      "x": 16,
+      "y": 31,
+      "pilot": null,
+      "tileScript": 0,
+      "script": {
+        "entry": "B7A4",
+        "ops": [
+          {"at":"B7A4","op":"removeSelf"},
+          {"at":"B7A5","op":"alliesAtLeast","n":1},
+          {"at":"B7A7","op":"jumpIfTrue","to":"B7AC"},
+          {"at":"B7AA","op":"setFlag","flag":10,"note":"关卡标志10"},
+          {"at":"B7AC","op":"stop","pause":true}
+        ]
+      }
+    }
+  ],
+  "summary": {
+    "victory": [["关卡标志10已置位"]],
+    "defeat": [["关卡标志10未置位","我方全灭"]],
+    "units": [
+      {
+        "source": "enemyPhase",
+        "at": "A257",
+        "when": [["第 1 回合"]],
+        "op": "spawnEnemy",
+        "x": 13,
+        "y": 5,
+        "pilot": 2,
+        "mech": 91,
+        "level": 32,
+        "ai": 10,
+        "note": "人物2 / 科顿 / 等级 33"
+      },
+      {
+        "source": "enemyPhase",
+        "at": "A284",
+        "when": [["并非（第 1 回合）","并非（第 2 回合）","第 3 回合"]],
+        "op": "spawnEnemy",
+        "x": 5,
+        "y": 13,
+        "pilot": 2,
+        "mech": 52,
+        "level": 32,
+        "ai": 11,
+        "note": "人物2 / 邦巴 / 等级 33"
+      },
+      {
+        "source": "enemyPhase",
+        "at": "A28D",
+        "when": [["并非（第 1 回合）","并非（第 2 回合）","第 3 回合"]],
+        "op": "spawnEnemy",
+        "x": 6,
+        "y": 13,
+        "pilot": 2,
+        "mech": 49,
+        "level": 32,
+        "ai": 1,
+        "note": "人物2 / 布X1 / 等级 33"
+      },
+      {
+        "source": "enemyPhase",
+        "at": "A2A3",
+        "when": [["并非（第 1 回合）","并非（第 2 回合）","并非（第 3 回合）","第 4 回合","萨米 在名册中"]],
+        "op": "spawnNpc",
+        "x": 13,
+        "y": 31,
+        "pilot": 35,
+        "mech": 9,
+        "level": 40,
+        "script": 4,
+        "note": "萨米 / 刚达 / 等级 41"
+      },
+      {
+        "source": "enemyPhase",
+        "at": "A2C6",
+        "when": [["并非（第 1 回合）","并非（第 2 回合）","并非（第 3 回合）","第 4 回合","萨米 不在名册中"]],
+        "op": "spawnNpc",
+        "x": 13,
+        "y": 31,
+        "pilot": 65,
+        "mech": 162,
+        "level": 40,
+        "script": 4,
+        "note": "凯文 / 阿格马 / 等级 41"
+      }
+    ],
+    "roster": [{"source":"check","at":"ACD2","when":[["关卡标志10已置位"]],"change":"mech","pilot":54,"mech":164,"note":"乔 → 拉姆"}]
+  }
+}
