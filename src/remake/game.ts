@@ -481,6 +481,7 @@ export class Game implements DrawState {
     this.rules.jamming = false;
     for (const u of this.players()) u.acted = false;
     this.repairOnBases("player");
+    this.turnStartTraits("player");
     this.ui.setTurn(this.turn, "player");
     const first = this.players()[0];
     this.setCursor(first.x, first.y);
@@ -490,6 +491,7 @@ export class Game implements DrawState {
 
   private async enemyPhase() {
     this.repairOnBases("enemy");
+    this.turnStartTraits("enemy");
     for (const enemy of this.rules.enemyOrder(this.units)) {
       if (enemy.hp <= 0) continue;
       const plan = this.rules.enemyPlan(enemy, this.units, this.turn);
@@ -522,6 +524,20 @@ export class Game implements DrawState {
       const before = u.hp;
       u.hp = Math.min(u.maxHp, u.hp + Math.floor(u.maxHp * 0.3));
       this.renderer.float(u, `+${u.hp - before}`, "#6dff8a");
+    }
+  }
+
+  // 特性「支援」每回合回复 SP，「底力」每回合回复 HP
+  private turnStartTraits(side: Unit["side"]) {
+    for (const u of this.units) {
+      const t = u.trait;
+      if (u.side !== side || u.hp <= 0 || !t) continue;
+      if (t.spPerTurn && u.maxSp) u.sp = Math.min(u.maxSp, u.sp + t.spPerTurn);
+      if (t.hpPerTurn && u.hp < u.maxHp) {
+        const before = u.hp;
+        u.hp = Math.min(u.maxHp, u.hp + Math.max(1, Math.floor(u.maxHp * t.hpPerTurn)));
+        this.renderer.float(u, `+${u.hp - before}`, "#6dff8a");
+      }
     }
   }
 

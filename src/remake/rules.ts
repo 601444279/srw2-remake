@@ -41,7 +41,8 @@ const toRule = (u: Unit): RuleUnit => ({
   moveType: TYPE_NUM[u.moveType],
   strength: u.strength,
   defense: u.defense,
-  speed: u.speed,
+  // 特性「快攻」：速度加成直接进原版公式（命中、回避、速度差再攻击都会受影响）
+  speed: u.speed + (u.trait?.speed ?? 0),
   hp: u.hp,
   maxHp: u.maxHp,
   spirit: u.spirit,
@@ -94,12 +95,20 @@ export class Rules {
 
   // 战前预测。attacker 站在 from（可能是移动后的位置），moved 表示这次行动移动过
   forecast(attacker: Unit, weapon: Weapon, defender: Unit, from: Point, moved: boolean): Forecast {
-    const atk = { ...toRule(attacker), x: from.x, y: from.y };
-    const def = toRule(defender);
+    const p = this.preview(attacker, weapon, defender, from, moved);
+    const attack = strike(p.attack);
+    const counterWeapon = p.counter.slot >= 0 && p.counter.flags & FLAG_VALID ? defender.weapons[p.counter.slot] : null;
+    const counter = { ...strike(p.counter), weapon: counterWeapon };
+    const extra = attack.valid ? extraAttacker({ ...toRule(attacker) }, toRule(defender), { counterValid: counter.valid }) : null;
+    return { attack, counter, extra };
+  }
+
+  // 原版的战前预测（previewBattle），再叠加机师特性。玩家预测和敌方 AI 评分都用它
+  private preview(attacker: Unit, weapon: Weapon, defender: Unit, from: Point, moved: boolean) {
     const p = previewBattle({
       weapon: toRuleWeapon(weapon),
-      atk,
-      def,
+      atk: { ...toRule(attacker), x: from.x, y: from.y },
+      def: toRule(defender),
       defWeapons: defender.weapons.map(toRuleWeapon),
       dist: distance(from, defender),
       moved,
@@ -107,10 +116,41 @@ export class Rules {
       atkTerrain: this.terrainEffectAt(from),
       jamming: this.jamming,
     });
-    const attack = strike(p.attack);
-    const counter = { ...strike(p.counter), weapon: p.counter.slot >= 0 && p.counter.flags & FLAG_VALID ? defender.weapons[p.counter.slot] : null };
-    const extra = attack.valid ? extraAttacker(atk, def, { counterValid: counter.valid }) : null;
-    return { attack, counter, extra };
+    this.applyTraits(p.attack, attacker, defender, weapon, from);
+    const cw = p.counter.slot >= 0 ? defender.weapons[p.counter.slot] : undefined;
+    if (cw) this.applyTraits(p.counter, defender, attacker, cw, defender);
+    return p;
+  }
+
+  // 机师特性的加成（data/pilot-traits.json）。atkPos 是出手方这次战斗时的位置（指挥光环按它算）
+  private applyTraits(r: { flags: number; hit: number; damage: number }, atk: Unit, def: Unit, weapon: Weapon, atkPos: Point) {
+    if (!(r.flags & FLAG_VALID)) return;
+    const at = atk.trait, dt = def.trait;
+    const forcedHit = atk.side === "player" && atk.spirit & FLAG.SURE_HIT;
+    const forcedMiss = def.side === "player" && def.spirit & FLAG.EVADE;
+    if (!forcedHit && !forcedMiss) {
+      let bonus = (at?.hit ?? 0) - (dt?.evade ?? 0) + this.commandAura(atk, atkPos);
+      if (weapon.range >= 2) bonus += at?.rangedHit ?? 0;
+      r.hit = Math.max(0, Math.min(100, r.hit + bonus));
+    }
+    let dmg = r.damage;
+    if (at?.lowHpDamage && atk.hp <= atk.maxHp * (at.lowHp ?? 0)) dmg *= at.lowHpDamage;
+    if (dt?.damageTaken) dmg *= dt.damageTaken;
+    if (dt?.lowHpDamageTaken && def.hp <= def.maxHp * (dt.lowHp ?? 0)) dmg *= dt.lowHpDamageTaken;
+    r.damage = Math.floor(dmg);
+    // 能否击破按特性修正后的数值重新判断
+    r.flags = r.hit > 0 && def.hp < r.damage ? r.flags | FLAG_LETHAL : r.flags & ~FLAG_LETHAL;
+  }
+
+  // 特性「指挥」：周围几格内有带指挥特性的友军，命中加成（不含自己）
+  private commandAura(unit: Unit, pos: Point) {
+    let bonus = 0;
+    for (const u of this.stage.units) {
+      const t = u.trait;
+      if (u === unit || u.side !== unit.side || u.hp <= 0 || !t?.auraHit) continue;
+      if (distance(u, pos) <= (t.auraRange ?? 0)) bonus = Math.max(bonus, t.auraHit);
+    }
+    return bonus;
   }
 
   // 能攻击的目标：从 from 出发，用这把武器
@@ -142,6 +182,8 @@ export class Rules {
     const gain = expForKill(victim.expBase, victim.levelIndex, killer.levelIndex);
     killer.exp = addExp(killer.exp, gain);
     money.value = addMoney(money.value, victim.money);
+    // 特性「斗志」：击破后 SP 回复
+    if (killer.trait?.spOnKill) killer.sp = Math.min(killer.maxSp, killer.sp + killer.trait.spOnKill);
     const newLevel = levelForExp(killer.exp, killer.levelIndex, 0);
     return { exp: gain, levels: newLevel - killer.levelIndex, newLevel };
   }
@@ -235,7 +277,7 @@ export class Rules {
       evaluate: (w: unknown, t: RuleUnit, pos: Point, moved: boolean) => {
         const target = players.find((p) => p.index === t.index)!;
         const weapon = enemy.weapons[ruleWeapons.indexOf(w as (typeof ruleWeapons)[number])];
-        return this.forecastRaw(enemy, weapon, target, pos, moved);
+        return this.preview(enemy, weapon, target, pos, moved);
       },
     }) as Choice | null;
     if (best) {
@@ -250,19 +292,6 @@ export class Rules {
     return { kind: "move", to };
   }
 
-  private forecastRaw(attacker: Unit, weapon: Weapon, defender: Unit, from: Point, moved: boolean) {
-    return previewBattle({
-      weapon: toRuleWeapon(weapon),
-      atk: { ...toRule(attacker), x: from.x, y: from.y },
-      def: toRule(defender),
-      defWeapons: defender.weapons.map(toRuleWeapon),
-      dist: distance(from, defender),
-      moved,
-      defTerrain: this.terrainEffectAt(defender),
-      atkTerrain: this.terrainEffectAt(from),
-      jamming: this.jamming,
-    });
-  }
 }
 
 export interface BattleEvent {

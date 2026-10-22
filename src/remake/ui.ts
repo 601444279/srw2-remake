@@ -60,7 +60,8 @@ export class UI {
           <img src="${iconUrl}" alt="">
           <div class="body">
             <div class="name">${unit.name}<span class="tag">${TYPE_LABEL[unit.moveType]}</span><span class="tag">Lv ${unit.level}</span>${unit.acted ? '<span class="tag">已行动</span>' : ""}</div>
-            ${unit.pilotName ? `<div class="pilot">驾驶员 ${unit.pilotName}${unit.maxSp ? `<span>SP ${unit.sp} / ${unit.maxSp}</span>` : ""}</div>` : ""}
+            ${unit.pilotName ? `<div class="pilot"><span>驾驶员 ${unit.pilotName}${unit.trait ? `<em class="trait" title="${unit.trait.text}">${unit.trait.name}</em>` : ""}</span>${unit.maxSp ? `<span>SP ${unit.sp} / ${unit.maxSp}</span>` : ""}</div>` : ""}
+            ${unit.trait ? `<div class="trait-text">${unit.trait.name}：${unit.trait.text}</div>` : ""}
             <div class="hp"><div class="bar"><i style="width:${ratio * 100}%"></i></div><span>${unit.hp} / ${unit.maxHp}</span></div>
             <div class="stats">
               <span>机动 <b>${unit.move}</b></span><span>强度 <b>${unit.strength}</b></span>

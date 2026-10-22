@@ -1,0 +1,42 @@
+{
+  "note": "机师特性（重制版新增，原版没有）。初版按原作形象、驾驶的机体和自带精神分配，边玩边改。pilots 的键是驾驶员编号（= 人物编号）",
+  "traits": {
+    "newtype": { "name": "新人类", "text": "命中 +10，敌人对他的命中 −10", "hit": 10, "evade": 10 },
+    "hotblood": { "name": "热血", "text": "HP 30% 以下时伤害 +20%", "lowHpDamage": 1.2, "lowHp": 0.3 },
+    "fighting": { "name": "斗志", "text": "每击破一个敌人 SP +5", "spOnKill": 5 },
+    "quick": { "name": "快攻", "text": "速度 +10（影响命中、回避和再攻击）", "speed": 10 },
+    "ironwall": { "name": "铁壁", "text": "受到的伤害 −10%", "damageTaken": 0.9 },
+    "guts": { "name": "根性", "text": "HP 30% 以下时受到的伤害 −20%", "lowHpDamageTaken": 0.8, "lowHp": 0.3 },
+    "sniper": { "name": "神射", "text": "射程 2 以上的武器命中 +10", "rangedHit": 10 },
+    "support": { "name": "支援", "text": "每回合开始 SP +5", "spPerTurn": 5 },
+    "command": { "name": "指挥", "text": "周围 2 格内的我方单位命中 +5", "auraHit": 5, "auraRange": 2 },
+    "resilience": { "name": "底力", "text": "每回合开始回复 5% HP", "hpPerTurn": 0.05 }
+  },
+  "pilots": {
+    "6": "newtype",
+    "7": "hotblood",
+    "8": "fighting",
+    "9": "quick",
+    "10": "ironwall",
+    "11": "newtype",
+    "12": "fighting",
+    "13": "quick",
+    "14": "guts",
+    "15": "support",
+    "16": "support",
+    "17": "guts",
+    "18": "hotblood",
+    "19": "newtype",
+    "20": "resilience",
+    "21": "quick",
+    "27": "newtype",
+    "28": "fighting",
+    "35": "sniper",
+    "43": "sniper",
+    "44": "ironwall",
+    "45": "support",
+    "49": "resilience",
+    "52": "guts",
+    "54": "command"
+  }
+}

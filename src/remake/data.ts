@@ -3,6 +3,8 @@
 //   机体、驾驶员、武器、精神：data/units.json、data/weapons.json、data/spirits.json（tools/extract-units.js）
 import type { GridMap, MoveType } from "./grid.ts";
 import { computeStats, type GrowthCurve, type PilotDef, type UnitDef } from "./stats.ts";
+import { traitOf, type Trait } from "./traits.ts";
+import { personName } from "./story.ts";
 import environments from "../../data/environments.json";
 import terrainNames from "../../data/terrain-names.json";
 import deployments from "../../data/deployments.json";
@@ -70,6 +72,8 @@ export interface Unit {
   maxSp: number;
   weapons: Weapon[];
   spirits: Spirit[];
+  // 机师特性（重制版新增）
+  trait: Trait | null;
   acted: boolean;
 }
 
@@ -149,7 +153,8 @@ function buildUnit(id: number, p: Placement, unitChrBanks: number[]): Unit {
     aiScript: p.aiScript,
     waitUntilTurn: WAIT_SCRIPTS[p.aiScript] ?? 0,
     name: def.name ?? `机体 ${p.unitId}`,
-    pilotName: pilot.name ?? (p.side === "enemy" ? "" : `驾驶员 ${p.pilotId}`),
+    // 驾驶员数据表里有些名字没解出来，用剧情的人名表（下标同样是人物编号）补上
+    pilotName: pilot.name || personName(p.pilotId) || (p.side === "enemy" ? "" : `驾驶员 ${p.pilotId}`),
     level: p.level + 1,
     x: p.x,
     y: p.y,
@@ -166,6 +171,7 @@ function buildUnit(id: number, p: Placement, unitChrBanks: number[]): Unit {
     maxSp: p.side === "player" ? stats.maxSp : 0,
     weapons: def.weapons.map(weaponOf).filter((w): w is Weapon => !!w),
     spirits: pilot.spirits.map((s) => spiritDb[s]).filter(Boolean).map((s) => ({ id: s.id, name: s.name, cost: s.cost, text: s.text })),
+    trait: traitOf(p.pilotId),
     acted: false,
   };
 }
