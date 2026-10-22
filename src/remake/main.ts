@@ -8,7 +8,8 @@ import { Sfx } from "./sfx.ts";
 import { Music } from "./music.ts";
 import { SettingsPanel } from "./settings-panel.ts";
 import { settings } from "./settings.ts";
-import { readSave, takePendingLoad } from "./saves.ts";
+import { readSave, requestLoad, takePendingLoad } from "./saves.ts";
+import { showTitle } from "./title.ts";
 
 async function boot() {
   const canvas = document.getElementById("map") as HTMLCanvasElement;
@@ -22,7 +23,10 @@ async function boot() {
   const ui = new UI();
   const panel = new SettingsPanel();
   let input: Input | null = null;
-  const game = new Game(stage, renderer, ui, new Sfx(), new Music(), () => input?.isFast ?? false);
+  const sfx = new Sfx(), music = new Music();
+  const game = new Game(stage, renderer, ui, sfx, music, () => input?.isFast ?? false);
+  // 标题画面开着时游戏不接收按键
+  let titleOpen = false;
 
   // 关闭鼠标操作时隐藏指针、菜单也不响应鼠标
   const applyMouse = () => document.body.classList.toggle("no-mouse", !settings.get().mouse);
@@ -52,7 +56,7 @@ async function boot() {
     onPointerTile: (x, y) => game.pointerTile(renderer.screenToTile(x, y)),
     onPointerClick: (x, y, button) => game.pointerClick(renderer.screenToTile(x, y), button),
     onWheel: (d) => game.action(d < 0 ? "zoomIn" : "zoomOut"),
-  }, () => panel.isOpen);
+  }, () => panel.isOpen || titleOpen);
 
   // 开发时方便在控制台里调试
   if (import.meta.env.DEV) Object.assign(window, { game, renderer });
@@ -91,7 +95,14 @@ async function boot() {
   }
   if (save) await game.resumeFromSave(save);
   else if (pending === "new") await game.start();
-  else await game.showStartMenu();
+  else {
+    // 正常打开游戏：标题画面 → 主菜单。继续 / 读档整页重新载入（干净地重建状态）
+    titleOpen = true;
+    const choice = await showTitle({ music, sfx, openSettings, settingsOpen: () => panel.isOpen });
+    titleOpen = false;
+    if (choice.kind === "load") { requestLoad(choice.slot); return; }
+    await game.start();
+  }
 }
 
 boot().catch((e) => {

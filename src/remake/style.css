@@ -364,3 +364,23 @@ body.story #info, body.story #forecast { display: none !important; }
 @keyframes bs-flash { 0% { opacity: .75; } 100% { opacity: 0; } }
 @keyframes bs-quake { 0%, 100% { transform: none; } 25% { transform: translate(-4px, 2px); } 50% { transform: translate(4px, -2px); } 75% { transform: translate(-2px, -1px); } }
 #growth .gr-level .lvup { font-style: normal; margin-left: 6px; color: var(--accent); font-size: 12px; font-weight: 700; }
+
+/* 标题画面 */
+#title { position: fixed; inset: 0; z-index: 40; display: flex; flex-direction: column; align-items: center; justify-content: center; background: radial-gradient(ellipse at 50% 35%, #141a33 0%, #05060c 70%); transition: opacity .4s; }
+#title.out { opacity: 0; }
+#title .tt-stars { position: absolute; inset: 0; width: 100%; height: 100%; }
+#title .tt-main { position: relative; display: flex; flex-direction: column; align-items: center; gap: 14px; width: min(860px, calc(100vw - 32px)); }
+#title .tt-logo { width: min(100%, 852px); image-rendering: pixelated; filter: drop-shadow(0 0 24px rgba(90, 120, 255, .35)); animation: tt-logo 1.1s cubic-bezier(.2, 1.2, .3, 1) both; }
+@keyframes tt-logo { from { opacity: 0; transform: translateY(-30px) scale(1.15); filter: brightness(3) drop-shadow(0 0 40px #fff); } to { opacity: 1; transform: none; } }
+#title .tt-sub { font: 800 14px/1 var(--font); letter-spacing: 12px; color: var(--muted); margin-top: -4px; animation: bs-in 1s .6s both; }
+#title .tt-press { margin-top: 48px; font-size: 18px; letter-spacing: 4px; color: var(--fg); animation: gr-blink 1.4s ease-in-out infinite, bs-in .6s 1s both; }
+#title .tt-menu { margin-top: 28px; display: flex; flex-direction: column; gap: 6px; width: min(420px, 100%); animation: gr-pop .25s ease-out; }
+#title .tt-menu button { display: flex; align-items: center; gap: 12px; padding: 10px 16px; border-radius: 10px; border: 1px solid var(--panel-border); background: rgba(18, 20, 30, 0.75); color: var(--fg); font: 16px var(--font); text-align: left; cursor: pointer; }
+#title .tt-menu button .label { min-width: 72px; font-weight: 700; letter-spacing: 2px; }
+#title .tt-menu button small { color: var(--muted); font-size: 12px; }
+#title .tt-menu button img { width: 72px; height: 48px; object-fit: cover; border-radius: 4px; image-rendering: pixelated; }
+#title .tt-menu button.on { border-color: var(--accent); background: rgba(255, 210, 87, 0.12); box-shadow: 0 0 18px rgba(255, 210, 87, .15); }
+#title .tt-menu button.on .label { color: var(--accent); }
+#title .tt-menu button:disabled { opacity: .4; cursor: default; }
+#title .tt-foot { position: absolute; bottom: 14px; font-size: 11px; color: rgba(154, 160, 180, .6); }
+body.no-mouse #title { cursor: none; }
