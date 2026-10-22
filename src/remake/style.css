@@ -253,6 +253,7 @@ body.story #info, body.story #forecast { display: none !important; }
 .dl-face img { width: 100%; height: 100%; image-rendering: pixelated; }
 .dl-face.placeholder { background: linear-gradient(135deg, #2e333c, #16181d); }
 .dl-face span { font: var(--f-display); color: var(--dim); }
+.dl-face.none { display: none; }
 .dl-body { flex: 1; min-height: 96px; }
 .dl-name { font: var(--f-title); color: var(--accent); margin-bottom: 6px; }
 .dl-text { font: var(--f-body); line-height: 1.6; white-space: pre-wrap; }

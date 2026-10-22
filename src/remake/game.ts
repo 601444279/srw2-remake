@@ -129,14 +129,17 @@ export class Game implements DrawState {
     await wait(0.2 / this.speed());
   }
 
+  // 原版（模拟器第 1 关第 11 回合实测）：光标先到出现位置，约 10 帧后单位直接冒出来，再停 26 帧才出下一个，
+  // 援军是伴着「噔噔噔」一个一个出现的；敌人不打字幕，保留神秘感
   private async addUnit(u: Unit) {
     if (u.side === "player") this.syncTrait(u);
     await this.renderer.loadUnit(u);
+    this.setCursor(u.x, u.y);
+    await wait(10 / 60 / this.speed());
     this.units.push(u);
     this.dangerCache = null;
-    this.setCursor(u.x, u.y);
-    this.renderer.float(u, u.side === "enemy" ? "出现" : "加入", u.side === "enemy" ? "enemy" : "player");
-    await wait(0.35 / this.speed());
+    if (u.side !== "enemy") this.renderer.float(u, "加入", "player");
+    await wait(26 / 60 / this.speed());
   }
 
   // 撤退 / 离场：淡出，不算击破，不给经验

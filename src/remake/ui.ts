@@ -568,6 +568,8 @@ export class UI {
       });
     }
     (el.querySelector(".dl-face") as HTMLElement).classList.toggle("placeholder", !portrait);
+    // 旁白（如「敌方援军出现了」，原版窗口样式 0F）没有说话人，原版不画头像框
+    (el.querySelector(".dl-face") as HTMLElement).classList.toggle("none", !portrait && !initial);
     el.querySelector(".dl-name")!.textContent = speaker;
     el.classList.remove("done");
     const body = el.querySelector(".dl-text")!;
