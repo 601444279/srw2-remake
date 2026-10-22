@@ -167,8 +167,8 @@ export class UI {
   }
 
   // 战斗后的成长卡片。没升级：小卡，经验条涨一截，自动消失。
-  // 升级：大卡，像原版那样一项一项往上跳——等级、经验条，然后每项能力一点一点加上去，每跳一下「嘀」一声；
-  // 最后是特性（强化了就高亮）。跳的过程中按确定直接跳完，再按一次关闭。sound 放界面音效
+  // 升级：大卡，像原版那样一项一项往上跳——经验条、等级，然后每项能力一点一点加上去，每跳一下「嘀」一声；
+  // 最后是特性（强化了就高亮）。按确定：当前这一项立刻加完、接着下一项；全部完了再按关闭。sound 放界面音效
   showGrowth(d: GrowthData, speed: number, sound: (kind: "tick" | "ding") => void = () => {}): { done: Promise<void>; advance: () => void; close: () => void } {
     const el = $("#growth");
     const up = d.after.level > d.before.level;
@@ -193,16 +193,18 @@ export class UI {
         </div>
         <div class="gr-bar"><i style="width:${d.barBefore * 100}%"></i></div>
         <div class="gr-next">${d.toNext === null ? "已达到最高等级" : `下一级还需 ${d.toNext}`}</div>
-        ${up ? `<ul class="gr-stats">${statRows}</ul>${traitRow(d)}<div class="gr-hint">按确定跳过</div>` : ""}
+        ${up ? `<ul class="gr-stats">${statRows}</ul>${traitRow(d)}<div class="gr-hint">按确定加快</div>` : ""}
       </div>`;
     el.hidden = false;
     const bar = el.querySelector(".gr-bar i") as HTMLElement;
-    let fast = false, finished = !up, closed = false;
-    const sleep = (s: number) => (fast || closed ? Promise.resolve() : new Promise<void>((r) => setTimeout(r, (s / speed) * 1000)));
+    const hint = el.querySelector(".gr-hint");
+    // rush：玩家按了确定，当前这一段立刻做完
+    let rush = false, finished = !up, closed = false;
+    const sleep = (s: number) => (rush || closed ? Promise.resolve() : new Promise<void>((r) => setTimeout(r, (s / speed) * 1000)));
     let resolveDone!: () => void;
     const done = new Promise<void>((r) => (resolveDone = r));
     const close = () => { if (closed) return; closed = true; el.hidden = true; el.innerHTML = ""; resolveDone(); };
-    const advance = () => { if (finished) close(); else fast = true; };
+    const advance = () => { if (finished) close(); else rush = true; };
     el.onclick = advance;
 
     const run = async () => {
@@ -213,36 +215,40 @@ export class UI {
         close();
         return;
       }
-      // 经验条涨满，等级跳上去，经验条从新等级的进度开始
+      // 经验条涨满
       bar.style.width = "100%";
-      await sleep(0.55);
-      // 等级一级一级跳
+      await sleep(0.7);
+      // 等级一级一级跳，经验条从新等级的进度开始
       const lv = el.querySelector(".gr-level .lv") as HTMLElement;
       const lvUp = el.querySelector(".gr-level .lvup") as HTMLElement;
       for (let L = d.before.level + 1; L <= d.after.level; L++) {
-        lv.textContent = String(fast ? d.after.level : L);
-        lvUp.textContent = `+${(fast ? d.after.level : L) - d.before.level}`;
+        const shown = rush ? d.after.level : L;
+        lv.textContent = String(shown);
+        lvUp.textContent = `+${shown - d.before.level}`;
         lv.classList.remove("new");
         void lv.offsetWidth;
         lv.classList.add("new");
-        if (!fast) sound("ding");
-        if (fast) break;
-        await sleep(0.3);
+        if (!rush) sound("ding");
+        if (rush) break;
+        await sleep(0.45);
       }
       bar.style.transition = "none";
       bar.style.width = "0%";
       void bar.offsetWidth;
       bar.style.transition = "";
       bar.style.width = `${(d.barAfter ?? 1) * 100}%`;
-      await sleep(0.45);
+      await sleep(0.5);
       // 能力一项一项往上加
-      for (const li of el.querySelectorAll<HTMLElement>(".gr-stats li")) {
+      const items = [...el.querySelectorAll<HTMLElement>(".gr-stats li")];
+      for (const li of items) {
+        if (closed) return;
+        rush = false;
         const from = Number(li.dataset.from), to = Number(li.dataset.to);
         const b = li.querySelector("b")!, em = li.querySelector("em")!;
         li.classList.add("active");
         const diff = to - from;
-        const stepS = Math.min(0.09, Math.max(0.03, 0.7 / Math.max(1, diff)));
-        for (let k = 1; k <= diff && !fast && !closed; k++) {
+        const stepS = Math.min(0.14, Math.max(0.05, 1.2 / Math.max(1, diff)));
+        for (let k = 1; k <= diff && !rush && !closed; k++) {
           b.textContent = String(from + k);
           em.textContent = `+${k}`;
           li.classList.toggle("bump");
@@ -253,16 +259,16 @@ export class UI {
         em.textContent = diff ? `+${diff}` : "";
         li.classList.remove("active");
         li.classList.add(diff ? "up" : "same");
-        await sleep(0.12);
+        rush = false;
+        await sleep(0.35);
       }
       const trait = el.querySelector(".gr-trait") as HTMLElement | null;
-      if (trait) {
+      if (trait && !closed) {
         await sleep(0.2);
         trait.classList.add("show");
-        if (trait.classList.contains("up") && !fast) sound("ding");
+        if (trait.classList.contains("up")) sound("ding");
       }
       finished = true;
-      const hint = el.querySelector(".gr-hint");
       if (hint) hint.textContent = "按确定继续";
     };
     void run();

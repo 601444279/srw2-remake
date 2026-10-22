@@ -340,8 +340,11 @@ body.story #info, body.story #forecast { display: none !important; }
 #growth .gr-trait.up { background: rgba(255, 210, 87, 0.12); border: 1px solid rgba(255, 210, 87, 0.45); }
 #growth .gr-trait.up b { color: var(--fg); font-size: 15px; }
 #status .st-next { margin-top: 2px; color: var(--muted); opacity: .8; }
-#battle-scene canvas { transition: transform .35s ease-out, filter .35s ease-out; transform-origin: var(--fx, 50%) var(--fy, 60%); }
-#battle-scene .bs-stage.slowmo canvas { transform: scale(1.12); filter: saturate(1.4) contrast(1.15); }
+/* 慢镜头：镜头移到被击破的机体（--fx / --fy 是它在画面里的位置），放大，四周压暗 */
+#battle-scene canvas { transition: transform .45s cubic-bezier(.2, .8, .3, 1), filter .45s ease-out; transform-origin: 50% 50%; }
+#battle-scene .bs-stage.slowmo canvas { transform: scale(1.7) translate(calc(50% - var(--fx, 50%)), calc(50% - var(--fy, 50%))); filter: saturate(1.4) contrast(1.15); }
+#battle-scene .bs-spot { position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .45s ease-out; background: radial-gradient(ellipse 30% 55% at 50% 50%, transparent 40%, rgba(0, 0, 0, .8) 100%); }
+#battle-scene .bs-stage.slowmo .bs-spot { opacity: 1; }
 #battle-scene .bs-stage::after { content: ""; position: absolute; inset: 0; background: #fff; opacity: 0; pointer-events: none; }
 #battle-scene .bs-stage.slowmo::after { animation: bs-flash .35s ease-out; }
 #battle-scene .bs-stage.blast::after { animation: bs-flash .3s ease-out; }

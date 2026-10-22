@@ -160,7 +160,7 @@ export class BattleScene {
 
     this.root.innerHTML = `
       <div class="bs-frame">
-        <div class="bs-stage"><canvas width="${W * SCALE}" height="${H * SCALE}"></canvas><div class="bs-pops"></div></div>
+        <div class="bs-stage"><canvas width="${W * SCALE}" height="${H * SCALE}"></canvas><div class="bs-spot"></div><div class="bs-pops"></div></div>
         <div class="bs-hud">
           ${this.actorsBySide().map((a) => this.card(a)).join("")}
         </div>
