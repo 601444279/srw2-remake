@@ -1,0 +1,2733 @@
+{
+ "note": "对话头像，人物编号 = 资源 0x11 人物名下标 = 剧情 F9 参数。资源 0x85 每人 7 字节记录；图像 = 4×4 背景图块（色板 0f 30 10 00）上叠 4×4 精灵图块（色板 0f + colors）。sameAs = 与该编号的图完全相同；blank = 空头像（整张对话框灰）；mixed = 背景层和精灵层借自两个不同人物，拼出来是乱图（占位）。格式见 docs/notes-portraits.md",
+ "resourceTable": "0x09C78",
+ "bgPalette": [
+  "0x0F",
+  "0x30",
+  "0x10",
+  "0x00"
+ ],
+ "portraits": [
+  {
+   "id": 1,
+   "idHex": "0x01",
+   "name": "",
+   "file": "assets/original/portraits/01.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09D58",
+   "colors": [
+    "0x37",
+    "0x1A",
+    "0x00"
+   ],
+   "bg": {
+    "chrBank1k": "0x24",
+    "firstTile": "0xC0",
+    "chrOffset": "0x09000"
+   },
+   "sprite": {
+    "chrBank2k": "0x14",
+    "firstTile": "0x80",
+    "chrOffset": "0x05000"
+   },
+   "blank": true
+  },
+  {
+   "id": 2,
+   "idHex": "0x02",
+   "name": "",
+   "file": "assets/original/portraits/02.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09D58",
+   "colors": [
+    "0x37",
+    "0x1A",
+    "0x00"
+   ],
+   "bg": {
+    "chrBank1k": "0x24",
+    "firstTile": "0xC0",
+    "chrOffset": "0x09000"
+   },
+   "sprite": {
+    "chrBank2k": "0x14",
+    "firstTile": "0x80",
+    "chrOffset": "0x05000"
+   },
+   "sameAs": 1,
+   "blank": true
+  },
+  {
+   "id": 3,
+   "idHex": "0x03",
+   "name": "士兵",
+   "file": "assets/original/portraits/03.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09D5F",
+   "colors": [
+    "0x37",
+    "0x1A",
+    "0x11"
+   ],
+   "bg": {
+    "chrBank1k": "0x24",
+    "firstTile": "0xD0",
+    "chrOffset": "0x09100"
+   },
+   "sprite": {
+    "chrBank2k": "0x14",
+    "firstTile": "0x90",
+    "chrOffset": "0x05100"
+   }
+  },
+  {
+   "id": 4,
+   "idHex": "0x04",
+   "name": "",
+   "file": "assets/original/portraits/04.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09D66",
+   "colors": [
+    "0x37",
+    "0x1A",
+    "0x00"
+   ],
+   "bg": {
+    "chrBank1k": "0x24",
+    "firstTile": "0xC0",
+    "chrOffset": "0x09000"
+   },
+   "sprite": {
+    "chrBank2k": "0x14",
+    "firstTile": "0x80",
+    "chrOffset": "0x05000"
+   },
+   "sameAs": 1,
+   "blank": true
+  },
+  {
+   "id": 5,
+   "idHex": "0x05",
+   "name": "查里",
+   "file": "assets/original/portraits/05.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09D6D",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x06"
+   ],
+   "bg": {
+    "chrBank1k": "0x24",
+    "firstTile": "0xE0",
+    "chrOffset": "0x09200"
+   },
+   "sprite": {
+    "chrBank2k": "0x14",
+    "firstTile": "0xA0",
+    "chrOffset": "0x05200"
+   }
+  },
+  {
+   "id": 6,
+   "idHex": "0x06",
+   "name": "大卫",
+   "file": "assets/original/portraits/06.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09D74",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x06"
+   ],
+   "bg": {
+    "chrBank1k": "0x24",
+    "firstTile": "0xF0",
+    "chrOffset": "0x09300"
+   },
+   "sprite": {
+    "chrBank2k": "0x14",
+    "firstTile": "0xB0",
+    "chrOffset": "0x05300"
+   }
+  },
+  {
+   "id": 7,
+   "idHex": "0x07",
+   "name": "加代",
+   "file": "assets/original/portraits/07.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09D7B",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x00"
+   ],
+   "bg": {
+    "chrBank1k": "0x25",
+    "firstTile": "0xC0",
+    "chrOffset": "0x09400"
+   },
+   "sprite": {
+    "chrBank2k": "0x15",
+    "firstTile": "0xC0",
+    "chrOffset": "0x05400"
+   }
+  },
+  {
+   "id": 8,
+   "idHex": "0x08",
+   "name": "龙",
+   "file": "assets/original/portraits/08.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09D82",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x06"
+   ],
+   "bg": {
+    "chrBank1k": "0x25",
+    "firstTile": "0xD0",
+    "chrOffset": "0x09500"
+   },
+   "sprite": {
+    "chrBank2k": "0x15",
+    "firstTile": "0xD0",
+    "chrOffset": "0x05500"
+   }
+  },
+  {
+   "id": 9,
+   "idHex": "0x09",
+   "name": "欧文",
+   "file": "assets/original/portraits/09.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09D89",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x16"
+   ],
+   "bg": {
+    "chrBank1k": "0x25",
+    "firstTile": "0xE0",
+    "chrOffset": "0x09600"
+   },
+   "sprite": {
+    "chrBank2k": "0x15",
+    "firstTile": "0xE0",
+    "chrOffset": "0x05600"
+   }
+  },
+  {
+   "id": 10,
+   "idHex": "0x0A",
+   "name": "路易",
+   "file": "assets/original/portraits/10.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09D90",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x17"
+   ],
+   "bg": {
+    "chrBank1k": "0x25",
+    "firstTile": "0xF0",
+    "chrOffset": "0x09700"
+   },
+   "sprite": {
+    "chrBank2k": "0x15",
+    "firstTile": "0xF0",
+    "chrOffset": "0x05700"
+   }
+  },
+  {
+   "id": 11,
+   "idHex": "0x0B",
+   "name": "卡姆",
+   "file": "assets/original/portraits/11.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09D97",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x01"
+   ],
+   "bg": {
+    "chrBank1k": "0x26",
+    "firstTile": "0xC0",
+    "chrOffset": "0x09800"
+   },
+   "sprite": {
+    "chrBank2k": "0x16",
+    "firstTile": "0x80",
+    "chrOffset": "0x05800"
+   }
+  },
+  {
+   "id": 12,
+   "idHex": "0x0C",
+   "name": "希塔",
+   "file": "assets/original/portraits/12.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09D9E",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x07"
+   ],
+   "bg": {
+    "chrBank1k": "0x26",
+    "firstTile": "0xD0",
+    "chrOffset": "0x09900"
+   },
+   "sprite": {
+    "chrBank2k": "0x16",
+    "firstTile": "0x90",
+    "chrOffset": "0x05900"
+   }
+  },
+  {
+   "id": 13,
+   "idHex": "0x0D",
+   "name": "布克",
+   "file": "assets/original/portraits/13.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09DA5",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x01"
+   ],
+   "bg": {
+    "chrBank1k": "0x26",
+    "firstTile": "0xE0",
+    "chrOffset": "0x09A00"
+   },
+   "sprite": {
+    "chrBank2k": "0x16",
+    "firstTile": "0xA0",
+    "chrOffset": "0x05A00"
+   }
+  },
+  {
+   "id": 14,
+   "idHex": "0x0E",
+   "name": "马丁",
+   "file": "assets/original/portraits/14.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09DAC",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x06"
+   ],
+   "bg": {
+    "chrBank1k": "0x26",
+    "firstTile": "0xF0",
+    "chrOffset": "0x09B00"
+   },
+   "sprite": {
+    "chrBank2k": "0x16",
+    "firstTile": "0xB0",
+    "chrOffset": "0x05B00"
+   }
+  },
+  {
+   "id": 15,
+   "idHex": "0x0F",
+   "name": "由美",
+   "file": "assets/original/portraits/15.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09DB3",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x06"
+   ],
+   "bg": {
+    "chrBank1k": "0x27",
+    "firstTile": "0xC0",
+    "chrOffset": "0x09C00"
+   },
+   "sprite": {
+    "chrBank2k": "0x17",
+    "firstTile": "0xC0",
+    "chrOffset": "0x05C00"
+   }
+  },
+  {
+   "id": 16,
+   "idHex": "0x10",
+   "name": "发",
+   "file": "assets/original/portraits/16.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09DBA",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x02"
+   ],
+   "bg": {
+    "chrBank1k": "0x27",
+    "firstTile": "0xD0",
+    "chrOffset": "0x09D00"
+   },
+   "sprite": {
+    "chrBank2k": "0x17",
+    "firstTile": "0xD0",
+    "chrOffset": "0x05D00"
+   }
+  },
+  {
+   "id": 17,
+   "idHex": "0x11",
+   "name": "杰克",
+   "file": "assets/original/portraits/17.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09DC1",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x06"
+   ],
+   "bg": {
+    "chrBank1k": "0x27",
+    "firstTile": "0xE0",
+    "chrOffset": "0x09E00"
+   },
+   "sprite": {
+    "chrBank2k": "0x17",
+    "firstTile": "0xE0",
+    "chrOffset": "0x05E00"
+   }
+  },
+  {
+   "id": 18,
+   "idHex": "0x12",
+   "name": "布西",
+   "file": "assets/original/portraits/18.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09DC8",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x06"
+   ],
+   "bg": {
+    "chrBank1k": "0x27",
+    "firstTile": "0xF0",
+    "chrOffset": "0x09F00"
+   },
+   "sprite": {
+    "chrBank2k": "0x17",
+    "firstTile": "0xF0",
+    "chrOffset": "0x05F00"
+   }
+  },
+  {
+   "id": 19,
+   "idHex": "0x13",
+   "name": "克娃",
+   "file": "assets/original/portraits/19.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09DCF",
+   "colors": [
+    "0x37",
+    "0x38",
+    "0x18"
+   ],
+   "bg": {
+    "chrBank1k": "0x28",
+    "firstTile": "0xC0",
+    "chrOffset": "0x0A000"
+   },
+   "sprite": {
+    "chrBank2k": "0x18",
+    "firstTile": "0x80",
+    "chrOffset": "0x06000"
+   }
+  },
+  {
+   "id": 20,
+   "idHex": "0x14",
+   "name": "安东",
+   "file": "assets/original/portraits/20.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09DD6",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x09"
+   ],
+   "bg": {
+    "chrBank1k": "0x28",
+    "firstTile": "0xD0",
+    "chrOffset": "0x0A100"
+   },
+   "sprite": {
+    "chrBank2k": "0x18",
+    "firstTile": "0x90",
+    "chrOffset": "0x06100"
+   }
+  },
+  {
+   "id": 21,
+   "idHex": "0x15",
+   "name": "弗兰克",
+   "file": "assets/original/portraits/21.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09DDD",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x06"
+   ],
+   "bg": {
+    "chrBank1k": "0x28",
+    "firstTile": "0xE0",
+    "chrOffset": "0x0A200"
+   },
+   "sprite": {
+    "chrBank2k": "0x18",
+    "firstTile": "0xA0",
+    "chrOffset": "0x06200"
+   }
+  },
+  {
+   "id": 22,
+   "idHex": "0x16",
+   "name": "凯",
+   "file": "assets/original/portraits/22.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09DE4",
+   "colors": [
+    "0x37",
+    "0x32",
+    "0x38"
+   ],
+   "bg": {
+    "chrBank1k": "0x28",
+    "firstTile": "0xF0",
+    "chrOffset": "0x0A300"
+   },
+   "sprite": {
+    "chrBank2k": "0x18",
+    "firstTile": "0xB0",
+    "chrOffset": "0x06300"
+   }
+  },
+  {
+   "id": 23,
+   "idHex": "0x17",
+   "name": "拉尔",
+   "file": "assets/original/portraits/23.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09DEB",
+   "colors": [
+    "0x37",
+    "0x10",
+    "0x00"
+   ],
+   "bg": {
+    "chrBank1k": "0x29",
+    "firstTile": "0xC0",
+    "chrOffset": "0x0A400"
+   },
+   "sprite": {
+    "chrBank2k": "0x19",
+    "firstTile": "0xC0",
+    "chrOffset": "0x06400"
+   }
+  },
+  {
+   "id": 24,
+   "idHex": "0x18",
+   "name": "洛克",
+   "file": "assets/original/portraits/24.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09DF2",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x23"
+   ],
+   "bg": {
+    "chrBank1k": "0x29",
+    "firstTile": "0xD0",
+    "chrOffset": "0x0A500"
+   },
+   "sprite": {
+    "chrBank2k": "0x19",
+    "firstTile": "0xD0",
+    "chrOffset": "0x06500"
+   }
+  },
+  {
+   "id": 25,
+   "idHex": "0x19",
+   "name": "萨拉",
+   "file": "assets/original/portraits/25.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09DF9",
+   "colors": [
+    "0x37",
+    "0x36",
+    "0x26"
+   ],
+   "bg": {
+    "chrBank1k": "0x29",
+    "firstTile": "0xE0",
+    "chrOffset": "0x0A600"
+   },
+   "sprite": {
+    "chrBank2k": "0x19",
+    "firstTile": "0xE0",
+    "chrOffset": "0x06600"
+   }
+  },
+  {
+   "id": 26,
+   "idHex": "0x1A",
+   "name": "芬妮",
+   "file": "assets/original/portraits/26.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09E00",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x26"
+   ],
+   "bg": {
+    "chrBank1k": "0x29",
+    "firstTile": "0xF0",
+    "chrOffset": "0x0A700"
+   },
+   "sprite": {
+    "chrBank2k": "0x19",
+    "firstTile": "0xF0",
+    "chrOffset": "0x06700"
+   }
+  },
+  {
+   "id": 27,
+   "idHex": "0x1B",
+   "name": "伊娃",
+   "file": "assets/original/portraits/27.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09E07",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x07"
+   ],
+   "bg": {
+    "chrBank1k": "0x2A",
+    "firstTile": "0xC0",
+    "chrOffset": "0x0A800"
+   },
+   "sprite": {
+    "chrBank2k": "0x1A",
+    "firstTile": "0x80",
+    "chrOffset": "0x06800"
+   }
+  },
+  {
+   "id": 28,
+   "idHex": "0x1C",
+   "name": "普西",
+   "file": "assets/original/portraits/28.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09E0E",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x07"
+   ],
+   "bg": {
+    "chrBank1k": "0x2A",
+    "firstTile": "0xD0",
+    "chrOffset": "0x0A900"
+   },
+   "sprite": {
+    "chrBank2k": "0x1A",
+    "firstTile": "0x90",
+    "chrOffset": "0x06900"
+   }
+  },
+  {
+   "id": 29,
+   "idHex": "0x1D",
+   "name": "马休",
+   "file": "assets/original/portraits/29.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09E15",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x23"
+   ],
+   "bg": {
+    "chrBank1k": "0x2A",
+    "firstTile": "0xE0",
+    "chrOffset": "0x0AA00"
+   },
+   "sprite": {
+    "chrBank2k": "0x1A",
+    "firstTile": "0xA0",
+    "chrOffset": "0x06A00"
+   }
+  },
+  {
+   "id": 30,
+   "idHex": "0x1E",
+   "name": "马斯",
+   "file": "assets/original/portraits/30.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09E1C",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x02"
+   ],
+   "bg": {
+    "chrBank1k": "0x2A",
+    "firstTile": "0xF0",
+    "chrOffset": "0x0AB00"
+   },
+   "sprite": {
+    "chrBank2k": "0x1A",
+    "firstTile": "0xB0",
+    "chrOffset": "0x06B00"
+   }
+  },
+  {
+   "id": 31,
+   "idHex": "0x1F",
+   "name": "加纳",
+   "file": "assets/original/portraits/31.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09E23",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x08"
+   ],
+   "bg": {
+    "chrBank1k": "0x2B",
+    "firstTile": "0xC0",
+    "chrOffset": "0x0AC00"
+   },
+   "sprite": {
+    "chrBank2k": "0x1B",
+    "firstTile": "0xC0",
+    "chrOffset": "0x06C00"
+   }
+  },
+  {
+   "id": 32,
+   "idHex": "0x20",
+   "name": "麦克",
+   "file": "assets/original/portraits/32.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09E2A",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x06"
+   ],
+   "bg": {
+    "chrBank1k": "0x2B",
+    "firstTile": "0xD0",
+    "chrOffset": "0x0AD00"
+   },
+   "sprite": {
+    "chrBank2k": "0x1B",
+    "firstTile": "0xD0",
+    "chrOffset": "0x06D00"
+   }
+  },
+  {
+   "id": 33,
+   "idHex": "0x21",
+   "name": "肯特",
+   "file": "assets/original/portraits/33.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09E31",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x03"
+   ],
+   "bg": {
+    "chrBank1k": "0x2B",
+    "firstTile": "0xE0",
+    "chrOffset": "0x0AE00"
+   },
+   "sprite": {
+    "chrBank2k": "0x1B",
+    "firstTile": "0xE0",
+    "chrOffset": "0x06E00"
+   }
+  },
+  {
+   "id": 34,
+   "idHex": "0x22",
+   "name": "休",
+   "file": "assets/original/portraits/34.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09E38",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x13"
+   ],
+   "bg": {
+    "chrBank1k": "0x2B",
+    "firstTile": "0xF0",
+    "chrOffset": "0x0AF00"
+   },
+   "sprite": {
+    "chrBank2k": "0x1B",
+    "firstTile": "0xF0",
+    "chrOffset": "0x06F00"
+   }
+  },
+  {
+   "id": 35,
+   "idHex": "0x23",
+   "name": "萨米",
+   "file": "assets/original/portraits/35.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09E3F",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x2C"
+   ],
+   "bg": {
+    "chrBank1k": "0x2C",
+    "firstTile": "0xC0",
+    "chrOffset": "0x0B000"
+   },
+   "sprite": {
+    "chrBank2k": "0x1C",
+    "firstTile": "0x80",
+    "chrOffset": "0x07000"
+   }
+  },
+  {
+   "id": 36,
+   "idHex": "0x24",
+   "name": "保罗",
+   "file": "assets/original/portraits/36.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09E46",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x18"
+   ],
+   "bg": {
+    "chrBank1k": "0x2C",
+    "firstTile": "0xD0",
+    "chrOffset": "0x0B100"
+   },
+   "sprite": {
+    "chrBank2k": "0x1C",
+    "firstTile": "0x90",
+    "chrOffset": "0x07100"
+   }
+  },
+  {
+   "id": 37,
+   "idHex": "0x25",
+   "name": "梅尔",
+   "file": "assets/original/portraits/37.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09E4D",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x07"
+   ],
+   "bg": {
+    "chrBank1k": "0x2C",
+    "firstTile": "0xE0",
+    "chrOffset": "0x0B200"
+   },
+   "sprite": {
+    "chrBank2k": "0x1C",
+    "firstTile": "0xA0",
+    "chrOffset": "0x07200"
+   }
+  },
+  {
+   "id": 38,
+   "idHex": "0x26",
+   "name": "布朗",
+   "file": "assets/original/portraits/38.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09E54",
+   "colors": [
+    "0x37",
+    "0x38",
+    "0x18"
+   ],
+   "bg": {
+    "chrBank1k": "0x2C",
+    "firstTile": "0xF0",
+    "chrOffset": "0x0B300"
+   },
+   "sprite": {
+    "chrBank2k": "0x1C",
+    "firstTile": "0xB0",
+    "chrOffset": "0x07300"
+   }
+  },
+  {
+   "id": 39,
+   "idHex": "0x27",
+   "name": "琼",
+   "file": "assets/original/portraits/39.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09E5B",
+   "colors": [
+    "0x37",
+    "0x38",
+    "0x18"
+   ],
+   "bg": {
+    "chrBank1k": "0x2D",
+    "firstTile": "0xC0",
+    "chrOffset": "0x0B400"
+   },
+   "sprite": {
+    "chrBank2k": "0x1D",
+    "firstTile": "0xC0",
+    "chrOffset": "0x07400"
+   }
+  },
+  {
+   "id": 40,
+   "idHex": "0x28",
+   "name": "亨利",
+   "file": "assets/original/portraits/40.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09E62",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x26"
+   ],
+   "bg": {
+    "chrBank1k": "0x2D",
+    "firstTile": "0xD0",
+    "chrOffset": "0x0B500"
+   },
+   "sprite": {
+    "chrBank2k": "0x1D",
+    "firstTile": "0xD0",
+    "chrOffset": "0x07500"
+   }
+  },
+  {
+   "id": 41,
+   "idHex": "0x29",
+   "name": "诺思",
+   "file": "assets/original/portraits/41.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09E69",
+   "colors": [
+    "0x17",
+    "0x06",
+    "0x38"
+   ],
+   "bg": {
+    "chrBank1k": "0x2D",
+    "firstTile": "0xE0",
+    "chrOffset": "0x0B600"
+   },
+   "sprite": {
+    "chrBank2k": "0x1D",
+    "firstTile": "0xE0",
+    "chrOffset": "0x07600"
+   }
+  },
+  {
+   "id": 42,
+   "idHex": "0x2A",
+   "name": "温妮",
+   "file": "assets/original/portraits/42.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09E70",
+   "colors": [
+    "0x37",
+    "0x38",
+    "0x16"
+   ],
+   "bg": {
+    "chrBank1k": "0x2D",
+    "firstTile": "0xF0",
+    "chrOffset": "0x0B700"
+   },
+   "sprite": {
+    "chrBank2k": "0x1D",
+    "firstTile": "0xF0",
+    "chrOffset": "0x07700"
+   }
+  },
+  {
+   "id": 43,
+   "idHex": "0x2B",
+   "name": "尼娜",
+   "file": "assets/original/portraits/43.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09E77",
+   "colors": [
+    "0x27",
+    "0x17",
+    "0x01"
+   ],
+   "bg": {
+    "chrBank1k": "0x2E",
+    "firstTile": "0xC0",
+    "chrOffset": "0x0B800"
+   },
+   "sprite": {
+    "chrBank2k": "0x1E",
+    "firstTile": "0x80",
+    "chrOffset": "0x07800"
+   }
+  },
+  {
+   "id": 44,
+   "idHex": "0x2C",
+   "name": "卡尔",
+   "file": "assets/original/portraits/44.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09E7E",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x38"
+   ],
+   "bg": {
+    "chrBank1k": "0x2E",
+    "firstTile": "0xD0",
+    "chrOffset": "0x0B900"
+   },
+   "sprite": {
+    "chrBank2k": "0x1E",
+    "firstTile": "0x90",
+    "chrOffset": "0x07900"
+   }
+  },
+  {
+   "id": 45,
+   "idHex": "0x2D",
+   "name": "米奇尔",
+   "file": "assets/original/portraits/45.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09E85",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x07"
+   ],
+   "bg": {
+    "chrBank1k": "0x2E",
+    "firstTile": "0xE0",
+    "chrOffset": "0x0BA00"
+   },
+   "sprite": {
+    "chrBank2k": "0x1E",
+    "firstTile": "0xA0",
+    "chrOffset": "0x07A00"
+   }
+  },
+  {
+   "id": 46,
+   "idHex": "0x2E",
+   "name": "布扎",
+   "file": "assets/original/portraits/46.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09E8C",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x38"
+   ],
+   "bg": {
+    "chrBank1k": "0x2E",
+    "firstTile": "0xF0",
+    "chrOffset": "0x0BB00"
+   },
+   "sprite": {
+    "chrBank2k": "0x1E",
+    "firstTile": "0xB0",
+    "chrOffset": "0x07B00"
+   }
+  },
+  {
+   "id": 47,
+   "idHex": "0x2F",
+   "name": "海伦",
+   "file": "assets/original/portraits/47.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09E93",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x07"
+   ],
+   "bg": {
+    "chrBank1k": "0x2F",
+    "firstTile": "0xC0",
+    "chrOffset": "0x0BC00"
+   },
+   "sprite": {
+    "chrBank2k": "0x1F",
+    "firstTile": "0xC0",
+    "chrOffset": "0x07C00"
+   }
+  },
+  {
+   "id": 48,
+   "idHex": "0x30",
+   "name": "里卡",
+   "file": "assets/original/portraits/48.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09E9A",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x06"
+   ],
+   "bg": {
+    "chrBank1k": "0x2F",
+    "firstTile": "0xD0",
+    "chrOffset": "0x0BD00"
+   },
+   "sprite": {
+    "chrBank2k": "0x1F",
+    "firstTile": "0xD0",
+    "chrOffset": "0x07D00"
+   }
+  },
+  {
+   "id": 49,
+   "idHex": "0x31",
+   "name": "米亚",
+   "file": "assets/original/portraits/49.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09EA1",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x22"
+   ],
+   "bg": {
+    "chrBank1k": "0x2F",
+    "firstTile": "0xE0",
+    "chrOffset": "0x0BE00"
+   },
+   "sprite": {
+    "chrBank2k": "0x1F",
+    "firstTile": "0xE0",
+    "chrOffset": "0x07E00"
+   }
+  },
+  {
+   "id": 50,
+   "idHex": "0x32",
+   "name": "格恩",
+   "file": "assets/original/portraits/50.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09EA8",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x01"
+   ],
+   "bg": {
+    "chrBank1k": "0x2F",
+    "firstTile": "0xF0",
+    "chrOffset": "0x0BF00"
+   },
+   "sprite": {
+    "chrBank2k": "0x1F",
+    "firstTile": "0xF0",
+    "chrOffset": "0x07F00"
+   }
+  },
+  {
+   "id": 51,
+   "idHex": "0x33",
+   "name": "帕亚",
+   "file": "assets/original/portraits/51.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09EAF",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x2C"
+   ],
+   "bg": {
+    "chrBank1k": "0x30",
+    "firstTile": "0xC0",
+    "chrOffset": "0x0C000"
+   },
+   "sprite": {
+    "chrBank2k": "0x20",
+    "firstTile": "0x80",
+    "chrOffset": "0x08000"
+   }
+  },
+  {
+   "id": 52,
+   "idHex": "0x34",
+   "name": "珍妮",
+   "file": "assets/original/portraits/52.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09EB6",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x07"
+   ],
+   "bg": {
+    "chrBank1k": "0x30",
+    "firstTile": "0xD0",
+    "chrOffset": "0x0C100"
+   },
+   "sprite": {
+    "chrBank2k": "0x20",
+    "firstTile": "0x90",
+    "chrOffset": "0x08100"
+   }
+  },
+  {
+   "id": 53,
+   "idHex": "0x35",
+   "name": "贝克",
+   "file": "assets/original/portraits/53.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09EBD",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x06"
+   ],
+   "bg": {
+    "chrBank1k": "0x30",
+    "firstTile": "0xE0",
+    "chrOffset": "0x0C200"
+   },
+   "sprite": {
+    "chrBank2k": "0x20",
+    "firstTile": "0xA0",
+    "chrOffset": "0x08200"
+   }
+  },
+  {
+   "id": 54,
+   "idHex": "0x36",
+   "name": "乔",
+   "file": "assets/original/portraits/54.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09EC4",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x26"
+   ],
+   "bg": {
+    "chrBank1k": "0x30",
+    "firstTile": "0xF0",
+    "chrOffset": "0x0C300"
+   },
+   "sprite": {
+    "chrBank2k": "0x20",
+    "firstTile": "0xB0",
+    "chrOffset": "0x08300"
+   }
+  },
+  {
+   "id": 55,
+   "idHex": "0x37",
+   "name": "乔治",
+   "file": "assets/original/portraits/55.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09ECB",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x16"
+   ],
+   "bg": {
+    "chrBank1k": "0x31",
+    "firstTile": "0xC0",
+    "chrOffset": "0x0C400"
+   },
+   "sprite": {
+    "chrBank2k": "0x21",
+    "firstTile": "0xC0",
+    "chrOffset": "0x08400"
+   }
+  },
+  {
+   "id": 56,
+   "idHex": "0x38",
+   "name": "麦斯",
+   "file": "assets/original/portraits/56.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09ED2",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x38"
+   ],
+   "bg": {
+    "chrBank1k": "0x31",
+    "firstTile": "0xD0",
+    "chrOffset": "0x0C500"
+   },
+   "sprite": {
+    "chrBank2k": "0x21",
+    "firstTile": "0xD0",
+    "chrOffset": "0x08500"
+   }
+  },
+  {
+   "id": 57,
+   "idHex": "0x39",
+   "name": "约克",
+   "file": "assets/original/portraits/57.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09ED9",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x38"
+   ],
+   "bg": {
+    "chrBank1k": "0x31",
+    "firstTile": "0xE0",
+    "chrOffset": "0x0C600"
+   },
+   "sprite": {
+    "chrBank2k": "0x21",
+    "firstTile": "0xE0",
+    "chrOffset": "0x08600"
+   }
+  },
+  {
+   "id": 58,
+   "idHex": "0x3A",
+   "name": "西蒙",
+   "file": "assets/original/portraits/58.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09EE0",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x23"
+   ],
+   "bg": {
+    "chrBank1k": "0x31",
+    "firstTile": "0xF0",
+    "chrOffset": "0x0C700"
+   },
+   "sprite": {
+    "chrBank2k": "0x21",
+    "firstTile": "0xF0",
+    "chrOffset": "0x08700"
+   }
+  },
+  {
+   "id": 59,
+   "idHex": "0x3B",
+   "name": "拉多",
+   "file": "assets/original/portraits/59.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09EE7",
+   "colors": [
+    "0x32",
+    "0x12",
+    "0x02"
+   ],
+   "bg": {
+    "chrBank1k": "0x32",
+    "firstTile": "0xC0",
+    "chrOffset": "0x0C800"
+   },
+   "sprite": {
+    "chrBank2k": "0x22",
+    "firstTile": "0x80",
+    "chrOffset": "0x08800"
+   }
+  },
+  {
+   "id": 60,
+   "idHex": "0x3C",
+   "name": "男爵",
+   "file": "assets/original/portraits/60.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09EEE",
+   "colors": [
+    "0x27",
+    "0x23",
+    "0x03"
+   ],
+   "bg": {
+    "chrBank1k": "0x32",
+    "firstTile": "0xD0",
+    "chrOffset": "0x0C900"
+   },
+   "sprite": {
+    "chrBank2k": "0x22",
+    "firstTile": "0x90",
+    "chrOffset": "0x08900"
+   }
+  },
+  {
+   "id": 61,
+   "idHex": "0x3D",
+   "name": "罗纳",
+   "file": "assets/original/portraits/61.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09EF5",
+   "colors": [
+    "0x10",
+    "0x00",
+    "0x13"
+   ],
+   "bg": {
+    "chrBank1k": "0x32",
+    "firstTile": "0xE0",
+    "chrOffset": "0x0CA00"
+   },
+   "sprite": {
+    "chrBank2k": "0x22",
+    "firstTile": "0xA0",
+    "chrOffset": "0x08A00"
+   }
+  },
+  {
+   "id": 62,
+   "idHex": "0x3E",
+   "name": "凯",
+   "file": "assets/original/portraits/62.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09EFC",
+   "colors": [
+    "0x37",
+    "0x38",
+    "0x18"
+   ],
+   "bg": {
+    "chrBank1k": "0x32",
+    "firstTile": "0xF0",
+    "chrOffset": "0x0CB00"
+   },
+   "sprite": {
+    "chrBank2k": "0x22",
+    "firstTile": "0xB0",
+    "chrOffset": "0x08B00"
+   }
+  },
+  {
+   "id": 63,
+   "idHex": "0x3F",
+   "name": "汤姆",
+   "file": "assets/original/portraits/63.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09F03",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x18"
+   ],
+   "bg": {
+    "chrBank1k": "0x33",
+    "firstTile": "0xC0",
+    "chrOffset": "0x0CC00"
+   },
+   "sprite": {
+    "chrBank2k": "0x23",
+    "firstTile": "0xC0",
+    "chrOffset": "0x08C00"
+   }
+  },
+  {
+   "id": 64,
+   "idHex": "0x40",
+   "name": "艾玛",
+   "file": "assets/original/portraits/64.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09F0A",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x38"
+   ],
+   "bg": {
+    "chrBank1k": "0x33",
+    "firstTile": "0xD0",
+    "chrOffset": "0x0CD00"
+   },
+   "sprite": {
+    "chrBank2k": "0x23",
+    "firstTile": "0xD0",
+    "chrOffset": "0x08D00"
+   }
+  },
+  {
+   "id": 65,
+   "idHex": "0x41",
+   "name": "凯文",
+   "file": "assets/original/portraits/65.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09F11",
+   "colors": [
+    "0x27",
+    "0x17",
+    "0x18"
+   ],
+   "bg": {
+    "chrBank1k": "0x33",
+    "firstTile": "0xE0",
+    "chrOffset": "0x0CE00"
+   },
+   "sprite": {
+    "chrBank2k": "0x23",
+    "firstTile": "0xE0",
+    "chrOffset": "0x08E00"
+   }
+  },
+  {
+   "id": 66,
+   "idHex": "0x42",
+   "name": "洛卡",
+   "file": "assets/original/portraits/66.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09F18",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x13"
+   ],
+   "bg": {
+    "chrBank1k": "0x33",
+    "firstTile": "0xF0",
+    "chrOffset": "0x0CF00"
+   },
+   "sprite": {
+    "chrBank2k": "0x23",
+    "firstTile": "0xF0",
+    "chrOffset": "0x08F00"
+   }
+  },
+  {
+   "id": 67,
+   "idHex": "0x43",
+   "name": "里纳",
+   "file": "assets/original/portraits/67.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09F1F",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x06"
+   ],
+   "bg": {
+    "chrBank1k": "0x12",
+    "firstTile": "0xC0",
+    "chrOffset": "0x04800"
+   },
+   "sprite": {
+    "chrBank2k": "0x0A",
+    "firstTile": "0x80",
+    "chrOffset": "0x02800"
+   }
+  },
+  {
+   "id": 68,
+   "idHex": "0x44",
+   "name": "奇恩",
+   "file": "assets/original/portraits/68.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09F26",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x01"
+   ],
+   "bg": {
+    "chrBank1k": "0x12",
+    "firstTile": "0xD0",
+    "chrOffset": "0x04900"
+   },
+   "sprite": {
+    "chrBank2k": "0x0A",
+    "firstTile": "0x90",
+    "chrOffset": "0x02900"
+   }
+  },
+  {
+   "id": 69,
+   "idHex": "0x45",
+   "name": "里德",
+   "file": "assets/original/portraits/69.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09F2D",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x06"
+   ],
+   "bg": {
+    "chrBank1k": "0x12",
+    "firstTile": "0xE0",
+    "chrOffset": "0x04A00"
+   },
+   "sprite": {
+    "chrBank2k": "0x0A",
+    "firstTile": "0xA0",
+    "chrOffset": "0x02A00"
+   }
+  },
+  {
+   "id": 70,
+   "idHex": "0x46",
+   "name": "莫里",
+   "file": "assets/original/portraits/70.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09F34",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x31"
+   ],
+   "bg": {
+    "chrBank1k": "0x12",
+    "firstTile": "0xF0",
+    "chrOffset": "0x04B00"
+   },
+   "sprite": {
+    "chrBank2k": "0x0A",
+    "firstTile": "0xB0",
+    "chrOffset": "0x02B00"
+   }
+  },
+  {
+   "id": 71,
+   "idHex": "0x47",
+   "name": "尤里",
+   "file": "assets/original/portraits/71.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09F3B",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x31"
+   ],
+   "bg": {
+    "chrBank1k": "0x13",
+    "firstTile": "0xC0",
+    "chrOffset": "0x04C00"
+   },
+   "sprite": {
+    "chrBank2k": "0x0B",
+    "firstTile": "0xC0",
+    "chrOffset": "0x02C00"
+   }
+  },
+  {
+   "id": 72,
+   "idHex": "0x48",
+   "name": "瓦西",
+   "file": "assets/original/portraits/72.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09F42",
+   "colors": [
+    "0x37",
+    "0x31",
+    "0x10"
+   ],
+   "bg": {
+    "chrBank1k": "0x13",
+    "firstTile": "0xD0",
+    "chrOffset": "0x04D00"
+   },
+   "sprite": {
+    "chrBank2k": "0x0B",
+    "firstTile": "0xD0",
+    "chrOffset": "0x02D00"
+   }
+  },
+  {
+   "id": 73,
+   "idHex": "0x49",
+   "name": "希拉",
+   "file": "assets/original/portraits/73.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09F49",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x06"
+   ],
+   "bg": {
+    "chrBank1k": "0x13",
+    "firstTile": "0xE0",
+    "chrOffset": "0x04E00"
+   },
+   "sprite": {
+    "chrBank2k": "0x0B",
+    "firstTile": "0xE0",
+    "chrOffset": "0x02E00"
+   }
+  },
+  {
+   "id": 74,
+   "idHex": "0x4A",
+   "name": "布尔",
+   "file": "assets/original/portraits/74.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09F50",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x06"
+   ],
+   "bg": {
+    "chrBank1k": "0x13",
+    "firstTile": "0xF0",
+    "chrOffset": "0x04F00"
+   },
+   "sprite": {
+    "chrBank2k": "0x0B",
+    "firstTile": "0xF0",
+    "chrOffset": "0x02F00"
+   }
+  },
+  {
+   "id": 75,
+   "idHex": "0x4B",
+   "name": "罗依",
+   "file": "assets/original/portraits/75.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09F57",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x18"
+   ],
+   "bg": {
+    "chrBank1k": "0x10",
+    "firstTile": "0xC0",
+    "chrOffset": "0x04000"
+   },
+   "sprite": {
+    "chrBank2k": "0x11",
+    "firstTile": "0xC0",
+    "chrOffset": "0x04400"
+   }
+  },
+  {
+   "id": 76,
+   "idHex": "0x4C",
+   "name": "芬奇",
+   "file": "assets/original/portraits/76.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09F5E",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x0B"
+   ],
+   "bg": {
+    "chrBank1k": "0x10",
+    "firstTile": "0xD0",
+    "chrOffset": "0x04100"
+   },
+   "sprite": {
+    "chrBank2k": "0x11",
+    "firstTile": "0xD0",
+    "chrOffset": "0x04500"
+   }
+  },
+  {
+   "id": 77,
+   "idHex": "0x4D",
+   "name": "米拉",
+   "file": "assets/original/portraits/77.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09F65",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x16"
+   ],
+   "bg": {
+    "chrBank1k": "0x10",
+    "firstTile": "0xE0",
+    "chrOffset": "0x04200"
+   },
+   "sprite": {
+    "chrBank2k": "0x11",
+    "firstTile": "0xE0",
+    "chrOffset": "0x04600"
+   }
+  },
+  {
+   "id": 78,
+   "idHex": "0x4E",
+   "name": "艾玛",
+   "file": "assets/original/portraits/78.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09F6C",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x06"
+   ],
+   "bg": {
+    "chrBank1k": "0x10",
+    "firstTile": "0xF0",
+    "chrOffset": "0x04300"
+   },
+   "sprite": {
+    "chrBank2k": "0x11",
+    "firstTile": "0xF0",
+    "chrOffset": "0x04700"
+   }
+  },
+  {
+   "id": 79,
+   "idHex": "0x4F",
+   "name": "莫尼",
+   "file": "assets/original/portraits/79.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09F73",
+   "colors": [
+    "0x37",
+    "0x1A",
+    "0x11"
+   ],
+   "bg": {
+    "chrBank1k": "0x24",
+    "firstTile": "0xD0",
+    "chrOffset": "0x09100"
+   },
+   "sprite": {
+    "chrBank2k": "0x14",
+    "firstTile": "0x90",
+    "chrOffset": "0x05100"
+   },
+   "sameAs": 3
+  },
+  {
+   "id": 80,
+   "idHex": "0x50",
+   "name": "邓肯",
+   "file": "assets/original/portraits/80.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09F7A",
+   "colors": [
+    "0x37",
+    "0x1A",
+    "0x11"
+   ],
+   "bg": {
+    "chrBank1k": "0x24",
+    "firstTile": "0xD0",
+    "chrOffset": "0x09100"
+   },
+   "sprite": {
+    "chrBank2k": "0x14",
+    "firstTile": "0x90",
+    "chrOffset": "0x05100"
+   },
+   "sameAs": 3
+  },
+  {
+   "id": 81,
+   "idHex": "0x51",
+   "name": "彼得",
+   "file": "assets/original/portraits/81.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09F81",
+   "colors": [
+    "0x27",
+    "0x22",
+    "0x02"
+   ],
+   "bg": {
+    "chrBank1k": "0x68",
+    "firstTile": "0xC0",
+    "chrOffset": "0x1A000"
+   },
+   "sprite": {
+    "chrBank2k": "0x69",
+    "firstTile": "0xC0",
+    "chrOffset": "0x1A400"
+   }
+  },
+  {
+   "id": 82,
+   "idHex": "0x52",
+   "name": "吉姆",
+   "file": "assets/original/portraits/82.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09F88",
+   "colors": [
+    "0x28",
+    "0x17",
+    "0x16"
+   ],
+   "bg": {
+    "chrBank1k": "0x68",
+    "firstTile": "0xD0",
+    "chrOffset": "0x1A100"
+   },
+   "sprite": {
+    "chrBank2k": "0x69",
+    "firstTile": "0xD0",
+    "chrOffset": "0x1A500"
+   }
+  },
+  {
+   "id": 83,
+   "idHex": "0x53",
+   "name": "狄克",
+   "file": "assets/original/portraits/83.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09F8F",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x22"
+   ],
+   "bg": {
+    "chrBank1k": "0x68",
+    "firstTile": "0xE0",
+    "chrOffset": "0x1A200"
+   },
+   "sprite": {
+    "chrBank2k": "0x69",
+    "firstTile": "0xE0",
+    "chrOffset": "0x1A600"
+   }
+  },
+  {
+   "id": 84,
+   "idHex": "0x54",
+   "name": "杰夫",
+   "file": "assets/original/portraits/84.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09F96",
+   "colors": [
+    "0x37",
+    "0x1A",
+    "0x11"
+   ],
+   "bg": {
+    "chrBank1k": "0x24",
+    "firstTile": "0xD0",
+    "chrOffset": "0x09100"
+   },
+   "sprite": {
+    "chrBank2k": "0x14",
+    "firstTile": "0x90",
+    "chrOffset": "0x05100"
+   },
+   "sameAs": 3
+  },
+  {
+   "id": 85,
+   "idHex": "0x55",
+   "name": "休斯",
+   "file": "assets/original/portraits/85.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09F9D",
+   "colors": [
+    "0x37",
+    "0x1A",
+    "0x11"
+   ],
+   "bg": {
+    "chrBank1k": "0x24",
+    "firstTile": "0xD0",
+    "chrOffset": "0x09100"
+   },
+   "sprite": {
+    "chrBank2k": "0x14",
+    "firstTile": "0x90",
+    "chrOffset": "0x05100"
+   },
+   "sameAs": 3
+  },
+  {
+   "id": 86,
+   "idHex": "0x56",
+   "name": "假马丁",
+   "file": "assets/original/portraits/86.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09FA4",
+   "colors": [
+    "0x37",
+    "0x27",
+    "0x06"
+   ],
+   "bg": {
+    "chrBank1k": "0x26",
+    "firstTile": "0xF0",
+    "chrOffset": "0x09B00"
+   },
+   "sprite": {
+    "chrBank2k": "0x16",
+    "firstTile": "0xB0",
+    "chrOffset": "0x05B00"
+   },
+   "sameAs": 14
+  },
+  {
+   "id": 87,
+   "idHex": "0x57",
+   "name": "士兵",
+   "file": "assets/original/portraits/87.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09FAB",
+   "colors": [
+    "0x37",
+    "0x1A",
+    "0x11"
+   ],
+   "bg": {
+    "chrBank1k": "0x24",
+    "firstTile": "0xD0",
+    "chrOffset": "0x09100"
+   },
+   "sprite": {
+    "chrBank2k": "0x14",
+    "firstTile": "0x90",
+    "chrOffset": "0x05100"
+   },
+   "sameAs": 3
+  },
+  {
+   "id": 88,
+   "idHex": "0x58",
+   "name": "吉尔",
+   "file": "assets/original/portraits/88.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09FB2",
+   "colors": [
+    "0x37",
+    "0x1A",
+    "0x00"
+   ],
+   "bg": {
+    "chrBank1k": "0x24",
+    "firstTile": "0xC0",
+    "chrOffset": "0x09000"
+   },
+   "sprite": {
+    "chrBank2k": "0x14",
+    "firstTile": "0x80",
+    "chrOffset": "0x05000"
+   },
+   "sameAs": 1,
+   "blank": true
+  },
+  {
+   "id": 89,
+   "idHex": "0x59",
+   "name": "",
+   "file": "assets/original/portraits/89.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09FB9",
+   "colors": [
+    "0x37",
+    "0x17",
+    "0x00"
+   ],
+   "bg": {
+    "chrBank1k": "0x24",
+    "firstTile": "0xC0",
+    "chrOffset": "0x09000"
+   },
+   "sprite": {
+    "chrBank2k": "0x14",
+    "firstTile": "0x80",
+    "chrOffset": "0x05000"
+   },
+   "blank": true
+  },
+  {
+   "id": 90,
+   "idHex": "0x5A",
+   "name": "米巴",
+   "file": "assets/original/portraits/90.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09FC0",
+   "colors": [
+    "0x37",
+    "0x17",
+    "0x07"
+   ],
+   "bg": {
+    "chrBank1k": "0x12",
+    "firstTile": "0xC0",
+    "chrOffset": "0x04800"
+   },
+   "sprite": {
+    "chrBank2k": "0x18",
+    "firstTile": "0x80",
+    "chrOffset": "0x06000"
+   },
+   "mixed": true
+  },
+  {
+   "id": 91,
+   "idHex": "0x5B",
+   "name": "米巴",
+   "file": "assets/original/portraits/91.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09FC7",
+   "colors": [
+    "0x37",
+    "0x17",
+    "0x07"
+   ],
+   "bg": {
+    "chrBank1k": "0x12",
+    "firstTile": "0xC0",
+    "chrOffset": "0x04800"
+   },
+   "sprite": {
+    "chrBank2k": "0x18",
+    "firstTile": "0x80",
+    "chrOffset": "0x06000"
+   },
+   "sameAs": 90,
+   "mixed": true
+  },
+  {
+   "id": 92,
+   "idHex": "0x5C",
+   "name": "米巴",
+   "file": "assets/original/portraits/92.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09FCE",
+   "colors": [
+    "0x37",
+    "0x17",
+    "0x07"
+   ],
+   "bg": {
+    "chrBank1k": "0x12",
+    "firstTile": "0xC0",
+    "chrOffset": "0x04800"
+   },
+   "sprite": {
+    "chrBank2k": "0x18",
+    "firstTile": "0x80",
+    "chrOffset": "0x06000"
+   },
+   "sameAs": 90,
+   "mixed": true
+  },
+  {
+   "id": 93,
+   "idHex": "0x5D",
+   "name": "米巴",
+   "file": "assets/original/portraits/93.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09FD5",
+   "colors": [
+    "0x37",
+    "0x17",
+    "0x07"
+   ],
+   "bg": {
+    "chrBank1k": "0x12",
+    "firstTile": "0xC0",
+    "chrOffset": "0x04800"
+   },
+   "sprite": {
+    "chrBank2k": "0x18",
+    "firstTile": "0x80",
+    "chrOffset": "0x06000"
+   },
+   "sameAs": 90,
+   "mixed": true
+  },
+  {
+   "id": 94,
+   "idHex": "0x5E",
+   "name": "米巴",
+   "file": "assets/original/portraits/94.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09FDC",
+   "colors": [
+    "0x37",
+    "0x17",
+    "0x07"
+   ],
+   "bg": {
+    "chrBank1k": "0x12",
+    "firstTile": "0xC0",
+    "chrOffset": "0x04800"
+   },
+   "sprite": {
+    "chrBank2k": "0x18",
+    "firstTile": "0x80",
+    "chrOffset": "0x06000"
+   },
+   "sameAs": 90,
+   "mixed": true
+  },
+  {
+   "id": 95,
+   "idHex": "0x5F",
+   "name": "米巴",
+   "file": "assets/original/portraits/95.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09FE3",
+   "colors": [
+    "0x37",
+    "0x1A",
+    "0x00"
+   ],
+   "bg": {
+    "chrBank1k": "0x24",
+    "firstTile": "0xC0",
+    "chrOffset": "0x09000"
+   },
+   "sprite": {
+    "chrBank2k": "0x14",
+    "firstTile": "0x80",
+    "chrOffset": "0x05000"
+   },
+   "sameAs": 1,
+   "blank": true
+  },
+  {
+   "id": 96,
+   "idHex": "0x60",
+   "name": "帕依",
+   "file": "assets/original/portraits/96.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09FEA",
+   "colors": [
+    "0x37",
+    "0x17",
+    "0x07"
+   ],
+   "bg": {
+    "chrBank1k": "0x12",
+    "firstTile": "0xC0",
+    "chrOffset": "0x04800"
+   },
+   "sprite": {
+    "chrBank2k": "0x18",
+    "firstTile": "0x80",
+    "chrOffset": "0x06000"
+   },
+   "sameAs": 90,
+   "mixed": true
+  },
+  {
+   "id": 97,
+   "idHex": "0x61",
+   "name": "帕依",
+   "file": "assets/original/portraits/97.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09FF1",
+   "colors": [
+    "0x37",
+    "0x17",
+    "0x07"
+   ],
+   "bg": {
+    "chrBank1k": "0x12",
+    "firstTile": "0xC0",
+    "chrOffset": "0x04800"
+   },
+   "sprite": {
+    "chrBank2k": "0x18",
+    "firstTile": "0x80",
+    "chrOffset": "0x06000"
+   },
+   "sameAs": 90,
+   "mixed": true
+  },
+  {
+   "id": 98,
+   "idHex": "0x62",
+   "name": "帕依",
+   "file": "assets/original/portraits/98.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09FF8",
+   "colors": [
+    "0x37",
+    "0x17",
+    "0x07"
+   ],
+   "bg": {
+    "chrBank1k": "0x12",
+    "firstTile": "0xC0",
+    "chrOffset": "0x04800"
+   },
+   "sprite": {
+    "chrBank2k": "0x18",
+    "firstTile": "0x80",
+    "chrOffset": "0x06000"
+   },
+   "sameAs": 90,
+   "mixed": true
+  },
+  {
+   "id": 99,
+   "idHex": "0x63",
+   "name": "帕依",
+   "file": "assets/original/portraits/99.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x09FFF",
+   "colors": [
+    "0x37",
+    "0x17",
+    "0x07"
+   ],
+   "bg": {
+    "chrBank1k": "0x12",
+    "firstTile": "0xC0",
+    "chrOffset": "0x04800"
+   },
+   "sprite": {
+    "chrBank2k": "0x18",
+    "firstTile": "0x80",
+    "chrOffset": "0x06000"
+   },
+   "sameAs": 90,
+   "mixed": true
+  },
+  {
+   "id": 100,
+   "idHex": "0x64",
+   "name": "帕依",
+   "file": "assets/original/portraits/100.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x0A006",
+   "colors": [
+    "0x37",
+    "0x17",
+    "0x07"
+   ],
+   "bg": {
+    "chrBank1k": "0x12",
+    "firstTile": "0xC0",
+    "chrOffset": "0x04800"
+   },
+   "sprite": {
+    "chrBank2k": "0x18",
+    "firstTile": "0x80",
+    "chrOffset": "0x06000"
+   },
+   "sameAs": 90,
+   "mixed": true
+  },
+  {
+   "id": 101,
+   "idHex": "0x65",
+   "name": "帕依",
+   "file": "assets/original/portraits/101.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x0A00D",
+   "colors": [
+    "0x37",
+    "0x17",
+    "0x07"
+   ],
+   "bg": {
+    "chrBank1k": "0x12",
+    "firstTile": "0xC0",
+    "chrOffset": "0x04800"
+   },
+   "sprite": {
+    "chrBank2k": "0x18",
+    "firstTile": "0x80",
+    "chrOffset": "0x06000"
+   },
+   "sameAs": 90,
+   "mixed": true
+  },
+  {
+   "id": 102,
+   "idHex": "0x66",
+   "name": "帕依",
+   "file": "assets/original/portraits/102.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x0A014",
+   "colors": [
+    "0x37",
+    "0x17",
+    "0x07"
+   ],
+   "bg": {
+    "chrBank1k": "0x12",
+    "firstTile": "0xC0",
+    "chrOffset": "0x04800"
+   },
+   "sprite": {
+    "chrBank2k": "0x18",
+    "firstTile": "0x80",
+    "chrOffset": "0x06000"
+   },
+   "sameAs": 90,
+   "mixed": true
+  },
+  {
+   "id": 103,
+   "idHex": "0x67",
+   "name": "帕依",
+   "file": "assets/original/portraits/103.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x0A01B",
+   "colors": [
+    "0x37",
+    "0x17",
+    "0x07"
+   ],
+   "bg": {
+    "chrBank1k": "0x12",
+    "firstTile": "0xC0",
+    "chrOffset": "0x04800"
+   },
+   "sprite": {
+    "chrBank2k": "0x18",
+    "firstTile": "0x80",
+    "chrOffset": "0x06000"
+   },
+   "sameAs": 90,
+   "mixed": true
+  },
+  {
+   "id": 104,
+   "idHex": "0x68",
+   "name": "帕依",
+   "file": "assets/original/portraits/104.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x0A022",
+   "colors": [
+    "0x37",
+    "0x17",
+    "0x07"
+   ],
+   "bg": {
+    "chrBank1k": "0x12",
+    "firstTile": "0xC0",
+    "chrOffset": "0x04800"
+   },
+   "sprite": {
+    "chrBank2k": "0x18",
+    "firstTile": "0x80",
+    "chrOffset": "0x06000"
+   },
+   "sameAs": 90,
+   "mixed": true
+  },
+  {
+   "id": 105,
+   "idHex": "0x69",
+   "name": "帕依",
+   "file": "assets/original/portraits/105.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x0A029",
+   "colors": [
+    "0x37",
+    "0x17",
+    "0x07"
+   ],
+   "bg": {
+    "chrBank1k": "0x12",
+    "firstTile": "0xC0",
+    "chrOffset": "0x04800"
+   },
+   "sprite": {
+    "chrBank2k": "0x18",
+    "firstTile": "0x80",
+    "chrOffset": "0x06000"
+   },
+   "sameAs": 90,
+   "mixed": true
+  },
+  {
+   "id": 106,
+   "idHex": "0x6A",
+   "name": "帕依",
+   "file": "assets/original/portraits/106.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x0A030",
+   "colors": [
+    "0x37",
+    "0x17",
+    "0x07"
+   ],
+   "bg": {
+    "chrBank1k": "0x12",
+    "firstTile": "0xC0",
+    "chrOffset": "0x04800"
+   },
+   "sprite": {
+    "chrBank2k": "0x18",
+    "firstTile": "0x80",
+    "chrOffset": "0x06000"
+   },
+   "sameAs": 90,
+   "mixed": true
+  },
+  {
+   "id": 107,
+   "idHex": "0x6B",
+   "name": "帕依",
+   "file": "assets/original/portraits/107.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x0A037",
+   "colors": [
+    "0x37",
+    "0x17",
+    "0x07"
+   ],
+   "bg": {
+    "chrBank1k": "0x12",
+    "firstTile": "0xC0",
+    "chrOffset": "0x04800"
+   },
+   "sprite": {
+    "chrBank2k": "0x18",
+    "firstTile": "0x80",
+    "chrOffset": "0x06000"
+   },
+   "sameAs": 90,
+   "mixed": true
+  },
+  {
+   "id": 108,
+   "idHex": "0x6C",
+   "name": "帕依",
+   "file": "assets/original/portraits/108.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x0A03E",
+   "colors": [
+    "0x37",
+    "0x17",
+    "0x07"
+   ],
+   "bg": {
+    "chrBank1k": "0x12",
+    "firstTile": "0xC0",
+    "chrOffset": "0x04800"
+   },
+   "sprite": {
+    "chrBank2k": "0x18",
+    "firstTile": "0x80",
+    "chrOffset": "0x06000"
+   },
+   "sameAs": 90,
+   "mixed": true
+  },
+  {
+   "id": 109,
+   "idHex": "0x6D",
+   "name": "帕依",
+   "file": "assets/original/portraits/109.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x0A045",
+   "colors": [
+    "0x37",
+    "0x17",
+    "0x07"
+   ],
+   "bg": {
+    "chrBank1k": "0x12",
+    "firstTile": "0xC0",
+    "chrOffset": "0x04800"
+   },
+   "sprite": {
+    "chrBank2k": "0x18",
+    "firstTile": "0x80",
+    "chrOffset": "0x06000"
+   },
+   "sameAs": 90,
+   "mixed": true
+  },
+  {
+   "id": 110,
+   "idHex": "0x6E",
+   "name": "帕依",
+   "file": "assets/original/portraits/110.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x0A04C",
+   "colors": [
+    "0x37",
+    "0x17",
+    "0x07"
+   ],
+   "bg": {
+    "chrBank1k": "0x12",
+    "firstTile": "0xC0",
+    "chrOffset": "0x04800"
+   },
+   "sprite": {
+    "chrBank2k": "0x18",
+    "firstTile": "0x80",
+    "chrOffset": "0x06000"
+   },
+   "sameAs": 90,
+   "mixed": true
+  },
+  {
+   "id": 111,
+   "idHex": "0x6F",
+   "name": "帕依",
+   "file": "assets/original/portraits/111.png",
+   "width": 32,
+   "height": 32,
+   "record": "0x0A053",
+   "colors": [
+    "0x37",
+    "0x17",
+    "0x07"
+   ],
+   "bg": {
+    "chrBank1k": "0x12",
+    "firstTile": "0xC0",
+    "chrOffset": "0x04800"
+   },
+   "sprite": {
+    "chrBank2k": "0x18",
+    "firstTile": "0x80",
+    "chrOffset": "0x06000"
+   },
+   "sameAs": 90,
+   "mixed": true
+  }
+ ]
+}
