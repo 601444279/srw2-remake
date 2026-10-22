@@ -1,0 +1,11 @@
+// 给朋友测试用的线上版：纯静态资源 Worker，没有后端代码。
+// 部署用 tools/deploy.sh（从指定的提交构建到 dist/ 再上传），不要直接在工作区 deploy。
+// 访问控制靠 Cloudflare Access（只放行名单里的邮箱），在控制台配置。
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "srw2-remake",
+  "compatibility_date": "2026-10-01",
+  "assets": { "directory": "./dist" },
+  "workers_dev": true,
+  "preview_urls": false
+}
