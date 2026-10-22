@@ -68,6 +68,8 @@ export class Game implements DrawState {
   private anim: MoveAnim | null = null;
   // 飞行演出：离地高度 0（地面）→ 1（悬停），只记离地的单位
   private alt = new Map<Unit, number>();
+  // 每个单位这一帧的推力（画喷焰用）
+  private thrust = new Map<Unit, number>();
   private dangerOn = false;
   // 开始菜单（继续 / 读档 / 新游戏）开着时，右上角按钮不打开地图菜单
   private inStartMenu = false;
@@ -391,6 +393,19 @@ export class Game implements DrawState {
     return a * a * (3 - 2 * a);
   }
 
+  unitThrust(unit: Unit): number {
+    return this.thrust.get(unit) ?? 0;
+  }
+
+  // 沿路线移动时当前这一段的方向
+  unitHeading(unit: Unit): Point | null {
+    if (!this.anim || this.anim.unit !== unit || this.anim.v <= 0) return null;
+    const { path, t } = this.anim;
+    const i = Math.min(Math.floor(t), path.length - 2);
+    const a = path[i], b = path[i + 1] ?? a;
+    return { x: b.x - a.x, y: b.y - a.y };
+  }
+
   update(dt: number) {
     // 按住快速键：对话自动快进
     if (this.talk && this.fast()) {
@@ -422,20 +437,21 @@ export class Game implements DrawState {
     const up = new Set<Unit>();
     if (flight && this.selected) up.add(this.selected);
     if (flight && anim) up.add(anim.unit);
-    let thrust = 0;
+    this.thrust.clear();
     for (const u of up) if (!this.alt.has(u)) this.alt.set(u, 0);
     for (const [u, a] of this.alt) {
       if (up.has(u) && u.hp > 0) {
         this.alt.set(u, Math.min(1, a + k / TAKEOFF_TIME));
-        if (a < 1) thrust = Math.max(thrust, THRUST.takeoff);
-        else if (HOVER_MODES.includes(this.mode) || anim?.unit === u) thrust = Math.max(thrust, THRUST.hover);
+        if (a < 1) this.thrust.set(u, THRUST.takeoff);
+        else if (HOVER_MODES.includes(this.mode) || anim?.unit === u) this.thrust.set(u, THRUST.hover);
       } else {
         // 降落：推力跟着高度慢慢收
         if (a - k / LANDING_TIME <= 0) this.alt.delete(u);
         else this.alt.set(u, a - k / LANDING_TIME);
-        thrust = Math.max(thrust, THRUST.brake * a);
+        this.thrust.set(u, THRUST.brake * a);
       }
     }
+    const thrust = Math.max(0, ...this.thrust.values());
     if (!anim) return thrust;
     if (!flight) { anim.t += k * MOVE_TILES_PER_SEC; return thrust; }
     // 先升到悬停高度再走
@@ -447,6 +463,7 @@ export class Game implements DrawState {
     const phase = v < anim.v - 1e-6 || v === brakeCap ? "brake" : v > anim.v + 1e-6 ? "accel" : "cruise";
     anim.v = v;
     anim.t += v * k;
+    this.thrust.set(anim.unit, THRUST[phase]);
     return THRUST[phase];
   }
 
