@@ -43,6 +43,9 @@ export interface DrawState {
   unitPos(unit: Unit): Point;
   // 飞行演出：离地高度 0 → 1
   unitLift(unit: Unit): number;
+  // 飞行演出：引擎推力 0 → 1，移动方向（没在走时为 null）
+  unitThrust(unit: Unit): number;
+  unitHeading(unit: Unit): Point | null;
   selected: Unit | null;
 }
 
@@ -73,6 +76,8 @@ export class Renderer {
   private floats: FloatText[] = [];
   // 修理的闪光：原版是 4 颗星绕着被修理的单位转（地图上，不进战斗画面）
   private sparkles: { x: number; y: number; t: number; dur: number }[] = [];
+  // 飞行时留下的尾烟（格子坐标）
+  private smoke: { x: number; y: number; t: number }[] = [];
   private fx = new Map<Unit, UnitFx>();
   private hitstop = 0;
   // 震屏：amp 单位是原版像素，随时间按平方衰减
@@ -283,6 +288,7 @@ export class Renderer {
     }
 
     // 离地的单位最后画，升起来的头部不会被上一格的单位和血条盖住（sort 是稳定的，其余保持原顺序）
+    this.drawSmoke(s, dt);
     const order = settings.get().flight ? [...state.units].sort((a, b) => state.unitLift(a) - state.unitLift(b)) : state.units;
     for (const u of order) {
       const f = this.fx.get(u);
@@ -310,6 +316,8 @@ export class Renderer {
         ctx.ellipse(px + s / 2, py + s * 0.9, s * (0.36 - 0.08 * h), s * 0.09, 0, 0, Math.PI * 2);
         ctx.fill();
       }
+      const thrust = flight ? state.unitThrust(u) : 0;
+      if (thrust > 0) this.drawExhaust(px + s / 2, py + lift + s * 0.94, thrust, state.unitHeading(u), s);
       ctx.drawImage(u.acted ? sprite.gray : sprite.normal, px, py + lift, s, s);
       if (f && f.flash > 0) {
         ctx.fillStyle = `rgba(255,255,255,${f.flash / 0.18 * 0.8})`;
@@ -322,6 +330,40 @@ export class Renderer {
     this.drawCursor(this.cursorDraw.x * s, this.cursorDraw.y * s, s);
     this.drawSparkles(s, dt);
     this.drawFloats(s, dt);
+  }
+
+  // 机体下方的喷焰：白芯 → 黄 → 橙 → 透明，长度跟推力走；移动时焰尾甩向反方向并留下尾烟
+  private drawExhaust(cx: number, top: number, thrust: number, heading: Point | null, s: number) {
+    const ctx = this.ctx;
+    const len = s * (0.16 + 0.4 * thrust) * (0.85 + 0.15 * Math.sin(this.time * 47) + 0.08 * Math.random());
+    const w = s * (0.08 + 0.06 * thrust);
+    const tx = cx - (heading?.x ?? 0) * len * 0.7, ty = top + len * (1 - 0.3 * (heading?.y ?? 0));
+    const g = ctx.createLinearGradient(cx, top, tx, ty);
+    g.addColorStop(0, "rgba(255,255,255,0.95)");
+    g.addColorStop(0.25, "rgba(255,236,120,0.9)");
+    g.addColorStop(0.6, "rgba(255,140,40,0.6)");
+    g.addColorStop(1, "rgba(255,80,20,0)");
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.moveTo(cx - w, top);
+    ctx.quadraticCurveTo(cx, top - w, cx + w, top);
+    ctx.lineTo(tx, ty);
+    ctx.closePath();
+    ctx.fill();
+    if (heading && Math.random() < 0.6) this.smoke.push({ x: tx / s, y: ty / s, t: 0 });
+  }
+
+  private drawSmoke(s: number, dt: number) {
+    const ctx = this.ctx;
+    for (const p of this.smoke) {
+      p.t += dt;
+      const k = p.t / 0.5;
+      ctx.fillStyle = `rgba(200,200,210,${0.45 * (1 - k)})`;
+      ctx.beginPath();
+      ctx.arc(p.x * s, p.y * s, s * (0.05 + 0.12 * k), 0, Math.PI * 2);
+      ctx.fill();
+    }
+    this.smoke = this.smoke.filter((p) => p.t < 0.5);
   }
 
   private drawSparkles(s: number, dt: number) {
