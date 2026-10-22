@@ -1,0 +1,1895 @@
+{
+ "note": "剧情脚本以外扫到的文字片段（菜单、系统消息、说明、职员表等），未按文本引擎解析，end 是片段后面那个字节",
+ "fragments": [
+  {
+   "offset": "0x045C9",
+   "text": "尔重",
+   "end": "E7"
+  },
+  {
+   "offset": "0x047B9",
+   "text": "枪AF秀红",
+   "end": "23"
+  },
+  {
+   "offset": "0x047D1",
+   "text": "齿空韦",
+   "end": "69"
+  },
+  {
+   "offset": "0x047D9",
+   "text": "枪0避",
+   "end": "D0"
+  },
+  {
+   "offset": "0x047E3",
+   "text": "齿空埃",
+   "end": "04"
+  },
+  {
+   "offset": "0x0488D",
+   "text": "洛AF重",
+   "end": "E7"
+  },
+  {
+   "offset": "0x048C7",
+   "text": "弗何",
+   "end": "D5"
+  },
+  {
+   "offset": "0x04972",
+   "text": "洛AF重",
+   "end": "E7"
+  },
+  {
+   "offset": "0x04992",
+   "text": "何轻",
+   "end": "C1"
+  },
+  {
+   "offset": "0x04A7C",
+   "text": "洛AF重",
+   "end": "E7"
+  },
+  {
+   "offset": "0x04A9A",
+   "text": "洛AF重",
+   "end": "E7"
+  },
+  {
+   "offset": "0x05413",
+   "text": "弗介",
+   "end": "E5"
+  },
+  {
+   "offset": "0x08FFF",
+   "text": "政N港力",
+   "end": "02"
+  },
+  {
+   "offset": "0x0A088",
+   "text": "O严O严O严",
+   "end": "EA"
+  },
+  {
+   "offset": "0x0A0BC",
+   "text": "U恶",
+   "end": "EA"
+  },
+  {
+   "offset": "0x0A0DC",
+   "text": "N吃",
+   "end": "EA"
+  },
+  {
+   "offset": "0x0A0FC",
+   "text": "I旦",
+   "end": "EA"
+  },
+  {
+   "offset": "0x0A11E",
+   "text": "T号T",
+   "end": "EA"
+  },
+  {
+   "offset": "0x0A170",
+   "text": ".侵侵侵",
+   "end": "EA"
+  },
+  {
+   "offset": "0x0A1A2",
+   "text": "L者",
+   "end": "EA"
+  },
+  {
+   "offset": "0x0D41B",
+   "text": "动衣功",
+   "end": "B2"
+  },
+  {
+   "offset": "0x0D47C",
+   "text": "抱划仍",
+   "end": "DC"
+  },
+  {
+   "offset": "0x0D7FF",
+   "text": "移动",
+   "end": "FF"
+  },
+  {
+   "offset": "0x0D804",
+   "text": "强度",
+   "end": "FF"
+  },
+  {
+   "offset": "0x0D809",
+   "text": "防卫",
+   "end": "FF"
+  },
+  {
+   "offset": "0x0D80E",
+   "text": "速度",
+   "end": "FF"
+  },
+  {
+   "offset": "0x0D813",
+   "text": "P最高HP",
+   "end": "FF"
+  },
+  {
+   "offset": "0x0D81C",
+   "text": "+经验值",
+   "end": "FF"
+  },
+  {
+   "offset": "0x0D825",
+   "text": "精神",
+   "end": "FF"
+  },
+  {
+   "offset": "0x0DF48",
+   "text": "更更",
+   "end": "E0"
+  },
+  {
+   "offset": "0x0E83D",
+   "text": "光子剑",
+   "end": "FF"
+  },
+  {
+   "offset": "0x0EAE9",
+   "text": "回合",
+   "end": "F3"
+  },
+  {
+   "offset": "0x0EAF0",
+   "text": "回合结束",
+   "end": "F1"
+  },
+  {
+   "offset": "0x0EAF9",
+   "text": "工具",
+   "end": "F1"
+  },
+  {
+   "offset": "0x0EAFE",
+   "text": "存储",
+   "end": "F1"
+  },
+  {
+   "offset": "0x0EB06",
+   "text": "部队表",
+   "end": "F1"
+  },
+  {
+   "offset": "0x0EB0D",
+   "text": "开关",
+   "end": "F1"
+  },
+  {
+   "offset": "0x0EB12",
+   "text": "目标",
+   "end": "FF"
+  },
+  {
+   "offset": "0x0EDF0",
+   "text": "水平",
+   "end": "F0"
+  },
+  {
+   "offset": "0x0EE29",
+   "text": "全歼敌人即胜利。",
+   "end": "FF"
+  },
+  {
+   "offset": "0x0EE4E",
+   "text": "攻克敌要塞就是胜利",
+   "end": "FF"
+  },
+  {
+   "offset": "0x0EE7B",
+   "text": "记住，要打败拉英X！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x0EEA1",
+   "text": "破坏加恩即胜利，",
+   "end": "F1"
+  },
+  {
+   "offset": "0x0EEB1",
+   "text": "古连被杀死就会失败。",
+   "end": "FF"
+  },
+  {
+   "offset": "0x0EED0",
+   "text": "一定要破坏加恩！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x0EEF6",
+   "text": "守住坎普，全歼敌人！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x0EF2B",
+   "text": "破坏比克，将巴斯塔弄到手。",
+   "end": "FF"
+  },
+  {
+   "offset": "0x0EF65",
+   "text": "保护阿格马，全歼敌人",
+   "end": "FF"
+  },
+  {
+   "offset": "0x0EF96",
+   "text": "全部安全撤离。",
+   "end": "FF"
+  },
+  {
+   "offset": "0x0EFA4",
+   "text": "被水怒画。",
+   "end": "FF"
+  },
+  {
+   "offset": "0x0EFD8",
+   "text": "记住，在11回合内攻下索拉来衣。",
+   "end": "FF"
+  },
+  {
+   "offset": "0x0F011",
+   "text": "回合内必须全部",
+   "end": "F1"
+  },
+  {
+   "offset": "0x0F020",
+   "text": "从下面的出口逃出。",
+   "end": "FF"
+  },
+  {
+   "offset": "0x0F054",
+   "text": "一定要坚守拉姆20回合。",
+   "end": "FF"
+  },
+  {
+   "offset": "0x0F095",
+   "text": "打败基奥。",
+   "end": "FF"
+  },
+  {
+   "offset": "0x0F0BA",
+   "text": "消灭吉尔金刚就是胜利。",
+   "end": "FF"
+  },
+  {
+   "offset": "0x0F0E1",
+   "text": "请打败希亚。",
+   "end": "FF"
+  },
+  {
+   "offset": "0x0F106",
+   "text": "全力以赴消灭瓦尔。",
+   "end": "FF"
+  },
+  {
+   "offset": "0x0F12C",
+   "text": "全歼敌人。",
+   "end": "FF"
+  },
+  {
+   "offset": "0x0F13C",
+   "text": "全歼敌人。",
+   "end": "FF"
+  },
+  {
+   "offset": "0x0F14C",
+   "text": "全歼敌人。",
+   "end": "FF"
+  },
+  {
+   "offset": "0x0F15C",
+   "text": "全歼敌人。",
+   "end": "FF"
+  },
+  {
+   "offset": "0x0F16C",
+   "text": "全歼敌人。",
+   "end": "FF"
+  },
+  {
+   "offset": "0x0F17C",
+   "text": "全歼敌人。",
+   "end": "FF"
+  },
+  {
+   "offset": "0x0F1A0",
+   "text": "是吗 ？",
+   "end": "F1"
+  },
+  {
+   "offset": "0x0F1AA",
+   "text": "是  否",
+   "end": "FF"
+  },
+  {
+   "offset": "0x0F1C7",
+   "text": "动画",
+   "end": "F1"
+  },
+  {
+   "offset": "0x0F1EF",
+   "text": "游戏是否继续？",
+   "end": "F1"
+  },
+  {
+   "offset": "0x0F204",
+   "text": "储存完毕",
+   "end": "F1"
+  },
+  {
+   "offset": "0x0F266",
+   "text": "水平",
+   "end": "FE"
+  },
+  {
+   "offset": "0x0F287",
+   "text": "没有工具",
+   "end": "FF"
+  },
+  {
+   "offset": "0x0F2A8",
+   "text": "工具",
+   "end": "FE"
+  },
+  {
+   "offset": "0x0F2B3",
+   "text": "下一页         PAGE",
+   "end": "F0"
+  },
+  {
+   "offset": "0x0F34D",
+   "text": "水平",
+   "end": "F0"
+  },
+  {
+   "offset": "0x0F354",
+   "text": "机动",
+   "end": "F0"
+  },
+  {
+   "offset": "0x0F35E",
+   "text": "精神",
+   "end": "F0"
+  },
+  {
+   "offset": "0x0F36D",
+   "text": "类型",
+   "end": "F0"
+  },
+  {
+   "offset": "0x0F3EB",
+   "text": "水平",
+   "end": "F0"
+  },
+  {
+   "offset": "0x0F3F2",
+   "text": "机动",
+   "end": "F0"
+  },
+  {
+   "offset": "0x0F3FC",
+   "text": "精神",
+   "end": "F0"
+  },
+  {
+   "offset": "0x0F40B",
+   "text": "类型",
+   "end": "F0"
+  },
+  {
+   "offset": "0x0F44A",
+   "text": "强度",
+   "end": "F0"
+  },
+  {
+   "offset": "0x0F452",
+   "text": "防卫",
+   "end": "F0"
+  },
+  {
+   "offset": "0x0F45A",
+   "text": "速度",
+   "end": "F0"
+  },
+  {
+   "offset": "0x0F478",
+   "text": "升级还需",
+   "end": "F0"
+  },
+  {
+   "offset": "0x0F4B5",
+   "text": "驾驶员",
+   "end": "F0"
+  },
+  {
+   "offset": "0x0F52F",
+   "text": "水平",
+   "end": "F0"
+  },
+  {
+   "offset": "0x0F536",
+   "text": "机动",
+   "end": "F0"
+  },
+  {
+   "offset": "0x0F542",
+   "text": "精神",
+   "end": "F0"
+  },
+  {
+   "offset": "0x0F550",
+   "text": "类型",
+   "end": "F0"
+  },
+  {
+   "offset": "0x0F55A",
+   "text": "强度",
+   "end": "F0"
+  },
+  {
+   "offset": "0x0F562",
+   "text": "防卫",
+   "end": "F0"
+  },
+  {
+   "offset": "0x0F56A",
+   "text": "速度",
+   "end": "F0"
+  },
+  {
+   "offset": "0x0F587",
+   "text": "升级还需",
+   "end": "F0"
+  },
+  {
+   "offset": "0x0F618",
+   "text": "恢复HP",
+   "end": "F1"
+  },
+  {
+   "offset": "0x0F63E",
+   "text": "没敌人",
+   "end": "F1"
+  },
+  {
+   "offset": "0x0F645",
+   "text": "不能进攻！",
+   "end": "F1"
+  },
+  {
+   "offset": "0x0F662",
+   "text": "能修理",
+   "end": "F1"
+  },
+  {
+   "offset": "0x0F669",
+   "text": "但没有友军",
+   "end": "F1"
+  },
+  {
+   "offset": "0x0F687",
+   "text": "刚移动",
+   "end": "F1"
+  },
+  {
+   "offset": "0x0F68E",
+   "text": "不能用",
+   "end": "F1"
+  },
+  {
+   "offset": "0x0F94D",
+   "text": "攻击！",
+   "end": "FD"
+  },
+  {
+   "offset": "0x0F962",
+   "text": "防御成功！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x0F97A",
+   "text": "损坏",
+   "end": "F0"
+  },
+  {
+   "offset": "0x0F993",
+   "text": "倒下了",
+   "end": "FF"
+  },
+  {
+   "offset": "0x0F9A4",
+   "text": "吸收HP",
+   "end": "F0"
+  },
+  {
+   "offset": "0x0F9BF",
+   "text": "反击！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x0F9D0",
+   "text": "得到经验值",
+   "end": "F0"
+  },
+  {
+   "offset": "0x0F9F4",
+   "text": "阻止了",
+   "end": "F0"
+  },
+  {
+   "offset": "0x0F9FC",
+   "text": "的反击！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x0FA10",
+   "text": "阻止了",
+   "end": "F0"
+  },
+  {
+   "offset": "0x0FA18",
+   "text": "的攻击！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x0FA2B",
+   "text": "间接攻击行不通！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x0FA4B",
+   "text": "具有防卫体系",
+   "end": "FD"
+  },
+  {
+   "offset": "0x0FA68",
+   "text": "用盾防卫",
+   "end": "F0"
+  },
+  {
+   "offset": "0x0FA85",
+   "text": "发射回电波 ！",
+   "end": "FD"
+  },
+  {
+   "offset": "0x0FAA3",
+   "text": "武器的命中率很低！",
+   "end": "FD"
+  },
+  {
+   "offset": "0x0FAC5",
+   "text": "最后攻击",
+   "end": "FD"
+  },
+  {
+   "offset": "0x0FADC",
+   "text": "最后反击",
+   "end": "FD"
+  },
+  {
+   "offset": "0x0FAF3",
+   "text": "无力反击 ！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x0FB0A",
+   "text": "游戏结束了！",
+   "end": "F1"
+  },
+  {
+   "offset": "0x0FB16",
+   "text": "请按一下CLEAR键，",
+   "end": "F1"
+  },
+  {
+   "offset": "0x0FB27",
+   "text": "拔下电源。",
+   "end": "FF"
+  },
+  {
+   "offset": "0x0FB51",
+   "text": "移动",
+   "end": "FE"
+  },
+  {
+   "offset": "0x0FB6B",
+   "text": "强度",
+   "end": "FE"
+  },
+  {
+   "offset": "0x0FB83",
+   "text": "防卫",
+   "end": "FE"
+  },
+  {
+   "offset": "0x0FB9B",
+   "text": "速度",
+   "end": "FE"
+  },
+  {
+   "offset": "0x0FC11",
+   "text": "类型",
+   "end": "FE"
+  },
+  {
+   "offset": "0x0FC29",
+   "text": "精神",
+   "end": "FE"
+  },
+  {
+   "offset": "0x0FC44",
+   "text": "上升",
+   "end": "F0"
+  },
+  {
+   "offset": "0x0FC55",
+   "text": "的类型不合适！",
+   "end": "FD"
+  },
+  {
+   "offset": "0x0FC6C",
+   "text": "不再上升了！",
+   "end": "FD"
+  },
+  {
+   "offset": "0x0FC80",
+   "text": "不能用于空中部队",
+   "end": "FD"
+  },
+  {
+   "offset": "0x0FC96",
+   "text": "水平提高到",
+   "end": "F0"
+  },
+  {
+   "offset": "0x0FCB1",
+   "text": "火力提高到",
+   "end": "F0"
+  },
+  {
+   "offset": "0x0FCC8",
+   "text": "防卫提高到",
+   "end": "F0"
+  },
+  {
+   "offset": "0x0FCDF",
+   "text": "速度提高到",
+   "end": "F0"
+  },
+  {
+   "offset": "0x0FCF5",
+   "text": "提高到",
+   "end": "F0"
+  },
+  {
+   "offset": "0x0FD05",
+   "text": "精神提高到",
+   "end": "F0"
+  },
+  {
+   "offset": "0x0FD1C",
+   "text": "能使用博思",
+   "end": "FD"
+  },
+  {
+   "offset": "0x0FD34",
+   "text": "用于刚达，就能变形",
+   "end": "FD"
+  },
+  {
+   "offset": "0x0FD50",
+   "text": "部队行动完毕",
+   "end": "FF"
+  },
+  {
+   "offset": "0x0FD6A",
+   "text": "只能恢复到此",
+   "end": "FF"
+  },
+  {
+   "offset": "0x0FD82",
+   "text": "没敌人",
+   "end": "FD"
+  },
+  {
+   "offset": "0x0FD91",
+   "text": "不要使用过度",
+   "end": "FD"
+  },
+  {
+   "offset": "0x0FE63",
+   "text": "出装",
+   "end": "F1"
+  },
+  {
+   "offset": "0x0FE68",
+   "text": "金Z    阿波罗A",
+   "end": "F1"
+  },
+  {
+   "offset": "0x0FE77",
+   "text": "博思 金",
+   "end": "F1"
+  },
+  {
+   "offset": "0x0FE7F",
+   "text": "古连",
+   "end": "F1"
+  },
+  {
+   "offset": "0x0FE84",
+   "text": "出装",
+   "end": "F1"
+  },
+  {
+   "offset": "0x0FE89",
+   "text": "刚达   刚达Z",
+   "end": "F1"
+  },
+  {
+   "offset": "0x0FE96",
+   "text": "刚达ZZ  刚达R",
+   "end": "F1"
+  },
+  {
+   "offset": "0x0FEAB",
+   "text": "麦塔斯",
+   "end": "F1"
+  },
+  {
+   "offset": "0x0FEB2",
+   "text": "出装",
+   "end": "F1"
+  },
+  {
+   "offset": "0x0FEB7",
+   "text": "盖塔   太勒",
+   "end": "F1"
+  },
+  {
+   "offset": "0x0FEC3",
+   "text": "盖塔龙 盖塔虎",
+   "end": "FF"
+  },
+  {
+   "offset": "0x0FF31",
+   "text": "损坏机器人",
+   "end": "F0"
+  },
+  {
+   "offset": "0x0FF44",
+   "text": "带钱",
+   "end": "F0"
+  },
+  {
+   "offset": "0x10066",
+   "text": "寂寂",
+   "end": "F7"
+  },
+  {
+   "offset": "0x14A8F",
+   "text": "划真",
+   "end": "D0"
+  },
+  {
+   "offset": "0x1661C",
+   "text": "攻驾驶员",
+   "end": "F1"
+  },
+  {
+   "offset": "0x16626",
+   "text": "攻机器人",
+   "end": "F1"
+  },
+  {
+   "offset": "0x1662F",
+   "text": "攻武器",
+   "end": "F1"
+  },
+  {
+   "offset": "0x16636",
+   "text": "防机器人",
+   "end": "FF"
+  },
+  {
+   "offset": "0x16684",
+   "text": "暂停",
+   "end": "FE"
+  },
+  {
+   "offset": "0x1668C",
+   "text": "存储数据",
+   "end": "F1"
+  },
+  {
+   "offset": "0x16696",
+   "text": "向下一站前进",
+   "end": "FE"
+  },
+  {
+   "offset": "0x166A5",
+   "text": "最新数据",
+   "end": "F1"
+  },
+  {
+   "offset": "0x166AF",
+   "text": "数据",
+   "end": "F0"
+  },
+  {
+   "offset": "0x166BD",
+   "text": "平均水平",
+   "end": "F0"
+  },
+  {
+   "offset": "0x16737",
+   "text": "数据",
+   "end": "F0"
+  },
+  {
+   "offset": "0x16745",
+   "text": "平均水平",
+   "end": "F0"
+  },
+  {
+   "offset": "0x16754",
+   "text": "没有数据",
+   "end": "FF"
+  },
+  {
+   "offset": "0x16766",
+   "text": "数据损坏了",
+   "end": "FF"
+  },
+  {
+   "offset": "0x167CA",
+   "text": "数据损坏了",
+   "end": "FF"
+  },
+  {
+   "offset": "0x167D6",
+   "text": "栖近",
+   "end": "CB"
+  },
+  {
+   "offset": "0x1692D",
+   "text": "设计",
+   "end": "F1"
+  },
+  {
+   "offset": "0x16936",
+   "text": "美术",
+   "end": "F1"
+  },
+  {
+   "offset": "0x1693D",
+   "text": "音乐",
+   "end": "F1"
+  },
+  {
+   "offset": "0x16944",
+   "text": "编程",
+   "end": "F1"
+  },
+  {
+   "offset": "0x16957",
+   "text": "酒田正彦",
+   "end": "F1"
+  },
+  {
+   "offset": "0x16960",
+   "text": "小林宏二",
+   "end": "F1"
+  },
+  {
+   "offset": "0x16969",
+   "text": "田中真一",
+   "end": "F1"
+  },
+  {
+   "offset": "0x16972",
+   "text": "铃木正雄",
+   "end": "F1"
+  },
+  {
+   "offset": "0x1697B",
+   "text": "水岛敬太郎",
+   "end": "FE"
+  },
+  {
+   "offset": "0x1698D",
+   "text": "倍给古害",
+   "end": "FE"
+  },
+  {
+   "offset": "0x169D7",
+   "text": "水平",
+   "end": "F0"
+  },
+  {
+   "offset": "0x169E1",
+   "text": "攻击力",
+   "end": "F0"
+  },
+  {
+   "offset": "0x169EA",
+   "text": "机动",
+   "end": "F0"
+  },
+  {
+   "offset": "0x169F3",
+   "text": "防御力",
+   "end": "F0"
+  },
+  {
+   "offset": "0x16A0E",
+   "text": "高度",
+   "end": "F0"
+  },
+  {
+   "offset": "0x16A1B",
+   "text": "重量",
+   "end": "F0"
+  },
+  {
+   "offset": "0x16BB0",
+   "text": "帕拼",
+   "end": "CD"
+  },
+  {
+   "offset": "0x16BD9",
+   "text": "帕拼",
+   "end": "CD"
+  },
+  {
+   "offset": "0x16CBB",
+   "text": "帕拼",
+   "end": "CD"
+  },
+  {
+   "offset": "0x16D36",
+   "text": "帕拼",
+   "end": "CD"
+  },
+  {
+   "offset": "0x16F83",
+   "text": "使用它，防御力增加1点。",
+   "end": "FF"
+  },
+  {
+   "offset": "0x16F9D",
+   "text": "力1应。",
+   "end": "FF"
+  },
+  {
+   "offset": "0x16FBA",
+   "text": "加快反应速度，",
+   "end": "F1"
+  },
+  {
+   "offset": "0x16FC8",
+   "text": "速度提高1点。",
+   "end": "FF"
+  },
+  {
+   "offset": "0x16FD8",
+   "text": "度使H1应。",
+   "end": "FF"
+  },
+  {
+   "offset": "0x16FEF",
+   "text": "使用这种装置，",
+   "end": "F1"
+  },
+  {
+   "offset": "0x16FFD",
+   "text": "强度增加1点。",
+   "end": "FF"
+  },
+  {
+   "offset": "0x1700D",
+   "text": "H攻击力1应。",
+   "end": "FF"
+  },
+  {
+   "offset": "0x17020",
+   "text": "也叫复合装甲，",
+   "end": "F1"
+  },
+  {
+   "offset": "0x17030",
+   "text": "上限提高5点。",
+   "end": "FF"
+  },
+  {
+   "offset": "0x17046",
+   "text": "能强化超合金Z，",
+   "end": "F1"
+  },
+  {
+   "offset": "0x17055",
+   "text": "提高防护力3点。",
+   "end": "FF"
+  },
+  {
+   "offset": "0x17065",
+   "text": "力3应。",
+   "end": "FF"
+  },
+  {
+   "offset": "0x1707B",
+   "text": "火箭喷射装置，",
+   "end": "F1"
+  },
+  {
+   "offset": "0x17089",
+   "text": "提高移动力1点。",
+   "end": "FF"
+  },
+  {
+   "offset": "0x17099",
+   "text": "使H1应。",
+   "end": "FF"
+  },
+  {
+   "offset": "0x170A7",
+   "text": "装上红色机翼，",
+   "end": "F1"
+  },
+  {
+   "offset": "0x170B5",
+   "text": "能在太空飞行。",
+   "end": "FF"
+  },
+  {
+   "offset": "0x170C3",
+   "text": "飞行。",
+   "end": "FF"
+  },
+  {
+   "offset": "0x170D3",
+   "text": "增强型传感器，",
+   "end": "F1"
+  },
+  {
+   "offset": "0x170E1",
+   "text": "提高攻击力3点。",
+   "end": "FF"
+  },
+  {
+   "offset": "0x170F1",
+   "text": "击力3应。",
+   "end": "FF"
+  },
+  {
+   "offset": "0x17101",
+   "text": "能反映脑电波，",
+   "end": "F1"
+  },
+  {
+   "offset": "0x1710F",
+   "text": "速度提高3点。",
+   "end": "FF"
+  },
+  {
+   "offset": "0x17129",
+   "text": "新式的电子光束盾，",
+   "end": "F1"
+  },
+  {
+   "offset": "0x1713D",
+   "text": "上限提高10点。",
+   "end": "FF"
+  },
+  {
+   "offset": "0x17153",
+   "text": "干扰雷达，降低敌方的攻击力50%。",
+   "end": "FF"
+  },
+  {
+   "offset": "0x1717D",
+   "text": "恢复机器人的精神20点。",
+   "end": "FF"
+  },
+  {
+   "offset": "0x1719C",
+   "text": "恢复机器人的HP100点。",
+   "end": "FF"
+  },
+  {
+   "offset": "0x171BC",
+   "text": "恢复全体成员的HP50到200点。",
+   "end": "FF"
+  },
+  {
+   "offset": "0x171DF",
+   "text": "可用一次，",
+   "end": "F1"
+  },
+  {
+   "offset": "0x171E9",
+   "text": "扩大敌人的损伤2倍。",
+   "end": "FF"
+  },
+  {
+   "offset": "0x17202",
+   "text": "使部队的机动性加强一次。",
+   "end": "FF"
+  },
+  {
+   "offset": "0x17221",
+   "text": "恢复机器人的HP100点。",
+   "end": "FF"
+  },
+  {
+   "offset": "0x1723E",
+   "text": "给敌方1台机器",
+   "end": "F1"
+  },
+  {
+   "offset": "0x1724E",
+   "text": "到200的损害。",
+   "end": "FF"
+  },
+  {
+   "offset": "0x1725E",
+   "text": "使部队命中率提高10%。",
+   "end": "FF"
+  },
+  {
+   "offset": "0x17281",
+   "text": "增加1—255点EXP。",
+   "end": "FF"
+  },
+  {
+   "offset": "0x1729E",
+   "text": "射程很远，命中率极高。",
+   "end": "F1"
+  },
+  {
+   "offset": "0x172B3",
+   "text": "夫来母能提供强大的动力。",
+   "end": "F1"
+  },
+  {
+   "offset": "0x172CB",
+   "text": "它是最强的刚达。",
+   "end": "F1"
+  },
+  {
+   "offset": "0x172DC",
+   "text": "大卫：刚达R不是好惹的！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x17301",
+   "text": "超合金W使装甲具有强大",
+   "end": "F1"
+  },
+  {
+   "offset": "0x17317",
+   "text": "的防护力。威力也因金Z",
+   "end": "F1"
+  },
+  {
+   "offset": "0x1732C",
+   "text": "而提高数倍。",
+   "end": "F1"
+  },
+  {
+   "offset": "0x17339",
+   "text": "加代：金，攻击！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x1735B",
+   "text": "盖塔增大装置可以",
+   "end": "F1"
+  },
+  {
+   "offset": "0x1736C",
+   "text": "提高盖塔10倍效能。",
+   "end": "F1"
+  },
+  {
+   "offset": "0x1737E",
+   "text": "盖塔龙的必杀武器斯帕克",
+   "end": "F1"
+  },
+  {
+   "offset": "0x17395",
+   "text": "威力强大。",
+   "end": "F1"
+  },
+  {
+   "offset": "0x1739F",
+   "text": "龙：双战斧飞镖！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x173BE",
+   "text": "长于陆地作战，",
+   "end": "F1"
+  },
+  {
+   "offset": "0x173CC",
+   "text": "机动性和速度在盖塔中",
+   "end": "F1"
+  },
+  {
+   "offset": "0x173E1",
+   "text": "是最高的。",
+   "end": "F1"
+  },
+  {
+   "offset": "0x173EC",
+   "text": "欧文：联合攻击！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x1740B",
+   "text": "水中专用的波赛冬",
+   "end": "F1"
+  },
+  {
+   "offset": "0x1741C",
+   "text": "速度虽然不快，",
+   "end": "F1"
+  },
+  {
+   "offset": "0x1742A",
+   "text": "却能发挥无与伦比的力量。",
+   "end": "F1"
+  },
+  {
+   "offset": "0x17443",
+   "text": "路易：盖塔旋风！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x17475",
+   "text": "在构造方面有不完美的地方，",
+   "end": "F1"
+  },
+  {
+   "offset": "0x1748F",
+   "text": "但反应速度不亚于刚达。",
+   "end": "F1"
+  },
+  {
+   "offset": "0x174A7",
+   "text": "发：麦塔斯，出发！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x174E2",
+   "text": "机动性较差，",
+   "end": "F1"
+  },
+  {
+   "offset": "0x174EE",
+   "text": "但百万粒子炮是强大武器。",
+   "end": "F1"
+  },
+  {
+   "offset": "0x17508",
+   "text": "萨米：刚达，出发！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x17538",
+   "text": "有很高的机动性和变形能力，",
+   "end": "F1"
+  },
+  {
+   "offset": "0x17552",
+   "text": "在任何场合都可广泛应用，",
+   "end": "F1"
+  },
+  {
+   "offset": "0x1756A",
+   "text": "性能稳定。",
+   "end": "F1"
+  },
+  {
+   "offset": "0x17575",
+   "text": "卡姆：刚达Z，出发！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x1759D",
+   "text": "刚达ZZ长于火力，",
+   "end": "F1"
+  },
+  {
+   "offset": "0x175AD",
+   "text": "速度不快，",
+   "end": "F1"
+  },
+  {
+   "offset": "0x175B7",
+   "text": "它能百发百中。",
+   "end": "F1"
+  },
+  {
+   "offset": "0x175C6",
+   "text": "希塔：ZZ出发！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x175FA",
+   "text": "装备了光盾，",
+   "end": "F1"
+  },
+  {
+   "offset": "0x17606",
+   "text": "防御比火箭的刚达强了许多。",
+   "end": "F1"
+  },
+  {
+   "offset": "0x17620",
+   "text": "艾斯巴也有很强火力。",
+   "end": "F1"
+  },
+  {
+   "offset": "0x17635",
+   "text": "布克：F91，出发！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x1765C",
+   "text": "由于斯帕的提前到达，",
+   "end": "F1"
+  },
+  {
+   "offset": "0x17670",
+   "text": "各种万能机器都可超水平发挥。",
+   "end": "F1"
+  },
+  {
+   "offset": "0x1768E",
+   "text": "马丁：达衣乍，走！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x176AB",
+   "text": "由废旧物资制作，",
+   "end": "F1"
+  },
+  {
+   "offset": "0x176BB",
+   "text": "能量胜过金Z，",
+   "end": "F1"
+  },
+  {
+   "offset": "0x176C8",
+   "text": "是个有非凡能力的机器人。",
+   "end": "F1"
+  },
+  {
+   "offset": "0x176E1",
+   "text": "布西：和我的搏思一样！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x1770A",
+   "text": "要与刚达齐心协力地干",
+   "end": "F1"
+  },
+  {
+   "offset": "0x1771F",
+   "text": "是行动的要诀。",
+   "end": "F1"
+  },
+  {
+   "offset": "0x1772F",
+   "text": "普西：不行！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x1776D",
+   "text": "火力和机动性并存，",
+   "end": "F1"
+  },
+  {
+   "offset": "0x1777F",
+   "text": "是有威胁的机器人，",
+   "end": "F1"
+  },
+  {
+   "offset": "0x17791",
+   "text": "驾驶员要完全掌握性能。",
+   "end": "F1"
+  },
+  {
+   "offset": "0x177A8",
+   "text": "伊娃：伊娃 伊娃‥‥‥！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x177CB",
+   "text": "用永动机来驱动，",
+   "end": "F1"
+  },
+  {
+   "offset": "0x177DB",
+   "text": "是神秘的机器人。",
+   "end": "F1"
+  },
+  {
+   "offset": "0x177EB",
+   "text": "拉秀是强大的武器，",
+   "end": "F1"
+  },
+  {
+   "offset": "0x177FD",
+   "text": "现在还不了解它。",
+   "end": "F1"
+  },
+  {
+   "offset": "0x1780D",
+   "text": "安东：不可以！拉秀！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x17823",
+   "text": "和巴斯塔一样，",
+   "end": "F1"
+  },
+  {
+   "offset": "0x17831",
+   "text": "是个神秘的机器人。",
+   "end": "F1"
+  },
+  {
+   "offset": "0x17843",
+   "text": "重视火器的种类。",
+   "end": "F1"
+  },
+  {
+   "offset": "0x17853",
+   "text": "巴斯塔什么来历？",
+   "end": "F1"
+  },
+  {
+   "offset": "0x17863",
+   "text": "休：哼‥‥‥",
+   "end": "FF"
+  },
+  {
+   "offset": "0x17874",
+   "text": "令人惊奇的机器人，",
+   "end": "F1"
+  },
+  {
+   "offset": "0x17886",
+   "text": "有超级的忍耐力。",
+   "end": "F1"
+  },
+  {
+   "offset": "0x17896",
+   "text": "据说发明人还活着。",
+   "end": "F1"
+  },
+  {
+   "offset": "0x178A9",
+   "text": "贝克：‥‥‥",
+   "end": "FF"
+  },
+  {
+   "offset": "0x188AC",
+   "text": "矛毒！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x18925",
+   "text": "看， 这个！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x18944",
+   "text": "加好该收！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x189FD",
+   "text": "快搞！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x18A2D",
+   "text": "什么！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x18C3B",
+   "text": "讨厌！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x18D15",
+   "text": "歼体！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x18D42",
+   "text": "珍罗！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x18D58",
+   "text": "还差着呢！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x18D88",
+   "text": "看这个！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x18DEC",
+   "text": "瞄准！再来一下！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x18DFF",
+   "text": "再射击！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x18E17",
+   "text": "小子‥‥‥！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x18E38",
+   "text": "能躲开！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x18E49",
+   "text": "你别想有喘息机会",
+   "end": "FF"
+  },
+  {
+   "offset": "0x18E7F",
+   "text": "身落！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x18EF0",
+   "text": "稳聪！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x18F10",
+   "text": "逃洛！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x18F7C",
+   "text": "奈索！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x19000",
+   "text": "抓逃焰！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x19016",
+   "text": "呀完！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x19126",
+   "text": "看笨拙！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x1924F",
+   "text": "存默",
+   "end": "FE"
+  },
+  {
+   "offset": "0x19509",
+   "text": "布朗：就让他来检验西马性能吧！",
+   "end": "F6"
+  },
+  {
+   "offset": "0x19527",
+   "text": "拙蛋！",
+   "end": "F6"
+  },
+  {
+   "offset": "0x1A2E9",
+   "text": "贝克：",
+   "end": "F2"
+  },
+  {
+   "offset": "0x1A2EF",
+   "text": "你不是我的对手。",
+   "end": "F6"
+  },
+  {
+   "offset": "0x1A309",
+   "text": "贝克：",
+   "end": "F2"
+  },
+  {
+   "offset": "0x1A30F",
+   "text": "现在改变主意还来得及。",
+   "end": "F6"
+  },
+  {
+   "offset": "0x1A326",
+   "text": "贝克：别干没用的事。",
+   "end": "F6"
+  },
+  {
+   "offset": "0x1A33A",
+   "text": "贝克：",
+   "end": "F2"
+  },
+  {
+   "offset": "0x1A340",
+   "text": "怎么？还想打吗！",
+   "end": "F6"
+  },
+  {
+   "offset": "0x1C866",
+   "text": "攻体 ！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x1C881",
+   "text": "哇 ！ 打中了！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x1C91A",
+   "text": "盖体，",
+   "end": "F2"
+  },
+  {
+   "offset": "0x1C920",
+   "text": "事收猎话备！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x1C9CE",
+   "text": "往那打",
+   "end": "FF"
+  },
+  {
+   "offset": "0x1C9FB",
+   "text": "别小看他的威力‥‥‥！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x1CAF6",
+   "text": "能打中吧！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x1CB0A",
+   "text": "就这两下子， ‥‥‥见鬼！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x1CB8F",
+   "text": "哼， 别小看人 ！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x1CC5F",
+   "text": "备体！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x1CC72",
+   "text": "索体！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x1CCF9",
+   "text": "危险 ，危险 ！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x1CD06",
+   "text": "就这水平是打不过我的！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x1CD45",
+   "text": "没用啊！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x1CD88",
+   "text": "亏半！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x1CDF0",
+   "text": "狡体看逃滑！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x1CFB1",
+   "text": "医字式自体！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x1CFC2",
+   "text": "毛游倒极状态‥‥‥！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x1D003",
+   "text": "倒塔盖体！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x1D05F",
+   "text": "Z维呵！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x1D0FD",
+   "text": "游万畜牲？",
+   "end": "FF"
+  },
+  {
+   "offset": "0x1D164",
+   "text": "哎哟‥‥‥我不会输！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x1E253",
+   "text": "把L火爵约完喜规体。",
+   "end": "F6"
+  },
+  {
+   "offset": "0x1F193",
+   "text": "挡吸",
+   "end": "2A"
+  },
+  {
+   "offset": "0x1F1B7",
+   "text": "老H奈",
+   "end": "73"
+  },
+  {
+   "offset": "0x1F3F8",
+   "text": "衣GMP悔",
+   "end": "26"
+  },
+  {
+   "offset": "0x1F46B",
+   "text": "K逐",
+   "end": "59"
+  },
+  {
+   "offset": "0x2195D",
+   "text": "卡尔：",
+   "end": "F2"
+  },
+  {
+   "offset": "0x21963",
+   "text": "盖塔，决一胜负吧！",
+   "end": "F6"
+  },
+  {
+   "offset": "0x231A6",
+   "text": "似志。",
+   "end": "F6"
+  },
+  {
+   "offset": "0x266C1",
+   "text": "撤‥‥‥，路西。",
+   "end": "F6"
+  },
+  {
+   "offset": "0x2CCC4",
+   "text": "敌上需？",
+   "end": "FF"
+  },
+  {
+   "offset": "0x2CDE8",
+   "text": "精神低赛。",
+   "end": "F6"
+  },
+  {
+   "offset": "0x2CE04",
+   "text": "必复出？",
+   "end": "FF"
+  },
+  {
+   "offset": "0x2CE2B",
+   "text": "记随与。",
+   "end": "F6"
+  },
+  {
+   "offset": "0x2CE73",
+   "text": "见，约，记聪毛！",
+   "end": "FF"
+  },
+  {
+   "offset": "0x317C5",
+   "text": "开勉",
+   "end": "EA"
+  },
+  {
+   "offset": "0x3B012",
+   "text": "虚徒",
+   "end": "77"
+  },
+  {
+   "offset": "0x3C056",
+   "text": "+B+",
+   "end": "A3"
+  },
+  {
+   "offset": "0x3C077",
+   "text": "重/重海重",
+   "end": "DE"
+  },
+  {
+   "offset": "0x3C080",
+   "text": "重M它",
+   "end": "C6"
+  },
+  {
+   "offset": "0x3C320",
+   "text": "内齿",
+   "end": "00"
+  },
+  {
+   "offset": "0x3D419",
+   "text": "示，概",
+   "end": "01"
+  },
+  {
+   "offset": "0x3D426",
+   "text": "阳家肥",
+   "end": "D9"
+  },
+  {
+   "offset": "0x3DD00",
+   "text": "到/",
+   "end": "00"
+  }
+ ]
+}

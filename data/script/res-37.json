@@ -1,0 +1,788 @@
+{
+ "resource": "0x37",
+ "note": "出击、变形时的喊话，以及少量关卡对话",
+ "bank": "0x0E",
+ "table": "0x1E55D",
+ "entries": [
+  {
+   "index": 0,
+   "offset": "0x1E5C5",
+   "nodes": [
+    {
+     "offset": "0x1E5C5",
+     "random": [
+      [
+       {
+        "offset": "0x1E5CB",
+        "speaker": "大卫",
+        "text": "大卫，刚达出发！",
+        "raw": "大卫：{F2}大卫，刚达出发！{F6}"
+       }
+      ],
+      [
+       {
+        "offset": "0x1E5E3",
+        "speaker": "大卫",
+        "text": "出发！",
+        "raw": "大卫：{F2}出发！{F6}"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 1,
+   "offset": "0x1E5F5",
+   "stages": [
+    "第4关·过关",
+    "第5关·过关",
+    "第16关·过关"
+   ],
+   "nodes": [
+    {
+     "offset": "0x1E5F5",
+     "speaker": "大卫",
+     "text": "刚达R出发！",
+     "raw": "大卫：{F2}刚达R出发！{F6}"
+    }
+   ]
+  },
+  {
+   "index": 2,
+   "offset": "0x1E60B",
+   "nodes": [
+    {
+     "offset": "0x1E60B",
+     "random": [
+      [
+       {
+        "offset": "0x1E611",
+        "speaker": "卡姆",
+        "text": "比旦，刚达Z出发！",
+        "raw": "卡姆：{F2}比旦，刚达Z出发！{F6}"
+       }
+      ],
+      [
+       {
+        "offset": "0x1E62E",
+        "speaker": "卡姆",
+        "text": "出发！",
+        "raw": "卡姆：{F2}出发！{F6}"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 3,
+   "offset": "0x1E640",
+   "nodes": [
+    {
+     "offset": "0x1E640",
+     "random": [
+      [
+       {
+        "offset": "0x1E646",
+        "speaker": "希塔",
+        "text": "刚达ZZ出发！",
+        "raw": "希塔：{F2}刚达ZZ出发！{F6}"
+       }
+      ],
+      [
+       {
+        "offset": "0x1E65F",
+        "speaker": "希塔",
+        "text": "ZZ出发！",
+        "raw": "希塔：{F2}ZZ出发！{F6}"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 4,
+   "offset": "0x1E671",
+   "nodes": [
+    {
+     "offset": "0x1E671",
+     "random": [
+      [
+       {
+        "offset": "0x1E677",
+        "speaker": "布克",
+        "text": "布克驾驶刚达F91出发！",
+        "raw": "布克：{F2}布克驾驶刚达F91出发！{F6}"
+       }
+      ],
+      [
+       {
+        "offset": "0x1E69B",
+        "speaker": "布克",
+        "text": "F91出发！",
+        "raw": "布克：{F2}F91出发！{F6}"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 5,
+   "offset": "0x1E6AF",
+   "nodes": [
+    {
+     "offset": "0x1E6AF",
+     "random": [
+      [
+       {
+        "offset": "0x1E6B5",
+        "speaker": "加代",
+        "text": "好，出发！金Z起飞！",
+        "raw": "加代：{F2}好，出发！金Z起飞！{F6}"
+       }
+      ],
+      [
+       {
+        "offset": "0x1E6D2",
+        "speaker": "加代",
+        "text": "起飞！金Z！",
+        "raw": "加代：{F2}起飞！金Z！{F6}"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 6,
+   "offset": "0x1E6E7",
+   "nodes": [
+    {
+     "offset": "0x1E6E7",
+     "speaker": "加代",
+     "text": "布尔升空！",
+     "raw": "加代：{F2}布尔升空！{F6}"
+    }
+   ]
+  },
+  {
+   "index": 7,
+   "offset": "0x1E6FE",
+   "nodes": [
+    {
+     "offset": "0x1E6FE",
+     "speaker": "龙",
+     "text": "盖塔1号起飞！",
+     "raw": "龙：{F2}盖塔1号起飞！{F6}"
+    }
+   ]
+  },
+  {
+   "index": 8,
+   "offset": "0x1E711",
+   "nodes": [
+    {
+     "offset": "0x1E711",
+     "speaker": "龙",
+     "text": "龙出发！",
+     "raw": "龙：{F2}龙出发！{F6}"
+    }
+   ]
+  },
+  {
+   "index": 9,
+   "offset": "0x1E723",
+   "nodes": [
+    {
+     "offset": "0x1E723",
+     "speaker": "欧文",
+     "text": "盖塔2号起飞！",
+     "raw": "欧文：{F2}盖塔2号起飞！{F6}"
+    }
+   ]
+  },
+  {
+   "index": 10,
+   "offset": "0x1E738",
+   "nodes": [
+    {
+     "offset": "0x1E738",
+     "speaker": null,
+     "text": "欧文：拉依格起飞！",
+     "raw": "欧文：拉依格起飞！{F6}"
+    }
+   ]
+  },
+  {
+   "index": 11,
+   "offset": "0x1E74A",
+   "nodes": [
+    {
+     "offset": "0x1E74A",
+     "speaker": "路易",
+     "text": "盖塔3号出发！",
+     "raw": "路易：{F2}盖塔3号出发！{F6}"
+    }
+   ]
+  },
+  {
+   "index": 12,
+   "offset": "0x1E75E",
+   "nodes": [
+    {
+     "offset": "0x1E75E",
+     "speaker": "路易",
+     "text": "波东起飞！",
+     "raw": "路易：{F2}波东起飞！{F6}"
+    }
+   ]
+  },
+  {
+   "index": 13,
+   "offset": "0x1E771",
+   "nodes": [
+    {
+     "offset": "0x1E771",
+     "random": [
+      [
+       {
+        "offset": "0x1E777",
+        "speaker": "马丁",
+        "text": "古连起飞！",
+        "raw": "马丁：{F2}古连起飞！{F6}"
+       }
+      ],
+      [
+       {
+        "offset": "0x1E78F",
+        "speaker": "马丁",
+        "text": "古连出发！",
+        "raw": "马丁：{F2}古连出发！{F6}"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 14,
+   "offset": "0x1E7A5",
+   "nodes": [
+    {
+     "offset": "0x1E7A5",
+     "speaker": "由美",
+     "text": "阿波罗A起飞！",
+     "raw": "由美：{F2}阿波罗A起飞！{F6}"
+    }
+   ]
+  },
+  {
+   "index": 15,
+   "offset": "0x1E7B9",
+   "nodes": [
+    {
+     "offset": "0x1E7B9",
+     "random": [
+      [
+       {
+        "offset": "0x1E7BF",
+        "speaker": "发",
+        "text": "麦塔斯出发！",
+        "raw": "发： {F2}麦塔斯出发！{F6}"
+       }
+      ],
+      [
+       {
+        "offset": "0x1E7D6",
+        "speaker": null,
+        "text": "发：麦塔斯出发！",
+        "raw": "发：麦塔斯出发！{F6}"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 16,
+   "offset": "0x1E7E6",
+   "nodes": [
+    {
+     "offset": "0x1E7E6",
+     "speaker": "杰克",
+     "text": "出发！",
+     "raw": "杰克：{F2}出发！{F6}"
+    }
+   ]
+  },
+  {
+   "index": 17,
+   "offset": "0x1E7FA",
+   "nodes": [
+    {
+     "offset": "0x1E7FA",
+     "speaker": "布西",
+     "text": "博思出发！",
+     "raw": "布西：{F2}博思出发！{F6}"
+    }
+   ]
+  },
+  {
+   "index": 18,
+   "offset": "0x1E80D",
+   "nodes": [
+    {
+     "offset": "0x1E80D",
+     "speaker": "克娃",
+     "text": "出发！",
+     "raw": "克娃：{F2}出发！{F6}"
+    }
+   ]
+  },
+  {
+   "index": 19,
+   "offset": "0x1E82A",
+   "nodes": [
+    {
+     "offset": "0x1E82A",
+     "speaker": "安东",
+     "text": "巴斯塔出发！",
+     "raw": "安东：{F2}巴斯塔出发！{F6}"
+    }
+   ]
+  },
+  {
+   "index": 20,
+   "offset": "0x1E83E",
+   "nodes": [
+    {
+     "offset": "0x1E83E",
+     "random": [
+      [
+       {
+        "offset": "0x1E844",
+        "speaker": "伊娃",
+        "text": "出发！",
+        "raw": "伊娃：{F2}出发！{F6}"
+       }
+      ],
+      [
+       {
+        "offset": "0x1E85E",
+        "speaker": "伊娃",
+        "text": "出发！",
+        "raw": "伊娃：{F2}出发！{F6}"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "index": 21,
+   "offset": "0x1E85E",
+   "nodes": [
+    {
+     "offset": "0x1E85E",
+     "speaker": "伊娃",
+     "text": "出发！",
+     "raw": "伊娃：{F2}出发！{F6}"
+    }
+   ]
+  },
+  {
+   "index": 22,
+   "offset": "0x1E86C",
+   "nodes": [
+    {
+     "offset": "0x1E86C",
+     "speaker": "普西",
+     "text": "刚达Ⅱ出发！",
+     "raw": "普西：{F2}刚达Ⅱ出发！{F6}"
+    }
+   ]
+  },
+  {
+   "index": 23,
+   "offset": "0x1E889",
+   "nodes": [
+    {
+     "offset": "0x1E889",
+     "speaker": "普西",
+     "text": "出发！",
+     "raw": "普西：{F2}出发！{F6}"
+    }
+   ]
+  },
+  {
+   "index": 24,
+   "offset": "0x1E89B",
+   "nodes": [
+    {
+     "offset": "0x1E89B",
+     "speaker": "萨米",
+     "text": "刚达出发！",
+     "raw": "萨米：{F2}刚达出发！{F6}"
+    }
+   ]
+  },
+  {
+   "index": 25,
+   "offset": "0x1E8B8",
+   "nodes": [
+    {
+     "offset": "0x1E8B8",
+     "speaker": "尼娜",
+     "text": "艾文出发！",
+     "raw": "尼娜：{F2}艾文出发！{F6}"
+    }
+   ]
+  },
+  {
+   "index": 26,
+   "offset": "0x1E8CA",
+   "nodes": [
+    {
+     "offset": "0x1E8CA",
+     "speaker": "珍妮",
+     "text": "出发！",
+     "raw": "珍妮：{F2}出发！{F6}"
+    }
+   ]
+  },
+  {
+   "index": 27,
+   "offset": "0x1E8F2",
+   "nodes": [
+    {
+     "offset": "0x1E8F2",
+     "speaker": "龙",
+     "text": "开机，到位！",
+     "raw": "龙：{F2}开机，到位！"
+    }
+   ]
+  },
+  {
+   "index": 28,
+   "offset": "0x1E905",
+   "nodes": [
+    {
+     "offset": "0x1E905",
+     "speaker": "欧文",
+     "text": "开机，到位！",
+     "raw": "欧文：{F2}开机，到位！"
+    }
+   ]
+  },
+  {
+   "index": 29,
+   "offset": "0x1E916",
+   "nodes": [
+    {
+     "offset": "0x1E916",
+     "speaker": "路易",
+     "text": "开机，到位！",
+     "raw": "路易：{F2}开机，到位！"
+    }
+   ]
+  },
+  {
+   "index": 30,
+   "offset": "0x1E927",
+   "nodes": [
+    {
+     "offset": "0x1E929",
+     "face": 8,
+     "speaker": "龙",
+     "text": "盖塔1号点火！变形！",
+     "raw": "龙： {F2}盖塔1号点火！变形！"
+    }
+   ]
+  },
+  {
+   "index": 31,
+   "offset": "0x1E949",
+   "nodes": [
+    {
+     "offset": "0x1E94B",
+     "face": 9,
+     "speaker": "欧文",
+     "text": "盖塔2号点火！变形！",
+     "raw": "欧文：{F2}盖塔2号点火！变形！"
+    }
+   ]
+  },
+  {
+   "index": 32,
+   "offset": "0x1E966",
+   "nodes": [
+    {
+     "offset": "0x1E968",
+     "face": 10,
+     "speaker": "路易",
+     "text": "轮到我们啦！\n盖塔3号变形！",
+     "raw": "路易：{F2}轮到我们啦！{F2}盖塔3号变形！"
+    }
+   ]
+  },
+  {
+   "index": 33,
+   "offset": "0x1E987",
+   "nodes": [
+    {
+     "offset": "0x1E989",
+     "face": 8,
+     "speaker": "龙",
+     "text": "龙点火！变形！",
+     "raw": "龙： {F2}龙点火！变形！"
+    }
+   ]
+  },
+  {
+   "index": 34,
+   "offset": "0x1E9A8",
+   "nodes": [
+    {
+     "offset": "0x1E9AA",
+     "face": 9,
+     "speaker": "欧文",
+     "text": "拉依格点火！变形！",
+     "raw": "欧文：{F2}拉依格点火！变形！"
+    }
+   ]
+  },
+  {
+   "index": 35,
+   "offset": "0x1E9C5",
+   "nodes": [
+    {
+     "offset": "0x1E9C7",
+     "face": 10,
+     "speaker": "路易",
+     "text": "波东点火！变形！",
+     "raw": "路易：{F2}波东点火！变形！"
+    }
+   ]
+  },
+  {
+   "index": 36,
+   "offset": "0x1E9E2",
+   "nodes": [
+    {
+     "offset": "0x1E9E2",
+     "speaker": "大卫",
+     "text": "出发！",
+     "raw": "大卫：{F2}出发！"
+    }
+   ]
+  },
+  {
+   "index": 37,
+   "offset": "0x1E9EF",
+   "nodes": [
+    {
+     "offset": "0x1E9EF",
+     "speaker": "卡姆",
+     "text": "宰塔出发！",
+     "raw": "卡姆：{F2}宰塔出发！"
+    }
+   ]
+  },
+  {
+   "index": 38,
+   "offset": "0x1EA00",
+   "nodes": [
+    {
+     "offset": "0x1EA00",
+     "speaker": "希塔",
+     "text": "起飞！ZZ！",
+     "raw": "希塔：{F2}起飞！ZZ！"
+    }
+   ]
+  },
+  {
+   "index": 39,
+   "offset": "0x1EA11",
+   "nodes": [
+    {
+     "offset": "0x1EA11",
+     "speaker": "萨米",
+     "text": "刚达出发！",
+     "raw": "萨米：{F2}刚达出发！"
+    }
+   ]
+  },
+  {
+   "index": 40,
+   "offset": "0x1EA24",
+   "nodes": [
+    {
+     "offset": "0x1EA24",
+     "speaker": "普西",
+     "text": "萨衣克MK出发！",
+     "raw": "普西：{F2}萨衣克MK出发！"
+    }
+   ]
+  },
+  {
+   "index": 41,
+   "offset": "0x1EA38",
+   "nodes": [
+    {
+     "offset": "0x1EA38",
+     "speaker": null,
+     "text": "发：麦塔斯出发！",
+     "raw": "发：麦塔斯出发！"
+    }
+   ]
+  },
+  {
+   "index": 42,
+   "offset": "0x1EA47",
+   "nodes": [
+    {
+     "offset": "0x1EA47",
+     "speaker": "安东",
+     "text": "巴得变形！",
+     "raw": "安东：{F2}巴得变形！"
+    }
+   ]
+  },
+  {
+   "index": 43,
+   "offset": "0x1EA5B",
+   "nodes": [
+    {
+     "offset": "0x1EA5B",
+     "speaker": "安东",
+     "text": "巴得变形巴斯塔！",
+     "raw": "安东：{F2}巴得变形巴斯塔！"
+    }
+   ]
+  },
+  {
+   "index": 44,
+   "offset": "0x1EA76",
+   "nodes": [
+    {
+     "offset": "0x1EA76",
+     "speaker": null,
+     "text": "马丁：达衣乍变形！",
+     "raw": "马丁：达衣乍变形！"
+    }
+   ]
+  },
+  {
+   "index": 45,
+   "offset": "0x1EA87",
+   "nodes": [
+    {
+     "offset": "0x1EA87",
+     "speaker": "马丁",
+     "text": "秀扎进入！",
+     "raw": "马丁：{F2}秀扎进入！"
+    }
+   ]
+  },
+  {
+   "index": 46,
+   "offset": "0x1EA97",
+   "nodes": [
+    {
+     "offset": "0x1EA97",
+     "speaker": null,
+     "text": "马丁：达衣乍出发！",
+     "raw": "马丁：达衣乍出发！"
+    }
+   ]
+  },
+  {
+   "index": 47,
+   "offset": "0x1EA97",
+   "nodes": [
+    {
+     "offset": "0x1EA97",
+     "speaker": null,
+     "text": "马丁：达衣乍出发！",
+     "raw": "马丁：达衣乍出发！"
+    }
+   ]
+  },
+  {
+   "index": 48,
+   "offset": "0x1EA76",
+   "nodes": [
+    {
+     "offset": "0x1EA76",
+     "speaker": null,
+     "text": "马丁：达衣乍变形！",
+     "raw": "马丁：达衣乍变形！"
+    }
+   ]
+  },
+  {
+   "index": 49,
+   "offset": "0x1EAA8",
+   "stages": [
+    "第1关·地图事件",
+    "第2关·地图事件",
+    "第3关·地图事件",
+    "第4关·地图事件",
+    "第5关·地图事件",
+    "第6关·地图事件",
+    "第7关·地图事件",
+    "第8关·地图事件",
+    "第9关·地图事件",
+    "第10关·地图事件",
+    "第11关·地图事件",
+    "第12关·地图事件",
+    "第13关·地图事件",
+    "第14关·地图事件",
+    "第15关·地图事件",
+    "第17关·地图事件",
+    "第18关·地图事件",
+    "第20关·地图事件",
+    "第21关·地图事件",
+    "第22关·地图事件",
+    "第23关·地图事件",
+    "第24关·地图事件",
+    "第25关·地图事件"
+   ],
+   "nodes": [
+    {
+     "offset": "0x1EAA8",
+     "speaker": null,
+     "text": " 敌方援军出现了。",
+     "raw": " 敌方援军出现了。"
+    }
+   ]
+  },
+  {
+   "index": 50,
+   "offset": "0x1EABE",
+   "nodes": [
+    {
+     "offset": "0x1EABE",
+     "speaker": null,
+     "text": " 发现入侵者，迎击！",
+     "raw": " 发现入侵者，迎击！"
+    }
+   ]
+  },
+  {
+   "index": 51,
+   "offset": "0x1EADB",
+   "nodes": [
+    {
+     "offset": "0x1EADB",
+     "speaker": null,
+     "text": " 巴斯塔到手了！",
+     "raw": " 巴斯塔到手了！"
+    }
+   ]
+  }
+ ]
+}

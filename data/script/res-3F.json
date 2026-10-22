@@ -1,0 +1,901 @@
+{
+ "resource": "0x3F",
+ "note": "系统消息：升级、精神指令效果、全灭结局、存档、商店（带参数）",
+ "bank": "0x16",
+ "table": "0x2C65C",
+ "entries": [
+  {
+   "index": 0,
+   "offset": "0x2C6FC",
+   "nodes": [
+    {
+     "offset": "0x2C6FC",
+     "speaker": null,
+     "text": "{参数}：",
+     "raw": "{F0:00}： "
+    },
+    {
+     "offset": "0x2C700",
+     "call": [
+      "参数",
+      "参数"
+     ]
+    }
+   ]
+  },
+  {
+   "index": 1,
+   "offset": "0x2C706",
+   "nodes": [
+    {
+     "offset": "0x2C706",
+     "speaker": null,
+     "text": "{参数}：",
+     "raw": "{F0:00}： "
+    },
+    {
+     "offset": "0x2C70A",
+     "call": [
+      "参数",
+      "参数"
+     ]
+    }
+   ]
+  },
+  {
+   "index": 2,
+   "offset": "0x2C70F",
+   "nodes": [
+    {
+     "offset": "0x2C70F",
+     "speaker": null,
+     "text": "水平提高，达到 {参数}。",
+     "raw": "水平提高，达到 {F0:00}。   {FD:CE}{F3}"
+    },
+    {
+     "offset": "0x2C728",
+     "call": [
+      "参数",
+      "参数"
+     ]
+    },
+    {
+     "offset": "0x2C72B",
+     "call": [
+      "参数",
+      "参数"
+     ]
+    },
+    {
+     "offset": "0x2C72E",
+     "call": [
+      "参数",
+      "参数"
+     ]
+    },
+    {
+     "offset": "0x2C731",
+     "call": [
+      "参数",
+      "参数"
+     ]
+    },
+    {
+     "offset": "0x2C734",
+     "call": [
+      "参数",
+      "参数"
+     ]
+    }
+   ]
+  },
+  {
+   "index": 3,
+   "offset": "0x2C73B",
+   "nodes": [
+    {
+     "offset": "0x2C73B",
+     "speaker": null,
+     "text": "火力达到 {参数} 。",
+     "raw": "火力达到 {F0:00} 。   {F2}"
+    }
+   ]
+  },
+  {
+   "index": 4,
+   "offset": "0x2C74D",
+   "nodes": [
+    {
+     "offset": "0x2C74D",
+     "speaker": null,
+     "text": "防卫力达到 {参数} 。",
+     "raw": "防卫力达到 {F0:00} 。 {F2}"
+    }
+   ]
+  },
+  {
+   "index": 5,
+   "offset": "0x2C75F",
+   "nodes": [
+    {
+     "offset": "0x2C75F",
+     "speaker": null,
+     "text": "速度达到 {参数} 。",
+     "raw": "速度达到 {F0:00} 。{F2}"
+    }
+   ]
+  },
+  {
+   "index": 6,
+   "offset": "0x2C76E",
+   "nodes": [
+    {
+     "offset": "0x2C76E",
+     "speaker": null,
+     "text": "HP达到 {参数} 。",
+     "raw": "HP达到 {F0:00} 。{F2}"
+    }
+   ]
+  },
+  {
+   "index": 7,
+   "offset": "0x2C77B",
+   "nodes": [
+    {
+     "offset": "0x2C77B",
+     "speaker": null,
+     "text": "精神力达到 {参数} 。",
+     "raw": "精神力达到 {F0:00} 。 {F2}"
+    }
+   ]
+  },
+  {
+   "index": 8,
+   "offset": "0x2C78D",
+   "nodes": []
+  },
+  {
+   "index": 9,
+   "offset": "0x2C78E",
+   "nodes": [
+    {
+     "offset": "0x2C78E",
+     "speaker": null,
+     "text": "敌人的命中率减少一半 ！",
+     "raw": "敌人的命中率减少一半 ！{F6}"
+    }
+   ]
+  },
+  {
+   "index": 10,
+   "offset": "0x2C7A6",
+   "nodes": [
+    {
+     "offset": "0x2C7A6",
+     "speaker": null,
+     "text": "释放米诺夫粒子！\n敌人的命中率下降 ！",
+     "raw": "释放米诺夫粒子！{F2}敌人的命中率下降 ！    {F6}"
+    }
+   ]
+  },
+  {
+   "index": 11,
+   "offset": "0x2C7CE",
+   "nodes": [
+    {
+     "offset": "0x2C7CE",
+     "speaker": null,
+     "text": "{参数}的机动性提高 3 ！",
+     "raw": "{F0:00}的机动性提高 3 ！{F6}"
+    }
+   ]
+  },
+  {
+   "index": 12,
+   "offset": "0x2C7E2",
+   "nodes": [
+    {
+     "offset": "0x2C7E2",
+     "speaker": null,
+     "text": "{参数}的机动性提高 5 ！",
+     "raw": "{F0:00}的机动性提高 5 ！{F6}"
+    }
+   ]
+  },
+  {
+   "index": 13,
+   "offset": "0x2C7F6",
+   "nodes": [
+    {
+     "offset": "0x2C7F6",
+     "speaker": null,
+     "text": "往下就接不上了",
+     "raw": "往下就接不上了{F6}"
+    }
+   ]
+  },
+  {
+   "index": 14,
+   "offset": "0x2C806",
+   "nodes": [
+    {
+     "offset": "0x2C806",
+     "speaker": null,
+     "text": "使它增加攻击力1倍！",
+     "raw": "使它增加攻击力1倍！{F6}"
+    }
+   ]
+  },
+  {
+   "index": 15,
+   "offset": "0x2C81A",
+   "nodes": [
+    {
+     "offset": "0x2C81A",
+     "speaker": null,
+     "text": "使它增加攻击力2倍！",
+     "raw": "使它增加攻击力2倍！{F6}"
+    }
+   ]
+  },
+  {
+   "index": 16,
+   "offset": "0x2C82E",
+   "nodes": [
+    {
+     "offset": "0x2C82E",
+     "speaker": null,
+     "text": "我们的损伤减少一半！",
+     "raw": "我们的损伤减少一半！{F6}"
+    }
+   ]
+  },
+  {
+   "index": 17,
+   "offset": "0x2C845",
+   "nodes": [
+    {
+     "offset": "0x2C845",
+     "speaker": null,
+     "text": "{参数}的命中率提高 10%！",
+     "raw": "{F0:00}的命中率提高 10%！{F6}"
+    }
+   ]
+  },
+  {
+   "index": 18,
+   "offset": "0x2C85A",
+   "nodes": [
+    {
+     "offset": "0x2C85A",
+     "speaker": null,
+     "text": "{参数}的命中率提高到 100%！",
+     "raw": "{F0:00}的命中率提高到 100%！{F6}"
+    }
+   ]
+  },
+  {
+   "index": 19,
+   "offset": "0x2C872",
+   "nodes": [
+    {
+     "offset": "0x2C872",
+     "speaker": null,
+     "text": "躲开了敌人的攻击！",
+     "raw": "躲开了敌人的攻击！{F6}"
+    }
+   ]
+  },
+  {
+   "index": 20,
+   "offset": "0x2C885",
+   "nodes": [
+    {
+     "offset": "0x2C885",
+     "speaker": null,
+     "text": "西洛他们全部阵亡。\n世界落入了D.C的手中，\n世界再一次被黑暗笼罩‥‥‥",
+     "raw": "西洛他们全部阵亡。{F2}世界落入了D.C的手中，{F2}世界再一次被黑暗笼罩‥‥‥"
+    }
+   ]
+  },
+  {
+   "index": 21,
+   "offset": "0x2C8D8",
+   "nodes": [
+    {
+     "offset": "0x2C8D8",
+     "speaker": null,
+     "text": "坎普他们没完成守护任务，\n西洛被迫应战。\n但是，敌人太强大了，\n世界再一次被黑暗笼罩‥‥‥",
+     "raw": "坎普他们没完成守护任务，{F2}西洛被迫应战。{F2}但是，敌人太强大了，{F2}世界再一次被黑暗笼罩‥‥‥"
+    }
+   ]
+  },
+  {
+   "index": 22,
+   "offset": "0x2C95D",
+   "nodes": [
+    {
+     "offset": "0x2C95D",
+     "speaker": null,
+     "text": "西洛他们被阿格马击败，\n对地球上D.C的反击\n也失败了，许多人倒下了！\n黑暗的时代开始了‥‥‥",
+     "raw": "西洛他们被阿格马击败，{F2}对地球上D.C的反击{F2}也失败了，许多人倒下了！{F2}黑暗的时代开始了‥‥‥"
+    }
+   ]
+  },
+  {
+   "index": 23,
+   "offset": "0x2C9E4",
+   "nodes": [
+    {
+     "offset": "0x2C9E4",
+     "speaker": null,
+     "text": "激光盘的攻击使基地被毁！\n西洛丧失时机，\n在D.C反击前就倒下了！\n世界落入D.C手中‥‥‥",
+     "raw": "激光盘的攻击使基地被毁！{F2}西洛丧失时机，{F2}在D.C反击前就倒下了！{F2}世界落入D.C手中‥‥‥"
+    }
+   ]
+  },
+  {
+   "index": 24,
+   "offset": "0x2CA82",
+   "nodes": [
+    {
+     "offset": "0x2CA82",
+     "speaker": null,
+     "text": "西洛部队冒险作战终于失败！\nD.C有计划地储备力量，\n逐步确立了地球的统治地位！：〔06〕〔10〕〔22〕 〔11〕W〔08〕〔11〕W〔08〕〔14〕 〔11〕〔06〕〔27〕：\n〔10〕〔08〕〔2C〕〔04〕〔13〕〔02〕V〔10〕PPPP\n〔7B〕〔60〕L〔60〕〔10〕〔11〕〔19〕〔03〕〔12〕〔13〕〔1A〕 〔0D〕错 率〔16〕〔1F〕〔2C〕〔28〕\n〔44〕P〔43〕〔19〕〔0C〕〔1A〕〔02〕〔1A〕 〔06〕〔08〕〔28〕〔12〕〔0B〕〔2A〕〔13〕〔0C〕〔1F〕V〔10〕\n〔0E〕〔06〕〔02〕〔1A〕 〔E89A〕〔EA62〕O〔68〕J〔6E〕〔62〕〔E560〕〔E219〕\n〔13〕〔16〕〔05〕〔11〕 〔24〕〔20〕〔19〕〔CDD1〕〔02〕〔C7〕 〔1A〕〔CD1F〕V〔10〕PPPP",
+     "raw": "西洛部队冒险作战终于失败！{F2}D.C有计划地储备力量，{F2}逐步确立了地球的统治地位！：〔06〕〔10〕〔22〕 〔11〕W〔08〕〔11〕W〔08〕〔14〕 〔11〕〔06〕〔27〕：{F2}〔10〕〔08〕〔2C〕〔04〕〔13〕〔02〕V〔10〕PPPP{F2}〔7B〕〔60〕L〔60〕〔10〕〔11〕〔19〕〔03〕〔12〕〔13〕〔1A〕 〔0D〕错 率〔16〕〔1F〕〔2C〕〔28〕{F2}〔44〕P〔43〕〔19〕〔0C〕〔1A〕〔02〕〔1A〕 〔06〕〔08〕〔28〕〔12〕〔0B〕〔2A〕〔13〕〔0C〕〔1F〕V〔10〕{F2}〔0E〕〔06〕〔02〕〔1A〕 〔E89A〕〔EA62〕O〔68〕J〔6E〕〔62〕〔E560〕〔E219〕{F2}〔13〕〔16〕〔05〕〔11〕 〔24〕〔20〕〔19〕〔CDD1〕〔02〕〔C7〕 〔1A〕〔CD1F〕V〔10〕PPPP",
+     "garbled": true
+    }
+   ]
+  },
+  {
+   "index": 25,
+   "offset": "0x2CB3F",
+   "nodes": [
+    {
+     "offset": "0x2CB3F",
+     "speaker": null,
+     "text": "尤里：哎呀，被破坏了。\n没办法，再小心点，怎么样。",
+     "raw": "尤里：哎呀，被破坏了。{F2}没办法，再小心点，怎么样。{F6}"
+    }
+   ]
+  },
+  {
+   "index": 26,
+   "offset": "0x2CB72",
+   "nodes": [
+    {
+     "offset": "0x2CB72",
+     "speaker": null,
+     "text": "尤里：哎呀，资金没有了。\n但会有办法的。",
+     "raw": "尤里：哎呀，资金没有了。{F2}但会有办法的。{F6}"
+    },
+    {
+     "offset": "0x2CB96",
+     "speaker": null,
+     "text": "瓦西：还是要节约用钱。",
+     "raw": "瓦西：还是要节约用钱。{F6}"
+    }
+   ]
+  },
+  {
+   "index": 27,
+   "offset": "0x2CBAD",
+   "nodes": [
+    {
+     "offset": "0x2CBAD",
+     "speaker": null,
+     "text": "瓦西：哈，真是一场苦战，\n年轻人受点磨难也好。",
+     "raw": "瓦西：哈，真是一场苦战，{F2}年轻人受点磨难也好。{F6}"
+    }
+   ]
+  },
+  {
+   "index": 28,
+   "offset": "0x2CBDA",
+   "nodes": [
+    {
+     "offset": "0x2CBDA",
+     "speaker": null,
+     "text": "瓦西：什么，钱已经没了，\n总得想个办法吧‥‥‥",
+     "raw": "瓦西：什么，钱已经没了，{F2}总得想个办法吧‥‥‥{F6}"
+    }
+   ]
+  },
+  {
+   "index": 29,
+   "offset": "0x2CC0D",
+   "nodes": [
+    {
+     "offset": "0x2CC0D",
+     "speaker": null,
+     "text": "莫里：啊，坏得很严重了！\n不用担心，马上给你修好。",
+     "raw": "莫里：啊，坏得很严重了！{F2}不用担心，马上给你修好。{F6}"
+    }
+   ]
+  },
+  {
+   "index": 30,
+   "offset": "0x2CC3E",
+   "nodes": [
+    {
+     "offset": "0x2CC3E",
+     "speaker": "莫里",
+     "text": "钱用完了，不久就会有的，\n但最好别浪费金钱了。",
+     "raw": "莫里：{F2}钱用完了，不久就会有的，{F2}但最好别浪费金钱了。{F6}"
+    }
+   ]
+  },
+  {
+   "index": 31,
+   "offset": "0x2CC73",
+   "nodes": [
+    {
+     "offset": "0x2CC73",
+     "speaker": null,
+     "text": "查里：辛苦了，今后怎么办？",
+     "raw": "查里：辛苦了，今后怎么办？"
+    }
+   ]
+  },
+  {
+   "index": 32,
+   "offset": "0x2CC8C",
+   "nodes": [
+    {
+     "offset": "0x2CC8C",
+     "speaker": null,
+     "text": "查里：加油！",
+     "raw": "{EE:2C}查里：加油！"
+    }
+   ]
+  },
+  {
+   "index": 33,
+   "offset": "0x2CC99",
+   "nodes": [
+    {
+     "offset": "0x2CC99",
+     "speaker": null,
+     "text": "查里：储存在哪？",
+     "raw": "{EE:2C}查里：储存在哪？"
+    }
+   ]
+  },
+  {
+   "index": 34,
+   "offset": "0x2CCAB",
+   "nodes": [
+    {
+     "offset": "0x2CCAB",
+     "speaker": null,
+     "text": "查里：可以替换旧数据吗？",
+     "raw": "{EE:2A}查里：可以替换旧数据吗？"
+    }
+   ]
+  },
+  {
+   "index": 35,
+   "offset": "0x2CCD1",
+   "nodes": [
+    {
+     "offset": "0x2CCD1",
+     "speaker": null,
+     "text": "查里：储存结束。",
+     "raw": "{EE:2C}查里：储存结束。{F6}"
+    }
+   ]
+  },
+  {
+   "index": 36,
+   "offset": "0x2CCE4",
+   "nodes": [
+    {
+     "offset": "0x2CCE4",
+     "speaker": null,
+     "text": "查里：数据损坏了。",
+     "raw": "{EE:2C}查里：数据损坏了。{F6}"
+    }
+   ]
+  },
+  {
+   "index": 37,
+   "offset": "0x2CD00",
+   "nodes": [
+    {
+     "offset": "0x2CD00",
+     "speaker": null,
+     "text": "查里：选择哪组数据？",
+     "raw": "{EE:2C}查里：选择哪组数据？"
+    }
+   ]
+  },
+  {
+   "index": 38,
+   "offset": "0x2CD16",
+   "nodes": [
+    {
+     "offset": "0x2CD16",
+     "speaker": null,
+     "text": "{参数}得到 {参数} 经验值和 {参数}0G 钱！",
+     "raw": "{F0:00}得到 {F0:00} 经验值和 {F0:00}0G 钱！{F3}"
+    },
+    {
+     "offset": "0x2CD32",
+     "call": [
+      "参数",
+      "参数"
+     ]
+    }
+   ]
+  },
+  {
+   "index": 39,
+   "offset": "0x2CD36",
+   "nodes": [
+    {
+     "offset": "0x2CD36",
+     "speaker": null,
+     "text": "米拉：啊，欢迎！",
+     "raw": "{EE:14}米拉：啊，欢迎！{F6}"
+    }
+   ]
+  },
+  {
+   "index": 40,
+   "offset": "0x2CD36",
+   "nodes": [
+    {
+     "offset": "0x2CD36",
+     "speaker": null,
+     "text": "米拉：啊，欢迎！",
+     "raw": "{EE:14}米拉：啊，欢迎！{F6}"
+    }
+   ]
+  },
+  {
+   "index": 41,
+   "offset": "0x2CD36",
+   "nodes": [
+    {
+     "offset": "0x2CD36",
+     "speaker": null,
+     "text": "米拉：啊，欢迎！",
+     "raw": "{EE:14}米拉：啊，欢迎！{F6}"
+    }
+   ]
+  },
+  {
+   "index": 42,
+   "offset": "0x2CD36",
+   "nodes": [
+    {
+     "offset": "0x2CD36",
+     "speaker": null,
+     "text": "米拉：啊，欢迎！",
+     "raw": "{EE:14}米拉：啊，欢迎！{F6}"
+    }
+   ]
+  },
+  {
+   "index": 43,
+   "offset": "0x2CD36",
+   "nodes": [
+    {
+     "offset": "0x2CD36",
+     "speaker": null,
+     "text": "米拉：啊，欢迎！",
+     "raw": "{EE:14}米拉：啊，欢迎！{F6}"
+    }
+   ]
+  },
+  {
+   "index": 44,
+   "offset": "0x2CD36",
+   "nodes": [
+    {
+     "offset": "0x2CD36",
+     "speaker": null,
+     "text": "米拉：啊，欢迎！",
+     "raw": "{EE:14}米拉：啊，欢迎！{F6}"
+    }
+   ]
+  },
+  {
+   "index": 45,
+   "offset": "0x2CD36",
+   "nodes": [
+    {
+     "offset": "0x2CD36",
+     "speaker": null,
+     "text": "米拉：啊，欢迎！",
+     "raw": "{EE:14}米拉：啊，欢迎！{F6}"
+    }
+   ]
+  },
+  {
+   "index": 46,
+   "offset": "0x2CD36",
+   "nodes": [
+    {
+     "offset": "0x2CD36",
+     "speaker": null,
+     "text": "米拉：啊，欢迎！",
+     "raw": "{EE:14}米拉：啊，欢迎！{F6}"
+    }
+   ]
+  },
+  {
+   "index": 47,
+   "offset": "0x2CD36",
+   "nodes": [
+    {
+     "offset": "0x2CD36",
+     "speaker": null,
+     "text": "米拉：啊，欢迎！",
+     "raw": "{EE:14}米拉：啊，欢迎！{F6}"
+    }
+   ]
+  },
+  {
+   "index": 48,
+   "offset": "0x2CD36",
+   "nodes": [
+    {
+     "offset": "0x2CD36",
+     "speaker": null,
+     "text": "米拉：啊，欢迎！",
+     "raw": "{EE:14}米拉：啊，欢迎！{F6}"
+    }
+   ]
+  },
+  {
+   "index": 49,
+   "offset": "0x2CD49",
+   "nodes": [
+    {
+     "offset": "0x2CD49",
+     "speaker": null,
+     "text": "米拉：需要什么？",
+     "raw": "{EE:14}米拉：需要什么？"
+    }
+   ]
+  },
+  {
+   "index": 50,
+   "offset": "0x2CD60",
+   "nodes": [
+    {
+     "offset": "0x2CD60",
+     "speaker": null,
+     "text": "米拉：钱不够啊。",
+     "raw": "{EE:14}米拉：钱不够啊。{F6}"
+    }
+   ]
+  },
+  {
+   "index": 51,
+   "offset": "0x2CD73",
+   "nodes": [
+    {
+     "offset": "0x2CD73",
+     "speaker": null,
+     "text": "米拉：只能带那么些。",
+     "raw": "{EE:14}米拉：只能带那么些。{F6}"
+    }
+   ]
+  },
+  {
+   "index": 52,
+   "offset": "0x2CD89",
+   "nodes": [
+    {
+     "offset": "0x2CD89",
+     "speaker": null,
+     "text": "米拉：要买吗？",
+     "raw": "{EE:14}米拉：要买吗？"
+    }
+   ]
+  },
+  {
+   "index": 53,
+   "offset": "0x2CD99",
+   "nodes": [
+    {
+     "offset": "0x2CD99",
+     "speaker": null,
+     "text": "米拉：还要什么吗？",
+     "raw": "{EE:14}米拉：还要什么吗？"
+    }
+   ]
+  },
+  {
+   "index": 54,
+   "offset": "0x2CDBA",
+   "nodes": [
+    {
+     "offset": "0x2CDBA",
+     "speaker": null,
+     "text": "米拉：谢谢。请再来！",
+     "raw": "{EE:14}米拉：谢谢。请再来！{F6}"
+    }
+   ]
+  },
+  {
+   "index": 55,
+   "offset": "0x2CDD6",
+   "nodes": [
+    {
+     "offset": "0x2CDD6",
+     "speaker": null,
+     "text": "米拉：乔，您好！",
+     "raw": "{EE:14}米拉：乔，您好！{F6}"
+    }
+   ]
+  },
+  {
+   "index": 56,
+   "offset": "0x2CDF3",
+   "nodes": [
+    {
+     "offset": "0x2CDF3",
+     "speaker": null,
+     "text": "米拉：您要什么？",
+     "raw": "{EE:14}米拉：您要什么？"
+    }
+   ]
+  },
+  {
+   "index": 57,
+   "offset": "0x2CE0E",
+   "nodes": [
+    {
+     "offset": "0x2CE0E",
+     "speaker": null,
+     "text": "米拉：不行，乔。\n您也不例外。",
+     "raw": "{EE:14}米拉：不行，乔。{F2}您也不例外。{F6}"
+    }
+   ]
+  },
+  {
+   "index": 58,
+   "offset": "0x2CE34",
+   "nodes": [
+    {
+     "offset": "0x2CE34",
+     "speaker": null,
+     "text": "米拉：粗心大意不行。",
+     "raw": "{EE:14}米拉：粗心大意不行。{F6}"
+    }
+   ]
+  },
+  {
+   "index": 59,
+   "offset": "0x2CE4B",
+   "nodes": [
+    {
+     "offset": "0x2CE4B",
+     "speaker": null,
+     "text": "米拉：要买吗？",
+     "raw": "{EE:14}米拉：要买吗？"
+    }
+   ]
+  },
+  {
+   "index": 60,
+   "offset": "0x2CE5A",
+   "nodes": [
+    {
+     "offset": "0x2CE5A",
+     "speaker": null,
+     "text": "米拉：您还要什么吗？",
+     "raw": "{EE:14}米拉：您还要什么吗？"
+    }
+   ]
+  },
+  {
+   "index": 61,
+   "offset": "0x2CE88",
+   "nodes": [
+    {
+     "offset": "0x2CE88",
+     "speaker": null,
+     "text": "米拉：那么，加油吧！",
+     "raw": "{EE:14}米拉：那么，加油吧！"
+    }
+   ]
+  },
+  {
+   "index": 62,
+   "offset": "0x2CEA5",
+   "nodes": []
+  },
+  {
+   "index": 63,
+   "offset": "0x2CEA5",
+   "nodes": []
+  },
+  {
+   "index": 64,
+   "offset": "0x2CEA5",
+   "nodes": []
+  },
+  {
+   "index": 65,
+   "offset": "0x2CEA5",
+   "nodes": []
+  },
+  {
+   "index": 66,
+   "offset": "0x2CEA5",
+   "nodes": []
+  },
+  {
+   "index": 67,
+   "offset": "0x2CEA5",
+   "nodes": []
+  },
+  {
+   "index": 68,
+   "offset": "0x2CEA5",
+   "nodes": []
+  },
+  {
+   "index": 69,
+   "offset": "0x2CEA5",
+   "nodes": []
+  },
+  {
+   "index": 70,
+   "offset": "0x2CEA5",
+   "stages": [
+    "第9关·地图事件"
+   ],
+   "nodes": []
+  },
+  {
+   "index": 71,
+   "offset": "0x2CEA5",
+   "nodes": []
+  },
+  {
+   "index": 72,
+   "offset": "0x2CEA5",
+   "nodes": []
+  },
+  {
+   "index": 73,
+   "offset": "0x2CEA5",
+   "nodes": []
+  },
+  {
+   "index": 74,
+   "offset": "0x2CEA5",
+   "nodes": []
+  },
+  {
+   "index": 75,
+   "offset": "0x2CEA5",
+   "nodes": []
+  },
+  {
+   "index": 76,
+   "offset": "0x2CEA5",
+   "nodes": []
+  },
+  {
+   "index": 77,
+   "offset": "0x2CEA5",
+   "nodes": []
+  },
+  {
+   "index": 78,
+   "offset": "0x2CEA5",
+   "nodes": []
+  },
+  {
+   "index": 79,
+   "offset": "0x2CEA5",
+   "nodes": []
+  }
+ ]
+}
