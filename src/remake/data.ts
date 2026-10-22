@@ -26,6 +26,9 @@ const mapFiles = import.meta.glob("../../data/maps/stage*.json", { eager: true, 
 const terrainSheets = import.meta.glob("../../assets/original/terrain/env-*.png", { eager: true, import: "default", query: "?url" });
 const unitSheets = import.meta.glob("../../assets/original/units/bank-*.png", { eager: true, import: "default", query: "?url" });
 const eventFiles = import.meta.glob("../../data/events/stage*.json", { eager: true, import: "default" });
+const battleSpriteFiles = import.meta.glob("../../assets/original/battle/units/*.png", { eager: true, import: "default", query: "?url" });
+import battleSpriteDb from "../../data/battle-sprites.json";
+import { EXP_TABLE_A } from "../rules/growth.js";
 import aiDb from "../../data/events/ai.json";
 import type { Script } from "./script.ts";
 
@@ -259,6 +262,22 @@ export function transformUnit(stage: Stage, unit: Unit, newUnitId: number) {
   // 名册也记成新形态，下一关出击时保持
   const m = stage.roster.find((r) => r.member === unit.roster);
   if (m) { m.unit = newUnitId; m.pilot = pilotId; }
+}
+
+// 机体战斗大图（tools/extract-battle-gfx.js）：共用同一张图的机体用 sameAs 指向另一台
+const battleSprites = new Map((battleSpriteDb as { units: { id: number; file?: string | null; sameAs?: number | null }[] }).units.map((u) => [u.id, u]));
+export function battleSpriteUrl(unitId: number): string | null {
+  let u = battleSprites.get(unitId);
+  for (let i = 0; i < 4 && u && !u.file && u.sameAs != null; i++) u = battleSprites.get(u.sameAs);
+  const file = u?.file?.split("/").pop();
+  const hit = file && Object.entries(battleSpriteFiles).find(([p]) => p.endsWith(`/${file}`));
+  return hit ? (hit[1] as string) : null;
+}
+
+// 升到下一级还差多少经验（门槛表 A，现有驾驶员都用它）；满级返回 null
+export function expToNext(unit: Unit): number | null {
+  const need = EXP_TABLE_A[unit.levelIndex];
+  return need === undefined ? null : Math.max(0, need - unit.exp);
 }
 
 export const AI_SCRIPTS = (aiDb as unknown as { scripts: Record<string, Script> }).scripts;

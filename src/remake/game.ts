@@ -1,7 +1,7 @@
 // 游戏流程：我方回合（移动、攻击、精神、待机）、敌方回合、剧情。
 // 战斗、命中、伤害、经验等规则在 rules.ts 里调用原版规则代码；
 // 关卡事件（对话、援军、胜负、过关）和敌人 AI 由原版脚本驱动，见 events.ts。
-import { applyLevel, formIndexOf, formsOf, mechName, pilotForForm, transformUnit, type Stage, type Unit, type Weapon } from "./data.ts";
+import { applyLevel, battleSpriteUrl, expToNext, formIndexOf, formsOf, mechName, pilotForForm, transformUnit, type Stage, type Unit, type Weapon } from "./data.ts";
 import { StageEvents } from "./events.ts";
 import { key, pathTo, rangeFrom, reachable, inBounds, MOVE_TYPE_ROW, type Point, type Reach } from "./grid.ts";
 import type { Action } from "./input.ts";
@@ -15,7 +15,7 @@ import { keyLabel, settings, TEXT_SPEEDS, type BindAction } from "./settings.ts"
 import { attackShout, damageCase, reactionShout } from "./shouts.ts";
 import { loadScene, personName, portraitUrl, STAGE_STORY, type SceneRef } from "./story.ts";
 
-type Mode = "browse" | "selected" | "moving" | "menu" | "target" | "allyTarget" | "busy" | "dialog" | "title" | "over";
+type Mode = "browse" | "selected" | "moving" | "menu" | "target" | "allyTarget" | "busy" | "dialog" | "title" | "over" | "status";
 
 const MOVE_TILES_PER_SEC = 14;
 // 剧情对话时的音乐：原版开新游戏后，开场剧情和进地图后的开场对话都放 9 号，第 1 回合开始才换成我方回合曲
@@ -54,6 +54,9 @@ export class Game implements DrawState {
   private dangerOn = false;
   private dangerCache: Set<number> | null = null;
   private inspected: Unit | null = null;
+  // 移动前的单位菜单打开时，背景显示移动范围
+  private reachPreview = false;
+  private status: { list: Unit[]; index: number; from: Unit; back: () => void } | null = null;
   private pick: TargetPick | null = null;
   private turn = 1;
   private money = { value: 0 };
@@ -296,7 +299,7 @@ export class Game implements DrawState {
       o.move = r.stops;
       o.attack = minus(this.threat(this.inspected, r), r.stops);
     }
-    if (this.selected && this.reach && (this.mode === "selected" || this.mode === "moving")) {
+    if (this.selected && this.reach && (this.mode === "selected" || this.mode === "moving" || (this.mode === "menu" && this.reachPreview))) {
       o.move = this.reach.stops;
       o.attack = minus(this.threat(this.selected, this.reach), this.reach.cost);
       if (this.mode === "selected" && this.reach.stops.has(key(this.stage.map, this.cursor.x, this.cursor.y))) {
@@ -346,6 +349,7 @@ export class Game implements DrawState {
 
   // ---------- 输入 ----------
   move(dx: number, dy: number) {
+    if (this.mode === "status") { if (dx) this.cycleStatus(dx); return; }
     if (this.mode === "menu") { this.ui.menuMove(dy || dx); this.sfx.ui("move"); return; }
     if (this.mode === "target" || this.mode === "allyTarget") { this.cyclePick(dx + dy > 0 ? 1 : -1); this.sfx.ui("move"); return; }
     if (this.mode !== "browse" && this.mode !== "selected") return;
@@ -364,7 +368,18 @@ export class Game implements DrawState {
 
   pointerClick(p: Point, button: number) {
     if (this.mode === "dialog" || this.mode === "title") { this.action(button === 2 ? "cancel" : "confirm"); return; }
+    if (this.mode === "status") return;
     if (button === 2) { this.action("cancel"); return; }
+    // 移动前的单位菜单开着时直接点地图：点范围内的格子就走过去，点敌人就自动接近攻击
+    if (this.mode === "menu" && this.reachPreview && this.selected && inBounds(this.stage.map, p.x, p.y)) {
+      const enemy = this.unitAt(p)?.side === "enemy";
+      if (!enemy && !this.reach!.stops.has(key(this.stage.map, p.x, p.y))) return;
+      this.ui.closeMenu(false);
+      this.startMove(this.selected);
+      this.setCursor(p.x, p.y);
+      this.action("confirm");
+      return;
+    }
     if (this.mode === "menu" || this.mode === "busy" || this.mode === "over") return;
     if (this.pick) {
       const i = this.pick.candidates.findIndex((c) => c.x === p.x && c.y === p.y);
@@ -386,6 +401,10 @@ export class Game implements DrawState {
         return;
       case "title":
         if (a === "confirm" || a === "cancel") this.titleSkip?.();
+        return;
+      case "status":
+        if (a === "confirm" || a === "cancel") this.closeStatus();
+        if (a === "next" || a === "prev") this.cycleStatus(a === "next" ? 1 : -1);
         return;
       case "menu":
         if (a === "confirm") { this.sfx.ui("ok"); this.ui.menuConfirm(); }
@@ -412,7 +431,7 @@ export class Game implements DrawState {
       case "confirm":
         this.sfx.ui("ok");
         if (here?.side === "player" && !here.acted) return this.select(here);
-        if (here?.side === "enemy") { this.inspected = this.inspected === here ? null : here; return; }
+        if (here) return this.openInfoMenu(here);
         if (this.inspected) { this.inspected = null; return; }
         return this.openMapMenu();
       case "cancel":
@@ -435,29 +454,94 @@ export class Game implements DrawState {
         const target = this.unitAt(this.cursor);
         // 现代捷径：直接点敌人，自动走到能打到它的格子再选武器
         if (target?.side === "enemy") return this.quickAttack(unit, target);
-        if (this.cursor.x === unit.x && this.cursor.y === unit.y) return this.openActionMenu(unit);
+        if (this.cursor.x === unit.x && this.cursor.y === unit.y) { this.sfx.ui("ok"); return this.openActionMenu(unit); }
         const k = key(this.stage.map, this.cursor.x, this.cursor.y);
         if (!this.reach!.stops.has(k)) { this.ui.toast("无法移动到这里"); return; }
         this.sfx.ui("ok");
         return this.moveSelected(this.cursor, () => this.openActionMenu(unit));
       }
       case "cancel":
-        this.setCursor(unit.x, unit.y);
-        this.deselect();
-        return;
+        // 选目的地时取消：回到单位菜单
+        return this.openActionMenu(unit);
       case "danger":
         return this.toggleDanger();
     }
   }
 
   // ---------- 我方行动 ----------
+  // 选中我方单位：先弹出单位菜单（移动 / 攻击 / 精神 / 变形 / 资料 / 待机），背景显示移动范围
   private select(unit: Unit) {
     this.inspected = null;
     this.selected = unit;
     this.origin = null;
     this.moved = false;
     this.reach = this.unitReach(unit);
+    this.openActionMenu(unit);
+  }
+
+  // 菜单里选「移动」：选目的地
+  private startMove(unit: Unit) {
     this.setMode("selected");
+    this.setCursor(unit.x, unit.y);
+  }
+
+  // 已行动的我方、敌方、友军：只能看资料、看范围
+  private openInfoMenu(unit: Unit) {
+    const back = () => this.setMode("browse");
+    const items: MenuItem[] = [{ label: "资料", run: () => this.openStatus(unit, back) }];
+    if (unit.side !== "player") {
+      const on = this.inspected === unit;
+      items.push({ label: on ? "隐藏范围" : "显示范围", hint: "移动范围和攻击范围", run: () => { this.inspected = on ? null : unit; back(); } });
+    }
+    this.openMenu(items, unit, back);
+  }
+
+  // ---------- 资料页 ----------
+  private openStatus(unit: Unit, back: () => void) {
+    const alive = this.units.filter((u) => u.hp > 0);
+    const order = { player: 0, npc: 1, enemy: 2 } as Record<string, number>;
+    const list = [...alive].sort((a, b) => (order[a.npc ? "npc" : a.side] ?? 3) - (order[b.npc ? "npc" : b.side] ?? 3));
+    this.status = { list, index: Math.max(0, list.indexOf(unit)), from: unit, back };
+    this.setMode("status");
+    this.renderStatus();
+  }
+
+  private renderStatus() {
+    const { list, index } = this.status!;
+    const unit = list[index];
+    this.setCursor(unit.x, unit.y);
+    this.renderer.centerOn(unit);
+    this.ui.showStatus(
+      {
+        unit,
+        iconUrl: this.renderer.iconUrl(unit),
+        sprite: battleSpriteUrl(unit.unitId),
+        portrait: unit.pilotName ? portraitUrl(unit.pilotId) : null,
+        expToNext: unit.side === "player" ? expToNext(unit) : null,
+        index,
+        count: list.length,
+      },
+      { close: () => this.closeStatus(), cycle: (d) => this.cycleStatus(d) },
+    );
+  }
+
+  private cycleStatus(dir: number) {
+    const st = this.status;
+    if (!st) return;
+    st.index = (st.index + (dir > 0 ? 1 : -1) + st.list.length) % st.list.length;
+    this.sfx.ui("move");
+    this.renderStatus();
+  }
+
+  private closeStatus() {
+    const st = this.status;
+    if (!st) return;
+    this.status = null;
+    this.ui.hideStatus();
+    // 镜头回到打开资料页的单位
+    this.setCursor(st.from.x, st.from.y);
+    this.renderer.centerOn(st.from);
+    st.back();
   }
 
   private deselect() {
@@ -496,18 +580,24 @@ export class Game implements DrawState {
     this.moveSelected(best.p, () => this.chooseWeapon(unit, enemy));
   }
 
+  // 单位菜单：移动前有「移动」「变形」，取消就放开这个单位；移动后取消退回原位重新选目的地
   private openActionMenu(unit: Unit) {
     this.setCursor(unit.x, unit.y, false);
     const canAttack = unit.weapons.some((w) => this.rules.targetsFor(unit, w, unit, this.moved, this.units).length);
     const canSpirit = this.rules.spiritMenu(unit, this.units).some((s) => s.usable);
+    const canMove = !this.moved && this.reach!.stops.size > 1;
+    const back = () => this.openActionMenu(unit);
     const items: MenuItem[] = [
+      ...(!this.moved ? [{ label: "移动", disabled: !canMove, detail: `机动 ${this.rules.mobility(unit)}`, run: () => this.startMove(unit) }] : []),
       { label: "攻击", disabled: !canAttack, detail: canAttack ? "" : "无目标", run: () => this.chooseWeapon(unit) },
       { label: "精神", disabled: !canSpirit, detail: unit.maxSp ? `SP ${unit.sp}` : "", run: () => this.openSpiritMenu(unit) },
       // 原版只在移动前的单位菜单里有「变形」，变形不消耗行动
       ...(!this.moved && formsOf(unit.unitId).length > 1 ? [{ label: "变形", run: () => this.openTransformMenu(unit) }] : []),
+      { label: "资料", run: () => this.openStatus(unit, back) },
       { label: "待机", run: () => this.finishAction(unit) },
     ];
-    this.openMenu(items, unit, () => this.undoMove(unit));
+    if (this.moved) this.openMenu(items, unit, () => this.undoMove(unit));
+    else this.openMenu(items, unit, () => { this.setCursor(unit.x, unit.y); this.deselect(); }, true);
   }
 
   // ---------- 变形 ----------
@@ -549,11 +639,13 @@ export class Game implements DrawState {
     this.select(unit);
   }
 
-  // 菜单里取消：回到移动前的位置，重新选择
+  // 移动后的菜单里取消：回到移动前的位置，重新选目的地
   private undoMove(unit: Unit) {
     if (this.origin) { unit.x = this.origin.x; unit.y = this.origin.y; this.dangerCache = null; }
-    this.select(unit);
-    this.setCursor(unit.x, unit.y);
+    this.origin = null;
+    this.moved = false;
+    this.reach = this.unitReach(unit);
+    this.startMove(unit);
   }
 
   private chooseWeapon(unit: Unit, preset?: Unit) {
@@ -820,7 +912,8 @@ export class Game implements DrawState {
   }
 
   // ---------- 辅助 ----------
-  private openMenu(items: MenuItem[], at: Point, onCancel: () => void) {
+  private openMenu(items: MenuItem[], at: Point, onCancel: () => void, reachPreview = false) {
+    this.reachPreview = reachPreview;
     this.setMode("menu");
     const s = 16 * this.renderer.zoom;
     const pos = this.renderer.tileToScreen(at);
@@ -887,7 +980,7 @@ export class Game implements DrawState {
     const move = `${k("up")}${k("down")}${k("left")}${k("right")}`;
     const hints: Record<Mode, [string, string][]> = {
       browse: [[k("confirm"), "选择"], [`${k("next")} / ${k("prev")}`, "切换单位"], [k("danger"), "敌方范围"], [k("menu"), "菜单"], [`${k("zoomIn")} / ${k("zoomOut")}`, "缩放"], [k("fast"), "快速移动"], [k("settings"), "设置"]],
-      selected: [[k("confirm"), "移动 / 点敌人直接攻击"], [k("cancel"), "取消"], [k("danger"), "敌方范围"]],
+      selected: [[k("confirm"), "移动到这里 / 点敌人直接攻击"], [k("cancel"), "返回菜单"], [k("danger"), "敌方范围"]],
       moving: [[`按住 ${k("fast")}`, "加速"]],
       menu: [[move, "选择"], [k("confirm"), "确定"], [k("cancel"), "返回"]],
       target: [[move, "切换目标"], [k("confirm"), "攻击"], [k("cancel"), "返回"]],
@@ -896,6 +989,7 @@ export class Game implements DrawState {
       dialog: [[k("confirm"), "下一句"], [`按住 ${k("fast")}`, "快进"], [k("cancel"), "跳过这段"], [k("settings"), "设置"]],
       title: [[k("confirm"), "继续"]],
       over: [],
+      status: [[`${k("left")}${k("right")} / ${k("prev")} ${k("next")}`, "切换单位"], [k("cancel"), "关闭"]],
     };
     this.ui.setHints(hints[this.mode]);
   }

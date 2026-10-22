@@ -14,6 +14,16 @@ export interface MenuItem {
   run(): void;
 }
 
+export interface StatusData {
+  unit: Unit;
+  iconUrl: string;
+  sprite: string | null;
+  portrait: string | null;
+  expToNext: number | null;
+  index: number;
+  count: number;
+}
+
 export interface TerrainInfo {
   name: string;
   evade: number;
@@ -80,6 +90,63 @@ export class UI {
       html += `<div class="terrain"><b>${terrain.name}</b><span>${evade}${terrain.sea ? " · 算作海上" : ""}</span><span class="muted">移动消耗 ${costs}</span></div>`;
     }
     el.innerHTML = html;
+  }
+
+  // 资料页：机体战斗大图、能力、武器、驾驶员、精神。←→ / E Q 切换单位
+  showStatus(d: StatusData, on: { close(): void; cycle(dir: number): void }) {
+    const { unit } = d;
+    const el = $("#status");
+    const fire = (p: number | null) => (p === null ? "—" : String(p + unit.strength));
+    const weapons = unit.weapons.map((w) => `
+      <tr><td>${w.name}</td><td>${w.range}</td><td>${w.hit}</td><td>${fire(w.power.air)}</td><td>${fire(w.power.land)}</td><td>${fire(w.power.sea)}</td><td>${w.usableAfterMove ? "○" : "—"}</td></tr>`).join("");
+    const spirits = unit.spirits.map((s) => `<li class="${s.cost > unit.sp ? "off" : ""}"><b>${s.name}</b><i>${s.cost}</i><span>${s.text}</span></li>`).join("");
+    const ratio = Math.max(0, unit.hp / unit.maxHp);
+    const exp = d.expToNext === null ? "已满级" : `下一级还需 ${d.expToNext}`;
+    el.className = unit.side;
+    el.innerHTML = `
+      <div class="st-card">
+        <button class="st-close" aria-label="关闭">✕</button>
+        <div class="st-head">
+          <div class="st-sprite">${d.sprite ? `<img src="${d.sprite}" alt="">` : `<img class="icon" src="${d.iconUrl}" alt="">`}</div>
+          <div class="st-main">
+            <div class="st-name">${unit.name}<span class="tag">${TYPE_LABEL[unit.moveType]}</span>${unit.acted ? '<span class="tag">已行动</span>' : ""}</div>
+            <div class="st-hp"><span>HP</span><div class="bar"><i style="width:${ratio * 100}%"></i></div><b>${unit.hp} / ${unit.maxHp}</b></div>
+            <div class="st-stats">
+              <span>机动<b>${unit.move}</b></span><span>强度<b>${unit.strength}</b></span>
+              <span>防卫<b>${unit.defense}</b></span><span>速度<b>${unit.speed}</b></span>
+            </div>
+          </div>
+        </div>
+        <table class="st-weapons"><tr><th>武器</th><th>射程</th><th>命中</th><th>空</th><th>陆</th><th>海</th><th>移动后</th></tr>${weapons || '<tr><td colspan="7" class="muted">没有武器</td></tr>'}</table>
+        ${unit.pilotName ? `
+        <div class="st-pilot">
+          <div class="st-face">${d.portrait ? `<img src="${d.portrait}" alt="">` : `<span>${unit.pilotName.slice(0, 1)}</span>`}</div>
+          <div class="st-pbody">
+            <div class="st-pname">${unit.pilotName}<span class="tag">Lv ${unit.level}</span>${unit.side === "player" ? `<span class="muted">经验 ${unit.exp} · ${exp}</span>` : ""}</div>
+            ${unit.maxSp ? `<div class="st-sp">SP <b>${unit.sp} / ${unit.maxSp}</b></div>` : ""}
+            ${unit.trait ? `<div class="st-trait"><em>${unit.trait.name}</em>${unit.trait.text}</div>` : ""}
+          </div>
+        </div>` : ""}
+        ${spirits ? `<ul class="st-spirits">${spirits}</ul>` : ""}
+        <div class="st-nav">
+          <button data-dir="-1">‹ 上一个</button><span>${d.index + 1} / ${d.count}</span><button data-dir="1">下一个 ›</button>
+        </div>
+      </div>`;
+    el.hidden = false;
+    (el.querySelector(".st-close") as HTMLElement).onclick = () => on.close();
+    el.querySelectorAll<HTMLElement>(".st-nav button").forEach((b) => (b.onclick = () => on.cycle(Number(b.dataset.dir))));
+    el.onclick = (e) => { if (e.target === el) on.close(); };
+    el.oncontextmenu = (e) => { e.preventDefault(); on.close(); };
+    if (settings.get().artStyle === "smooth") {
+      for (const img of el.querySelectorAll<HTMLImageElement>(".st-sprite img, .st-face img")) {
+        const src = img.getAttribute("src")!;
+        void smoothUrl(src).then((u) => { if (img.getAttribute("src") === src) img.src = u; });
+      }
+    }
+  }
+
+  hideStatus() {
+    $("#status").hidden = true;
   }
 
   // 菜单出现在屏幕坐标 (x, y) 旁边

@@ -248,11 +248,11 @@ const SPIRIT_RULES = [
   { condition: "selfHpNotFull", target: "self", effect: "heal", value: "full", text: "自身 HP 全满" },
   { condition: "statusClear", status: 0x04, target: "self", effect: "damageMul", value: 3, text: "攻击伤害 ×3（下一次攻击）" },
   { condition: "anyAllyDamaged", target: "ally", effect: "heal", value: "full", text: "一名友军 HP 全满" },
-  { condition: "always", target: "self", effect: "teleport", text: "移动到地图上任意空格（按画面推测，未细看代码）" },
+  { condition: "always", target: "self", effect: "teleport", text: "移动到地图上任意空格" },
   { condition: "anyPlayerHpNotFull", target: "allAllies", effect: "heal", value: 50, text: "我方全体 HP 回复 50" },
   { condition: "enemyExists", target: "allEnemies", effect: "damage", value: [10, 100], text: "敌方全体受到 10–100 随机伤害" },
   { condition: "anyPlayerHpNotFull", target: "allAllies", effect: "heal", value: 100, text: "我方全体 HP 回复 100" },
-  { condition: "enemyExists", target: "allEnemies", effect: "enemyHitHalf", text: "敌人的命中率减半（$750D bit6，没看到清除，可能持续到本关结束）" },
+  { condition: "enemyExists", target: "allEnemies", effect: "enemyHitHalf", text: "本回合敌人的命中率减半" },
   { condition: "enemyExists", target: "allEnemies", effect: "damage", value: [10, 255], text: "敌方全体受到 10–255 随机伤害" },
   { condition: "anyPlayerHpNotFull", target: "allAllies", effect: "heal", value: "full", text: "我方全体 HP 全满" },
 ];

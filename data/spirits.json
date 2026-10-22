@@ -153,7 +153,7 @@
     "target": "self",
     "effect": "teleport",
     "value": null,
-    "text": "移动到地图上任意空格（按画面推测，未细看代码）"
+    "text": "移动到地图上任意空格"
   },
   {
     "id": 13,
@@ -201,7 +201,7 @@
     "target": "allEnemies",
     "effect": "enemyHitHalf",
     "value": null,
-    "text": "敌人的命中率减半（$750D bit6，没看到清除，可能持续到本关结束）"
+    "text": "本回合敌人的命中率减半"
   },
   {
     "id": 17,

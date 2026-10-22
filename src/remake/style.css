@@ -187,3 +187,53 @@ body.story #info, body.story #forecast { display: none !important; }
   #info { width: auto; right: 12px; }
   #objective { display: none; }
 }
+
+/* 资料页 */
+#status { position: fixed; inset: 0; display: grid; place-items: center; background: rgba(0, 0, 0, 0.55); z-index: 20; animation: pop .12s ease-out; }
+#status .st-card { position: relative; width: min(560px, calc(100vw - 32px)); max-height: calc(100vh - 32px); overflow: auto; padding: 18px; border-radius: 14px; background: #161821; border: 1px solid var(--panel-border); display: flex; flex-direction: column; gap: 14px; }
+#status .st-close { position: absolute; top: 10px; right: 12px; border: 0; background: none; color: var(--muted); font-size: 16px; cursor: pointer; }
+#status .tag { font-size: 11px; font-weight: 500; color: var(--muted); border: 1px solid var(--panel-border); border-radius: 4px; padding: 0 4px; }
+#status .muted { color: var(--muted); font-size: 12px; font-weight: 400; }
+#status .st-head { display: flex; gap: 16px; align-items: center; }
+#status .st-sprite { flex: none; width: 168px; height: 168px; display: grid; place-items: center; border-radius: 10px; background: radial-gradient(circle at 50% 60%, rgba(90, 162, 255, 0.18), rgba(255,255,255,0.03) 70%); }
+#status.enemy .st-sprite { background: radial-gradient(circle at 50% 60%, rgba(255, 107, 107, 0.18), rgba(255,255,255,0.03) 70%); }
+#status .st-sprite img { max-width: 160px; max-height: 160px; width: 150px; image-rendering: pixelated; object-fit: contain; }
+#status .st-sprite img.icon { width: 64px; }
+#status .st-main { flex: 1; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+#status .st-name { font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+#status.player .st-name { color: var(--player); }
+#status.enemy .st-name { color: var(--enemy); }
+#status .st-hp { display: flex; align-items: center; gap: 8px; font: 13px ui-monospace, monospace; }
+#status .st-hp span { color: var(--muted); }
+#status .bar { flex: 1; height: 8px; background: rgba(255,255,255,0.12); border-radius: 4px; overflow: hidden; }
+#status .bar i { display: block; height: 100%; background: #4cd964; }
+#status .st-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px 16px; font-size: 13px; color: var(--muted); }
+#status .st-stats span { display: flex; justify-content: space-between; }
+#status .st-stats b { color: var(--fg); font-variant-numeric: tabular-nums; }
+#status .st-weapons { width: 100%; border-collapse: collapse; font-size: 13px; }
+#status .st-weapons th { color: var(--muted); font-weight: 500; text-align: right; padding: 2px 6px; border-bottom: 1px solid var(--panel-border); }
+#status .st-weapons td { text-align: right; padding: 3px 6px; font-variant-numeric: tabular-nums; }
+#status .st-weapons th:first-child, #status .st-weapons td:first-child { text-align: left; padding-left: 0; }
+#status .st-pilot { display: flex; gap: 12px; padding-top: 12px; border-top: 1px solid var(--panel-border); }
+#status .st-face { flex: none; width: 64px; height: 64px; border-radius: 8px; overflow: hidden; background: rgba(255,255,255,0.06); display: grid; place-items: center; font-size: 26px; color: var(--muted); }
+#status .st-face img { width: 100%; height: 100%; image-rendering: pixelated; }
+#status .st-pbody { flex: 1; display: flex; flex-direction: column; gap: 4px; font-size: 13px; }
+#status .st-pname { font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+#status .st-sp { color: var(--muted); }
+#status .st-sp b { color: var(--fg); }
+#status .st-trait { color: var(--muted); font-size: 12px; }
+#status .st-trait em { font-style: normal; margin-right: 6px; padding: 0 5px; border-radius: 4px; background: rgba(255, 210, 87, 0.16); color: var(--accent); }
+#status .st-spirits { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+#status .st-spirits li { padding: 6px 8px; border-radius: 6px; background: rgba(255,255,255,0.05); font-size: 12px; color: var(--muted); }
+#status .st-spirits li.off { opacity: .45; }
+#status .st-spirits b { color: var(--fg); font-size: 13px; }
+#status .st-spirits i { font-style: normal; margin-left: 6px; color: var(--accent); }
+#status .st-spirits span { display: block; margin-top: 2px; }
+#status .st-nav { display: flex; justify-content: space-between; align-items: center; color: var(--muted); font-size: 12px; }
+#status .st-nav button { padding: 6px 12px; border: 0; border-radius: 8px; background: rgba(255,255,255,0.08); color: var(--fg); font: inherit; cursor: pointer; }
+#status .st-nav button:hover { background: rgba(255,255,255,0.14); }
+@media (max-width: 520px) {
+  #status .st-head { flex-direction: column; align-items: stretch; }
+  #status .st-sprite { width: 100%; }
+  #status .st-spirits { grid-template-columns: 1fr; }
+}
