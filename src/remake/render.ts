@@ -4,6 +4,7 @@ import type { Point } from "./grid.ts";
 import { smoothCanvas } from "./upscale.ts";
 import { settings } from "./settings.ts";
 import { floatFont, tone, type Tone } from "./theme.ts";
+import mapFxJson from "../../data/map-fx.json";
 
 const TILE = 16;
 export const ZOOM_LEVELS = [2, 3, 4, 5, 6];
@@ -73,7 +74,19 @@ interface Sprite {
 
 const spriteKey = (u: Unit) => `${u.icon.sheetUrl}#${u.icon.index}`;
 
-export type SpiritMark = "comet" | "flower" | "ring" | "bolt" | "jam";
+// 原版地图特效数据（tools/extract-map-fx.js）
+type MapFxFrame = [number, number, number?, number?, number?];
+export type MapFxName = "heal" | "wipe" | "comet" | "flower" | "ring" | "bolt" | "jam";
+const mapFxDb = (mapFxJson as unknown as { effects: Record<string, { file: string; cels: [number, number, number, number][]; frames: MapFxFrame[]; total: number }> }).effects;
+const mapFxFiles = import.meta.glob("../../assets/original/map-fx/*.png", { eager: true, import: "default", query: "?url" });
+const mapFxImages = new Map<string, HTMLImageElement>();
+for (const [name, fx] of Object.entries(mapFxDb)) {
+  const hit = Object.entries(mapFxFiles).find(([p]) => p.endsWith(`/${fx.file}`));
+  if (!hit) continue;
+  const img = new Image();
+  img.src = hit[1] as string;
+  mapFxImages.set(name, img);
+}
 
 export class Renderer {
   private ctx: CanvasRenderingContext2D;
@@ -92,10 +105,8 @@ export class Renderer {
   private cursorDraw = { x: 0, y: 0 };
   private time = 0;
   private floats: FloatText[] = [];
-  // 修理的闪光：原版是 4 颗星绕着被修理的单位转（地图上，不进战斗画面）
-  private sparkles: { x: number; y: number; t: number; dur: number }[] = [];
-  private wipes: { x: number; y: number; t: number; dur: number }[] = [];
-  private marks: { kind: SpiritMark; x: number; y: number; t: number; dur: number; seed: number }[] = [];
+  // 地图上正在播的原版特效（精神、修理），见 mapFx
+  private fxPlays: { name: string; x: number; y: number; t: number; rate: number }[] = [];
   // 飞行时留下的尾烟（格子坐标）
   private smoke: { x: number; y: number; t: number }[] = [];
   // 击破爆炸：每个爆炸一组粒子（火球、火花、黑烟），格子坐标，t 秒
@@ -143,24 +154,15 @@ export class Renderer {
   }
 
   // ---------- 特效 ----------
-  // 精神：原版在单位格子上刷过一道蓝色横纹（前沿一条白亮竖线），盖满停一下再恢复。一次刷一遍，seconds 秒
-  spiritWipe(p: Point, seconds: number) {
-    this.wipes.push({ x: p.x, y: p.y, t: 0, dur: seconds });
-  }
-
-  // 精神在地图上的演出（原版模拟器逐个核对，见 game.ts castSpirit）：
-  //   comet  瞄准 / 必杀 / 回避：一颗黄色流星从右上飞进单位
-  //   flower 防守：单位周围一圈粉色花瓣形光圈
-  //   ring   强攻 / 热血：单位周围一圈蓝色圆环（先小后撑开）
-  //   bolt   怒 / 狂怒：绿色闪电从天上劈到敌人身上，一闪一闪
-  //   jam    干扰：敌人身上一个白色圆环从中心撑开，再散成虚线
-  mark(kind: SpiritMark, p: Point, seconds: number) {
-    this.marks.push({ kind, x: p.x, y: p.y, t: 0, dur: seconds, seed: Math.random() * 1000 });
-  }
-
-  // 修理：被修理的单位周围星星绕圈 + 一圈淡绿光环，持续 seconds 秒
-  repairFx(p: Point, seconds: number) {
-    this.sparkles.push({ x: p.x, y: p.y, t: 0, dur: seconds });
+  // 原版地图特效（tools/extract-map-fx.js 从原版逐帧抠出来的精灵）：在 p 那一格按原版的帧和位置播放，
+  // rate = 演出倍速。返回播完要多少秒
+  //   heal 回复（星星闪烁的虚点圆圈，修理同）  wipe 加速 / 疾风  comet 瞄准 / 必杀 / 回避
+  //   flower 防守  ring 强攻 / 热血（细的蓝色电圈）  bolt 怒 / 狂怒（闪电）  jam 干扰
+  mapFx(name: MapFxName, p: Point, rate = 1): number {
+    const fx = mapFxDb[name];
+    if (!fx) return 0;
+    this.fxPlays.push({ name, x: p.x, y: p.y, t: 0, rate });
+    return fx.total / 60 / rate;
   }
 
   float(p: Point, text: string, color: Tone = "ink") {
@@ -444,9 +446,7 @@ export class Renderer {
     this.drawBlasts(s, dt);
     this.drawLock(state.overlay.lock, s);
     this.drawCursor(this.cursorDraw.x * s, this.cursorDraw.y * s, s);
-    this.drawSparkles(s, dt);
-    this.drawWipes(s, dt);
-    this.drawMarks(s, dt);
+    this.drawMapFx(s, dt);
     this.drawFloats(s, dt);
   }
 
@@ -484,148 +484,21 @@ export class Renderer {
     this.smoke = this.smoke.filter((p) => p.t < 0.5);
   }
 
-  private drawSparkles(s: number, dt: number) {
+  private drawMapFx(s: number, dt: number) {
     const ctx = this.ctx;
-    for (const sp of this.sparkles) {
-      sp.t += dt;
-      const k = sp.t / sp.dur;
-      const cx = sp.x * s + s / 2, cy = sp.y * s + s / 2;
-      // 进出时淡入淡出
-      const fade = Math.min(1, k * 6, (1 - k) * 6);
-      // 淡绿光环
-      ctx.globalAlpha = 0.6 * fade;
-      ctx.strokeStyle = tone("hp");
-      ctx.lineWidth = Math.max(2, s / 10);
-      ctx.beginPath();
-      ctx.ellipse(cx, cy, s * 0.5, s * 0.5, 0, 0, Math.PI * 2);
-      ctx.stroke();
-      // 4 颗星绕圈转（约一圈半），一闪一闪
-      for (let i = 0; i < 4; i++) {
-        const a = k * Math.PI * 3 + (i * Math.PI) / 2;
-        const r = s * (0.42 + 0.06 * Math.sin(sp.t * 9 + i));
-        const size = s * (0.17 + 0.08 * Math.abs(Math.sin(sp.t * 12 + i * 1.7)));
-        this.drawStar(cx + Math.cos(a) * r, cy + Math.sin(a) * r * 0.85, size, fade);
-      }
+    const k = s / 16; // 一个原版像素
+    ctx.imageSmoothingEnabled = false;
+    for (const p of this.fxPlays) {
+      p.t += dt;
+      const fx = mapFxDb[p.name];
+      const img = mapFxImages.get(p.name);
+      const frame = Math.floor(p.t * 60 * p.rate);
+      const key = [...fx.frames].reverse().find((f) => f[0] <= frame);
+      if (!img?.complete || !key || key[2] === undefined) continue;
+      const [cx, cy, cw, ch] = fx.cels[key[2]];
+      ctx.drawImage(img, cx, cy, cw, ch, Math.round(p.x * s + key[3]! * k), Math.round(p.y * s + key[4]! * k), Math.round(cw * k), Math.round(ch * k));
     }
-    ctx.globalAlpha = 1;
-    this.sparkles = this.sparkles.filter((sp) => sp.t < sp.dur);
-  }
-
-  // 一遍：前 35% 横纹从左往右盖上来（前沿白线），中间 30% 盖满，最后 35% 露出单位
-  private drawWipes(s: number, dt: number) {
-    const ctx = this.ctx;
-    for (const w of this.wipes) {
-      w.t += dt;
-      const k = w.t / w.dur;
-      if (k >= 0.65) continue;
-      const x0 = w.x * s, y0 = w.y * s;
-      const cover = Math.min(1, k / 0.35);
-      const width = s * cover;
-      ctx.fillStyle = "#1838d8";
-      ctx.fillRect(x0, y0, width, s);
-      ctx.fillStyle = "#5c8cff";
-      const line = Math.max(1, Math.round(s / 16));
-      for (let y = 0; y < s; y += line * 3) ctx.fillRect(x0, y0 + y, width, line);
-      if (cover < 1) {
-        ctx.fillStyle = "#fff";
-        ctx.fillRect(x0 + width - line * 2, y0, line * 2, s);
-      }
-    }
-    this.wipes = this.wipes.filter((w) => w.t < w.dur);
-  }
-
-  private drawMarks(s: number, dt: number) {
-    const ctx = this.ctx;
-    const px = Math.max(2, Math.round(s / 16)); // 一个原版像素
-    for (const m of this.marks) {
-      m.t += dt;
-      const k = Math.min(1, m.t / m.dur);
-      const cx = m.x * s + s / 2, cy = m.y * s + s / 2;
-      const fade = Math.min(1, (1 - k) * 5);
-      ctx.save();
-      ctx.globalAlpha = fade;
-      if (m.kind === "comet") {
-        // 前 60% 飞进来，之后在单位上闪一下
-        const f = Math.min(1, k / 0.6);
-        const hx = cx + (1 - f) * s * 1.6, hy = cy - (1 - f) * s * 1.6;
-        const g = ctx.createLinearGradient(hx + s * 0.9, hy - s * 0.9, hx, hy);
-        g.addColorStop(0, "rgba(255, 210, 60, 0)");
-        g.addColorStop(1, "#ffe066");
-        ctx.strokeStyle = g;
-        ctx.lineWidth = px * 2;
-        ctx.beginPath();
-        ctx.moveTo(hx + s * 0.9, hy - s * 0.9);
-        ctx.lineTo(hx, hy);
-        ctx.stroke();
-        ctx.fillStyle = "#fff6c0";
-        ctx.fillRect(hx - px * 1.5, hy - px * 1.5, px * 3, px * 3);
-        if (k > 0.6) {
-          const b = (k - 0.6) / 0.4;
-          ctx.globalAlpha = (1 - b) * 0.9;
-          ctx.fillStyle = "#ffe066";
-          ctx.beginPath();
-          ctx.arc(cx, cy, s * (0.2 + b * 0.4), 0, Math.PI * 2);
-          ctx.fill();
-        }
-      } else if (m.kind === "flower" || m.kind === "ring") {
-        const grow = Math.min(1, k / 0.25);
-        const r = s * (0.25 + 0.33 * grow) * (1 + 0.03 * Math.sin(m.t * 20));
-        ctx.strokeStyle = m.kind === "flower" ? "#ff7ae0" : "#4aa8ff";
-        ctx.lineWidth = px * 1.5;
-        ctx.beginPath();
-        for (let i = 0; i <= 64; i++) {
-          const a = (i / 64) * Math.PI * 2;
-          const rr = m.kind === "flower" ? r * (1 + 0.12 * Math.cos(a * 8)) : r;
-          const x = cx + Math.cos(a) * rr, y = cy + Math.sin(a) * rr;
-          if (i) ctx.lineTo(x, y); else ctx.moveTo(x, y);
-        }
-        ctx.stroke();
-      } else if (m.kind === "bolt") {
-        // 每 3 帧换一次折线，一闪一闪
-        if (Math.floor(m.t * 20) % 3 !== 2) {
-          let seed = m.seed + Math.floor(m.t * 20);
-          const rnd = () => ((seed = (seed * 9301 + 49297) % 233280) / 233280);
-          const top = cy - s * 9;
-          ctx.strokeStyle = "#5dff5d";
-          ctx.lineWidth = px * 2;
-          ctx.beginPath();
-          ctx.moveTo(cx, top);
-          for (let y = top; y < cy; y += s * 0.4) ctx.lineTo(cx + (rnd() - 0.5) * s * 0.35, y);
-          ctx.lineTo(cx, cy);
-          ctx.stroke();
-          ctx.strokeStyle = "#eaffea";
-          ctx.lineWidth = px * 0.7;
-          ctx.stroke();
-        }
-      } else if (m.kind === "jam") {
-        const r = s * 0.5 * Math.min(1, k / 0.4) + px;
-        ctx.strokeStyle = "#fff";
-        ctx.lineWidth = px * 1.5;
-        if (k > 0.55) ctx.setLineDash([px * 3, px * 2]);
-        ctx.beginPath();
-        if (k < 0.15) ctx.fillStyle = "#fff", ctx.arc(cx, cy, r * 0.6, 0, Math.PI * 2), ctx.fill();
-        else { ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke(); }
-      }
-      ctx.restore();
-    }
-    this.marks = this.marks.filter((m) => m.t < m.dur);
-  }
-
-  // 四角星：白芯、蓝边
-  private drawStar(x: number, y: number, r: number, alpha: number) {
-    const ctx = this.ctx;
-    ctx.globalAlpha = alpha;
-    ctx.fillStyle = "#8fc4ff";
-    ctx.beginPath();
-    for (let i = 0; i < 8; i++) {
-      const a = (i * Math.PI) / 4;
-      const rr = i % 2 ? r * 0.28 : r;
-      ctx.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr);
-    }
-    ctx.closePath();
-    ctx.fill();
-    ctx.fillStyle = "#fff";
-    ctx.fillRect(x - r * 0.18, y - r * 0.18, r * 0.36, r * 0.36);
+    this.fxPlays = this.fxPlays.filter((p) => p.t * 60 * p.rate < mapFxDb[p.name].total);
   }
 
   // 伤害、回复数字：从格子中间往上飘，1 秒后消失

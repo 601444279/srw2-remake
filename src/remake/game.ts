@@ -880,12 +880,11 @@ export class Game implements DrawState {
     this.startPick("allyTarget", targets, {
       confirm: async (t) => {
         this.setMode("busy");
-        // 原版：不进战斗画面，在地图上被修理的单位周围星星绕圈（04 号音效），然后回复量跳出来（05 号音效）
+        // 原版：不进战斗画面，在地图上被修理的单位身上放回复特效（星星闪烁的虚点圆圈，04 号音效），然后回复量跳出来（05 号音效）
         const amount = this.rules.repair(unit, t);
         this.setCursor(t.x, t.y);
         this.sfx.play(0x04);
-        this.renderer.repairFx(t, 1.4 / this.speed());
-        await wait(1.4 / this.speed());
+        await wait(this.renderer.mapFx("heal", t, this.speed()));
         this.sfx.play(0x05);
         this.renderer.float(t, `+${amount}`, "hp");
         this.refreshInfo();
@@ -920,12 +919,13 @@ export class Game implements DrawState {
   private async castSpirit(unit: Unit, spiritId: number, target?: Unit) {
     const r = this.rules.useSpirit(unit, spiritId, this.units, target);
     // 演出照原版（模拟器里 19 个精神逐个核对过，演出和音效分几类）：
-    //   回复（毅力、潜力、友情、情义、援助、祈祷、爱心）：被回复的单位一个一个来，星星绕圈 04 → 回复量 05（同修理）
+    //   画面用原版的特效精灵（tools/extract-map-fx.js 逐帧抠的，renderer.mapFx），按原版的帧播放
+    //   回复（毅力、潜力、友情、情义、援助、祈祷、爱心）：被回复的单位一个一个来，星星闪烁的虚点圆圈 04 → 回复量 05（同修理）
     //   怒、狂怒：敌人一个一个来，绿色闪电劈下 09 → 伤害数字 05
     //   干扰：敌人一个一个来，白色圆环撑开，各一声 17
     //   加速、疾风：使用者格子上蓝色横纹刷 3 遍，每遍一声 1D
     //   瞄准、必杀、回避：黄色流星飞进使用者，1C
-    //   防守：粉色花瓣光圈，1B；强攻、热血：蓝色圆环，1B
+    //   防守：粉色花瓣光圈，1B；强攻、热血：细的蓝色电圈，1B
     //   最后才出提示消息
     this.setMode("busy");
     const sp = () => this.speed();
@@ -936,8 +936,7 @@ export class Game implements DrawState {
       for (const a of heals) {
         focus(a.unit);
         this.sfx.play(0x04);
-        this.renderer.repairFx(a.unit, 1.0 / sp());
-        await wait(1.0 / sp());
+        await wait(this.renderer.mapFx("heal", a.unit, sp()));
         this.sfx.play(0x05);
         this.renderer.float(a.unit, `+${a.amount}`, "hp");
         this.refreshInfo();
@@ -947,8 +946,7 @@ export class Game implements DrawState {
       for (const a of hits) {
         focus(a.unit);
         this.sfx.play(0x09);
-        this.renderer.mark("bolt", a.unit, 0.85 / sp());
-        await wait(0.85 / sp());
+        await wait(this.renderer.mapFx("bolt", a.unit, sp()));
         this.sfx.play(0x05);
         this.renderer.float(a.unit, `-${a.amount}`, "danger");
         this.renderer.impact(a.unit, a.unit.hp === 0 ? 1 : Math.min(1, (a.amount / a.unit.maxHp) * 2));
@@ -959,24 +957,19 @@ export class Game implements DrawState {
       for (const e of this.enemies()) {
         focus(e);
         this.sfx.play(0x17);
-        this.renderer.mark("jam", e, 0.35 / sp());
-        await wait(0.35 / sp());
+        await wait(this.renderer.mapFx("jam", e, sp()));
       }
     } else if (spiritId === 1 || spiritId === 7) {
       focus(unit);
-      const pass = 16 / 60 / sp();
-      for (let i = 0; i < 3; i++) {
-        this.sfx.play(0x1d);
-        this.renderer.spiritWipe(unit, pass);
-        await wait(pass);
-      }
+      // 原版的 1D 落在特效的第 1、17、33 帧
+      const total = this.renderer.mapFx("wipe", unit, sp());
+      for (const f of [1, 17, 33]) setTimeout(() => this.sfx.play(0x1d), (f / 60 / sp()) * 1000);
+      await wait(total);
     } else {
       const kind = spiritId === 3 ? "flower" : spiritId === 4 || spiritId === 10 ? "ring" : "comet";
       focus(unit);
       this.sfx.play(kind === "comet" ? 0x1c : 0x1b);
-      const dur = kind === "comet" ? 0.45 : 0.75;
-      this.renderer.mark(kind, unit, dur / sp());
-      await wait(dur / sp());
+      await wait(this.renderer.mapFx(kind, unit, sp()));
     }
     this.ui.toast(r.text);
     this.dangerCache = null;
