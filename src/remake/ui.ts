@@ -281,8 +281,7 @@ export class UI {
         <div class="tu-title">特性强化</div>
         <div class="tu-who"><div class="gr-face">${face}</div><b>${d.unit.pilotName || d.unit.name}</b></div>
         <div class="tu-name"><span class="old">${traitLabel(d.before)}</span><span class="new">${traitLabel(d.after)}</span></div>
-        <div class="tu-was">${d.before.text}</div>
-        <div class="tu-now">${d.after.text}</div>
+        <div class="tu-effect">${effectHtml(d.before.text, d.after.text)}</div>
         <div class="gr-hint">按确定继续</div>
       </div>`;
     el.hidden = false;
@@ -305,8 +304,21 @@ export class UI {
       card.classList.add("reveal");
       sound("ding");
       await sleep(0.7);
+      // 效果说明里变了的数字从旧值滚到新值
       card.classList.add("effect");
-      await sleep(0.4);
+      const nums = [...el.querySelectorAll<HTMLElement>(".tu-effect .num.up")];
+      const steps = Math.max(1, ...nums.map((n) => Number(n.dataset.to) - Number(n.dataset.from)));
+      for (let k = 1; k <= steps; k++) {
+        for (const n of nums) {
+          const from = Number(n.dataset.from), to = Number(n.dataset.to);
+          n.textContent = String(rush ? to : Math.min(to, from + Math.round(((to - from) * k) / steps)));
+        }
+        if (rush) break;
+        sound("tick");
+        await sleep(Math.min(0.16, 0.9 / steps));
+      }
+      for (const n of nums) { n.textContent = n.dataset.to!; n.classList.add("done"); }
+      await sleep(0.3);
       finished = true;
       hint.textContent = "按确定继续";
     };
@@ -566,3 +578,12 @@ export class UI {
   }
 }
 
+// 特性说明：前后两档的文字只差数字时，同一行里把变了的数字标出来（data-from / data-to）做动效；
+// 文字结构不一样就直接显示新档的说明
+function effectHtml(before: string, after: string) {
+  const split = (t: string) => t.split(/(\d+)/);
+  const a = split(before), b = split(after);
+  const same = a.length === b.length && a.every((p, i) => (i % 2 ? true : p === b[i]));
+  if (!same) return `<span class="num up done">${after}</span>`;
+  return b.map((p, i) => (i % 2 === 0 ? p : p === a[i] ? `<span class="num">${p}</span>` : `<span class="num up" data-from="${a[i]}" data-to="${p}">${a[i]}</span>`)).join("");
+}
