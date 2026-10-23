@@ -394,6 +394,21 @@ export class Game implements DrawState {
     this.setMode(prev === "dialog" ? "busy" : prev);
   }
 
+  // 原版的系统消息（资源 0x3F 第 index 条）：不带说话人的窗口，▼ 等按键。{参数} 换成 param
+  private async systemMessage(index: number, param = "") {
+    if (this.auto) return;
+    const line = loadScene({ res: "3F", index })[0];
+    if (!line) return;
+    const prev = this.mode;
+    this.setMode("dialog");
+    const cps = TEXT_SPEEDS.find((t) => t.id === settings.get().textSpeed)!.cps;
+    this.ui.showLine("", line.text.replace("{参数}", param), null, "", cps);
+    await new Promise<void>((resolve) => { this.talk = { next: resolve, skip: resolve, autoAt: 0 }; });
+    this.talk = null;
+    this.ui.hideDialog();
+    this.setMode(prev === "dialog" ? "busy" : prev);
+  }
+
   // 确定：字没出完就先出完，出完了翻到下一句
   private advanceTalk() {
     if (!this.talk) return;
@@ -1040,7 +1055,7 @@ export class Game implements DrawState {
     //   加速、疾风：使用者格子上蓝色横纹刷 3 遍，每遍一声 1D
     //   瞄准、必杀、回避：黄色流星飞进使用者，1C
     //   防守：粉色花瓣光圈，1B；强攻、热血：细的蓝色电圈，1B
-    //   最后才出提示消息
+    //   最后状态类精神出原版的系统消息（SPIRIT_MESSAGE，等按键）；回复、伤害类原版没有消息，只有数字
     this.setMode("busy");
     const sp = () => this.speed();
     const focus = (u: Unit) => this.setCursor(u.x, u.y);
@@ -1085,7 +1100,8 @@ export class Game implements DrawState {
       this.sfx.play(kind === "comet" ? 0x1c : 0x1b);
       await wait(this.renderer.mapFx(kind, unit, sp()));
     }
-    this.ui.toast(r.text);
+    const msg = SPIRIT_MESSAGE[spiritId];
+    if (msg !== undefined) await this.systemMessage(msg, unit.name);
     this.dangerCache = null;
     this.refreshInfo();
     // 精神「怒」「狂怒」可能打掉敌人，跑一次检查脚本
@@ -1847,6 +1863,11 @@ export class Game implements DrawState {
 
 // 变形台词（文本资源 0x37）：当前驾驶员「开机，到位！」（27–29：龙、欧文、路易），
 // 新形态的驾驶员「盖塔N号点火！变形！」（盖塔 30–32，盖塔G 33–35）。其他机体没有专门台词
+// 状态类精神用完后原版显示的系统消息（资源 0x3F 的编号；模拟器里给杰克逐个换精神实测）：
+// 加速「{机体}的机动性提高 3 ！」、疾风「…提高 5 ！」、瞄准「{机体}的命中率提高 10%！」、必杀「…提高到 100%！」、
+// 回避「躲开了敌人的攻击！」、防守「我们的损伤减少一半！」、强攻「使它增加攻击力1倍！」、热血「…2倍！」、干扰「敌人的命中率减少一半 ！」
+const SPIRIT_MESSAGE: Record<number, number> = { 1: 11, 7: 12, 2: 17, 6: 18, 8: 19, 3: 16, 4: 14, 10: 15, 16: 9 };
+
 function transformLines(pilotId: number, to: number): SceneRef[] {
   const team = [8, 9, 10];
   if (!team.includes(pilotId) || !formIndexOf(to)) return [];
