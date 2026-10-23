@@ -7,7 +7,7 @@ import { key, pathTo, rangeFrom, reachable, inBounds, MOVE_TYPE_ROW, type Point,
 import type { Action } from "./input.ts";
 import type { DrawState, Overlay, Renderer } from "./render.ts";
 import type { GrowthStats, UI, MenuItem, StatusTab } from "./ui.ts";
-import { Rules, SPIRIT_FLAG, isRepair, rngState, setRngState, type BattleEvent, type Forecast } from "./rules.ts";
+import { Rules, SPIRIT_FLAG, isRepair, rand, rngState, setRngState, type BattleEvent, type Forecast } from "./rules.ts";
 import { describeTime, listSaves, readSave, requestLoad, requestNextStage, writeSave, SAVE_VERSION, type SaveData, type SlotId } from "./saves.ts";
 import { strikeSound, type Sfx } from "./sfx.ts";
 import { MUSIC, type Music } from "./music.ts";
@@ -17,6 +17,8 @@ import { traitOf, type Trait } from "./traits.ts";
 import { levelForExp } from "./stats.ts";
 import { showIntermission } from "./intermission.ts";
 import { showSortie } from "./sortie.ts";
+import { showShop } from "./shop.ts";
+import { PARTS, SHOPS, STAT_LABEL, applyStat, emptyItems, pickColumn, usableOn, type Part } from "./parts.ts";
 import { AutoPilot } from "./autopilot.ts";
 import { AutoTester, type AutoOptions, type AutoReport } from "./autotest.ts";
 import { BattleScene, attackTimeline, battleLayout, battleSpriteUrl, type AttackTimeline } from "./battle-scene.ts";
@@ -96,6 +98,8 @@ export class Game implements DrawState {
   private turn = 1;
   // 资金（原版单位，画面 ×10）。过关进下一关时由 main.ts 带过来
   readonly money = { value: 0 };
+  // 强化零件的持有数（按零件号，全队共用，原版 $741A）。跟资金一样带到下一关
+  items: number[] = emptyItems();
   private rules: Rules;
   onOpenSettings: () => void = () => {};
   // 对话播放中：等玩家按确定翻页
@@ -138,6 +142,7 @@ export class Game implements DrawState {
       wait: (s) => wait(s / this.speed()),
       music: (kind, song) => this.scriptMusic(kind, song),
       finish: (r) => this.finishStage(r),
+      openShop: (n) => this.openShop(n),
     });
   }
 
@@ -272,6 +277,7 @@ export class Game implements DrawState {
       stage: this.stage.number,
       turn: this.turn,
       money: this.money.value,
+      items: [...this.items],
       units: structuredClone(this.units),
       roster: structuredClone(this.stage.roster),
       events: this.events.snapshot(),
@@ -298,6 +304,7 @@ export class Game implements DrawState {
     this.syncTraits();
     this.turn = save.turn;
     this.money.value = save.money;
+    if (save.items) this.items = [...save.items];
     this.songs = { ...save.songs };
     // 读档直接进我方回合：先下载解码要放的曲子（之前读档后要等第一次按键才开始下载）
     this.music.preload([this.songs.player, this.songs.enemy, ...new Set(this.players().map((u) => MUSIC.battle(u.pilotId, -1)))]);
@@ -1487,9 +1494,9 @@ export class Game implements DrawState {
       for (const u of this.units) {
         if (u.side !== "player" || u.npc || u.roster == null) continue;
         const m = roster.find((r) => r.member === u.roster);
-        if (m) Object.assign(m, { unit: u.unitId, pilot: u.pilotId, level: u.levelIndex, exp: u.exp, kills: u.kills ?? 0 });
+        if (m) Object.assign(m, { unit: u.unitId, pilot: u.pilotId, level: u.levelIndex, exp: u.exp, kills: u.kills ?? 0, parts: u.parts });
       }
-      const go = (benched?: number[]) => requestNextStage({ stage: nextStage, roster, money: this.money.value, benched });
+      const go = (benched?: number[]) => requestNextStage({ stage: nextStage, roster, money: this.money.value, items: this.items, benched });
       // 自动测试带 &chain：不进间章，自己接着打下一关
       if (chain) { this.ui.showResult(true, lines, () => go(), `进入第 ${nextStage} 关`); setTimeout(go, 800); return; }
       // 过关 → 间章（改造）→ 出击选择 → 出击下一关
@@ -1566,12 +1573,115 @@ export class Game implements DrawState {
     this.ui.toast(this.phase === "enemy" ? "敌方回合中，不能打开菜单" : "请稍等，动画结束后再打开菜单");
   }
 
+  // ---------- 商店和工具（强化零件，parts.ts / shop.ts）----------
+  // 地图商店：单位在商店格上待命时打开（events.ts runTile）。自动测试不进店
+  private async openShop(n: number) {
+    const shop = SHOPS[n];
+    if (!shop || this.auto) return;
+    const mode = this.mode;
+    this.setMode("busy");
+    const settingsOpen = () => !!(document.getElementById("settings") as HTMLDialogElement | null)?.open;
+    await showShop({ shop, money: this.money, items: this.items, sfx: this.sfx, settingsOpen });
+    this.setMode(mode);
+    this.refreshInfo();
+  }
+
+  // 「工具」（原版系统菜单）：列出持有的零件，选一个再选给谁用。不占行动，行动过的单位也能用
+  private openItemMenu(back: () => void) {
+    const reopen = () => this.openItemMenu(back);
+    const items: MenuItem[] = PARTS.filter((p) => this.items[p.id] > 0).map((p) => {
+      const k = p.effect.kind;
+      const ready = k === "jamming" ? !this.rules.jamming : ["stat", "sp", "hp", "exp", "flag"].includes(k);
+      return { label: p.name, detail: `×${this.items[p.id]}`, hint: p.note.replace(/\n/g, ""), disabled: !ready, run: () => this.chooseItemTarget(p, reopen) };
+    });
+    items.push({ label: "返回", run: back });
+    this.openMenu(items, this.cursor, back);
+  }
+
+  // 选人：能力 / 回复 / 经验类是「部队表」（列出这个零件会改的那一栏，原版表头随零件变）；
+  // 瞄准类回到地图用光标点我方单位（原版 $82A8 看光标下的单位）；米诺夫粒子不用选
+  private chooseItemTarget(p: Part, back: () => void) {
+    const allies = this.players().filter((u) => !u.npc);
+    const target = p.effect.target;
+    if (target === "none") { void this.useItem(p, null); return; }
+    if (target === "map") {
+      const ok = allies.filter((u) => usableOn(p, u));
+      if (!ok.length) { this.ui.toast("没有能用的单位"); back(); return; }
+      this.startPick("allyTarget", ok, { confirm: (u) => void this.useItem(p, u), cancel: back });
+      return;
+    }
+    const items: MenuItem[] = allies.map((u) => ({
+      label: u.name,
+      detail: pickColumn(p, u),
+      hint: u.pilotName,
+      disabled: !usableOn(p, u),
+      run: () => void this.useItem(p, u),
+    }));
+    items.push({ label: "返回", run: back });
+    this.openMenu(items, this.cursor, back);
+  }
+
+  // 用掉一个零件（效果照原版 bank 10 $807E 分发的各段，docs/notes-events.md「商店和工具」），演出借用精神的特效。用完回到地图
+  private async useItem(p: Part, u: Unit | null) {
+    this.setMode("busy");
+    this.items[p.id]--;
+    const e = p.effect, sp = this.speed();
+    const heal = async (t: Unit, text: string, kind: "hp" | "sp" | "accent") => {
+      this.setCursor(t.x, t.y);
+      this.sfx.play(0x04);
+      await wait(this.renderer.mapFx("heal", t, sp));
+      this.sfx.play(0x05);
+      this.renderer.float(t, text, kind);
+      this.refreshInfo();
+      await wait(0.6 / sp);
+    };
+    if (e.kind === "stat" && u) {
+      const add = applyStat(u, e.stat, e.amount);
+      const label = e.stat === "maxHp" ? "最大HP" : STAT_LABEL[e.stat];
+      await heal(u, `${label} +${add}`, "accent");
+      this.ui.toast(`${u.name}的${label}上升 ${add}！`);
+    } else if ((e.kind === "sp" || e.kind === "hp") && u) {
+      const key = e.kind, max = key === "sp" ? u.maxSp : u.maxHp;
+      const add = Math.min(e.amount, max - u[key]);
+      u[key] += add;
+      await heal(u, key === "sp" ? `SP +${add}` : `+${add}`, key === "sp" ? "sp" : "hp");
+      this.ui.toast(`${u.name}的${key === "sp" ? "精神" : "HP"}回复 ${add}！`);
+    } else if (e.kind === "flag" && u) {
+      u.spirit |= e.flag;
+      this.setCursor(u.x, u.y);
+      this.sfx.play(0x1c);
+      await wait(this.renderer.mapFx("comet", u, sp));
+      this.ui.toast(e.flag === SPIRIT_FLAG.AIM ? `${u.name}的命中率提高 10%！` : `${u.name}：${p.name}`);
+    } else if (e.kind === "exp" && u) {
+      // 原版 rand(254)，可能是 0
+      const gained = rand(e.rand);
+      const before = { stats: growthStats(u), levelIndex: u.levelIndex, exp: u.exp, trait: u.trait };
+      u.exp += gained;
+      this.setCursor(u.x, u.y);
+      const level = levelForExp(u.exp, u.levelIndex);
+      if (level > u.levelIndex) { applyLevel(u, level); this.syncTrait(u); this.music.jingle(LEVEL_UP_JINGLE); }
+      await this.showGrowth(u, gained, before);
+    } else if (e.kind === "jamming") {
+      this.rules.jamming = true;
+      for (const t of this.enemies()) {
+        this.setCursor(t.x, t.y);
+        this.sfx.play(0x17);
+        await wait(this.renderer.mapFx("jam", t, sp));
+      }
+      this.ui.toast("本回合敌方命中率减半");
+    }
+    this.dangerCache = null;
+    this.setMode("browse");
+    this.refreshInfo();
+  }
+
   // at：屏幕坐标时是右上角按钮的下拉菜单，否则弹在地图光标旁边。back：返回到哪里；midAction：有单位正在行动
   private openMapMenu(at?: Point, back = () => this.setMode("browse"), midAction = false) {
     const reopen = () => this.openMapMenu(at, back, midAction);
     const items: MenuItem[] = [
       { label: "结束回合", disabled: midAction, detail: midAction ? "单位行动中" : "", run: () => this.endTurn() },
       { label: this.dangerOn ? "隐藏敌方范围" : "显示敌方范围", run: () => { this.toggleDanger(); back(); } },
+      { label: "工具", disabled: midAction || !this.items.some((n) => n > 0), detail: midAction ? "单位行动中" : this.items.some((n) => n > 0) ? "" : "没有零件", run: () => this.openItemMenu(reopen) },
       { label: "存档", disabled: midAction, detail: midAction ? "单位行动中" : "", run: () => void this.openSaveMenu(reopen) },
       { label: "读档", run: () => void this.openLoadMenu(reopen) },
       { label: "设置", detail: "按键 · 声音", run: () => { back(); this.onOpenSettings(); } },

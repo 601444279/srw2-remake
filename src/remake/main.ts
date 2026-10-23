@@ -105,7 +105,7 @@ async function boot() {
   if (import.meta.env.DEV && params.has("autoplay")) {
     const num = (k: string) => Number(params.get(k)) || undefined;
     const battle = params.get("battle");
-    if (next) game.money.value = next.money;
+    if (next) { game.money.value = next.money; if (next.items) game.items = [...next.items]; }
     const done = game.autoplay({ turns: num("turns"), speed: num("speed"), battle: battle === "full" || battle === "simple" ? battle : undefined, mute: !params.has("sound") });
     const queue = (params.get("queue") ?? "").split(",").filter(Boolean);
     if (queue.length) void done.then(() => setTimeout(() => {
@@ -118,7 +118,7 @@ async function boot() {
     return;
   }
   if (save) await game.resumeFromSave(save);
-  else if (next) { game.money.value = next.money; await game.start(); }
+  else if (next) { game.money.value = next.money; if (next.items) game.items = [...next.items]; await game.start(); }
   else if (pending === "new" || devStage) await game.start();
   else {
     // 正常打开游戏：标题画面 → 主菜单。继续 / 读档整页重新载入（干净地重建状态）

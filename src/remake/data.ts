@@ -94,6 +94,8 @@ export interface Unit {
   trait: Trait | null;
   // 间章里的改造等级（重制版新增，见 intermission.ts）
   upgrades?: Upgrades;
+  // 强化零件加的能力（跟着名册走，见 RosterMember.parts）
+  parts?: PartBonus;
   // 击坠数（重制版新增，跟着名册走，出击选择里排序用）
   kills: number;
   acted: boolean;
@@ -110,6 +112,19 @@ export interface RosterMember {
   upgrades?: Upgrades;
   // 累计击坠数
   kills?: number;
+  // 强化零件加的能力（原版名册的改造值 $746C–$74BC，parts.ts），每关出击时加回去
+  parts?: PartBonus;
+}
+
+// 强化零件的能力加成（原版载入例程 bank 4 $96D8：加到机体数值上，机动最多 15，其他最多 255，HP 最多 9999）。
+// 只截零件加的这部分，重制版改造本身超过原版上限的不动
+export interface PartBonus { move: number; strength: number; defense: number; speed: number; maxHp: number }
+const PART_CAP: PartBonus = { move: 15, strength: 255, defense: 255, speed: 255, maxHp: 9999 };
+function withParts<T extends PartBonus>(s: T, parts?: PartBonus): T {
+  if (!parts) return s;
+  const out = { ...s };
+  for (const k of Object.keys(PART_CAP) as (keyof PartBonus)[]) if (parts[k]) out[k] = Math.max(s[k], Math.min(PART_CAP[k], s[k] + parts[k]));
+  return out;
 }
 
 // ---------- 改造（重制版新增，docs/design.md 3.5）----------
@@ -137,7 +152,7 @@ function upgradeWeapon(w: Weapon, up?: Upgrades): Weapon {
 export function memberPreview(m: RosterMember, up: Upgrades = m.upgrades ?? { body: 0, weapon: 0 }) {
   const def = units.get(m.unit)!, pilot = pilots.get(m.pilot)!;
   const st = computeStats(def, pilot, m.level, curves);
-  const s = upgradeStats(st, up);
+  const s = withParts({ ...st, ...upgradeStats(st, up) }, m.parts);
   return {
     name: def.name || mechNames.get(m.unit) || `机体 ${m.unit}`,
     pilotName: pilot.name || personName(m.pilot) || "",
@@ -155,7 +170,7 @@ export interface StageEvents {
   victoryText: string;
   scripts: { start: Script; enemyPhase: Script; check: Script };
   npcScripts: Record<string, Script>;
-  // 格子事件：pilot 为 null 表示谁都行；有 script 的是事件脚本，有 shop 的是商店（还没做）
+  // 格子事件：pilot 为 null 表示谁都行；有 script 的是事件脚本，有 shop 的是商店（data/parts.json 的 shops）
   tiles?: { x: number; y: number; pilot: number | null; script?: Script; shop?: number }[];
 }
 
@@ -213,6 +228,7 @@ export interface Placement {
   level: number;
   exp?: number;
   upgrades?: Upgrades;
+  parts?: PartBonus;
   kills?: number;
   aiScript: number;
 }
@@ -230,7 +246,7 @@ export function createUnit(stage: Stage, p: Placement): Unit {
   const pilot = pilots.get(p.pilotId);
   if (!def || !pilot) throw new Error(`单位缺数据：机体 ${p.unitId}，驾驶员 ${p.pilotId}`);
   const stats = { ...computeStats(def, pilot, p.level, curves) };
-  Object.assign(stats, upgradeStats(stats, p.upgrades));
+  Object.assign(stats, withParts({ ...stats, ...upgradeStats(stats, p.upgrades) }, p.parts));
   // 地图图标号：高 2 位决定在哪个 1KB CHR bank（每关不同），低 6 位 ÷ 4 是 bank 内序号
   const bank = stage.unitChrBanks[def.sprite >> 6];
   const moveType = MOVE_TYPES.includes(def.type as MoveType) ? (def.type as MoveType) : "land";
@@ -271,6 +287,7 @@ export function createUnit(stage: Stage, p: Placement): Unit {
     maxSp: isPlayer ? stats.maxSp : 0,
     weapons: def.weapons.map(weaponOf).filter((w): w is Weapon => !!w).map((w) => upgradeWeapon(w, p.upgrades)),
     upgrades: p.upgrades,
+    parts: p.parts,
     spirits: isPlayer ? pilot.spirits.map((s) => spiritDb[s]).filter(Boolean).map((s) => ({ id: s.id, name: s.name, cost: s.cost, text: s.text })) : [],
     trait: traitOf(p.pilotId, p.level + 1),
     acted: false,
@@ -318,7 +335,7 @@ export function pilotForForm(pilotId: number, unitId: number) {
 // 变形：换机体（和盖塔的主驾驶员），能力值、武器、精神、特性、图标换成新的；HP、SP 保留（不超过新的上限）
 export function transformUnit(stage: Stage, unit: Unit, newUnitId: number) {
   const pilotId = pilotForForm(unit.pilotId, newUnitId);
-  const fresh = createUnit(stage, { side: unit.side, npc: unit.npc, roster: unit.roster ?? undefined, x: unit.x, y: unit.y, unitId: newUnitId, pilotId, level: unit.levelIndex, upgrades: unit.upgrades, aiScript: unit.aiScript });
+  const fresh = createUnit(stage, { side: unit.side, npc: unit.npc, roster: unit.roster ?? undefined, x: unit.x, y: unit.y, unitId: newUnitId, pilotId, level: unit.levelIndex, upgrades: unit.upgrades, parts: unit.parts, aiScript: unit.aiScript });
   const keep = { id: unit.id, index: unit.index, hp: unit.hp, sp: unit.sp, exp: unit.exp, spirit: unit.spirit, bits: unit.bits, kills: unit.kills, acted: unit.acted };
   Object.assign(unit, fresh, keep);
   unit.hp = Math.min(unit.hp, unit.maxHp);
@@ -444,7 +461,7 @@ export function loadStage(number: number, rosterMembers: RosterMember[] = roster
   // 我方：部署第 4 段的第三个字节是名册号，名册里有人才出击
   for (const p of deploy.players) {
     const member = stage.roster.find((m) => m.member === p.order);
-    if (member && !benched.includes(member.member)) placements.push({ side: "player", roster: member.member, x: p.x, y: p.y, unitId: member.unit, pilotId: member.pilot, level: member.level, exp: member.exp, upgrades: member.upgrades, kills: member.kills, aiScript: 0 });
+    if (member && !benched.includes(member.member)) placements.push({ side: "player", roster: member.member, x: p.x, y: p.y, unitId: member.unit, pilotId: member.pilot, level: member.level, exp: member.exp, upgrades: member.upgrades, parts: member.parts, kills: member.kills, aiScript: 0 });
   }
   // 敌人记录：参数 a = 驾驶员，b = 等级（从 0 开始），c = AI 脚本
   for (const e of deploy.enemies) placements.push({ side: "enemy", x: e.x, y: e.y, unitId: e.unit, pilotId: e.a, level: e.b, aiScript: e.c });
@@ -457,7 +474,7 @@ export function loadStage(number: number, rosterMembers: RosterMember[] = roster
 // 升级后重算能力：只提高上限，当前 HP / SP 不变（原版实测，docs/notes-rules.md 2.2）
 export function applyLevel(unit: Unit, levelIndex: number) {
   const base = computeStats(units.get(unit.unitId)!, pilots.get(unit.pilotId)!, levelIndex, curves);
-  const stats = { ...base, ...upgradeStats(base, unit.upgrades) };
+  const stats = withParts({ ...base, ...upgradeStats(base, unit.upgrades) }, unit.parts);
   unit.levelIndex = levelIndex;
   unit.level = levelIndex + 1;
   unit.speed = stats.speed;

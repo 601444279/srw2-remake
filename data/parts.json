@@ -1,0 +1,39 @@
+{
+ "note": "强化零件和地图商店（tools/extract-parts.js，docs/notes-events.md「商店和工具」）。price 是原版资金单位（画面 ×10）；持有数全队共用，上限 255；问候语起连续 7 条：问候、需要什么、钱不够、只能带那么些、要买吗、还要什么吗、道别",
+ "parts": [
+  {"id":0,"name":"超合金Z","price":300,"note":"使用它，防御力增加1点。","effect":{"kind":"stat","stat":"defense","amount":1,"target":"pick"}},
+  {"id":1,"name":"磁性涂料","price":400,"note":"加快反应速度，\n速度提高1点。","effect":{"kind":"stat","stat":"speed","amount":1,"target":"pick"}},
+  {"id":2,"name":"传感器","price":200,"note":"使用这种装置，\n强度增加1点。","effect":{"kind":"stat","stat":"strength","amount":1,"target":"pick"}},
+  {"id":3,"name":"C装甲","price":200,"note":"也叫复合装甲，\nHP上限提高5点。","effect":{"kind":"stat","stat":"maxHp","amount":5,"target":"pick"}},
+  {"id":4,"name":"超合金W","price":500,"note":"能强化超合金Z，\n提高防护力3点。","effect":{"kind":"stat","stat":"defense","amount":3,"target":"pick"}},
+  {"id":5,"name":"助推器","price":800,"note":"火箭喷射装置，\n提高移动力1点。","effect":{"kind":"stat","stat":"move","amount":1,"target":"pick"}},
+  {"id":6,"name":"喷气机翼","price":900,"note":"装上红色机翼，\n能在太空飞行。","effect":{"kind":"flight","target":"pick"}},
+  {"id":7,"name":"传感器Ⅱ","price":300,"note":"增强型传感器，\n提高攻击力3点。","effect":{"kind":"stat","stat":"strength","amount":3,"target":"pick"}},
+  {"id":8,"name":"M合金","price":500,"note":"能反映脑电波，\n速度提高3点。","effect":{"kind":"stat","stat":"speed","amount":3,"target":"pick"}},
+  {"id":9,"name":"电子盾","price":300,"note":"新式的电子光束盾，\nHP上限提高10点。","effect":{"kind":"stat","stat":"maxHp","amount":10,"target":"pick"}},
+  {"id":10,"name":"米诺夫粒子","price":1800,"note":"干扰雷达，降低敌方的攻击力50%。","effect":{"kind":"jamming","target":"none"}},
+  {"id":11,"name":"正义","price":500,"note":"恢复机器人的精神20点。","effect":{"kind":"sp","amount":20,"target":"pick"}},
+  {"id":12,"name":"医治","price":1500,"note":"恢复机器人的HP100点。","effect":{"kind":"sp","amount":100,"target":"pick"}},
+  {"id":13,"name":"维修","price":1800,"note":"恢复全体成员的HP50到200点。","effect":{"kind":"healAll","amount":"50-200","target":"none"}},
+  {"id":14,"name":"斗志","price":1200,"note":"可用一次，\n扩大敌人的损伤2倍。","effect":{"kind":"flag","flag":8,"blockedBy":12,"target":"map"}},
+  {"id":15,"name":"疾风","price":100,"note":"使部队的机动性加强一次。","effect":{"kind":"flag","flag":128,"blockedBy":192,"target":"map"}},
+  {"id":16,"name":"勇气","price":400,"note":"恢复机器人的HP100点。","effect":{"kind":"hp","amount":100,"target":"pick"}},
+  {"id":17,"name":"愤怒","price":1000,"note":"给敌方1台机器\n10到200的损害。","effect":{"kind":"damage","amount":"10-200","target":"enemy"}},
+  {"id":18,"name":"瞄准","price":100,"note":"使部队命中率提高10%。","effect":{"kind":"flag","flag":32,"blockedBy":34,"target":"map"}},
+  {"id":19,"name":"根基","price":500,"note":"增加1—255点EXP。","effect":{"kind":"exp","rand":254,"target":"pick"}},
+  {"id":20,"name":"地雷","price":9999,"note":"","effect":{"kind":"none","target":"none"}},
+  {"id":21,"name":"探雷器","price":9999,"note":"","effect":{"kind":"none","target":"none"}},
+  {"id":22,"name":"G零件","price":100,"note":"","effect":{"kind":"none","target":"none"}},
+  {"id":23,"name":"非尔卡","price":9999,"note":"","effect":{"kind":"none","target":"none"}}
+ ],
+ "shops": [
+  {"shop":0,"face":77,"greeting":"res-3F#48","parts":[2,3,10,16]},
+  {"shop":1,"face":77,"greeting":"res-3F#48","parts":[0,1,18,11]},
+  {"shop":2,"face":77,"greeting":"res-3F#48","parts":[1,3,16,19]},
+  {"shop":3,"face":77,"greeting":"res-3F#55","parts":[2,3,10,16]},
+  {"shop":4,"face":77,"greeting":"res-3F#55","parts":[0,1,18,11]},
+  null,
+  null,
+  null
+ ]
+}

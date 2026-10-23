@@ -12,6 +12,8 @@ export interface SaveData {
   stage: number;
   turn: number;
   money: number;
+  // 强化零件持有数（按零件号；旧存档没有，读成全 0）
+  items?: number[];
   units: Unit[];
   roster: RosterMember[];
   events: EventsState;
@@ -103,8 +105,8 @@ export async function importAll(data: Backup) {
   if (data.settings) localStorage.setItem(SETTINGS_KEY, JSON.stringify(data.settings));
 }
 
-// 过关进下一关：带着名册（等级、经验、形态）和资金整页重新载入，从下一关的开场开始。benched = 出击选择里留下待命的名册号
-export interface NextStage { stage: number; roster: RosterMember[]; money: number; benched?: number[] }
+// 过关进下一关：带着名册（等级、经验、形态、零件加成）、资金和零件整页重新载入，从下一关的开场开始。benched = 出击选择里留下待命的名册号
+export interface NextStage { stage: number; roster: RosterMember[]; money: number; items?: number[]; benched?: number[] }
 const NEXT = "srw2-remake:next";
 export function requestNextStage(next: NextStage) {
   sessionStorage.setItem(NEXT, JSON.stringify(next));
