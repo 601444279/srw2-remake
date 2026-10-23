@@ -175,6 +175,15 @@ export interface StageEvents {
   npcScripts: Record<string, Script>;
   // 格子事件：pilot 为 null 表示谁都行；有 script 的是事件脚本，有 shop 的是商店（data/parts.json 的 shops）
   tiles?: { x: number; y: number; pilot: number | null; script?: Script; shop?: number }[];
+  // 劝降（原版表 bank 28 $9E03）：我方驾驶员 pilot 和敌方驾驶员 target 相邻时单位菜单出现「劝降」，选了就跑 script
+  persuade: PersuadeEntry[];
+}
+
+export interface PersuadeEntry {
+  pilot: number;
+  target: number;
+  index: number;
+  script: Script;
 }
 
 export interface Stage {
@@ -183,6 +192,8 @@ export interface Stage {
   unitChrBanks: number[];
   // 当前队伍名册（脚本的入队、离队会改它）
   roster: RosterMember[];
+  // 前面关卡带过来的全程标志（≥ 0x80，劝降了谁、谁离队等）
+  flags?: number[];
   map: GridMap;
   environment: number;
   terrainSheetUrl: string;
@@ -335,9 +346,10 @@ export function pilotForForm(pilotId: number, unitId: number) {
   return pilotId;
 }
 
-// 变形：换机体（和盖塔的主驾驶员），能力值、武器、精神、特性、图标换成新的；HP、SP 保留（不超过新的上限）
-export function transformUnit(stage: Stage, unit: Unit, newUnitId: number) {
-  const pilotId = pilotForForm(unit.pilotId, newUnitId);
+// 变形：换机体（和盖塔的主驾驶员），能力值、武器、精神、特性、图标换成新的；HP、SP 保留（不超过新的上限）。
+// 脚本换乘、转阵营也用它重建单位（newPilot = 换驾驶员）
+export function transformUnit(stage: Stage, unit: Unit, newUnitId: number, newPilot?: number) {
+  const pilotId = newPilot ?? pilotForForm(unit.pilotId, newUnitId);
   const fresh = createUnit(stage, { side: unit.side, npc: unit.npc, roster: unit.roster ?? undefined, x: unit.x, y: unit.y, unitId: newUnitId, pilotId, level: unit.levelIndex, upgrades: unit.upgrades, parts: unit.parts, aiScript: unit.aiScript });
   const keep = { id: unit.id, index: unit.index, hp: unit.hp, sp: unit.sp, exp: unit.exp, spirit: unit.spirit, bits: unit.bits, kills: unit.kills, acted: unit.acted };
   Object.assign(unit, fresh, keep);
