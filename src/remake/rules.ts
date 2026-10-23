@@ -159,7 +159,7 @@ export class Rules {
     let bonus = 0;
     for (const u of this.stage.units) {
       const t = u.trait;
-      if (u === unit || u.side !== unit.side || u.hp <= 0 || !t?.auraHit) continue;
+      if (u === unit || u.side !== unit.side || !onMap(u) || !t?.auraHit) continue;
       if (distance(u, pos) <= (t.auraRange ?? 0)) bonus = Math.max(bonus, t.auraHit);
     }
     return bonus;
@@ -168,9 +168,9 @@ export class Rules {
   // 能攻击的目标：从 from 出发，用这把武器。修理武器的目标是射程内没满血的友军
   targetsFor(attacker: Unit, weapon: Weapon, from: Point, moved: boolean, units: Unit[]) {
     if (isRepair(weapon)) {
-      return units.filter((u) => u !== attacker && u.side === attacker.side && u.hp > 0 && u.hp < u.maxHp && this.canHit(weapon, from, u, moved));
+      return units.filter((u) => u !== attacker && u.side === attacker.side && onMap(u) && u.hp < u.maxHp && this.canHit(weapon, from, u, moved));
     }
-    return units.filter((u) => u.side !== attacker.side && u.hp > 0 && this.canHit(weapon, from, u, moved) && this.forecast(attacker, weapon, u, from, moved).attack.valid);
+    return units.filter((u) => u.side !== attacker.side && onMap(u) && this.canHit(weapon, from, u, moved) && this.forecast(attacker, weapon, u, from, moved).attack.valid);
   }
 
   // 修理（bank 4 $8904，原版实测：阿波罗A 最大 HP 280 给 HP 10 的太勒回复 140）：
@@ -219,7 +219,7 @@ export class Rules {
 
   // ---------- 精神指令 ----------
   spiritMenu(unit: Unit, units: Unit[]) {
-    const ruleUnits = units.map((u) => ({ ...toRule(u), alive: u.hp > 0, hidden: false }));
+    const ruleUnits = units.map((u) => ({ ...toRule(u), alive: onMap(u), hidden: false }));
     const self = { ...toRule(unit), sp: unit.sp };
     return unit.spirits
       .map((s) => ({ spirit: s, def: SPIRITS[s.id] }))
@@ -269,18 +269,18 @@ export class Rules {
   // 行动顺序：按到最近我方单位的空中距离从近到远（原版只给敌方排序）
   enemyOrder(units: Unit[]) {
     const map = this.stage.map;
-    const enemies = units.filter((u) => u.side === "enemy" && u.hp > 0);
+    const enemies = units.filter((u) => u.side === "enemy" && onMap(u));
     const order: number[] = enemyOrder({
       terrain: map.terrain,
       airCosts: map.moveCost[MOVE_TYPE_ROW.air],
       enemies: enemies.map(toRule),
-      players: units.filter((u) => u.side === "player" && u.hp > 0).map(toRule),
+      players: units.filter((u) => u.side === "player" && onMap(u)).map(toRule),
     });
     return order.map((i) => enemies.find((e) => e.index === i)!);
   }
 
   private foes(unit: Unit, units: Unit[]) {
-    return units.filter((u) => u.hp > 0 && u.side !== unit.side);
+    return units.filter((u) => onMap(u) && u.side !== unit.side);
   }
 
   // 本单位的距离图：敌对单位挡路
@@ -292,7 +292,7 @@ export class Rules {
   }
 
   private occupiedBy(unit: Unit, units: Unit[]) {
-    return new Set(units.filter((u) => u.hp > 0 && u !== unit).map((u) => `${u.x},${u.y}`));
+    return new Set(units.filter((u) => onMap(u) && u !== unit).map((u) => `${u.x},${u.y}`));
   }
 
   // 脚本指令「选攻击」（$1A）：canMove 为假时只考虑原地能打的；onlyPilot 限定目标（「攻击指定单位」）
@@ -323,7 +323,7 @@ export class Rules {
   // 脚本指令「接近」（$14）：向最近的敌对单位（或指定单位）旁边移动，本回合走得到的最近一格
   approach(unit: Unit, units: Unit[], onlyPilot?: number): Point | null {
     const targets = this.foes(unit, units).filter((u) => onlyPilot === undefined || samePilot(u.pilotId, onlyPilot));
-    const all = onlyPilot === undefined ? targets : units.filter((u) => u.hp > 0 && samePilot(u.pilotId, onlyPilot));
+    const all = onlyPilot === undefined ? targets : units.filter((u) => onMap(u) && samePilot(u.pilotId, onlyPilot));
     if (!all.length) return null;
     const grid = this.gridOf(unit, units);
     const goal = moveGoal(all.map(toRule), grid, this.occupiedBy(unit, units));
@@ -360,4 +360,7 @@ export interface AiPlan {
 }
 
 // 驾驶员 8、9、10（盖塔三人）在脚本比较时都当作 8（docs/notes-events.md 第 2 节）
+// 在地图上（母舰里的不算，见 data.ts onMap；这里不从 data.ts 引值，免得循环引用）
+const onMap = (u: Unit) => u.hp > 0 && !u.aboard;
+
 export const samePilot = (a: number, b: number) => (a >= 8 && a <= 10 ? 8 : a) === (b >= 8 && b <= 10 ? 8 : b);

@@ -22,6 +22,7 @@ import unitDb from "../../data/units.json";
 import weaponDb from "../../data/weapons.json";
 import spiritDb from "../../data/spirits.json";
 import roster from "../../data/roster.json";
+import launchShouts from "../../data/launch-shouts.json";
 
 const mapFiles = import.meta.glob("../../data/maps/stage*.json", { eager: true, import: "default" });
 const terrainSheets = import.meta.glob("../../assets/original/terrain/env-*.png", { eager: true, import: "default", query: "?url" });
@@ -96,6 +97,8 @@ export interface Unit {
   upgrades?: Upgrades;
   // 击坠数（重制版新增，跟着名册走，出击选择里排序用）
   kills: number;
+  // 在母舰里（原版 $77D7 = C0）：不在地图上，但还算在场（脚本的 exists、我方数量照算）
+  aboard?: boolean;
   acted: boolean;
 }
 
@@ -345,6 +348,16 @@ export const AI_SCRIPTS = (aiDb as unknown as { scripts: Record<string, Script> 
 // 这一关有没有数据（地图和事件都在）
 export function hasStage(number: number) {
   return Object.keys(mapFiles).some((p) => p.endsWith(`stage${pad(number)}.json`)) && Object.keys(eventFiles).some((p) => p.endsWith(`stage${pad(number)}.json`));
+}
+
+// 在地图上：活着、不在母舰里
+export const onMap = (u: Unit) => u.hp > 0 && !u.aboard;
+// 母舰 = 原版单位槽 0，也就是名册 0 号（原版固定进槽 0）。看的是槽号不是机体（模拟器实测，docs/notes-rules.md「母舰」）。
+// 重制版的单位编号按部署顺序分，不一定是 0，所以看名册号
+export const isCarrier = (u: Unit) => u.side === "player" && !u.npc && u.roster === 0;
+// 从母舰起飞时的喊话（文本资源 0x37 第几条）：按驾驶员和机体号范围查原版的表（data/launch-shouts.json），查不到不喊
+export function launchShout(u: Unit): number | null {
+  return launchShouts.rows.find((r) => r.pilot === u.pilotId && u.unitId >= r.mechFrom && u.unitId <= r.mechTo)?.shout ?? null;
 }
 
 // 开局名册（data/roster.json）

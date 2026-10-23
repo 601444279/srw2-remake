@@ -1,0 +1,167 @@
+{
+ "note": "起飞喊话：驾驶员 pilot 开机体 mechFrom–mechTo 时，从母舰起飞喊文本资源 0x37 第 shout 条。由 tools/extract-launch-shouts.js 从 bank 10 $89B5 导出",
+ "rows": [
+  {
+   "pilot": 6,
+   "mechFrom": 126,
+   "mechTo": 129,
+   "shout": 0
+  },
+  {
+   "pilot": 6,
+   "mechFrom": 140,
+   "mechTo": 142,
+   "shout": 1
+  },
+  {
+   "pilot": 11,
+   "mechFrom": 130,
+   "mechTo": 139,
+   "shout": 2
+  },
+  {
+   "pilot": 12,
+   "mechFrom": 147,
+   "mechTo": 152,
+   "shout": 3
+  },
+  {
+   "pilot": 13,
+   "mechFrom": 143,
+   "mechTo": 146,
+   "shout": 4
+  },
+  {
+   "pilot": 7,
+   "mechFrom": 29,
+   "mechTo": 30,
+   "shout": 5
+  },
+  {
+   "pilot": 7,
+   "mechFrom": 31,
+   "mechTo": 33,
+   "shout": 6
+  },
+  {
+   "pilot": 8,
+   "mechFrom": 1,
+   "mechTo": 8,
+   "shout": 7
+  },
+  {
+   "pilot": 8,
+   "mechFrom": 114,
+   "mechTo": 125,
+   "shout": 8
+  },
+  {
+   "pilot": 9,
+   "mechFrom": 1,
+   "mechTo": 8,
+   "shout": 9
+  },
+  {
+   "pilot": 9,
+   "mechFrom": 114,
+   "mechTo": 125,
+   "shout": 10
+  },
+  {
+   "pilot": 10,
+   "mechFrom": 1,
+   "mechTo": 8,
+   "shout": 11
+  },
+  {
+   "pilot": 10,
+   "mechFrom": 114,
+   "mechTo": 125,
+   "shout": 12
+  },
+  {
+   "pilot": 14,
+   "mechFrom": 98,
+   "mechTo": 105,
+   "shout": 13
+  },
+  {
+   "pilot": 15,
+   "mechFrom": 34,
+   "mechTo": 34,
+   "shout": 14
+  },
+  {
+   "pilot": 16,
+   "mechFrom": 106,
+   "mechTo": 113,
+   "shout": 15
+  },
+  {
+   "pilot": 17,
+   "mechFrom": 35,
+   "mechTo": 35,
+   "shout": 16
+  },
+  {
+   "pilot": 18,
+   "mechFrom": 39,
+   "mechTo": 41,
+   "shout": 17
+  },
+  {
+   "pilot": 19,
+   "mechFrom": 36,
+   "mechTo": 37,
+   "shout": 18
+  },
+  {
+   "pilot": 20,
+   "mechFrom": 23,
+   "mechTo": 28,
+   "shout": 19
+  },
+  {
+   "pilot": 27,
+   "mechFrom": 65,
+   "mechTo": 65,
+   "shout": 20
+  },
+  {
+   "pilot": 27,
+   "mechFrom": 77,
+   "mechTo": 77,
+   "shout": 21
+  },
+  {
+   "pilot": 28,
+   "mechFrom": 11,
+   "mechTo": 12,
+   "shout": 22
+  },
+  {
+   "pilot": 28,
+   "mechFrom": 77,
+   "mechTo": 77,
+   "shout": 23
+  },
+  {
+   "pilot": 35,
+   "mechFrom": 9,
+   "mechTo": 10,
+   "shout": 24
+  },
+  {
+   "pilot": 43,
+   "mechFrom": 60,
+   "mechTo": 60,
+   "shout": 25
+  },
+  {
+   "pilot": 52,
+   "mechFrom": 82,
+   "mechTo": 82,
+   "shout": 26
+  }
+ ]
+}

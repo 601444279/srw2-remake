@@ -89,13 +89,15 @@ export class AutoTester {
     const seen = new Map<string, Unit>();
     for (const u of units) {
       if (u.hp <= 0) continue;
+      if (u.hp > u.maxHp) this.problem(`${u.name} HP ${u.hp} 超过上限 ${u.maxHp}`);
+      // 母舰里的和母舰同一格，不算重叠
+      if (u.aboard) continue;
       const where = `${u.name}(${u.x},${u.y})`;
       if (!Number.isInteger(u.x) || !Number.isInteger(u.y) || u.x < 0 || u.y < 0 || u.x >= map.width || u.y >= map.height) this.problem(`${where} 坐标不对`);
       const k = `${u.x},${u.y}`;
       const other = seen.get(k);
       if (other) this.problem(`${where} 和 ${other.name} 重叠`);
       seen.set(k, u);
-      if (u.hp > u.maxHp) this.problem(`${where} HP ${u.hp} 超过上限 ${u.maxHp}`);
       if (u.sp < 0 || u.sp > u.maxSp) this.problem(`${where} SP ${u.sp} 越界（上限 ${u.maxSp}）`);
       if (!u.weapons.length) this.problem(`${where} 没有武器`);
       if (!u.name) this.problem(`单位 ${u.unitId} 没有名字`);
