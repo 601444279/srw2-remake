@@ -970,16 +970,15 @@ export class Game implements DrawState {
   private chooseWeapon(unit: Unit, preset?: Unit) {
     const items: MenuItem[] = unit.weapons.map((w) => {
       const targets = this.rules.targetsFor(unit, w, unit, this.moved, preset ? [preset] : this.units);
+      // 一行一把：射程、命中、空 / 陆 / 海火力（火力 = 武器火力 + 强度，和原版菜单一样），用不了时最后一列写原因
       if (isRepair(w)) {
-        const hint = `射程 ${w.range}　回复友军 HP（最多 ${unit.maxHp >> 1}）`;
-        return { label: w.name, detail: targets.length ? `${targets.length} 个目标` : "无人受伤", hint, disabled: !targets.length, run: () => this.chooseRepairTarget(unit, targets, () => this.chooseWeapon(unit, preset)) };
+        return { label: w.name, cols: [`${w.range}`, "—", "修理", "", ""], detail: targets.length ? undefined : "无人受伤", disabled: !targets.length, run: () => this.chooseRepairTarget(unit, targets, () => this.chooseWeapon(unit, preset)) };
       }
-      const fire = (["air", "land", "sea"] as const).map((t) => (w.power[t] === null ? "—" : w.power[t]! + unit.strength)).join("/");
-      const hint = `射程 ${w.range}　命中 ${w.hit}　火力 ${fire}`;
-      const detail = targets.length ? `${targets.length} 个目标` : w.range > 1 && !w.usableAfterMove && this.moved ? "移动后不能用" : "打不到";
-      return { label: w.name, detail, hint, disabled: !targets.length, run: () => this.chooseTarget(unit, w, targets, () => this.chooseWeapon(unit, preset)) };
+      const fire = (["air", "land", "sea"] as const).map((t) => (w.power[t] === null ? "—" : `${w.power[t]! + unit.strength}`));
+      const detail = targets.length ? undefined : w.range > 1 && !w.usableAfterMove && this.moved ? "移动后不能用" : "打不到";
+      return { label: w.name, cols: [`${w.range}`, `${w.hit}`, ...fire], detail, disabled: !targets.length, run: () => this.chooseTarget(unit, w, targets, () => this.chooseWeapon(unit, preset)) };
     });
-    this.openMenu(items, unit, () => this.openActionMenu(unit));
+    this.openMenu(items, unit, () => this.openActionMenu(unit), false, ["射程", "命中", "空", "陆", "海"]);
   }
 
   private chooseTarget(unit: Unit, weapon: Weapon, targets: Unit[], back: () => void) {
@@ -1670,14 +1669,14 @@ export class Game implements DrawState {
   }
 
   // ---------- 辅助 ----------
-  private openMenu(items: MenuItem[], at: Point, onCancel: () => void, reachPreview = false) {
+  private openMenu(items: MenuItem[], at: Point, onCancel: () => void, reachPreview = false, columns?: string[]) {
     this.reachPreview = reachPreview;
     // 单位菜单（at 是单位）时左下角显示这个单位的简要资料
     this.menuUnit = "side" in at ? (at as Unit) : null;
     this.setMode("menu");
     const s = 16 * this.renderer.zoom;
     const pos = this.renderer.tileToScreen(at);
-    this.ui.openMenu(items, pos.x + s * 1.2, pos.y, onCancel);
+    this.ui.openMenu(items, pos.x + s * 1.2, pos.y, onCancel, false, columns);
     this.refreshInfo();
   }
 

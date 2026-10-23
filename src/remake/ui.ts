@@ -17,6 +17,8 @@ export interface MenuItem {
   detail?: string;
   // 第二行的说明
   hint?: string;
+  // 表格式菜单（武器）：名字后面的各列，对齐到 openMenu 的 columns 表头
+  cols?: string[];
   disabled?: boolean;
   run(): void;
 }
@@ -66,7 +68,7 @@ export class UI {
   private menuItems: MenuItem[] = [];
   private menuIndex = 0;
   private onMenuClose: (() => void) | null = null;
-  private menuArgs: { items: MenuItem[]; x: number; y: number; onClose: () => void; fromHud: boolean } | null = null;
+  private menuArgs: { items: MenuItem[]; x: number; y: number; onClose: () => void; fromHud: boolean; columns?: string[] } | null = null;
   // 回合和胜利条件不常驻屏幕，显示在右上角菜单的顶部
   private turn = 1;
   private phase: "player" | "enemy" = "player";
@@ -134,7 +136,13 @@ export class UI {
     const tabs = d.known && d.hasPilot
       ? `<div class="st-tabs">${(["unit", "pilot"] as const).map((t) => `<button data-tab="${t}" class="${d.tab === t ? "on" : ""}">${t === "unit" ? "机体" : "驾驶员"}</button>`).join("")}</div>`
       : "";
-    const body = !d.known ? this.statusHead(d, false) : d.tab === "pilot" && d.hasPilot ? this.statusPilot(d) : this.statusUnit(d);
+    // 两页叠在同一格里，只显示当前页：窗口按较大的那页定尺寸，切换时不跳
+    const page = (on: boolean, html: string) => `<div class="st-page${on ? " on" : ""}">${html}</div>`;
+    const body = !d.known
+      ? this.statusHead(d, false)
+      : d.hasPilot
+        ? `<div class="st-pages">${page(d.tab !== "pilot", this.statusUnit(d))}${page(d.tab === "pilot", this.statusPilot(d))}</div>`
+        : this.statusUnit(d);
     el.innerHTML = `<div class="st-card"><button class="st-close" aria-label="关闭">✕</button>${tabs}${body}</div>`;
     el.hidden = false;
     (el.querySelector(".st-close") as HTMLElement).onclick = () => on.close();
@@ -387,14 +395,23 @@ export class UI {
   }
 
   // 菜单出现在屏幕坐标 (x, y) 旁边；fromHud 时是右上角按钮的下拉菜单，贴着按钮右对齐，顶部显示回合和胜利条件
-  openMenu(items: MenuItem[], x: number, y: number, onClose: () => void, fromHud = false) {
-    this.menuArgs = { items, x, y, onClose, fromHud };
+  // columns：表格式菜单的表头（武器菜单：射程、命中、空、陆、海），每项的 cols 按列对齐
+  openMenu(items: MenuItem[], x: number, y: number, onClose: () => void, fromHud = false, columns?: string[]) {
+    this.menuArgs = { items, x, y, onClose, fromHud, columns };
     this.menuItems = items;
     this.menuIndex = items.findIndex((i) => !i.disabled);
     this.onMenuClose = onClose;
     const el = $("#menu");
     el.innerHTML = "";
     el.classList.toggle("from-hud", fromHud);
+    el.classList.toggle("table", !!columns);
+    if (columns) {
+      el.style.setProperty("--ncols", String(columns.length));
+      const head = document.createElement("div");
+      head.className = "menu-cols";
+      head.innerHTML = `<span></span>${columns.map((c) => `<span class="col">${c}</span>`).join("")}<span></span>`;
+      el.append(head);
+    }
     $("#menu-btn").setAttribute("aria-expanded", String(fromHud));
     if (fromHud) {
       const head = document.createElement("div");
@@ -404,7 +421,9 @@ export class UI {
     }
     items.forEach((item, i) => {
       const b = document.createElement("button");
-      b.innerHTML = `<span class="label">${item.label}</span>${item.detail ? `<span class="detail">${item.detail}</span>` : ""}${item.hint ? `<small>${item.hint}</small>` : ""}`;
+      b.innerHTML = columns
+        ? `<span class="label">${item.label}</span>${columns.map((_, c) => `<span class="col">${item.cols?.[c] ?? ""}</span>`).join("")}<span class="detail">${item.detail ?? ""}</span>`
+        : `<span class="label">${item.label}</span>${item.detail ? `<span class="detail">${item.detail}</span>` : ""}${item.hint ? `<small>${item.hint}</small>` : ""}`;
       b.disabled = !!item.disabled;
       b.onpointerenter = () => { if (!item.disabled) { this.menuIndex = i; this.renderMenuFocus(); } };
       b.onclick = () => this.choose(i);
@@ -428,7 +447,7 @@ export class UI {
   }
 
   restoreMenu(m: NonNullable<ReturnType<UI["saveMenu"]>>) {
-    this.openMenu(m.items, m.x, m.y, m.onClose, m.fromHud);
+    this.openMenu(m.items, m.x, m.y, m.onClose, m.fromHud, m.columns);
     this.menuIndex = m.index;
     this.renderMenuFocus();
   }

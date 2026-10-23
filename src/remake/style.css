@@ -188,6 +188,13 @@ body.no-mouse #menu:not(.from-hud) { pointer-events: none; }
 #menu button .detail { color: var(--dim); font: var(--f-num-s); font-variant-numeric: tabular-nums; }
 #menu button small { grid-column: 1 / -1; color: var(--dim); font: var(--f-small); }
 #menu button.focus::before { visibility: visible; }
+/* 表格式菜单（武器）：名字 + 各列 + 原因，用 subgrid 让每行、表头的列对齐 */
+#menu.table { display: grid; grid-template-columns: auto repeat(var(--ncols), auto) auto; max-width: none; }
+#menu.table > .menu-cols, #menu.table > button { grid-column: 1 / -1; display: grid; grid-template-columns: subgrid; column-gap: 20px; align-items: baseline; }
+#menu.table > .menu-cols { padding: 0 12px 4px 30px; margin-bottom: 4px; border-bottom: 2px solid var(--fc-cream); font: var(--f-label); color: var(--label); }
+#menu.table .col { text-align: right; font: var(--f-num-s); font-variant-numeric: tabular-nums; }
+#menu.table .menu-cols .col { font: var(--f-label); }
+#menu.table button .detail { text-align: right; }
 #menu button:disabled { color: var(--dim); opacity: .5; cursor: default; }
 @keyframes pop { from { opacity: 0; transform: translateX(-6px); } to { opacity: 1; transform: none; } }
 
@@ -295,7 +302,7 @@ body.story #info, body.story #forecast { display: none !important; }
 .dl-face.none { display: none; }
 .dl-body { flex: 1; min-height: 96px; }
 .dl-name { font: var(--f-title); color: var(--accent); margin-bottom: 6px; }
-.dl-text { font: var(--f-body); line-height: 1.6; white-space: pre-wrap; }
+.dl-text { font: var(--f-body); line-height: 1.6; white-space: pre-wrap; min-height: calc(3 * 1.6em); }
 .dl-next { position: absolute; right: 18px; bottom: 10px; color: var(--accent); font: var(--f-small); opacity: 0; }
 #dialog.done .dl-next { opacity: 1; animation: blink 1s steps(2) infinite; }
 @keyframes blink { 50% { opacity: 0; } }
@@ -353,6 +360,9 @@ body.story #info, body.story #forecast { display: none !important; }
 #status .st-weapons td { font: var(--f-num-s); text-align: right; padding: 3px 6px; font-variant-numeric: tabular-nums; }
 #status .st-weapons th:first-child, #status .st-weapons td:first-child { text-align: left; padding-left: 0; }
 #status .st-weapons td:first-child { font: var(--f-small); }
+#status .st-pages { display: grid; }
+#status .st-page { grid-area: 1 / 1; display: flex; flex-direction: column; gap: 14px; visibility: hidden; }
+#status .st-page.on { visibility: visible; }
 #status .st-tabs { display: flex; gap: 4px; margin-right: 40px; }
 #status .st-tabs button { position: relative; padding: 6px 18px 6px 30px; border: 0; border-radius: 4px; background: var(--fc-fill); box-shadow: var(--fc-box); color: var(--dim); font: var(--f-title); text-shadow: none; cursor: pointer; }
 #status .st-tabs button::before { content: ""; position: absolute; left: 9px; top: 50%; width: 14px; height: 14px; margin-top: -7px; background: var(--fc-cursor) center / 14px 14px no-repeat; image-rendering: pixelated; visibility: hidden; }
@@ -526,7 +536,7 @@ body.story #info, body.story #forecast { display: none !important; }
 #title .tt-sub { font: var(--f-en); letter-spacing: 14px; color: var(--dim); margin-top: -4px; animation: bs-in 1s .6s both; }
 #title .tt-press { position: relative; font: var(--f-body); letter-spacing: 4px; color: var(--ink); animation: blink 1.6s steps(2) infinite; cursor: pointer; }
 #title .tt-press[hidden] { display: none; }
-#title .tt-menu { margin-top: 28px; display: flex; flex-direction: column; gap: 2px; width: min(520px, 100%); padding: 16px 18px; background: var(--fc-fill); border-radius: 8px; box-shadow: var(--fc-win); text-shadow: none; animation: gr-pop .2s ease-out; }
+#title .tt-menu { margin-top: 28px; display: flex; flex-direction: column; gap: 2px; width: fit-content; max-width: 100%; padding: 14px 24px 14px 14px; background: var(--fc-fill); border-radius: 8px; box-shadow: var(--fc-win); text-shadow: none; animation: gr-pop .2s ease-out; }
 #title .tt-menu button { position: relative; display: flex; align-items: center; gap: 14px; padding: 6px 12px 6px 36px; border: 0; background: none; color: var(--ink); font: var(--f-body); text-shadow: none; text-align: left; cursor: pointer; }
 #title .tt-menu button::before { content: ""; position: absolute; left: 10px; top: 50%; width: 14px; height: 14px; margin-top: -7px; background: var(--fc-cursor) center / 14px 14px no-repeat; image-rendering: pixelated; visibility: hidden; }
 #title .tt-menu button .label { min-width: 96px; letter-spacing: 2px; }
