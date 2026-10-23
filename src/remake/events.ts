@@ -23,6 +23,8 @@ export interface EventApi {
   wait(seconds: number): Promise<void>;
   music(kind: "player" | "enemy" | "now", song: number | "stop" | "restore"): void;
   finish(result: "clear" | "gameover" | "ending"): Promise<void>;
+  // 地图商店（data/parts.json 的 shops 第 n 项），关店后返回
+  openShop(shop: number, unit: Unit): Promise<void>;
 }
 
 // 存档用：三段关卡脚本、每个单位的 AI / NPC 脚本的进度（按单位 id），标志位，上一场战斗
@@ -123,10 +125,12 @@ export class StageEvents implements ScriptHost {
   }
 
   // 格子事件（原版 bank 10 $95A2，看当前单位的位置）。模拟器实测（tools/tile-probe.js）：第 21 关走到出口格，
-  // 移动时不触发，选「待命」结束行动时才跑格子脚本（撤离 → 最后一个撤离的置关卡标志 10 → 检查脚本过关）
+  // 移动时不触发，选「待命」结束行动时才跑格子脚本（撤离 → 最后一个撤离的置关卡标志 10 → 检查脚本过关）。
+  // 按表的顺序找第一条坐标相同、驾驶员对得上的：值是商店的就开店（第 2、5 关同一格乔是另一家店，tools/shop-probe.js）
   async runTile(unit: Unit) {
     if (this.finished || !onMap(unit)) return;
-    const tile = this.api.stage.events.tiles?.find((t) => t.script && t.x === unit.x && t.y === unit.y && (t.pilot === null || samePilot(unit.pilotId, t.pilot)));
+    const tile = this.api.stage.events.tiles?.find((t) => t.x === unit.x && t.y === unit.y && (t.pilot === null || samePilot(unit.pilotId, t.pilot)));
+    if (tile?.shop !== undefined) { await this.api.openShop(tile.shop, unit); return; }
     if (!tile?.script) return;
     this.self = unit;
     await new ScriptRunner(tile.script, this).resume();

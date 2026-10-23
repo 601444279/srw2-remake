@@ -597,6 +597,27 @@ body.no-mouse #title { cursor: none; }
 #intermission .so-row.stay .so-tag { color: var(--dim); }
 #intermission .so-row.absent { cursor: default; opacity: .35; }
 #intermission .so-row.absent .so-tag { color: var(--dim); }
+/* 地图商店（shop.ts），和间章共用 #intermission */
+#intermission .im-panel.shop { width: min(640px, calc(100vw - 24px)); }
+#intermission .sh-talk { display: flex; gap: 12px; align-items: center; }
+#intermission .sh-face { flex: none; width: 64px; height: 64px; border: 1px solid var(--edge); background: #000; }
+#intermission .sh-face img { width: 100%; height: 100%; image-rendering: pixelated; display: block; }
+#intermission .sh-line { font: var(--f-body); color: var(--ink); }
+#intermission .sh-line i { font-style: normal; color: var(--label); margin-right: 10px; }
+#intermission .sh-list { display: flex; flex-direction: column; gap: 4px; }
+#intermission .sh-row { display: flex; align-items: center; gap: 8px; padding: 2px; border: 1px solid transparent; background: rgba(255, 255, 255, 0.04); }
+#intermission .sh-row.on { border-color: var(--accent); background: rgba(255, 194, 26, 0.10); }
+#intermission .sh-pick { all: unset; cursor: pointer; flex: 1; display: grid; grid-template-columns: minmax(0, 1fr) 90px 100px; gap: 8px; align-items: baseline; padding: 6px 10px; }
+#intermission .sh-pick b { font: var(--f-body); color: var(--ink); }
+#intermission .sh-own { font: var(--f-small); color: var(--dim); }
+#intermission .sh-price { justify-self: end; font: var(--f-num-s); color: var(--label); }
+#intermission .sh-row.poor .sh-price { color: var(--danger); }
+#intermission .sh-ask { display: flex; gap: 6px; padding-right: 6px; }
+#intermission .sh-ask button { all: unset; cursor: pointer; padding: 4px 14px; font: var(--f-small); color: var(--dim); background: rgba(255, 255, 255, 0.08); clip-path: var(--chamfer-s); }
+#intermission .sh-ask .sh-yes { color: #000; background: var(--accent); }
+#intermission .sh-note { min-height: 2.6em; padding: 6px 10px; font: var(--f-small); color: var(--dim); background: rgba(255, 255, 255, 0.03); }
+#intermission .sh-note b { font: var(--f-small); color: var(--ink); margin-right: 10px; }
 @media (max-width: 720px) {
   #intermission .im-row { grid-template-columns: 1fr; }
+  #intermission .sh-pick { grid-template-columns: minmax(0, 1fr) 70px 80px; }
 }
