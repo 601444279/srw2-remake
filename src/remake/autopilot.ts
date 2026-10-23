@@ -53,7 +53,9 @@ export class AutoPilot {
   plan(u: Unit): BotPlan | null {
     const reach = this.w.reach(u);
     const map = this.w.stage.map;
-    const stops = [...reach.stops].map((k) => fromKey(map, k));
+    // 母舰的格子只能用来搭载（plan 里单独判断），普通的移动、攻击不停在那里
+    const shipAt = this.allies().find((a) => a !== u && isCarrier(a));
+    const stops = [...reach.stops].map((k) => fromKey(map, k)).filter((p) => !shipAt || p.x !== shipAt.x || p.y !== shipAt.y);
     const hpRate = u.hp / u.maxHp;
     const vip = this.isVip(u);
 
