@@ -49,7 +49,7 @@ async function boot() {
   settings.onChange(() => {
     applyMouse();
     game.settingsChanged();
-    void renderer.setArtStyle(settings.get().artStyle === "smooth", game.units);
+    void renderer.setArtStyle(settings.get().artStyle === "smooth", game.units, settings.get().unitBlackBox);
   });
   const openSettings = () => {
     if (panel.isOpen) return;

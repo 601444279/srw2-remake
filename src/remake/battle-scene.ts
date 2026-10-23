@@ -171,6 +171,9 @@ export class BattleScene {
   private actors: Actor[] = [];
   private layout: "close" | "ranged" = "close";
   private camera = { x: CLOSE_CAMERA, y: 0 };
+  // 画面上方裁掉的高度：原版上半屏 116 高、地面在底部，小机体上面空着一大片黑。
+  // 每场按这场会画到的最高处（两台机体、双方武器的攻击动画）往上留一点，其余裁掉；地面位置不变
+  private top = 0;
   private effect: Effect | null = null;
   private puffs: Puff[] = [];
   private raf = 0;
@@ -198,15 +201,18 @@ export class BattleScene {
     this.camera = { x: layout === "close" ? CLOSE_CAMERA : atkSide === "right" ? 256 : 0, y: 0 };
     this.effect = null;
     this.puffs = [];
+    this.top = this.cropTop();
+    const sh = H - this.top;
 
     this.root.innerHTML = `
       <div class="bs-frame">
-        <div class="bs-stage"><canvas width="${W * SCALE}" height="${H * SCALE}"></canvas><div class="bs-spot"></div><div class="bs-pops"></div></div>
+        <div class="bs-stage" style="aspect-ratio: ${W} / ${sh}"><canvas width="${W * SCALE}" height="${sh * SCALE}"></canvas><div class="bs-spot"></div><div class="bs-pops"></div></div>
         <div class="bs-hud">
           ${this.actorsBySide().map((a) => this.card(a)).join("")}
         </div>
         <div class="bs-msg"><div class="bs-face"></div><div class="bs-text"></div></div>
       </div>`;
+    this.root.style.setProperty("--sh", String(sh));
     this.canvas = $("canvas", this.root);
     this.ctx = this.canvas.getContext("2d")!;
     this.ctx.imageSmoothingEnabled = false;
@@ -247,6 +253,23 @@ export class BattleScene {
     if (flip) sx = W - sx - w;
     const off = this.layout === "close" ? CLOSE_CAMERA : RANGED_OFFSET[side];
     return { unit, info, art, white: art && silhouette(art), side, flip, x: sx + off, y: sy, w, h, dx: 0, dy: 0, flash: 0, alpha: 1, hp: unit.hp };
+  }
+
+  // 这场会画到的最高处：两台机体的头顶、双方每把武器攻击动画里特效的最高点（特效位置 = 攻方叠色精灵 + 关键帧偏移）。
+  // 上面留 MARGIN；伤害数字飘在机体头顶，也在留白里
+  private cropTop() {
+    const MARGIN = 10;
+    let min = H;
+    for (const a of this.actors) {
+      min = Math.min(min, a.y);
+      if (!a.info) continue;
+      for (const w of a.unit.weapons) {
+        const anim = animFor(a.unit.unitId, w.id);
+        if (!anim) continue;
+        for (const [, , cel = -1, , y = 0] of anim.keyframes) if (cel >= 0) min = Math.min(min, a.y + a.info.origin.y + y);
+      }
+    }
+    return Math.max(0, Math.floor(min) - MARGIN);
   }
 
   private actorsBySide() {
@@ -379,7 +402,7 @@ export class BattleScene {
     if (this.skipped()) { a.alpha = 0; return; }
     const stage = $(".bs-stage", this.root);
     stage.style.setProperty("--fx", `${((this.screenX(a) + a.w / 2) / W) * 100}%`);
-    stage.style.setProperty("--fy", `${((a.y + a.h / 2) / H) * 100}%`);
+    stage.style.setProperty("--fy", `${((a.y - this.top + a.h / 2) / (H - this.top)) * 100}%`);
     stage.classList.add("slowmo");
     this.slow = 0.45;
     boom();
@@ -419,7 +442,7 @@ export class BattleScene {
     el.textContent = text;
     el.style.left = `${((this.screenX(a) + a.w / 2) / W) * 100}%`;
     // 放在机体头顶，不压住机体
-    el.style.top = `${(Math.max(a.y - a.h * 0.05, 0) / H) * 100}%`;
+    el.style.top = `${(Math.max(a.y - this.top - a.h * 0.05, 0) / (H - this.top)) * 100}%`;
     $(".bs-pops", this.root).append(el);
     setTimeout(() => el.remove(), 1200);
   }
@@ -464,7 +487,7 @@ export class BattleScene {
   private blitWrapped(art: Art, sx: number, sy: number, sw: number, sh: number, dx: number, dy: number, flip: boolean) {
     for (const off of [-WORLD, 0, WORLD]) {
       const x = dx + off;
-      if (x < W && x + sw > 0) this.blit(art, sx, sy, sw, sh, x, dy, flip);
+      if (x < W && x + sw > 0) this.blit(art, sx, sy, sw, sh, x, dy - this.top, flip);
     }
   }
 

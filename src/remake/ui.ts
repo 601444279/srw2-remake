@@ -487,37 +487,38 @@ export class UI {
   // ---------- 攻击预测 ----------
   // known = false：对方没交过手，命中、伤害、反击都不显示（它们取决于对方的能力和武器）
   // top：放在画面上方（敌方瞄准时用，不挡住下方的单位）
-  // 攻击预测：一块钢板，左攻右守镜像排列，中间 VS。
-  // 每边：头像、机体名、驾驶员（特性只给标签）、HP；分隔线下：武器、命中 / 伤害、结果
+  // 攻击预测：一块钢板，左攻右守镜像排列，中间 VS。不写「击破」：结果留给战斗
+  // 每边：头像、机体名、驾驶员（特性只给标签）、HP；分隔线下：武器、命中 / 伤害
   // known = false：对方没交过手，命中、伤害、反击都不显示（它们取决于对方的能力和武器）
   showForecast(atk: Unit, atkIcon: string, def: Unit, defIcon: string, weapon: Weapon, f: Forecast, known = true, top = false) {
     const el = $("#forecast");
     el.classList.toggle("top", top);
+    const hpTone = (u: Unit) => { const r = u.hp / u.maxHp; return r > 0.5 ? "" : r > 0.25 ? "warn" : "danger"; };
     const head = (u: Unit, icon: string, showHp: boolean) => `
       <div class="fc-head">
         <img src="${icon}" alt="">
         <div class="fc-id">
           <b>${u.name}</b>
-          <small>${u.pilotName}${u.trait && showHp ? `<em>${traitLabel(u.trait)}</em>` : ""}</small>
+          <small><span>${u.pilotName}</span>${u.trait && showHp ? `<em>${traitLabel(u.trait)}</em>` : ""}</small>
         </div>
       </div>
-      ${showHp ? `<div class="fc-hp"><div class="bar"><i style="width:${Math.max(0, u.hp / u.maxHp) * 100}%"></i></div><span><b>${u.hp}</b>/${u.maxHp}</span></div>` : `<div class="fc-hp muted">${UNKNOWN_TEXT}</div>`}`;
-    const act = (w: Weapon | null, s: { hit: number; damage: number; valid: boolean; lethal: boolean } | null, twice: boolean, other: Unit) => {
-      if (!s) return `<div class="fc-act"><div class="fc-weapon">${w ? w.name : "?"}</div><div class="fc-nums"><div><small>命中</small><b>?</b></div><div><small>伤害</small><b>?</b></div></div></div>`;
-      if (!w || !s.valid) return `<div class="fc-act none"><div class="fc-weapon">${w ? w.name : "无法反击"}</div><div class="fc-nums"><div><small>命中</small><b>—</b></div><div><small>伤害</small><b>—</b></div></div></div>`;
-      const left = Math.max(0, other.hp - s.damage * (twice ? 2 : 1));
-      const result = s.lethal || left === 0 ? '<span class="kill">击破</span>' : `<span>对方剩 <b>${left}</b></span>`;
-      return `
-        <div class="fc-act">
-          <div class="fc-weapon"><span>${w.name}</span><div class="fc-result">${result}</div></div>
-          <div class="fc-nums">
-            <div><small>命中</small><b>${s.hit}<i>%</i></b></div>
-            <div><small>伤害</small><b>${s.damage}${twice ? "<i>×2</i>" : ""}</b></div>
-          </div>
-        </div>`;
+      <div class="fc-hp ${showHp ? hpTone(u) : ""}">
+        <span class="lb">HP</span>
+        <div class="bar"><i style="width:${showHp ? Math.max(0, u.hp / u.maxHp) * 100 : 0}%"></i></div>
+        <span class="val">${showHp ? `<b>${u.hp}</b><small>/${u.maxHp}</small>` : "<b>?</b>"}</span>
+      </div>`;
+    const nums = (hit: string, dmg: string, cls = "") => `
+      <div class="fc-nums ${cls}">
+        <div><small>命中</small><b>${hit}</b></div>
+        <div><small>伤害</small><b>${dmg}</b></div>
+      </div>`;
+    const act = (w: Weapon | null, s: { hit: number; damage: number; valid: boolean } | null, twice: boolean) => {
+      if (!s) return `<div class="fc-act"><div class="fc-weapon">${w ? w.name : "？"}</div>${nums("?", "?", "dash")}</div>`;
+      if (!w || !s.valid) return `<div class="fc-act none"><div class="fc-weapon">${w ? w.name : "无法反击"}</div>${nums("—", "—", "dash")}</div>`;
+      return `<div class="fc-act"><div class="fc-weapon">${w.name}</div>${nums(`${s.hit}<i>%</i>`, `${s.damage}${twice ? "<i>×2</i>" : ""}`)}</div>`;
     };
-    const atkSide = `<div class="fc-side ${atk.side}">${head(atk, atkIcon, true)}${act(weapon, known ? f.attack : null, f.extra === "attacker", def)}</div>`;
-    const defSide = `<div class="fc-side ${def.side} mirror">${head(def, defIcon, known)}${known ? act(f.counter.weapon, f.counter, f.extra === "defender", atk) : act(null, null, false, atk)}</div>`;
+    const atkSide = `<div class="fc-side ${atk.side}">${head(atk, atkIcon, true)}${act(weapon, known ? f.attack : null, f.extra === "attacker")}</div>`;
+    const defSide = `<div class="fc-side ${def.side} mirror">${head(def, defIcon, known)}${known ? act(f.counter.weapon, f.counter, f.extra === "defender") : act(null, null, false)}</div>`;
     el.innerHTML = `${atkSide}<div class="fc-vs"><span>VS</span></div>${defSide}`;
     el.hidden = false;
   }

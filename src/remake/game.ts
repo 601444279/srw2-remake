@@ -8,10 +8,10 @@ import type { Action } from "./input.ts";
 import type { DrawState, Overlay, Renderer } from "./render.ts";
 import type { GrowthStats, UI, MenuItem, StatusTab } from "./ui.ts";
 import { Rules, SPIRIT_FLAG, isRepair, rngState, setRngState, type BattleEvent, type Forecast } from "./rules.ts";
-import { describeTime, listSaves, readSave, requestLoad, requestNextStage, writeSave, SAVE_VERSION, type SaveData, type SlotId } from "./saves.ts";
+import { listSaves, readSave, requestLoad, requestNextStage, writeSave, SAVE_VERSION, type SaveData, type SlotId } from "./saves.ts";
 import { strikeSound, type Sfx } from "./sfx.ts";
 import { MUSIC, type Music } from "./music.ts";
-import { keyLabel, settings, TEXT_SPEEDS, type BindAction } from "./settings.ts";
+import { settings, TEXT_SPEEDS } from "./settings.ts";
 import { attackShout, damageCase, reactionShout } from "./shouts.ts";
 import { traitOf, type Trait } from "./traits.ts";
 import { levelForExp } from "./stats.ts";
@@ -292,7 +292,7 @@ export class Game implements DrawState {
       title: `第${this.stage.number}关${story ? ` ${story.subtitle}` : ""}`,
       thumb: this.renderer.thumbnail(),
     });
-    if (slot !== "auto") this.ui.toast(`已存到存档 ${slot}`);
+    if (slot !== "auto") this.ui.toast("已存档");
   }
 
   // 读档：单位和名册在建 Game 之前已经换成存档里的（main.ts），这里恢复其余状态，直接进入我方回合
@@ -316,7 +316,6 @@ export class Game implements DrawState {
     this.music.play(this.songs.player);
     this.setMode("browse");
     this.refreshInfo();
-    this.ui.toast(`已读取存档 · 第 ${this.turn} 回合`);
   }
 
   private async openSaveMenu(onCancel = () => this.openMapMenu()) {
@@ -325,8 +324,7 @@ export class Game implements DrawState {
       const m = metas.find((x) => x.slot === slot);
       return {
         label: `存档 ${slot}`,
-        detail: m ? describeTime(m.savedAt) : "空",
-        hint: m ? `${m.title} · 第 ${m.turn} 回合（覆盖）` : undefined,
+        detail: m ? `第${m.stage}关 第${m.turn}回合` : "空",
         run: async () => {
           try { await this.saveTo(slot); } catch (e) { console.warn(e); this.ui.toast("存档失败"); }
           this.setMode("browse");
@@ -341,8 +339,7 @@ export class Game implements DrawState {
     const metas = await listSaves();
     const items: MenuItem[] = metas.map((m) => ({
       label: m.slot === "auto" ? "自动存档" : `存档 ${m.slot}`,
-      detail: describeTime(m.savedAt),
-      hint: `${m.title} · 第 ${m.turn} 回合`,
+      detail: `第${m.stage}关 第${m.turn}回合`,
       run: () => requestLoad(m.slot),
     }));
     if (!items.length) { this.ui.toast("还没有存档"); onCancel(); return; }
@@ -359,7 +356,7 @@ export class Game implements DrawState {
         this.inStartMenu = true;
         this.setMode("menu");
         this.ui.openMenu([
-          { label: "继续", detail: describeTime(latest.savedAt), hint: `${latest.title} · 第 ${latest.turn} 回合`, run: () => requestLoad(latest.slot) },
+          { label: "继续", detail: `第${latest.stage}关 第${latest.turn}回合`, run: () => requestLoad(latest.slot) },
           { label: "读档", run: () => void this.openLoadMenu(show) },
           { label: "新游戏", run: () => { this.inStartMenu = false; resolve(); void this.start(); } },
         ], innerWidth / 2 - 90, innerHeight / 2 - 60, show);
@@ -703,7 +700,7 @@ export class Game implements DrawState {
     if (unit.side !== "player") {
       const on = this.inspected === unit;
       const known = this.known(unit);
-      items.push({ label: on ? "隐藏范围" : "显示范围", hint: "移动范围和攻击范围", detail: known ? undefined : "未交战", disabled: !known, run: () => { this.inspected = on ? null : unit; back(); } });
+      items.push({ label: on ? "隐藏范围" : "显示范围", detail: known ? undefined : "未交战", disabled: !known, run: () => { this.inspected = on ? null : unit; back(); } });
     }
     this.openMenu(items, unit, back);
   }
@@ -804,7 +801,7 @@ export class Game implements DrawState {
     // 停在母舰的格子上：原版移动后菜单只有「搭载」
     const ship = this.carrier();
     if (this.moved && ship && ship !== unit && ship.x === unit.x && ship.y === unit.y) {
-      this.openMenu([{ label: "搭载", hint: "进母舰：下回合开始回复 30% HP", run: () => void this.board(unit, ship) }], unit, () => this.undoMove(unit));
+      this.openMenu([{ label: "搭载", run: () => void this.board(unit, ship) }], unit, () => this.undoMove(unit));
       return;
     }
     const canAttack = unit.weapons.some((w) => this.rules.targetsFor(unit, w, unit, this.moved, this.units).length);
@@ -1028,7 +1025,6 @@ export class Game implements DrawState {
     const items: MenuItem[] = this.rules.spiritMenu(unit, this.units).map(({ spirit, def, usable }) => ({
       label: spirit.name,
       detail: `${spirit.cost}`,
-      hint: spirit.text,
       disabled: !usable,
       run: () => {
         if (def.effect.kind === "heal" && def.effect.target === "ally") {
@@ -1729,14 +1725,13 @@ export class Game implements DrawState {
   // 回到标题画面：整页重新载入（没有待读的存档时 main.ts 会进标题画面）
   private confirmTitle(back: () => void) {
     this.openMenu([
-      { label: "回到标题", hint: "没存档的进度会丢失", run: () => location.reload() },
+      { label: "回到标题", run: () => location.reload() },
       { label: "取消", run: back },
     ], this.cursor, back);
   }
 
   private toggleDanger() {
     this.dangerOn = !this.dangerOn;
-    this.ui.toast(this.dangerOn ? "显示敌方威胁范围" : "隐藏敌方威胁范围");
   }
 
   private cycleUnit(dir: number) {
@@ -1785,25 +1780,9 @@ export class Game implements DrawState {
   }
 
   // 底部按键提示，显示玩家当前绑定的键
+  // 底部按键提示：不显示（自己玩，按键都熟），留着接口以后要临时提示时用
   private refreshHints() {
-    const k = (a: BindAction) => keyLabel(a);
-    const move = `${k("up")}${k("down")}${k("left")}${k("right")}`;
-    const hints: Record<Mode, [string, string][]> = {
-      browse: [[k("confirm"), "选择"], [`${k("next")} / ${k("prev")}`, "切换单位"], [k("danger"), "敌方范围"], [k("menu"), "菜单"], [k("save"), "存档"], [k("load"), "读档"], [`${k("zoomIn")} / ${k("zoomOut")}`, "缩放"], [k("fast"), "快速移动"], [k("settings"), "设置"]],
-      selected: [[k("confirm"), "移动到这里 / 点敌人直接攻击"], [k("cancel"), "返回菜单"], [k("danger"), "敌方范围"]],
-      moving: [[`按住 ${k("fast")}`, "加速"]],
-      menu: [[move, "选择"], [k("confirm"), "确定"], [k("cancel"), "返回"]],
-      target: [[move, "切换目标"], [k("confirm"), "攻击"], [k("cancel"), "返回"]],
-      allyTarget: [[move, "切换"], [k("confirm"), "确定"], [k("cancel"), "返回"]],
-      busy: [[`按住 ${k("fast")}`, "加速"]],
-      dialog: [[k("confirm"), "下一句"], [`按住 ${k("fast")}`, "快进"], [k("cancel"), "跳过这段"], [k("settings"), "设置"]],
-      title: [[k("confirm"), "继续"]],
-      over: [],
-      notice: [[k("confirm"), "继续"]],
-      status: [[`${k("left")}${k("right")} / ${k("prev")} ${k("next")}`, "机体 / 驾驶员"], [k("cancel"), "关闭"]],
-    };
-    if (this.inBattle) { this.ui.setHints([[`${k("confirm")} / ${k("cancel")}`, "跳过战斗"], [`按住 ${k("fast")}`, "加速"]]); return; }
-    this.ui.setHints(hints[this.mode]);
+    this.ui.setHints([]);
   }
 
   // 我方、友军总是知道；敌人要本关和它或同型机交过手

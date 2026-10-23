@@ -44,32 +44,35 @@ export class SettingsPanel {
       <header><b>设置</b><button class="close" data-nav aria-label="关闭">✕</button></header>
       <section>
         <div class="set-group">鼠标</div>
-        <label class="set-row toggle"><span>鼠标操作<small>关闭后地图上的悬停、点击、右键和滚轮都不起作用</small></span>
+        <label class="set-row toggle"><span>鼠标操作</span>
           <button class="switch${s.mouse ? " on" : ""}" data-nav data-toggle="mouse" role="switch" aria-checked="${s.mouse}"><i></i></button>
         </label>
         <div class="set-group">画面</div>
-        <div class="set-row toggle"><span>画面风格<small>平滑放大：用像素画放大算法让斜线和边缘更圆滑</small></span>
+        <div class="set-row toggle"><span>画面风格</span>
           <button class="cycle" data-nav data-cycle="artStyle">${ART_STYLES.find((a) => a.id === s.artStyle)?.label}</button>
         </div>
-        <div class="set-row toggle"><span>战斗演出<small>完整：原版战斗画面和武器特效；简略：在地图上快速结算</small></span>
+        <div class="set-row toggle"><span>战斗演出</span>
           <button class="cycle" data-nav data-cycle="battleStyle">${BATTLE_STYLES.find((b) => b.id === s.battleStyle)?.label}</button>
         </div>
-        <label class="set-row toggle"><span>飞行演出<small>选中时起飞悬停，移动时引擎加速、到达后缓缓降落；关闭为原版的跳动和匀速移动</small></span>
+        <label class="set-row toggle"><span>飞行演出</span>
           <button class="switch${s.flight ? " on" : ""}" data-nav data-toggle="flight" role="switch" aria-checked="${s.flight}"><i></i></button>
         </label>
+        <label class="set-row toggle"><span>单位黑底</span>
+          <button class="switch${s.unitBlackBox ? " on" : ""}" data-nav data-toggle="unitBlackBox" role="switch" aria-checked="${s.unitBlackBox}"><i></i></button>
+        </label>
         <div class="set-group">成长</div>
-        <label class="set-row toggle"><span>特性成长<small>驾驶员到 Lv 10 / 20 / 30 时机师特性强化一档（敌方驾驶员也一样）</small></span>
+        <label class="set-row toggle"><span>特性成长</span>
           <button class="switch${s.traitGrowth ? " on" : ""}" data-nav data-toggle="traitGrowth" role="switch" aria-checked="${s.traitGrowth}"><i></i></button>
         </label>
-        <label class="set-row toggle"><span>击破连击<small>同一阶段里连续击破，每多一次经验 +10%（最多 +50%）</small></span>
+        <label class="set-row toggle"><span>击破连击</span>
           <button class="switch${s.killCombo ? " on" : ""}" data-nav data-toggle="killCombo" role="switch" aria-checked="${s.killCombo}"><i></i></button>
         </label>
         <div class="set-group">剧情</div>
-        <div class="set-row toggle"><span>文字速度<small>对话逐字显示的速度</small></span>
+        <div class="set-row toggle"><span>文字速度</span>
           <button class="cycle" data-nav data-cycle="textSpeed">${TEXT_SPEEDS.find((t) => t.id === s.textSpeed)?.label}</button>
         </div>
         <div class="set-group">声音</div>
-        <div class="set-row toggle"><span>音乐版本<small>增强版：原版乐谱重新合成的立体声；原版：FC 原声录音</small></span>
+        <div class="set-row toggle"><span>音乐版本</span>
           <button class="cycle" data-nav data-cycle="musicStyle">${MUSIC_STYLES.find((m) => m.id === s.musicStyle)?.label}</button>
         </div>
         <div class="set-row toggle"><span>音乐音量</span>
@@ -78,17 +81,15 @@ export class SettingsPanel {
         <div class="set-row toggle"><span>音效音量</span>
           <button class="cycle" data-nav data-cycle="sfxVolume">${volumeLabel(s.sfxVolume)}</button>
         </div>
-        <label class="set-row toggle"><span>命中音效<small>打中时补一声命中音；关闭为原版（只有攻击动画自带的音效，有的武器打中没声）</small></span>
+        <label class="set-row toggle"><span>命中音效</span>
           <button class="switch${s.hitSfx ? " on" : ""}" data-nav data-toggle="hitSfx" role="switch" aria-checked="${s.hitSfx}"><i></i></button>
         </label>
         <div class="set-cols"><span></span><small>主键</small><small>副键</small></div>
         ${rows}
-        <p class="set-hint">点按键框（或用方向键选中后按 Enter），再按下新的键。和其他功能冲突时会互换。Delete 清空，Esc 取消。</p>
-        <button class="reset" data-nav>恢复默认按键</button>
-        <div class="set-group">存档和设置</div>
-        <p class="set-hint">存档和设置保存在这个浏览器里，而且按网址分开（端口不同就是另一份）。导出成文件可以备份，或者在另一个网址导入。</p>
-        <div class="set-row toggle"><span>导出<small>所有存档和设置存成一个文件</small></span><button class="cycle" data-nav data-io="export">导出</button></div>
-        <div class="set-row toggle"><span>导入<small>同名存档位会被覆盖，设置整份换掉，导入后重新载入</small></span><button class="cycle" data-nav data-io="import">导入</button></div>
+        <button class="reset" data-nav>默认按键</button>
+        <div class="set-group">存档</div>
+        <div class="set-row toggle"><span>导出存档和设置</span><button class="cycle" data-nav data-io="export">导出</button></div>
+        <div class="set-row toggle"><span>导入存档和设置</span><button class="cycle" data-nav data-io="import">导入</button></div>
         <input type="file" accept=".json,application/json" hidden data-io-file>
       </section>`;
 
@@ -129,7 +130,7 @@ export class SettingsPanel {
       this.render();
       this.focus("[data-toggle=mouse]");
     });
-    for (const key of ["flight", "traitGrowth", "killCombo", "hitSfx"] as const) {
+    for (const key of ["flight", "unitBlackBox", "traitGrowth", "killCombo", "hitSfx"] as const) {
       this.dialog.querySelector(`[data-toggle=${key}]`)!.addEventListener("click", (e) => {
         e.preventDefault();
         settings.update({ [key]: !settings.get()[key] });

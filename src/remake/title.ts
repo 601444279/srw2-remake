@@ -23,13 +23,12 @@ export function showTitle(opts: { music: Music; sfx: Sfx; openSettings: () => vo
   root.hidden = false;
   root.innerHTML = `
     <canvas class="tt-stars"></canvas>
-    <div class="tt-press">点击或按任意键进入</div>
+    <div class="tt-press">按任意键</div>
     <div class="tt-main" hidden>
       <img class="tt-logo" src="${logoUrl}" alt="第2次超级机器人大战">
       <div class="tt-sub">REMAKE</div>
       <div class="tt-menu" hidden></div>
-    </div>
-    <div class="tt-foot">原作 © BANPRESTO 1991 · 个人重制，仅供自己游玩</div>`;
+    </div>`;
   const logo = root.querySelector(".tt-logo") as HTMLImageElement;
   if (settings.get().artStyle === "smooth") void smoothUrl(logoUrl).then((u) => (logo.src = u));
   const stopStars = stars(root.querySelector(".tt-stars") as HTMLCanvasElement);
@@ -90,7 +89,7 @@ export function showTitle(opts: { music: Music; sfx: Sfx; openSettings: () => vo
       const saves = await listSaves();
       const latest = saves.reduce<SaveMeta | null>((a, b) => (!a || b.savedAt > a.savedAt ? b : a), null);
       show([
-        { label: "继续", detail: latest ? `${latest.title} · 第 ${latest.turn} 回合 · ${describeTime(latest.savedAt)}` : "没有存档", disabled: !latest, run: () => finish({ kind: "load", slot: latest!.slot }) },
+        { label: "继续", detail: latest ? `第${latest.stage}关 第${latest.turn}回合` : undefined, disabled: !latest, run: () => finish({ kind: "load", slot: latest!.slot }) },
         { label: "新游戏", run: () => finish({ kind: "new" }) },
         { label: "读档", disabled: !saves.length, run: () => loadMenu(saves) },
         { label: "设置", run: () => opts.openSettings() },
@@ -99,7 +98,7 @@ export function showTitle(opts: { music: Music; sfx: Sfx; openSettings: () => vo
     const loadMenu = (saves: SaveMeta[]) => {
       show(saves.map((m) => ({
         label: m.slot === "auto" ? "自动存档" : `存档 ${m.slot}`,
-        detail: `${m.title} · 第 ${m.turn} 回合 · ${describeTime(m.savedAt)}`,
+        detail: `第${m.stage}关 第${m.turn}回合 · ${describeTime(m.savedAt)}`,
         thumb: m.thumb || undefined,
         run: () => finish({ kind: "load", slot: m.slot }),
       })), () => void mainMenu());

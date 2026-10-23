@@ -95,6 +95,7 @@ export class Renderer {
   // 画面设置「平滑放大」：地形和单位图标载入时用 Scale4x 放大
   private smooth = false;
   private sprites = new Map<string, Sprite>();
+  private blackBox = false;
   private stage: Stage | null = null;
   private dpr = 1;
   private cssW = 0;
@@ -145,6 +146,7 @@ export class Renderer {
     terrain.forEach((row, y) => row.forEach((t, x) => g.drawImage(sheet, t * TILE, 0, TILE, TILE, x * TILE, y * TILE, TILE, TILE)));
     this.terrainRaw = c;
     this.smooth = settings.get().artStyle === "smooth";
+    this.blackBox = settings.get().unitBlackBox;
     // 整张地图一起放大，图块之间的边缘也能接得上
     this.terrain = this.smooth ? smoothCanvas(c) : c;
     for (const u of stage.units) await this.loadUnit(u);
@@ -275,14 +277,15 @@ export class Renderer {
     const url = u.icon.sheetUrl;
     if (!this.sheets.has(url)) this.sheets.set(url, loadImage(url));
     const k = spriteKey(u);
-    if (!this.sprites.has(k)) this.sprites.set(k, makeSprite(await this.sheets.get(url)!, u.icon.index, this.smooth));
+    if (!this.sprites.has(k)) this.sprites.set(k, makeSprite(await this.sheets.get(url)!, u.icon.index, this.smooth, this.blackBox));
   }
 
-  // 切换画面风格：重建地形和所有单位图标
-  async setArtStyle(smooth: boolean, units: Unit[]) {
-    if (smooth === this.smooth || !this.terrainRaw) return;
+  // 切换画面风格 / 单位黑底：重建地形和所有单位图标
+  async setArtStyle(smooth: boolean, units: Unit[], blackBox = this.blackBox) {
+    if ((smooth === this.smooth && blackBox === this.blackBox) || !this.terrainRaw) return;
+    if (smooth !== this.smooth) this.terrain = smooth ? smoothCanvas(this.terrainRaw) : this.terrainRaw;
     this.smooth = smooth;
-    this.terrain = smooth ? smoothCanvas(this.terrainRaw) : this.terrainRaw;
+    this.blackBox = blackBox;
     this.sprites.clear();
     for (const u of units) await this.loadUnit(u);
   }
@@ -650,10 +653,45 @@ function loadImage(url: string): Promise<HTMLImageElement> {
 
 // 已行动的单位显示为灰色；手动处理像素，不依赖 ctx.filter（部分浏览器不支持）
 // 图标表是 16 个 16x16 图标横排，取第 index 个
-function makeSprite(sheet: HTMLImageElement, index: number, smooth: boolean): Sprite {
+// 抠掉原版单位图标的黑色方底：只去掉和图块边缘连通的纯黑（机体内部的黑色描线、阴影保留），
+// 然后在抠空的地方给机体补一圈 1 像素的黑描边，放在任何地形上都看得清
+function cutOutBlack(d: Uint8ClampedArray) {
+  const n = TILE * TILE;
+  const black = (p: number) => d[p * 4] === 0 && d[p * 4 + 1] === 0 && d[p * 4 + 2] === 0;
+  const bg = new Uint8Array(n);
+  const stack: number[] = [];
+  for (let i = 0; i < TILE; i++) for (const p of [i, (TILE - 1) * TILE + i, i * TILE, i * TILE + TILE - 1]) if (black(p) && !bg[p]) { bg[p] = 1; stack.push(p); }
+  while (stack.length) {
+    const p = stack.pop()!, x = p % TILE, y = (p / TILE) | 0;
+    for (const [nx, ny] of [[x - 1, y], [x + 1, y], [x, y - 1], [x, y + 1]]) {
+      if (nx < 0 || ny < 0 || nx >= TILE || ny >= TILE) continue;
+      const q = ny * TILE + nx;
+      if (!bg[q] && black(q)) { bg[q] = 1; stack.push(q); }
+    }
+  }
+  for (let p = 0; p < n; p++) {
+    if (!bg[p]) continue;
+    const x = p % TILE, y = (p / TILE) | 0;
+    // 8 邻域里有机体像素就留作描边，否则透明
+    let edge = false;
+    for (let dy = -1; dy <= 1 && !edge; dy++) for (let dx = -1; dx <= 1; dx++) {
+      const nx = x + dx, ny = y + dy;
+      if ((dx || dy) && nx >= 0 && ny >= 0 && nx < TILE && ny < TILE && !bg[ny * TILE + nx]) { edge = true; break; }
+    }
+    if (!edge) d[p * 4 + 3] = 0;
+  }
+}
+
+function makeSprite(sheet: HTMLImageElement, index: number, smooth: boolean, blackBox: boolean): Sprite {
   const normal = document.createElement("canvas");
   normal.width = normal.height = TILE;
-  normal.getContext("2d")!.drawImage(sheet, index * TILE, 0, TILE, TILE, 0, 0, TILE, TILE);
+  const nctx = normal.getContext("2d")!;
+  nctx.drawImage(sheet, index * TILE, 0, TILE, TILE, 0, 0, TILE, TILE);
+  if (!blackBox) {
+    const img = nctx.getImageData(0, 0, TILE, TILE);
+    cutOutBlack(img.data);
+    nctx.putImageData(img, 0, 0);
+  }
   const gray = document.createElement("canvas");
   gray.width = gray.height = TILE;
   const g = gray.getContext("2d")!;
