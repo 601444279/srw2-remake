@@ -842,9 +842,11 @@ function recordTransform(fromId, option) {
   if (unit.transform.kind === "triple") m[0x7537 + TF_SLOT] = GETTER_TEAM[unit.transform.formIndex - 1];
   const cap = attachCapture(emu);
   let f = 0, start = -1, animEnd = -1, anim = null;
-  const frames = [], music = [];
+  const frames = [], music = [], sounds = [];
   hookWrite(nes, (a, v) => {
     if (a === 0xad && m[0xaa] === 0x62 && start < 0) { start = f; anim = v; }
+    // 音效：往 $4C 写 $01–$7F（帧号和 frames 同一计数）
+    if (a === 0x4c && v >= 1 && v < 0x80 && start >= 0 && animEnd < 0) sounds.push([f - start, v]);
     if (a === 0xaa && v === 0 && start >= 0 && animEnd < 0) animEnd = f - start;
     if (a === 0x4c && v >= 0x80 && v < 0xf0) music.push([start < 0 ? null : f - start, v & 0x7f, f]);
   });
@@ -880,7 +882,7 @@ function recordTransform(fromId, option) {
   }
   // 切 1 号曲的帧（相对动画开始）
   const bgm = music.find(([, t, abs]) => t === 1 && abs >= pressed);
-  return { frames, anim, animEnd, toId: m[0x7557 + TF_SLOT], music: bgm ? bgm[2] - (f - frames.length) : null };
+  return { frames, anim, animEnd, sounds, toId: m[0x7557 + TF_SLOT], music: bgm ? bgm[2] - (f - frames.length) : null };
 }
 
 // 全白之后的几次色板变化 = 亮相淡入的各档
@@ -926,6 +928,7 @@ function extractTransforms() {
     // 0x67–0x69、0xA7/0xA8 是敌方机体，放进我方槽位时菜单 / 色板对不上，玩家也不会操作它们变形
     if (r.toId !== p.to) { out.push({ ...row, error: `菜单第 ${p.option} 项变成了 ${hex(r.toId)}（敌方机体，不适用）` }); continue; }
     row.music = r.music;
+    row.sounds = r.sounds;
     if (r.anim === 0x0b) {
       const rs = revealSteps(r.frames);
       if (!rs) { out.push({ ...row, error: "合体演出没录到亮相淡入" }); continue; }

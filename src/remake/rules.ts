@@ -14,6 +14,9 @@ export { FLAG as SPIRIT_FLAG };
 
 const SIDE_BITS = { player: 0x80, enemy: 0x40 } as const;
 const TYPE_NUM = { air: 0, land: 1, sea: 2 } as const;
+// 修理经验（见 repairReward）：按击破基础经验 20 的同级杂兵算，给其击破经验的 50%
+const REPAIR_EXP_BASE = 20;
+const REPAIR_EXP_RATE = 0.5;
 
 // 原版随机数（rand(100) 里 0–55 稍微偏多，和原版一致）。种子用当前时间，等同于原版存档里的帧计数器
 const seed = new Uint8Array(128);
@@ -174,7 +177,7 @@ export class Rules {
   }
 
   // 修理（bank 4 $8904，原版实测：阿波罗A 最大 HP 280 给 HP 10 的太勒回复 140）：
-  // 回复量 = min(缺的 HP, 修理者最大 HP / 2)，不算命中、没有反击、不给经验，在地图上直接回复
+  // 回复量 = min(缺的 HP, 修理者最大 HP / 2)，不算命中、没有反击，在地图上直接回复。原版不给经验，重制版给（repairReward）
   repairAmount(repairer: Unit, target: Unit) {
     return Math.min(target.maxHp - target.hp, repairer.maxHp >> 1);
   }
@@ -183,6 +186,21 @@ export class Rules {
     const amount = this.repairAmount(repairer, target);
     target.hp += amount;
     return amount;
+  }
+
+  // 修理经验（重制版加的，原版没有）：比击破少。
+  // = 击破一个「和被修理者同级的普通杂兵」的经验 × 修理量占比 × 50%，最少 1
+  //   普通杂兵按击破基础经验 20 算（第一关的乍克、拉达K7、布达MZ 是 18–25；我方机体的基础经验都是 100，不能拿来算）
+  //   修理量占比 = 回复量 / (被修理者最大 HP / 2)，最多 1（原版一次修理最多回复修理者最大 HP 的一半，修满一大截才算满额）
+  //   等级差沿用原版击破经验表（expForKill）：被修理者每高 1 级 +50%，低了按 1/2、1/4、1/6…递减，低太多只给 1
+  // 第一关同为 1 级：修满一次 10 点（击破乍克 18 点），修 3 次升到 2 级
+  repairReward(repairer: Unit, target: Unit, healed: number) {
+    if (repairer.side !== "player" || healed <= 0) return { exp: 0, levels: 0 };
+    const share = Math.min(1, healed / Math.max(1, target.maxHp / 2));
+    const gain = Math.max(1, Math.floor(expForKill(REPAIR_EXP_BASE, target.levelIndex, repairer.levelIndex) * share * REPAIR_EXP_RATE));
+    repairer.exp += gain;
+    const newLevel = levelForExp(repairer.exp, repairer.levelIndex);
+    return { exp: gain, levels: newLevel - repairer.levelIndex, newLevel };
   }
 
   // 执行一场战斗，返回出手顺序（给演出用）。会直接修改双方 HP

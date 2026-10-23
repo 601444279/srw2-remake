@@ -881,7 +881,7 @@ export class Game implements DrawState {
     });
   }
 
-  // 修理装置：选一名射程内受伤的友军，在地图上直接回复，然后行动结束（原版不给经验）
+  // 修理装置：选一名射程内受伤的友军，在地图上直接回复，然后行动结束（原版不给经验，重制版给，见 rules.repairReward）
   private chooseRepairTarget(unit: Unit, targets: Unit[], back: () => void) {
     this.startPick("allyTarget", targets, {
       confirm: async (t) => {
@@ -903,6 +903,16 @@ export class Game implements DrawState {
     this.renderer.float(t, `+${amount}`, "hp");
     this.refreshInfo();
     await wait(1.0 / this.speed());
+    // 修理经验：和击破一样弹出经验卡，升级时插播号角
+    const before = { stats: growthStats(unit), levelIndex: unit.levelIndex, exp: unit.exp, trait: unit.trait };
+    const r = this.rules.repairReward(unit, t, amount);
+    if (!r.exp) return;
+    if (r.levels > 0 && r.newLevel !== undefined) {
+      applyLevel(unit, r.newLevel);
+      this.syncTrait(unit);
+      this.music.jingle(LEVEL_UP_JINGLE);
+    }
+    await this.showGrowth(unit, r.exp, before);
   }
 
   private openSpiritMenu(unit: Unit) {
