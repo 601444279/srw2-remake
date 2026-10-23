@@ -3,7 +3,12 @@ import { TYPE_LABEL, type Unit, type Weapon } from "./data.ts";
 import type { Forecast, BattleEvent } from "./rules.ts";
 import { settings } from "./settings.ts";
 import { smoothUrl } from "./upscale.ts";
-import worldMapUrl from "../../assets/original/worldmap/map.png";
+import earthMapUrl from "../../assets/original/worldmap/map.png";
+import spaceMapUrl from "../../assets/original/worldmap/space.png";
+import americaMapUrl from "../../assets/original/worldmap/america.png";
+import type { WorldMapName } from "./story.ts";
+
+const worldMaps: Record<WorldMapName, string> = { earth: earthMapUrl, space: spaceMapUrl, america: americaMapUrl };
 import { traitLabel, type Trait } from "./traits.ts";
 
 export interface MenuItem {
@@ -363,7 +368,8 @@ export class UI {
   }
 
   // 世界地图（出击前的剧情背景）：原版地图 + 这一关的位置（闪烁的红点）
-  showWorldMap(marker: { x: number; y: number } | null) {
+  showWorldMap(map: WorldMapName, marker: { x: number; y: number } | null) {
+    const worldMapUrl = worldMaps[map];
     const el = $("#worldmap");
     el.innerHTML = `
       <div class="wm-frame">
@@ -481,38 +487,38 @@ export class UI {
   // ---------- 攻击预测 ----------
   // known = false：对方没交过手，命中、伤害、反击都不显示（它们取决于对方的能力和武器）
   // top：放在画面上方（敌方瞄准时用，不挡住下方的单位）
+  // 攻击预测：一块钢板，左攻右守镜像排列，中间 VS。
+  // 每边：头像、机体名、驾驶员（特性只给标签）、HP；分隔线下：武器、命中 / 伤害、结果
+  // known = false：对方没交过手，命中、伤害、反击都不显示（它们取决于对方的能力和武器）
   showForecast(atk: Unit, atkIcon: string, def: Unit, defIcon: string, weapon: Weapon, f: Forecast, known = true, top = false) {
     const el = $("#forecast");
     el.classList.toggle("top", top);
-    if (!known) {
-      const head = (u: Unit, icon: string) => `<div class="fc-head"><img src="${icon}" alt=""><div><b>${u.name}</b><small>${u.pilotName}</small></div></div>`;
-      el.innerHTML = `
-        <div class="fc-side ${atk.side}">${head(atk, atkIcon)}<div class="fc-weapon">${weapon.name}</div><div class="fc-nums muted">命中、伤害 ?</div></div>
-        <div class="fc-vs">VS</div>
-        <div class="fc-side ${def.side}">${head(def, defIcon)}<div class="fc-weapon">?</div><div class="fc-nums muted">${UNKNOWN_TEXT}</div></div>`;
-      el.hidden = false;
-      return;
-    }
-    const side = (u: Unit, icon: string, w: Weapon | null, s: { hit: number; damage: number; valid: boolean; lethal: boolean }, twice: boolean, other: Unit) => {
-      const after = Math.max(0, other.hp - (s.valid ? s.damage * (twice ? 2 : 1) : 0));
+    const head = (u: Unit, icon: string, showHp: boolean) => `
+      <div class="fc-head">
+        <img src="${icon}" alt="">
+        <div class="fc-id">
+          <b>${u.name}</b>
+          <small>${u.pilotName}${u.trait && showHp ? `<em>${traitLabel(u.trait)}</em>` : ""}</small>
+        </div>
+      </div>
+      ${showHp ? `<div class="fc-hp"><div class="bar"><i style="width:${Math.max(0, u.hp / u.maxHp) * 100}%"></i></div><span><b>${u.hp}</b>/${u.maxHp}</span></div>` : `<div class="fc-hp muted">${UNKNOWN_TEXT}</div>`}`;
+    const act = (w: Weapon | null, s: { hit: number; damage: number; valid: boolean; lethal: boolean } | null, twice: boolean, other: Unit) => {
+      if (!s) return `<div class="fc-act"><div class="fc-weapon">${w ? w.name : "?"}</div><div class="fc-nums"><div><small>命中</small><b>?</b></div><div><small>伤害</small><b>?</b></div></div></div>`;
+      if (!w || !s.valid) return `<div class="fc-act none"><div class="fc-weapon">${w ? w.name : "无法反击"}</div><div class="fc-nums"><div><small>命中</small><b>—</b></div><div><small>伤害</small><b>—</b></div></div></div>`;
+      const left = Math.max(0, other.hp - s.damage * (twice ? 2 : 1));
+      const result = s.lethal || left === 0 ? '<span class="kill">击破</span>' : `<span>对方剩 <b>${left}</b></span>`;
       return `
-        <div class="fc-side ${u.side}">
-          <div class="fc-head"><img src="${icon}" alt=""><div><b>${u.name}</b><small>${u.pilotName}</small></div></div>
-          ${u.trait ? `<div class="fc-trait"><em>${traitLabel(u.trait)}</em>${u.trait.text}</div>` : ""}
-          <div class="fc-hp"><div class="bar"><i style="width:${(u.hp / u.maxHp) * 100}%"></i></div><span>${u.hp}</span></div>
-          <div class="fc-weapon">${w ? w.name : "无法反击"}</div>
-          ${s.valid ? `
+        <div class="fc-act">
+          <div class="fc-weapon"><span>${w.name}</span><div class="fc-result">${result}</div></div>
           <div class="fc-nums">
-            <div><small>命中</small><b>${s.hit}%</b></div>
-            <div><small>伤害</small><b>${s.damage}${twice ? "<em>×2</em>" : ""}</b></div>
+            <div><small>命中</small><b>${s.hit}<i>%</i></b></div>
+            <div><small>伤害</small><b>${s.damage}${twice ? "<i>×2</i>" : ""}</b></div>
           </div>
-          <div class="fc-result">${s.lethal || after === 0 ? '<span class="kill">可击破</span>' : `对方剩 ${after}`}</div>` : '<div class="fc-nums muted">—</div>'}
         </div>`;
     };
-    el.innerHTML =
-      side(atk, atkIcon, weapon, f.attack, f.extra === "attacker", def) +
-      '<div class="fc-vs">VS</div>' +
-      side(def, defIcon, f.counter.weapon, f.counter, f.extra === "defender", atk);
+    const atkSide = `<div class="fc-side ${atk.side}">${head(atk, atkIcon, true)}${act(weapon, known ? f.attack : null, f.extra === "attacker", def)}</div>`;
+    const defSide = `<div class="fc-side ${def.side} mirror">${head(def, defIcon, known)}${known ? act(f.counter.weapon, f.counter, f.extra === "defender", atk) : act(null, null, false, atk)}</div>`;
+    el.innerHTML = `${atkSide}<div class="fc-vs"><span>VS</span></div>${defSide}`;
     el.hidden = false;
   }
 
@@ -577,16 +583,20 @@ export class UI {
   }
 
   // ---------- 结果 ----------
-  showResult(win: boolean, lines: string[], onRetry: () => void) {
+  showResult(win: boolean, lines: string[], onRetry: () => void, label = "再玩一次") {
     const el = $("#result");
     el.innerHTML = `
       <div class="card">
         <div class="title ${win ? "win" : "lose"}">${win ? "胜利" : "失败"}</div>
         ${lines.map((l) => `<div class="line">${l}</div>`).join("")}
-        <button>再玩一次</button>
+        <button>${label}</button>
       </div>`;
     el.querySelector("button")!.onclick = onRetry;
     el.hidden = false;
+  }
+
+  hideResult() {
+    $("#result").hidden = true;
   }
 
   // ---------- 剧情对话 ----------

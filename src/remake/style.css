@@ -81,7 +81,7 @@ button { text-shadow: inherit; }
 #map { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; text-shadow: none; }
 
 /* 窗口：切角钢板 + 斜纹 + 噪点划痕 + 左上角阵营色条 */
-#info, #menu, #forecast, #battle, #result .card, #dialog, #toast, #status .st-card, #battle-scene .bs-card, #battle-scene .bs-msg, #growth .gr-card, #settings, #autotest {
+#info, #menu, #forecast, #battle, #result .card, #dialog, #toast, #status .st-card, #battle-scene .bs-card, #battle-scene .bs-msg, #growth .gr-card, #settings, #autotest, #intermission .im-panel {
   --side: var(--label);
   border: 1px solid transparent;
   border-image: var(--edge-img);
@@ -201,7 +201,7 @@ body.no-mouse #menu:not(.from-hud) { pointer-events: none; }
 @keyframes banner { 0% { opacity: 0; transform: translateX(-40px); } 18%, 78% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translateX(40px); } }
 
 /* 大数字：金属渐变 + 硬投影 */
-.fc-nums b, #result .title {
+#result .title {
   background: var(--num-fill); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: none;
   filter: drop-shadow(2px 2px 0 #000); padding-right: 4px;
 }
@@ -219,25 +219,43 @@ body.no-mouse #menu:not(.from-hud) { pointer-events: none; }
 /* 攻击预测 */
 #forecast, #battle { position: fixed; left: 50%; transform: translateX(-50%); bottom: 56px; display: flex; align-items: stretch; gap: 12px; padding: 12px 16px; pointer-events: none; }
 #forecast.top { bottom: auto; top: 16px; }
-.fc-side { width: 260px; display: flex; flex-direction: column; gap: 6px; }
+/* 攻击预测：左攻右守，右边镜像；数字纯色（num-l），结果用小块标签 */
+#forecast { gap: 0; padding: 14px 18px; }
+.fc-side { width: 280px; display: flex; flex-direction: column; gap: 8px; }
+.fc-side.mirror { align-items: flex-end; text-align: right; }
 .fc-head { display: flex; gap: 10px; align-items: center; }
+.fc-side.mirror .fc-head { flex-direction: row-reverse; }
 .fc-head img, .bt-side img { width: 48px; height: 48px; image-rendering: pixelated; }
-.fc-head b { display: block; font: var(--f-title); }
-.fc-head small, .bt-name small { color: var(--dim); font: var(--f-small); }
-.fc-side.player .fc-head b, .bt-side.player b { color: var(--player); }
-.fc-side.enemy .fc-head b, .bt-side.enemy b { color: var(--enemy); }
-.fc-trait { font: var(--f-small); color: var(--dim); }
-.fc-trait em { font-style: normal; margin-right: 6px; padding: 0 6px; background: color-mix(in srgb, var(--accent) 18%, transparent); color: var(--accent); clip-path: var(--chamfer-s); }
-.fc-hp, .bt-hp { display: flex; align-items: center; gap: 8px; font: var(--f-num-s); }
+.fc-id { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.fc-id b { font: var(--f-title); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fc-id small { font: var(--f-small); color: var(--dim); display: flex; gap: 6px; align-items: center; }
+.fc-side.mirror .fc-id small { flex-direction: row-reverse; }
+.fc-id em { font: var(--f-small); font-style: normal; padding: 0 6px; background: color-mix(in srgb, var(--accent) 18%, transparent); color: var(--accent); clip-path: var(--chamfer-s); }
+.bt-name small { color: var(--dim); font: var(--f-small); }
+.fc-side.player .fc-id b, .bt-side.player b { color: var(--player); }
+.fc-side.enemy .fc-id b, .bt-side.enemy b { color: var(--enemy); }
+.fc-hp { width: 100%; display: flex; align-items: center; gap: 8px; font: var(--f-num-s); color: var(--dim); }
+.fc-side.mirror .fc-hp { flex-direction: row-reverse; }
+.fc-hp b { font: var(--f-num-m); color: var(--ink); }
+.fc-hp.muted { font: var(--f-small); }
+.bt-hp { display: flex; align-items: center; gap: 8px; font: var(--f-num-s); }
 .fc-hp .bar i, .bt-hp .bar i { transition: width .3s ease-out; }
-.fc-weapon { font: var(--f-body); color: var(--accent); }
-.fc-nums { display: flex; gap: 22px; }
+.fc-side.mirror .fc-hp .bar { transform: scaleX(-1); }
+.fc-act { width: 100%; display: flex; flex-direction: column; gap: 6px; padding-top: 10px; border-top: 1px solid rgba(255, 255, 255, 0.1); }
+.fc-side.mirror .fc-act { align-items: flex-end; }
+.fc-weapon { width: 100%; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font: var(--f-body); color: var(--ink); }
+.fc-side.mirror .fc-weapon { flex-direction: row-reverse; }
+.fc-nums { display: flex; gap: 24px; }
 .fc-nums small { display: block; font: var(--f-label); color: var(--label); margin-bottom: 4px; }
-.fc-nums b { font: var(--f-num-l); font-variant-numeric: tabular-nums; }
-.fc-nums em { font-style: inherit; font-size: 0.5em; margin-left: 2px; }
-.fc-result { font: var(--f-small); color: var(--dim); }
-.fc-result .kill { color: var(--danger); }
-.fc-vs { align-self: center; font: var(--f-en); font-size: 28px; color: var(--ink); }
+.fc-nums b { font: var(--f-num-l); color: var(--ink); text-shadow: var(--shadow); font-variant-numeric: tabular-nums; }
+.fc-nums i { font-style: inherit; font-size: 0.5em; margin-left: 2px; color: var(--dim); }
+.fc-act.none .fc-weapon, .fc-act.none .fc-nums b { color: var(--dim); text-shadow: none; }
+.fc-result { font: var(--f-small); color: var(--dim); white-space: nowrap; }
+.fc-result b { font: var(--f-num-s); color: var(--ink); }
+.fc-result .kill { display: inline-block; padding: 0 10px; font: var(--f-small); color: #fff; background: var(--danger); clip-path: var(--chamfer-s); }
+.fc-vs { align-self: stretch; display: flex; align-items: center; margin: 0 16px; position: relative; }
+.fc-vs::before { content: ""; position: absolute; left: 50%; top: 4px; bottom: 4px; width: 1px; background: rgba(255, 255, 255, 0.1); }
+.fc-vs span { position: relative; padding: 6px 0; background: var(--fill-a); font: var(--f-en); color: var(--dim); }
 
 /* 战斗面板 */
 #battle { bottom: auto; top: 64px; flex-wrap: wrap; width: min(640px, calc(100vw - 24px)); }
@@ -530,3 +548,35 @@ body.no-mouse #title { cursor: none; }
 /* 整屏淡入淡出：在地图、世界地图之上，在关卡标题和对话框之下 */
 #fade { position: fixed; inset: 0; z-index: 14; background: #000; opacity: 0; pointer-events: none; transition: opacity .5s ease; }
 #fade.on { opacity: 1; }
+
+/* 间章：改造机体和武器（intermission.ts） */
+#intermission { position: fixed; inset: 0; z-index: 30; display: grid; place-items: center; background: var(--scrim); }
+#intermission .im-panel { --side: var(--player); width: min(980px, calc(100vw - 24px)); max-height: calc(100vh - 32px); display: flex; flex-direction: column; gap: 10px; padding: 16px 18px; }
+#intermission header, #intermission footer { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+#intermission header b { font: var(--f-title); color: var(--ink); text-shadow: var(--shadow); margin-right: 12px; }
+#intermission header small, #intermission .im-hint { font: var(--f-small); color: var(--dim); }
+#intermission .im-money { font: var(--f-body); color: var(--dim); }
+#intermission .im-money b { font: var(--f-num-m); color: var(--accent); }
+#intermission .im-money.no { animation: tu-shake .12s linear 3; color: var(--danger); }
+#intermission .im-list { overflow: auto; display: flex; flex-direction: column; gap: 6px; padding-right: 4px; }
+#intermission .im-row { display: grid; grid-template-columns: 180px 1fr 1fr; gap: 8px; align-items: stretch; padding: 6px; border: 1px solid transparent; }
+#intermission .im-row.on { border-color: var(--edge); background: rgba(255, 255, 255, 0.03); }
+#intermission .im-who { display: flex; flex-direction: column; justify-content: center; gap: 2px; }
+#intermission .im-who b { font: var(--f-title); color: var(--player); text-shadow: var(--shadow); }
+#intermission .im-who small { font: var(--f-small); color: var(--dim); }
+#intermission .im-cell { all: unset; cursor: pointer; display: flex; flex-direction: column; gap: 4px; padding: 6px 10px; background: rgba(255, 255, 255, 0.04); clip-path: var(--chamfer-s); }
+#intermission .im-cell.on { background: rgba(255, 194, 26, 0.14); box-shadow: inset 0 0 0 1px var(--accent); }
+#intermission .im-cell.full { cursor: default; opacity: .75; }
+#intermission .im-cell-head { display: flex; justify-content: space-between; align-items: baseline; }
+#intermission .im-cell-head b { font: var(--f-body); color: var(--ink); }
+#intermission .im-pips { font: var(--f-num-s); color: var(--accent); letter-spacing: 1px; }
+#intermission .im-stats { display: flex; flex-wrap: wrap; gap: 2px 14px; }
+#intermission .im-stat { font: var(--f-num-s); color: var(--ink); }
+#intermission .im-stat i { font-style: normal; color: var(--dim); margin-right: 4px; }
+#intermission .im-stat em { font-style: normal; color: var(--hp); margin-left: 4px; }
+#intermission .im-cost { align-self: flex-end; font: var(--f-num-s); color: var(--label); }
+#intermission .im-go { all: unset; cursor: pointer; padding: 8px 18px; font: var(--f-body); color: #000; background: var(--accent); clip-path: var(--chamfer-s); }
+#intermission .im-go:hover { filter: brightness(1.1); }
+@media (max-width: 720px) {
+  #intermission .im-row { grid-template-columns: 1fr; }
+}

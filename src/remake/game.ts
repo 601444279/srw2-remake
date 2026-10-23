@@ -1,23 +1,24 @@
 // 游戏流程：我方回合（移动、攻击、精神、待机）、敌方回合、剧情。
 // 战斗、命中、伤害、经验等规则在 rules.ts 里调用原版规则代码；
 // 关卡事件（对话、援军、胜负、过关）和敌人 AI 由原版脚本驱动，见 events.ts。
-import { applyLevel, expProgress, expToNext, formIndexOf, formsOf, mechName, pilotForForm, transformUnit, type Stage, type Unit, type Weapon } from "./data.ts";
+import { applyLevel, expProgress, hasStage, expToNext, formIndexOf, formsOf, mechName, pilotForForm, transformUnit, type Stage, type Unit, type Weapon } from "./data.ts";
 import { StageEvents } from "./events.ts";
 import { key, pathTo, rangeFrom, reachable, inBounds, MOVE_TYPE_ROW, type Point, type Reach } from "./grid.ts";
 import type { Action } from "./input.ts";
 import type { DrawState, Overlay, Renderer } from "./render.ts";
 import type { GrowthStats, UI, MenuItem, StatusTab } from "./ui.ts";
 import { Rules, SPIRIT_FLAG, isRepair, rngState, setRngState, type BattleEvent, type Forecast } from "./rules.ts";
-import { describeTime, listSaves, readSave, requestLoad, writeSave, SAVE_VERSION, type SaveData, type SlotId } from "./saves.ts";
+import { describeTime, listSaves, readSave, requestLoad, requestNextStage, writeSave, SAVE_VERSION, type SaveData, type SlotId } from "./saves.ts";
 import { strikeSound, type Sfx } from "./sfx.ts";
 import { MUSIC, type Music } from "./music.ts";
 import { keyLabel, settings, TEXT_SPEEDS, type BindAction } from "./settings.ts";
 import { attackShout, damageCase, reactionShout } from "./shouts.ts";
 import { traitOf, type Trait } from "./traits.ts";
 import { levelForExp } from "./stats.ts";
+import { showIntermission } from "./intermission.ts";
 import { AutoTester, type AutoOptions, type AutoReport } from "./autotest.ts";
 import { BattleScene, attackTimeline, battleLayout, battleSpriteUrl, type AttackTimeline } from "./battle-scene.ts";
-import { loadScene, personName, portraitUrl, STAGE_STORY, WORLD_MARKER, type SceneRef } from "./story.ts";
+import { loadScene, personName, portraitUrl, STAGE_STORY, WORLD_MARKER, worldMapOf, type SceneRef } from "./story.ts";
 import { TransformScene, TRANSFORM_SONG, hasTransformScene, type TransformLine } from "./transform-scene.ts";
 
 type Mode = "browse" | "selected" | "moving" | "menu" | "target" | "allyTarget" | "busy" | "dialog" | "title" | "over" | "status" | "notice";
@@ -91,7 +92,8 @@ export class Game implements DrawState {
   private menuUnit: Unit | null = null;
   private pick: TargetPick | null = null;
   private turn = 1;
-  private money = { value: 0 };
+  // 资金（原版单位，画面 ×10）。过关进下一关时由 main.ts 带过来
+  readonly money = { value: 0 };
   private rules: Rules;
   onOpenSettings: () => void = () => {};
   // 对话播放中：等玩家按确定翻页
@@ -219,7 +221,7 @@ export class Game implements DrawState {
     await this.ui.fade(true, 0);
     this.music.play(STORY_BGM);
     // 原版出击前的对话在世界地图上（红点是这一关的位置），说完才进关卡地图
-    this.ui.showWorldMap(WORLD_MARKER[this.stage.number] ?? null);
+    this.ui.showWorldMap(worldMapOf(this.stage.number), WORLD_MARKER[this.stage.number] ?? null);
     await this.ui.fade(false, 0.3 / this.speed());
     await pause(1.3);
     await this.events.runStart();
@@ -1455,13 +1457,35 @@ export class Game implements DrawState {
 
   // 检查脚本走到「过关」「失败」「结局」。过关剧情、换曲都已经由脚本做完了
   private async finishStage(result: "clear" | "gameover" | "ending") {
+    // 自动测试结束会清掉 this.auto，先记下来（&chain 时过关要自己接着打下一关）
+    const chain = !!this.auto && new URLSearchParams(location.search).has("chain");
     this.auto?.finish({ clear: "过关", gameover: "失败", ending: "结局" }[result]);
     this.setMode("over");
     this.ui.closeMenu(false);
     this.ui.hideForecast();
-    const lines = [`回合数　${this.turn}`, `获得资金　${this.money.value * 10}G`];
+    const lines = [`回合数　${this.turn}`, `资金　${this.money.value * 10}G`];
     await wait(0.6);
-    this.ui.showResult(result !== "gameover", lines, () => location.reload());
+    // 过关：带着名册进下一关（等级、经验、当前形态都带过去；被击破的也回来，和原版一样修好再出击）
+    const nextStage = this.stage.number + 1;
+    if (result === "clear" && hasStage(nextStage)) {
+      const roster = this.stage.roster.map((m) => ({ ...m }));
+      for (const u of this.units) {
+        if (u.side !== "player" || u.npc || u.roster == null) continue;
+        const m = roster.find((r) => r.member === u.roster);
+        if (m) Object.assign(m, { unit: u.unitId, pilot: u.pilotId, level: u.levelIndex, exp: u.exp });
+      }
+      const go = () => requestNextStage({ stage: nextStage, roster, money: this.money.value });
+      // 自动测试带 &chain：不进间章，自己接着打下一关
+      if (chain) { this.ui.showResult(true, lines, go, `进入第 ${nextStage} 关`); setTimeout(go, 800); return; }
+      // 过关 → 间章（改造）→ 出击下一关
+      this.ui.showResult(true, lines, async () => {
+        this.ui.hideResult();
+        await showIntermission({ roster, money: this.money, cleared: this.stage.number, sfx: this.sfx, settingsOpen: () => !!(document.getElementById("settings") as HTMLDialogElement | null)?.open });
+        go();
+      }, "进入间章");
+      return;
+    }
+    this.ui.showResult(result !== "gameover", lines, () => location.reload(), result === "gameover" ? "回到标题" : "再玩一次");
   }
 
   // ---------- 目标选择 ----------

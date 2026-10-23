@@ -103,6 +103,19 @@ export async function importAll(data: Backup) {
   if (data.settings) localStorage.setItem(SETTINGS_KEY, JSON.stringify(data.settings));
 }
 
+// 过关进下一关：带着名册（等级、经验、形态）和资金整页重新载入，从下一关的开场开始
+export interface NextStage { stage: number; roster: RosterMember[]; money: number }
+const NEXT = "srw2-remake:next";
+export function requestNextStage(next: NextStage) {
+  sessionStorage.setItem(NEXT, JSON.stringify(next));
+  location.reload();
+}
+export function takeNextStage(): NextStage | null {
+  const v = sessionStorage.getItem(NEXT);
+  sessionStorage.removeItem(NEXT);
+  try { return v ? (JSON.parse(v) as NextStage) : null; } catch { return null; }
+}
+
 // 读档时整页重新载入，用 sessionStorage 带上要读的存档位（干净地重建所有状态）
 const PENDING = "srw2-remake:load";
 export function requestLoad(slot: SlotId | "new") {

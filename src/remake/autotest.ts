@@ -121,6 +121,12 @@ export class AutoTester {
       problems: this.problems,
     };
     console.log("[自动测试] 报告", report);
+    // 连着打好几关（&chain）时整页会重载，每关的结果记下来，最后一起看：sessionStorage「srw2-remake:autolog」
+    try {
+      const log = JSON.parse(sessionStorage.getItem("srw2-remake:autolog") ?? "[]");
+      log.push({ stage: report.stage, result: report.result, turns: report.turns, kills: report.kills, seconds: report.seconds, problems: report.problems });
+      sessionStorage.setItem("srw2-remake:autolog", JSON.stringify(log));
+    } catch { /* 存不了就算了 */ }
     this.render(report);
     this.resolve(report);
   }

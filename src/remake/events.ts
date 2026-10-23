@@ -237,7 +237,7 @@ export class StageEvents implements ScriptHost {
     const m = this.api.stage.roster.find((r) => r.member === roster);
     if (!m) return;
     const p = this.freeSpot({ x, y });
-    const unit = createUnit(this.api.stage, { side: "player", roster, x: p.x, y: p.y, unitId: m.unit, pilotId: m.pilot, level: m.level, aiScript: 0 });
+    const unit = createUnit(this.api.stage, { side: "player", roster, x: p.x, y: p.y, unitId: m.unit, pilotId: m.pilot, level: m.level, exp: m.exp, upgrades: m.upgrades, aiScript: 0 });
     await this.api.addUnit(unit);
   }
 

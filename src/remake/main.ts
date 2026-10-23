@@ -1,6 +1,6 @@
 import "./style.css";
 import "./theme.ts";
-import { loadStage, refreshSpiritText } from "./data.ts";
+import { INITIAL_ROSTER, loadStage, refreshSpiritText } from "./data.ts";
 import { Renderer } from "./render.ts";
 import { Input } from "./input.ts";
 import { UI } from "./ui.ts";
@@ -9,7 +9,7 @@ import { Sfx } from "./sfx.ts";
 import { Music } from "./music.ts";
 import { SettingsPanel } from "./settings-panel.ts";
 import { settings } from "./settings.ts";
-import { readSave, requestLoad, takePendingLoad } from "./saves.ts";
+import { readSave, requestLoad, takeNextStage, takePendingLoad } from "./saves.ts";
 import { showTitle } from "./title.ts";
 
 async function boot() {
@@ -17,7 +17,19 @@ async function boot() {
   // 读档是整页重新载入：先看有没有要读的存档，有的话用存档里的关卡、名册和单位
   const pending = takePendingLoad();
   const save = pending !== null && pending !== "new" ? await readSave(pending) : null;
-  const stage = loadStage(save?.stage ?? 1, save?.roster);
+  // 过关进下一关（game.finishStage → requestNextStage）。开发时地址加 ?stage=N 直接从第 N 关开始（初始名册）
+  let next = takeNextStage();
+  // 自动测试连着打（&chain）时，每进一关记一份；改代码触发整页重载也能从这一关接着跑
+  if (import.meta.env.DEV && new URLSearchParams(location.search).has("chain")) {
+    if (next) sessionStorage.setItem("srw2-remake:chain-current", JSON.stringify(next));
+    else next = JSON.parse(sessionStorage.getItem("srw2-remake:chain-current") ?? "null");
+  }
+  const devParams = new URLSearchParams(location.search);
+  const devStage = import.meta.env.DEV ? Number(devParams.get("stage")) || null : null;
+  // 开发时 &lv=N：初始名册全员 N 级（测后面的关卡用）
+  const devLevel = import.meta.env.DEV ? Number(devParams.get("lv")) || 0 : 0;
+  const devRoster = devLevel ? INITIAL_ROSTER.map((m) => ({ ...m, level: Math.max(m.level, devLevel - 1) })) : undefined;
+  const stage = loadStage(save?.stage ?? next?.stage ?? devStage ?? 1, save?.roster ?? next?.roster ?? devRoster);
   if (save) stage.units.splice(0, stage.units.length, ...save.units);
   if (save) refreshSpiritText(stage.units);
   const renderer = new Renderer(canvas);
@@ -86,17 +98,20 @@ async function boot() {
     await game.demoLevelUp();
     return;
   }
-  // 自动测试（开发时）：地址加 ?autoplay，可带 &turns=30&speed=8&battle=full|simple&sound=1
+  // 自动测试（开发时）：地址加 ?autoplay，可带 &turns=30&speed=8&battle=full|simple&sound=1&stage=N&lv=N&chain
+  //（chain：过关后自动进下一关接着打，名册带过去）
   const params = new URLSearchParams(location.search);
   if (import.meta.env.DEV && params.has("autoplay")) {
     const num = (k: string) => Number(params.get(k)) || undefined;
     const battle = params.get("battle");
+    if (next) game.money.value = next.money;
     void game.autoplay({ turns: num("turns"), speed: num("speed"), battle: battle === "full" || battle === "simple" ? battle : undefined, mute: !params.has("sound") });
     await game.start();
     return;
   }
   if (save) await game.resumeFromSave(save);
-  else if (pending === "new") await game.start();
+  else if (next) { game.money.value = next.money; await game.start(); }
+  else if (pending === "new" || devStage) await game.start();
   else {
     // 正常打开游戏：标题画面 → 主菜单。继续 / 读档整页重新载入（干净地重建状态）
     titleOpen = true;

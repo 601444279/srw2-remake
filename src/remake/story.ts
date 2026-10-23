@@ -66,11 +66,68 @@ export function loadScene(ref: SceneRef): Line[] {
 }
 
 // 关卡标题卡（原版是 CHR 里现成的字形图块，还没提取排列表，先手写已知的）
-// 世界地图上这一关的位置（红点，assets/original/worldmap/map.png 的像素坐标，原版出击前的剧情画面）
+// 出击前剧情的世界地图（原版画面截出来的，assets/original/worldmap/）：第 1–13 关地球，14–22 关宇宙航线，23–26 关美洲。
+// 红点是这一关的位置（地图图片里的像素坐标）。标题是原版关卡标题卡上的字（原版是现成的字形图块，不是文本）。
+// 都是在模拟器里把关卡号 $7411 改成各关、让原版播出击前流程截出来的
+export type WorldMapName = "earth" | "space" | "america";
+export function worldMapOf(stage: number): WorldMapName {
+  return stage <= 13 ? "earth" : stage <= 22 ? "space" : "america";
+}
+
 export const WORLD_MARKER: Record<number, { x: number; y: number }> = {
-  1: { x: 3.5, y: 11.5 },
+  1: { x: 4.0, y: 12.0 },
+  2: { x: 20.0, y: 44.0 },
+  3: { x: 4.0, y: 100.0 },
+  4: { x: 4.0, y: 100.0 },
+  5: { x: 52.0, y: 100.0 },
+  6: { x: 84.0, y: 116.0 },
+  7: { x: 84.0, y: 116.0 },
+  8: { x: 84.0, y: 28.0 },
+  9: { x: 132.0, y: 60.0 },
+  10: { x: 204.0, y: 68.0 },
+  11: { x: 212.0, y: 52.0 },
+  12: { x: 156.0, y: 60.0 },
+  13: { x: 156.0, y: 60.0 },
+  14: { x: 44.0, y: 124.0 },
+  15: { x: 148.0, y: 108.0 },
+  16: { x: 188.0, y: 84.0 },
+  17: { x: 148.0, y: 60.0 },
+  18: { x: 108.0, y: 108.0 },
+  19: { x: 220.0, y: 44.0 },
+  20: { x: 212.0, y: 12.0 },
+  21: { x: 212.0, y: 12.0 },
+  22: { x: 12.0, y: 92.0 },
+  23: { x: 132.0, y: 28.0 },
+  24: { x: 116.0, y: 84.0 },
+  25: { x: 156.0, y: 116.0 },
+  26: { x: 156.0, y: 116.0 },
 };
 
 export const STAGE_STORY: Record<number, { title: string; subtitle: string }> = {
   1: { title: "第1篇", subtitle: "救出刚达Z" },
+  2: { title: "第2篇", subtitle: "凶街" },
+  3: { title: "第3篇", subtitle: "达卡尔之血" },
+  4: { title: "第4篇", subtitle: "S．巴库" },
+  5: { title: "第5篇", subtitle: "背叛的荒野" },
+  6: { title: "第6篇", subtitle: "破坏敌要塞" },
+  7: { title: "第7篇", subtitle: "决斗" },
+  8: { title: "第8篇", subtitle: "圈套" },
+  9: { title: "第9篇", subtitle: "复仇" },
+  10: { title: "第10篇", subtitle: "夫奥" },
+  11: { title: "第11篇", subtitle: "终极机器人" },
+  12: { title: "第12篇", subtitle: "拉萨之战" },
+  13: { title: "第13篇", subtitle: "影子" },
+  14: { title: "第14篇", subtitle: "向着宇宙……" },
+  15: { title: "第15篇", subtitle: "激战" },
+  16: { title: "第16篇", subtitle: "逃脱" },
+  17: { title: "第17篇", subtitle: "起动" },
+  18: { title: "第18篇", subtitle: "潜入帕托" },
+  19: { title: "第19篇", subtitle: "决战月球" },
+  20: { title: "第20篇", subtitle: "决战古拉" },
+  21: { title: "第21篇", subtitle: "停止吧，时间！" },
+  22: { title: "第22篇", subtitle: "突入大气层" },
+  23: { title: "第23篇", subtitle: "反击" },
+  24: { title: "第24篇", subtitle: "亡灵" },
+  25: { title: "第25篇", subtitle: "巴塔利二世" },
+  26: { title: "第26篇", subtitle: "黎明的决斗" },
 };
