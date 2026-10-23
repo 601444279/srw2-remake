@@ -1,6 +1,6 @@
 import "./style.css";
 import "./theme.ts";
-import { INITIAL_ROSTER, loadStage, refreshSpiritText } from "./data.ts";
+import { INITIAL_ROSTER, campaignRoster, loadStage, refreshSpiritText } from "./data.ts";
 import { Renderer } from "./render.ts";
 import { Input } from "./input.ts";
 import { UI } from "./ui.ts";
@@ -26,9 +26,10 @@ async function boot() {
   }
   const devParams = new URLSearchParams(location.search);
   const devStage = import.meta.env.DEV ? Number(devParams.get("stage")) || null : null;
-  // 开发时 &lv=N：初始名册全员 N 级（测后面的关卡用）
+  // 开发时 ?stage=N：名册按一路打过来的样子模拟（data.ts campaignRoster）；&lv=N 再把全员拉到 N 级
   const devLevel = import.meta.env.DEV ? Number(devParams.get("lv")) || 0 : 0;
-  const devRoster = devLevel ? INITIAL_ROSTER.map((m) => ({ ...m, level: Math.max(m.level, devLevel - 1) })) : undefined;
+  const devBase = devStage && devStage > 1 ? campaignRoster(devStage) : INITIAL_ROSTER;
+  const devRoster = devLevel || devBase !== INITIAL_ROSTER ? devBase.map((m) => ({ ...m, level: Math.max(m.level, devLevel - 1) })) : undefined;
   const stage = loadStage(save?.stage ?? next?.stage ?? devStage ?? 1, save?.roster ?? next?.roster ?? devRoster, next?.benched);
   if (save) stage.units.splice(0, stage.units.length, ...save.units);
   if (save) refreshSpiritText(stage.units);
@@ -98,14 +99,21 @@ async function boot() {
     await game.demoLevelUp();
     return;
   }
-  // 自动测试（开发时）：地址加 ?autoplay，可带 &turns=30&speed=8&battle=full|simple&sound=1&stage=N&lv=N&chain
-  //（chain：过关后自动进下一关接着打，名册带过去）
+  // 自动测试（开发时）：地址加 ?autoplay，可带 &turns=30&speed=8&battle=full|simple&sound=1&stage=N&lv=N&chain&queue=7,10,11
+  //（chain：过关后自动进下一关接着打，名册带过去；queue：这一关打完换 queue 里的下一关，各自从模拟名册开始）
   const params = new URLSearchParams(location.search);
   if (import.meta.env.DEV && params.has("autoplay")) {
     const num = (k: string) => Number(params.get(k)) || undefined;
     const battle = params.get("battle");
     if (next) game.money.value = next.money;
-    void game.autoplay({ turns: num("turns"), speed: num("speed"), battle: battle === "full" || battle === "simple" ? battle : undefined, mute: !params.has("sound") });
+    const done = game.autoplay({ turns: num("turns"), speed: num("speed"), battle: battle === "full" || battle === "simple" ? battle : undefined, mute: !params.has("sound") });
+    const queue = (params.get("queue") ?? "").split(",").filter(Boolean);
+    if (queue.length) void done.then(() => setTimeout(() => {
+      const [stage, ...rest] = queue;
+      params.set("stage", stage);
+      if (rest.length) params.set("queue", rest.join(",")); else params.delete("queue");
+      location.search = params.toString();
+    }, 1500));
     await game.start();
     return;
   }

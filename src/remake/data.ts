@@ -155,6 +155,8 @@ export interface StageEvents {
   victoryText: string;
   scripts: { start: Script; enemyPhase: Script; check: Script };
   npcScripts: Record<string, Script>;
+  // 格子事件：pilot 为 null 表示谁都行；有 script 的是事件脚本，有 shop 的是商店（还没做）
+  tiles?: { x: number; y: number; pilot: number | null; script?: Script; shop?: number }[];
 }
 
 export interface Stage {
@@ -348,24 +350,66 @@ export function hasStage(number: number) {
 // 开局名册（data/roster.json）
 export const INITIAL_ROSTER: RosterMember[] = roster.members;
 
-// 出击选择（重制版新增，docs/design.md 4.4）：这一关原版的出场名单（部署第 4 段，每个位置对应一个名册号）里、
-// 名册上有的人可以选。主角（名册 0 号，原版固定进单位槽 0）和剧情里「此人被击坠就失败」的人（脚本里
-// exists 不成立就走到 gameOver）必须出场。名单外的人原版这一关剧情里不在场，不能带上
-export function stageLineup(number: number, rosterMembers: RosterMember[]) {
-  const events = pick<StageEvents>(eventFiles, `stage${pad(number)}.json`);
-  const mustLive = new Set<number>();
+// 这一关的目标（从脚本里读）：脚本里「exists p 不成立就跳转」，顺着跳过去的那条路（只跟无条件跳转，
+// 碰到条件跳转或 stop 就不算）先走到 gameOver 的，p 是 mustLive（不在了就失败）；先走到过关 / 结局的，p 是 defeat（打倒就过关）。
+// exits = 撤离格（格子脚本里有 removeSelf）
+type Op = { at: string; op: string; pilot?: number; to?: string };
+function outcome(ops: Op[], i: number): "lose" | "win" | null {
+  for (let k = 0; k < 40 && i >= 0 && i < ops.length; k++) {
+    const o = ops[i];
+    if (o.op === "gameOver") return "lose";
+    if (o.op === "stageClear" || o.op === "ending") return "win";
+    if (o.op === "stop" || o.op === "jumpIfTrue" || o.op === "jumpIfFalse") return null;
+    i = o.op === "jump" ? ops.findIndex((x) => x.at === o.to) : i + 1;
+  }
+  return null;
+}
+export function stageGoals(events: StageEvents) {
+  const mustLive = new Set<number>(), defeat = new Set<number>();
   for (const sc of Object.values(events.scripts ?? {})) {
-    const ops = (sc as { ops?: { at: string; op: string; pilot?: number; to?: string }[] }).ops ?? [];
+    const ops = (sc as Script).ops as Op[];
     ops.forEach((o, i) => {
       if (o.op !== "exists" || o.pilot === undefined || ops[i + 1]?.op !== "jumpIfFalse") return;
-      const t = ops.findIndex((x) => x.at === ops[i + 1].to);
-      if (t >= 0 && ops.slice(t, t + 6).some((x) => x.op === "gameOver")) mustLive.add(o.pilot);
+      const r = outcome(ops, ops.findIndex((x) => x.at === ops[i + 1].to));
+      if (r === "lose") mustLive.add(o.pilot);
+      if (r === "win") defeat.add(o.pilot);
     });
   }
+  const exits = (events.tiles ?? []).filter((t) => t.script?.ops.some((o) => o.op === "removeSelf")).map((t) => ({ x: t.x, y: t.y }));
+  return { mustLive: [...mustLive], defeat: [...defeat], exits };
+}
+
+// 出击选择（重制版新增，docs/design.md 4.4）：这一关原版的出场名单（部署第 4 段，每个位置对应一个名册号）里、
+// 名册上有的人可以选。主角（名册 0 号，原版固定进单位槽 0）和剧情里不在了就失败的人（stageGoals 的 mustLive）
+// 必须出场。名单外的人原版这一关剧情里不在场，不能带上
+export function stageLineup(number: number, rosterMembers: RosterMember[]) {
+  const { mustLive } = stageGoals(pick<StageEvents>(eventFiles, `stage${pad(number)}.json`));
   const slots = deployments[number - 1].players.map((p) => p.order);
   const members = slots.map((n) => rosterMembers.find((m) => m.member === n)).filter((m): m is RosterMember => !!m);
-  const forced = new Set(members.filter((m) => m.member === 0 || [...mustLive].some((p) => samePilot(m.pilot, p))).map((m) => m.member));
+  const forced = new Set(members.filter((m) => m.member === 0 || mustLive.some((p) => samePilot(m.pilot, p))).map((m) => m.member));
   return { slots: slots.length, members, forced };
+}
+
+// 开发测试用：直接从第 n 关开始时，模拟一路打过来的名册。把前面各关脚本里的入队、离队、换机体按顺序走一遍
+// （劝降这类看玩家选择的不算）。像一个正常练级、用间章改造的玩家：等级至少比这一关敌人的平均等级高 5，
+// 机体、武器各改 5 段（只拉到敌人平均等级、不改造的话，后半程连主力都打不过头目）
+export function campaignRoster(n: number): RosterMember[] {
+  const team = new Map(INITIAL_ROSTER.map((m) => [m.member, { ...m }]));
+  type RosterOp = { op: string; roster?: number; pilot?: number; newPilot?: number; mech?: number; level?: number };
+  for (let s = 1; s < n; s++) {
+    const events = pick<StageEvents>(eventFiles, `stage${pad(s)}.json`);
+    for (const sc of Object.values(events.scripts)) for (const o of (sc as Script).ops as RosterOp[]) {
+      if (o.op === "rosterAdd") team.set(o.roster!, { member: o.roster!, pilot: o.pilot!, unit: o.mech!, level: o.level! });
+      else if (o.op === "rosterRemove") team.delete(o.roster!);
+      else if (o.op === "changeMech" || o.op === "changePilotMech") {
+        const m = [...team.values()].find((x) => samePilot(x.pilot, o.pilot!));
+        if (m) { m.unit = o.mech!; if (o.newPilot !== undefined) m.pilot = o.newPilot; }
+      }
+    }
+  }
+  const foes = deployments[n - 1].enemies;
+  const level = foes.length ? Math.round(foes.reduce((a, e) => a + e.b, 0) / foes.length) : 0;
+  return [...team.values()].map((m) => ({ ...m, level: Math.max(m.level, level + 5), exp: undefined, upgrades: { body: 5, weapon: 5 } }));
 }
 
 // benched：出击选择里没选上的名册号（剧情中途靠脚本出场的照样会出来）

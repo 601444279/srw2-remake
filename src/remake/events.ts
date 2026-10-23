@@ -122,6 +122,17 @@ export class StageEvents implements ScriptHost {
     return runner;
   }
 
+  // 格子事件（原版 bank 10 $95A2，看当前单位的位置）。模拟器实测（tools/tile-probe.js）：第 21 关走到出口格，
+  // 移动时不触发，选「待命」结束行动时才跑格子脚本（撤离 → 最后一个撤离的置关卡标志 10 → 检查脚本过关）
+  async runTile(unit: Unit) {
+    if (this.finished || unit.hp <= 0) return;
+    const tile = this.api.stage.events.tiles?.find((t) => t.script && t.x === unit.x && t.y === unit.y && (t.pilot === null || samePilot(unit.pilotId, t.pilot)));
+    if (!tile?.script) return;
+    this.self = unit;
+    await new ScriptRunner(tile.script, this).resume();
+    this.self = null;
+  }
+
   async runUnit(unit: Unit) {
     const runner = this.runnerFor(unit);
     this.self = unit;

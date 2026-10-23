@@ -17,6 +17,7 @@ import { traitOf, type Trait } from "./traits.ts";
 import { levelForExp } from "./stats.ts";
 import { showIntermission } from "./intermission.ts";
 import { showSortie } from "./sortie.ts";
+import { AutoPilot } from "./autopilot.ts";
 import { AutoTester, type AutoOptions, type AutoReport } from "./autotest.ts";
 import { BattleScene, attackTimeline, battleLayout, battleSpriteUrl, type AttackTimeline } from "./battle-scene.ts";
 import { loadScene, personName, portraitUrl, STAGE_STORY, WORLD_MARKER, worldMapOf, type SceneRef } from "./story.ts";
@@ -885,19 +886,23 @@ export class Game implements DrawState {
     this.startPick("allyTarget", targets, {
       confirm: async (t) => {
         this.setMode("busy");
-        // 原版：不进战斗画面，在地图上被修理的单位身上放回复特效（星星闪烁的虚点圆圈，04 号音效），然后回复量跳出来（05 号音效）
-        const amount = this.rules.repair(unit, t);
-        this.setCursor(t.x, t.y);
-        this.sfx.play(0x04);
-        await wait(this.renderer.mapFx("heal", t, this.speed()));
-        this.sfx.play(0x05);
-        this.renderer.float(t, `+${amount}`, "hp");
-        this.refreshInfo();
-        await wait(1.0 / this.speed());
+        await this.repairOnMap(unit, t);
         this.finishAction(unit);
       },
       cancel: back,
     });
+  }
+
+  // 原版：不进战斗画面，在地图上被修理的单位身上放回复特效（星星闪烁的虚点圆圈，04 号音效），然后回复量跳出来（05 号音效）
+  private async repairOnMap(unit: Unit, t: Unit) {
+    const amount = this.rules.repair(unit, t);
+    this.setCursor(t.x, t.y);
+    this.sfx.play(0x04);
+    await wait(this.renderer.mapFx("heal", t, this.speed()));
+    this.sfx.play(0x05);
+    this.renderer.float(t, `+${amount}`, "hp");
+    this.refreshInfo();
+    await wait(1.0 / this.speed());
   }
 
   private openSpiritMenu(unit: Unit) {
@@ -997,6 +1002,7 @@ export class Game implements DrawState {
     unit.acted = true;
     this.deselect();
     this.setMode("busy");
+    await this.events.runTile(unit);
     await this.events.runCheck();
     if (this.mode === "over") return;
     this.setMode("browse");
@@ -1320,25 +1326,31 @@ export class Game implements DrawState {
     return auto.done;
   }
 
-  // 我方回合交给 AI：能打就打（偶尔先用精神），打不到就接近；然后结束回合
+  // 我方回合交给测试 AI（autopilot.ts）：撤离、修理、伤重撤退、挑最划算的攻击、稳妥接近；然后结束回合
   private async autoPlayerTurn() {
     const auto = this.auto!;
     this.setMode("busy");
+    const pilot = new AutoPilot({
+      stage: this.stage, rules: this.rules, units: this.units, repairTerrain: REPAIR_TERRAIN,
+      reach: (u) => this.unitReach(u), threat: (u, r) => this.threat(u, r),
+    });
     try {
-      for (const u of this.players()) {
+      // 会修理的最后动（先让别人打完、受伤的撤回来）
+      const order = this.players().filter((u) => !u.npc).sort((a, b) => Number(a.weapons.some(isRepair)) - Number(b.weapons.some(isRepair)));
+      for (const u of order) {
         if (u.acted || u.hp <= 0 || u.npc) continue;
-        this.autoSpirit(u);
-        const plan = this.rules.pickAttack(u, this.units, 3, true);
+        this.autoSpirit(u, pilot.hurry);
+        const plan = pilot.plan(u);
         if (plan) {
           const moved = plan.to.x !== u.x || plan.to.y !== u.y;
           await this.focus(u);
           if (moved) await this.moveUnit(u, plan.to);
-          await this.battle(u, plan.weapon, plan.target, moved);
-        } else {
-          const to = this.rules.approach(u, this.units);
-          if (to && (to.x !== u.x || to.y !== u.y)) await this.moveUnit(u, to);
+          if (plan.kind === "attack") await this.battle(u, plan.weapon, plan.target, moved);
+          else if (plan.kind === "repair") await this.repairOnMap(u, plan.target);
         }
+        pilot.invalidate();
         u.acted = true;
+        await this.events.runTile(u);
         await this.events.runCheck();
         auto.check(this.units);
         if (this.mode === "over") return;
@@ -1352,12 +1364,13 @@ export class Game implements DrawState {
     await this.endTurn();
   }
 
-  // 血少时用回复类精神；其他时候有一定机会随便用一个（顺便测精神）
-  private autoSpirit(u: Unit) {
+  // 血少时用回复类精神；要赶路（撤离关）时用加速 / 疾风；其他时候有一定机会随便用一个（顺便测精神）
+  private autoSpirit(u: Unit, hurry = false) {
     const menu = this.rules.spiritMenu(u, this.units).filter((s) => s.usable && s.def.effect.kind !== "warp" && !(s.def.effect.kind === "heal" && s.def.effect.target === "ally"));
     if (!menu.length) return;
     const heal = menu.find((s) => s.def.effect.kind === "heal");
-    const pick = u.hp < u.maxHp * 0.4 && heal ? heal : Math.random() < 0.25 ? menu[Math.floor(Math.random() * menu.length)] : null;
+    const speed = menu.filter((s) => s.def.effect.kind === "flag" && (s.def.effect.flag ?? 0) & (SPIRIT_FLAG.ACCEL | SPIRIT_FLAG.GALE)).sort((a, b) => b.def.cost - a.def.cost)[0];
+    const pick = u.hp < u.maxHp * 0.4 && heal ? heal : hurry && speed ? speed : Math.random() < 0.25 ? menu[Math.floor(Math.random() * menu.length)] : null;
     if (!pick) return;
     this.rules.useSpirit(u, pick.spirit.id, this.units);
     this.auto!.spirits++;
