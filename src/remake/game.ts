@@ -87,6 +87,8 @@ export class Game implements DrawState {
   // 移动前的单位菜单打开时，背景显示移动范围
   private reachPreview = false;
   private status: { unit: Unit; tab: StatusTab; back: () => void } | null = null;
+  // 开着单位菜单的那个单位（左下角简要资料用）
+  private menuUnit: Unit | null = null;
   private pick: TargetPick | null = null;
   private turn = 1;
   private money = { value: 0 };
@@ -1485,10 +1487,13 @@ export class Game implements DrawState {
   // ---------- 辅助 ----------
   private openMenu(items: MenuItem[], at: Point, onCancel: () => void, reachPreview = false) {
     this.reachPreview = reachPreview;
+    // 单位菜单（at 是单位）时左下角显示这个单位的简要资料
+    this.menuUnit = "side" in at ? (at as Unit) : null;
     this.setMode("menu");
     const s = 16 * this.renderer.zoom;
     const pos = this.renderer.tileToScreen(at);
     this.ui.openMenu(items, pos.x + s * 1.2, pos.y, onCancel);
+    this.refreshInfo();
   }
 
   // 右上角按钮：再点一次收起。我方回合里随时能打开：单位菜单、选攻击目标时也行，「返回」原样回到刚才的菜单。
@@ -1562,8 +1567,10 @@ export class Game implements DrawState {
 
   private setMode(mode: Mode) {
     this.mode = mode;
+    if (mode !== "menu") this.menuUnit = null;
     document.body.classList.toggle("story", mode === "dialog" || mode === "title");
     this.refreshHints();
+    this.refreshInfo();
   }
 
   private setCursor(x: number, y: number, refresh = true) {
@@ -1572,8 +1579,11 @@ export class Game implements DrawState {
     if (refresh) this.refreshInfo();
   }
 
+  // 左下角简要资料：只在点了某个单位之后显示（它的单位菜单开着，或正在给它选目的地），
+  // 光标路过不显示，剧情、敌方回合、动画中也不显示。选目的地时地形跟着光标走
   private refreshInfo() {
-    const unit = this.unitAt(this.cursor) ?? (this.mode === "selected" ? this.selected : null);
+    const unit = this.mode === "selected" ? this.selected : this.mode === "menu" && !this.ui.hudMenuOpen ? this.menuUnit : null;
+    if (!unit) { this.ui.showInfo(null, "", true, null); return; }
     const t = this.stage.map.terrain[this.cursor.y][this.cursor.x];
     const effect = this.stage.terrainEffect[t];
     this.ui.showInfo(unit ?? null, unit ? this.renderer.iconUrl(unit) : "", unit ? this.known(unit) : true, {
