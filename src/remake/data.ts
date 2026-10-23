@@ -350,29 +350,36 @@ export function hasStage(number: number) {
 // 开局名册（data/roster.json）
 export const INITIAL_ROSTER: RosterMember[] = roster.members;
 
-// 这一关的目标（从脚本里读）：脚本里「exists p 不成立就跳转」，顺着跳过去的那条路（只跟无条件跳转，
-// 碰到条件跳转或 stop 就不算）先走到 gameOver 的，p 是 mustLive（不在了就失败）；先走到过关 / 结局的，p 是 defeat（打倒就过关）。
+// 这一关的目标（从脚本里读）：脚本里「exists p」之后，p 不在了的那条路（条件跳转两边都跟）一定走到 gameOver、
+// 而 p 还在的那条路不一定，p 就是 mustLive（不在了就失败）；同理一定走到过关 / 结局的是 defeat（打倒就过关）。
 // exits = 撤离格（格子脚本里有 removeSelf）
 type Op = { at: string; op: string; pilot?: number; to?: string };
-function outcome(ops: Op[], i: number): "lose" | "win" | null {
-  for (let k = 0; k < 40 && i >= 0 && i < ops.length; k++) {
-    const o = ops[i];
-    if (o.op === "gameOver") return "lose";
-    if (o.op === "stageClear" || o.op === "ending") return "win";
-    if (o.op === "stop" || o.op === "jumpIfTrue" || o.op === "jumpIfFalse") return null;
-    i = o.op === "jump" ? ops.findIndex((x) => x.at === o.to) : i + 1;
+function outcomes(ops: Op[], start: number): Set<string> {
+  const out = new Set<string>(), seen = new Set<number>(), todo = [start];
+  while (todo.length) {
+    const i = todo.pop()!;
+    if (i < 0 || i >= ops.length || seen.has(i)) continue;
+    seen.add(i);
+    const o = ops[i], to = () => ops.findIndex((x) => x.at === o.to);
+    if (o.op === "gameOver") out.add("lose");
+    else if (o.op === "stageClear" || o.op === "ending") out.add("win");
+    else if (o.op === "stop") out.add("stop");
+    else if (o.op === "jump") todo.push(to());
+    else if (o.op === "jumpIfTrue" || o.op === "jumpIfFalse") todo.push(to(), i + 1);
+    else todo.push(i + 1);
   }
-  return null;
+  return out;
 }
+const only = (s: Set<string>, kind: string) => s.size === 1 && s.has(kind);
 export function stageGoals(events: StageEvents) {
   const mustLive = new Set<number>(), defeat = new Set<number>();
   for (const sc of Object.values(events.scripts ?? {})) {
     const ops = (sc as Script).ops as Op[];
     ops.forEach((o, i) => {
       if (o.op !== "exists" || o.pilot === undefined || ops[i + 1]?.op !== "jumpIfFalse") return;
-      const r = outcome(ops, ops.findIndex((x) => x.at === ops[i + 1].to));
-      if (r === "lose") mustLive.add(o.pilot);
-      if (r === "win") defeat.add(o.pilot);
+      const gone = outcomes(ops, ops.findIndex((x) => x.at === ops[i + 1].to)), here = outcomes(ops, i + 2);
+      if (only(gone, "lose") && !only(here, "lose")) mustLive.add(o.pilot);
+      if (only(gone, "win") && !only(here, "win")) defeat.add(o.pilot);
     });
   }
   const exits = (events.tiles ?? []).filter((t) => t.script?.ops.some((o) => o.op === "removeSelf")).map((t) => ({ x: t.x, y: t.y }));

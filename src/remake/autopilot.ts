@@ -82,6 +82,14 @@ export class AutoPilot {
     }
 
     const attack = this.bestAttack(u, stops, vip) ?? (!vip && hpRate > 0.6 ? this.bestAttack(u, stops, false, "anyScore") : null);
+    // 有要打倒的头目（常常还有回合限制）：离头目还远就别在路上纠缠，除非这一下能打掉对方
+    const bossList = this.enemies().filter((e) => this.isBoss(e));
+    if (attack?.kind === "attack" && bossList.length && !vip && !this.isBoss(attack.target)) {
+      const field = this.field(bossList, u);
+      const far = (field.get(key(map, u.x, u.y)) ?? 9999) > this.w.rules.mobility(u) * 2;
+      const kills = this.w.rules.forecast(u, attack.weapon, attack.target, attack.to, attack.to.x !== u.x || attack.to.y !== u.y).attack.damage >= attack.target.hp;
+      if (far && !kills) return { kind: "move", to: this.toward(stops, bossList, u, 0.25) };
+    }
     if (attack) return attack;
 
     // 接近：要保护的人找最安全的格子待着；其他人往敌人那边走，不停在太危险的格子
@@ -92,7 +100,9 @@ export class AutoPilot {
     const bosses = this.enemies().filter((e) => this.isBoss(e));
     const goal = threats.length ? threats : bosses.length ? bosses : this.enemies();
     if (!goal.length) return null;
-    return { kind: "move", to: this.toward(stops, goal, u, hpRate > 0.7 ? 1 : 3) };
+    // 去打头目时少顾忌一点危险（常常有回合限制）
+    const caution = goal === bosses ? (hpRate > 0.5 ? 0.25 : 1) : hpRate > 0.7 ? 1 : 3;
+    return { kind: "move", to: this.toward(stops, goal, u, caution) };
   }
 
   private canHeal(u: Unit) {
