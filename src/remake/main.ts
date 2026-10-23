@@ -1,5 +1,6 @@
 import "./style.css";
 import "./theme.ts";
+import { samePilot } from "./rules.ts";
 import { INITIAL_ROSTER, campaignRoster, loadStage, refreshSpiritText } from "./data.ts";
 import { Renderer } from "./render.ts";
 import { Input } from "./input.ts";
@@ -32,6 +33,11 @@ async function boot() {
   const devRoster = devLevel || devBase !== INITIAL_ROSTER ? devBase.map((m) => ({ ...m, level: Math.max(m.level, devLevel - 1) })) : undefined;
   const stage = loadStage(save?.stage ?? next?.stage ?? devStage ?? 1, save?.roster ?? next?.roster ?? devRoster, next?.benched);
   if (save) stage.units.splice(0, stage.units.length, ...save.units);
+  // 旧存档里名册 2 号、4 号弄反了（data.ts fixLegacyRoster），地图上单位的名册号跟着名册改回来
+  if (save) for (const u of stage.units) if (u.side === "player" && !u.npc && (u.roster === 2 || u.roster === 4)) {
+    const m = stage.roster.find((r) => samePilot(r.pilot, u.pilotId));
+    if (m) u.roster = m.member;
+  }
   // 全程标志：存档里的在读档时随事件状态恢复，过关带过来的在这里交给关卡事件
   if (next?.flags) stage.flags = next.flags;
   if (save) refreshSpiritText(stage.units);

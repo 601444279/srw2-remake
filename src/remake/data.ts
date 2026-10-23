@@ -462,7 +462,19 @@ export function campaignRoster(n: number): RosterMember[] {
 }
 
 // benched：出击选择里没选上的名册号（剧情中途靠脚本出场的照样会出来）
+// 旧版 roster.json 把名册 2 号（龙）和 4 号（由美）弄反了（2026-10-23 修正）。之前的存档、过关带过来的名册照原版改回来：
+// 还没过第 4 关的，两人对调名册号；已经过了的（第 4 关过关时原版让 4 号由美离队，旧版错把龙赶走了），2 号换回龙，等级经验照旧
+const GETTER = [8, 9, 10];
+export function fixLegacyRoster(members: RosterMember[]): RosterMember[] {
+  const m2 = members.find((m) => m.member === 2), m4 = members.find((m) => m.member === 4);
+  if (m2?.pilot !== 15) return members;
+  if (m4 && GETTER.includes(m4.pilot)) return members.map((m) => (m === m2 ? { ...m, member: 4 } : m === m4 ? { ...m, member: 2 } : m));
+  if (!members.some((m) => GETTER.includes(m.pilot))) return members.map((m) => (m === m2 ? { ...m, pilot: 8, unit: 2, upgrades: undefined, parts: undefined } : m));
+  return members;
+}
+
 export function loadStage(number: number, rosterMembers: RosterMember[] = roster.members, benched: number[] = []): Stage {
+  rosterMembers = fixLegacyRoster(rosterMembers);
   const raw = pick<{ width: number; height: number; environment: number; unitChrBanks: number[]; terrain: number[][] }>(mapFiles, `stage${pad(number)}.json`);
   const env = environments[raw.environment];
   const events = pick<StageEvents>(eventFiles, `stage${pad(number)}.json`);
