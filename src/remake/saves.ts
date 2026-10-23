@@ -103,8 +103,8 @@ export async function importAll(data: Backup) {
   if (data.settings) localStorage.setItem(SETTINGS_KEY, JSON.stringify(data.settings));
 }
 
-// 过关进下一关：带着名册（等级、经验、形态）和资金整页重新载入，从下一关的开场开始
-export interface NextStage { stage: number; roster: RosterMember[]; money: number }
+// 过关进下一关：带着名册（等级、经验、形态）和资金整页重新载入，从下一关的开场开始。benched = 出击选择里留下待命的名册号
+export interface NextStage { stage: number; roster: RosterMember[]; money: number; benched?: number[] }
 const NEXT = "srw2-remake:next";
 export function requestNextStage(next: NextStage) {
   sessionStorage.setItem(NEXT, JSON.stringify(next));

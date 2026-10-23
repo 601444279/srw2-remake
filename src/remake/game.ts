@@ -16,6 +16,7 @@ import { attackShout, damageCase, reactionShout } from "./shouts.ts";
 import { traitOf, type Trait } from "./traits.ts";
 import { levelForExp } from "./stats.ts";
 import { showIntermission } from "./intermission.ts";
+import { showSortie } from "./sortie.ts";
 import { AutoTester, type AutoOptions, type AutoReport } from "./autotest.ts";
 import { BattleScene, attackTimeline, battleLayout, battleSpriteUrl, type AttackTimeline } from "./battle-scene.ts";
 import { loadScene, personName, portraitUrl, STAGE_STORY, WORLD_MARKER, worldMapOf, type SceneRef } from "./story.ts";
@@ -1066,6 +1067,7 @@ export class Game implements DrawState {
       const before = { stats: growthStats(killer), levelIndex: killer.levelIndex, exp: killer.exp, trait: killer.trait };
       // 击破连击：同一阶段里我方第 n 次击破，经验 +10% × (n − 1)，最多 +50%
       let combo: { count: number; bonus: number } | null = null;
+      killer.kills = (killer.kills ?? 0) + 1;
       if (killer.side === "player" && settings.get().killCombo) {
         this.combo++;
         if (this.combo >= 2) {
@@ -1472,16 +1474,17 @@ export class Game implements DrawState {
       for (const u of this.units) {
         if (u.side !== "player" || u.npc || u.roster == null) continue;
         const m = roster.find((r) => r.member === u.roster);
-        if (m) Object.assign(m, { unit: u.unitId, pilot: u.pilotId, level: u.levelIndex, exp: u.exp });
+        if (m) Object.assign(m, { unit: u.unitId, pilot: u.pilotId, level: u.levelIndex, exp: u.exp, kills: u.kills ?? 0 });
       }
-      const go = () => requestNextStage({ stage: nextStage, roster, money: this.money.value });
+      const go = (benched?: number[]) => requestNextStage({ stage: nextStage, roster, money: this.money.value, benched });
       // 自动测试带 &chain：不进间章，自己接着打下一关
-      if (chain) { this.ui.showResult(true, lines, go, `进入第 ${nextStage} 关`); setTimeout(go, 800); return; }
-      // 过关 → 间章（改造）→ 出击下一关
+      if (chain) { this.ui.showResult(true, lines, () => go(), `进入第 ${nextStage} 关`); setTimeout(go, 800); return; }
+      // 过关 → 间章（改造）→ 出击选择 → 出击下一关
       this.ui.showResult(true, lines, async () => {
         this.ui.hideResult();
-        await showIntermission({ roster, money: this.money, cleared: this.stage.number, sfx: this.sfx, settingsOpen: () => !!(document.getElementById("settings") as HTMLDialogElement | null)?.open });
-        go();
+        const settingsOpen = () => !!(document.getElementById("settings") as HTMLDialogElement | null)?.open;
+        await showIntermission({ roster, money: this.money, cleared: this.stage.number, sfx: this.sfx, settingsOpen });
+        go(await showSortie({ stage: nextStage, title: STAGE_STORY[nextStage]?.title ?? "", roster, sfx: this.sfx, settingsOpen }));
       }, "进入间章");
       return;
     }

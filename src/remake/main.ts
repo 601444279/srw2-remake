@@ -29,7 +29,7 @@ async function boot() {
   // 开发时 &lv=N：初始名册全员 N 级（测后面的关卡用）
   const devLevel = import.meta.env.DEV ? Number(devParams.get("lv")) || 0 : 0;
   const devRoster = devLevel ? INITIAL_ROSTER.map((m) => ({ ...m, level: Math.max(m.level, devLevel - 1) })) : undefined;
-  const stage = loadStage(save?.stage ?? next?.stage ?? devStage ?? 1, save?.roster ?? next?.roster ?? devRoster);
+  const stage = loadStage(save?.stage ?? next?.stage ?? devStage ?? 1, save?.roster ?? next?.roster ?? devRoster, next?.benched);
   if (save) stage.units.splice(0, stage.units.length, ...save.units);
   if (save) refreshSpiritText(stage.units);
   const renderer = new Renderer(canvas);

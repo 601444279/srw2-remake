@@ -577,6 +577,25 @@ body.no-mouse #title { cursor: none; }
 #intermission .im-cost { align-self: flex-end; font: var(--f-num-s); color: var(--label); }
 #intermission .im-go { all: unset; cursor: pointer; padding: 8px 18px; font: var(--f-body); color: #000; background: var(--accent); clip-path: var(--chamfer-s); }
 #intermission .im-go:hover { filter: brightness(1.1); }
+/* 出击选择（sortie.ts），和间章共用 #intermission */
+#intermission .so-count { font: var(--f-body); color: var(--dim); }
+#intermission .so-count b { font: var(--f-num-m); color: var(--accent); }
+#intermission .so-count.no { animation: tu-shake .12s linear 3; color: var(--danger); }
+#intermission .so-sorts { display: flex; gap: 6px; }
+#intermission .so-sort { all: unset; cursor: pointer; padding: 3px 12px; font: var(--f-small); color: var(--dim); background: rgba(255, 255, 255, 0.04); clip-path: var(--chamfer-s); }
+#intermission .so-sort.on { color: #000; background: var(--accent); }
+#intermission .so-row { all: unset; cursor: pointer; display: grid; grid-template-columns: minmax(0, 1fr) 64px 84px 76px 92px; gap: 8px; align-items: center; padding: 6px 10px; border: 1px solid transparent; background: rgba(255, 255, 255, 0.04); }
+#intermission .so-row.on { border-color: var(--accent); background: rgba(255, 194, 26, 0.10); }
+#intermission .so-who { display: flex; align-items: baseline; gap: 10px; }
+#intermission .so-who b { font: var(--f-title); color: var(--player); text-shadow: var(--shadow); }
+#intermission .so-who small { font: var(--f-small); color: var(--dim); }
+#intermission .so-tag { justify-self: end; white-space: nowrap; font: var(--f-small); padding: 2px 10px; clip-path: var(--chamfer-s); }
+#intermission .so-row.go .so-tag { color: #000; background: var(--player); }
+#intermission .so-row.lock .so-tag { color: #000; background: var(--accent); }
+#intermission .so-row.stay { opacity: .6; }
+#intermission .so-row.stay .so-tag { color: var(--dim); background: rgba(255, 255, 255, 0.08); }
+#intermission .so-row.absent { cursor: default; opacity: .35; }
+#intermission .so-row.absent .so-tag { color: var(--dim); }
 @media (max-width: 720px) {
   #intermission .im-row { grid-template-columns: 1fr; }
 }

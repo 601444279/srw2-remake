@@ -5,6 +5,7 @@ import type { GridMap, MoveType } from "./grid.ts";
 import { computeStats, expThreshold, type GrowthCurve, type PilotDef, type UnitDef } from "./stats.ts";
 import { traitOf, type Trait } from "./traits.ts";
 import { personName } from "./story.ts";
+import { samePilot } from "./rules.ts";
 import nameTables from "../../data/script/names.json";
 
 // 机体名、武器名：data/units.json、weapons.json 里有不少没解出来，用剧情文本会话导出的名字表补上
@@ -93,6 +94,8 @@ export interface Unit {
   trait: Trait | null;
   // 间章里的改造等级（重制版新增，见 intermission.ts）
   upgrades?: Upgrades;
+  // 击坠数（重制版新增，跟着名册走，出击选择里排序用）
+  kills: number;
   acted: boolean;
 }
 
@@ -105,6 +108,8 @@ export interface RosterMember {
   exp?: number;
   // 改造等级
   upgrades?: Upgrades;
+  // 累计击坠数
+  kills?: number;
 }
 
 // ---------- 改造（重制版新增，docs/design.md 3.5）----------
@@ -206,6 +211,7 @@ export interface Placement {
   level: number;
   exp?: number;
   upgrades?: Upgrades;
+  kills?: number;
   aiScript: number;
 }
 
@@ -243,6 +249,7 @@ export function createUnit(stage: Stage, p: Placement): Unit {
     bits: 0,
     npc: !!p.npc,
     roster: p.roster ?? null,
+    kills: p.kills ?? 0,
     name: def.name || mechNames.get(p.unitId) || `机体 ${p.unitId}`,
     // 驾驶员数据表里有些名字没解出来，用剧情的人名表（下标同样是人物编号）补上
     pilotName: pilot.name || personName(p.pilotId) || (p.side === "enemy" ? "" : `驾驶员 ${p.pilotId}`),
@@ -310,7 +317,7 @@ export function pilotForForm(pilotId: number, unitId: number) {
 export function transformUnit(stage: Stage, unit: Unit, newUnitId: number) {
   const pilotId = pilotForForm(unit.pilotId, newUnitId);
   const fresh = createUnit(stage, { side: unit.side, npc: unit.npc, roster: unit.roster ?? undefined, x: unit.x, y: unit.y, unitId: newUnitId, pilotId, level: unit.levelIndex, upgrades: unit.upgrades, aiScript: unit.aiScript });
-  const keep = { id: unit.id, index: unit.index, hp: unit.hp, sp: unit.sp, exp: unit.exp, spirit: unit.spirit, bits: unit.bits, acted: unit.acted };
+  const keep = { id: unit.id, index: unit.index, hp: unit.hp, sp: unit.sp, exp: unit.exp, spirit: unit.spirit, bits: unit.bits, kills: unit.kills, acted: unit.acted };
   Object.assign(unit, fresh, keep);
   unit.hp = Math.min(unit.hp, unit.maxHp);
   unit.sp = Math.min(unit.sp, unit.maxSp);
@@ -341,7 +348,28 @@ export function hasStage(number: number) {
 // 开局名册（data/roster.json）
 export const INITIAL_ROSTER: RosterMember[] = roster.members;
 
-export function loadStage(number: number, rosterMembers: RosterMember[] = roster.members): Stage {
+// 出击选择（重制版新增，docs/design.md 4.4）：这一关原版的出场名单（部署第 4 段，每个位置对应一个名册号）里、
+// 名册上有的人可以选。主角（名册 0 号，原版固定进单位槽 0）和剧情里「此人被击坠就失败」的人（脚本里
+// exists 不成立就走到 gameOver）必须出场。名单外的人原版这一关剧情里不在场，不能带上
+export function stageLineup(number: number, rosterMembers: RosterMember[]) {
+  const events = pick<StageEvents>(eventFiles, `stage${pad(number)}.json`);
+  const mustLive = new Set<number>();
+  for (const sc of Object.values(events.scripts ?? {})) {
+    const ops = (sc as { ops?: { at: string; op: string; pilot?: number; to?: string }[] }).ops ?? [];
+    ops.forEach((o, i) => {
+      if (o.op !== "exists" || o.pilot === undefined || ops[i + 1]?.op !== "jumpIfFalse") return;
+      const t = ops.findIndex((x) => x.at === ops[i + 1].to);
+      if (t >= 0 && ops.slice(t, t + 6).some((x) => x.op === "gameOver")) mustLive.add(o.pilot);
+    });
+  }
+  const slots = deployments[number - 1].players.map((p) => p.order);
+  const members = slots.map((n) => rosterMembers.find((m) => m.member === n)).filter((m): m is RosterMember => !!m);
+  const forced = new Set(members.filter((m) => m.member === 0 || [...mustLive].some((p) => samePilot(m.pilot, p))).map((m) => m.member));
+  return { slots: slots.length, members, forced };
+}
+
+// benched：出击选择里没选上的名册号（剧情中途靠脚本出场的照样会出来）
+export function loadStage(number: number, rosterMembers: RosterMember[] = roster.members, benched: number[] = []): Stage {
   const raw = pick<{ width: number; height: number; environment: number; unitChrBanks: number[]; terrain: number[][] }>(mapFiles, `stage${pad(number)}.json`);
   const env = environments[raw.environment];
   const events = pick<StageEvents>(eventFiles, `stage${pad(number)}.json`);
@@ -365,7 +393,7 @@ export function loadStage(number: number, rosterMembers: RosterMember[] = roster
   // 我方：部署第 4 段的第三个字节是名册号，名册里有人才出击
   for (const p of deploy.players) {
     const member = stage.roster.find((m) => m.member === p.order);
-    if (member) placements.push({ side: "player", roster: member.member, x: p.x, y: p.y, unitId: member.unit, pilotId: member.pilot, level: member.level, exp: member.exp, upgrades: member.upgrades, aiScript: 0 });
+    if (member && !benched.includes(member.member)) placements.push({ side: "player", roster: member.member, x: p.x, y: p.y, unitId: member.unit, pilotId: member.pilot, level: member.level, exp: member.exp, upgrades: member.upgrades, kills: member.kills, aiScript: 0 });
   }
   // 敌人记录：参数 a = 驾驶员，b = 等级（从 0 开始），c = AI 脚本
   for (const e of deploy.enemies) placements.push({ side: "enemy", x: e.x, y: e.y, unitId: e.unit, pilotId: e.a, level: e.b, aiScript: e.c });

@@ -1,6 +1,6 @@
 // 间章（重制版新增，docs/design.md 3.5 / 6.6）：过关之后、下一关之前。用资金改造机体和武器，改造前后数值对比，
 // 再出击。改造等级记在名册上（RosterMember.upgrades），跟着人走到后面的关卡。
-// 键盘：↑↓ 选人，←→ 选机体 / 武器，确定改造一段，「菜单」键或点「出击」进下一关；鼠标直接点。
+// 键盘：↑↓ 选人，←→ 选机体 / 武器，确定改造一段，「菜单」键或点「下一步」进出击选择（sortie.ts）；鼠标直接点。
 import { MAX_UPGRADE, memberPreview, upgradeCost, type RosterMember } from "./data.ts";
 import { settings } from "./settings.ts";
 import type { Sfx } from "./sfx.ts";
@@ -87,7 +87,7 @@ export function showIntermission(opts: {
           <div class="im-list">${cards}</div>
           <footer>
             <span class="im-hint">↑↓ 选机体　←→ 选机体 / 武器　确定 改造一段</span>
-            <button class="im-go">出击：第 ${opts.cleared + 1} 关</button>
+            <button class="im-go">下一步：出击选择</button>
           </footer>
         </div>`;
       root.querySelectorAll<HTMLButtonElement>(".im-cell").forEach((b) => {
