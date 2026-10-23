@@ -3,14 +3,15 @@
 //   撤离关只管往出口走 → 修理受伤的友军 → 伤重就撤到安全的地方 → 打分最高的攻击 → 稳妥地接近
 // 攻击打分：期望伤害占对方剩余 HP 的比例、击破的把握、要打倒的头目加分、离要保护的人近的敌人加分，
 //   减去预计挨的反击和停留格子会被几个敌人打到。
-import { stageGoals, type Stage, type Unit, type Weapon } from "./data.ts";
+import { isCarrier, onMap, stageGoals, type Stage, type Unit, type Weapon } from "./data.ts";
 import { fromKey, inBounds, key, terrainCost, type Point, type Reach } from "./grid.ts";
 import { isRepair, samePilot, type Rules } from "./rules.ts";
 
 export type BotPlan =
   | { kind: "attack"; to: Point; weapon: Weapon; target: Unit }
   | { kind: "repair"; to: Point; weapon: Weapon; target: Unit }
-  | { kind: "move"; to: Point };
+  | { kind: "move"; to: Point }
+  | { kind: "board"; to: Point };
 
 export interface BotWorld {
   stage: Stage;
@@ -29,7 +30,7 @@ export class AutoPilot {
     this.goals = stageGoals(w.stage.events);
   }
 
-  private get alive() { return this.w.units.filter((u) => u.hp > 0); }
+  private get alive() { return this.w.units.filter(onMap); }
   private enemies() { return this.alive.filter((u) => u.side === "enemy"); }
   private allies() { return this.alive.filter((u) => u.side === "player"); }
   private isVip(u: Unit) { return u.npc || this.goals.mustLive.some((p) => samePilot(u.pilotId, p)); }
@@ -76,6 +77,9 @@ export class AutoPilot {
     if (hpRate < (vip ? 0.6 : 0.35)) {
       const attack = this.bestAttack(u, stops, true);
       if (attack) return attack;
+      // 走得到母舰就进舱回血
+      const ship = this.allies().find((a) => a !== u && isCarrier(a));
+      if (ship && !vip && reach.cost.has(key(map, ship.x, ship.y))) return { kind: "board", to: { x: ship.x, y: ship.y } };
       if (this.canHeal(u)) return { kind: "move", to: this.safest(u, stops) };
       const any = this.bestAttack(u, stops, false);
       if (any) return any;
@@ -107,7 +111,7 @@ export class AutoPilot {
 
   private canHeal(u: Unit) {
     if (this.w.stage.map.terrain.some((row) => row.includes(this.w.repairTerrain))) return true;
-    if (this.allies().some((a) => a !== u && a.weapons.some(isRepair))) return true;
+    if (this.allies().some((a) => a !== u && (a.weapons.some(isRepair) || isCarrier(a)))) return true;
     return this.w.rules.spiritMenu(u, this.w.units).some((s) => s.usable && s.def.effect.kind === "heal");
   }
 

@@ -1,7 +1,7 @@
 // 游戏流程：我方回合（移动、攻击、精神、待机）、敌方回合、剧情。
 // 战斗、命中、伤害、经验等规则在 rules.ts 里调用原版规则代码；
 // 关卡事件（对话、援军、胜负、过关）和敌人 AI 由原版脚本驱动，见 events.ts。
-import { applyLevel, expProgress, hasStage, expToNext, formIndexOf, formsOf, mechName, pilotForForm, transformUnit, type Stage, type Unit, type Weapon } from "./data.ts";
+import { applyLevel, expProgress, hasStage, expToNext, formIndexOf, formsOf, isCarrier, launchShout, mechName, onMap, pilotForForm, transformUnit, type Stage, type Unit, type Weapon } from "./data.ts";
 import { StageEvents } from "./events.ts";
 import { key, pathTo, rangeFrom, reachable, inBounds, MOVE_TYPE_ROW, type Point, type Reach } from "./grid.ts";
 import type { Action } from "./input.ts";
@@ -94,6 +94,8 @@ export class Game implements DrawState {
   private status: { unit: Unit; tab: StatusTab; back: () => void } | null = null;
   // 开着单位菜单的那个单位（左下角简要资料用）
   private menuUnit: Unit | null = null;
+  // 正在从母舰起飞、还没落地的机体
+  private launching: Unit | null = null;
   private pick: TargetPick | null = null;
   private turn = 1;
   // 资金（原版单位，画面 ×10）。过关进下一关时由 main.ts 带过来
@@ -648,14 +650,20 @@ export class Game implements DrawState {
         const target = this.unitAt(this.cursor);
         // 现代捷径：直接点敌人，自动走到能打到它的格子再选武器
         if (target?.side === "enemy") return this.quickAttack(unit, target);
-        if (this.cursor.x === unit.x && this.cursor.y === unit.y) { this.sfx.ui("ok"); return this.openActionMenu(unit); }
+        if (this.cursor.x === unit.x && this.cursor.y === unit.y) {
+          if (this.launching === unit && !this.moved) { this.ui.toast("选一个格子起飞"); return; }
+          this.sfx.ui("ok");
+          return this.openActionMenu(unit);
+        }
         const k = key(this.stage.map, this.cursor.x, this.cursor.y);
         if (!this.reach!.stops.has(k)) { this.ui.toast("无法移动到这里"); return; }
         this.sfx.ui("ok");
+        if (this.launching === unit && !this.moved) return void this.launchTo(unit, { ...this.cursor });
         return this.moveSelected(this.cursor, () => this.openActionMenu(unit));
       }
       case "cancel":
-        // 选目的地时取消：回到单位菜单
+        // 起飞选目的地时取消：回舱；其他：回到单位菜单
+        if (this.launching === unit && !this.moved) return this.cancelLaunch();
         return this.openActionMenu(unit);
       case "danger":
         return this.toggleDanger();
@@ -755,6 +763,14 @@ export class Game implements DrawState {
     this.anim = { unit, path: pathTo(this.stage.map, this.reach!, to), t: 0, v: 0, done };
   }
 
+  // 起飞：原版先喊出击台词（文本资源 0x37，按驾驶员和机体查表），再飞到目的地
+  private async launchTo(unit: Unit, to: Point) {
+    this.setMode("busy");
+    const shout = launchShout(unit);
+    if (shout !== null) await this.playScene({ res: "37", index: shout, who: unit.pilotId });
+    this.moveSelected(to, () => this.openActionMenu(unit));
+  }
+
   // 点敌人：原地能打就原地打；否则在移动范围里找能用「移动后可用」武器打到它的最近格
   private quickAttack(unit: Unit, enemy: Unit) {
     if (unit.weapons.some((w) => this.rules.targetsFor(unit, w, unit, false, [enemy]).length)) {
@@ -776,6 +792,12 @@ export class Game implements DrawState {
   // 单位菜单：移动前有「移动」「变形」，取消就放开这个单位；移动后取消退回原位重新选目的地
   private openActionMenu(unit: Unit) {
     this.setCursor(unit.x, unit.y, false);
+    // 停在母舰的格子上：原版移动后菜单只有「搭载」
+    const ship = this.carrier();
+    if (this.moved && ship && ship !== unit && ship.x === unit.x && ship.y === unit.y) {
+      this.openMenu([{ label: "搭载", hint: "进母舰：下回合开始回复 30% HP", run: () => void this.board(unit, ship) }], unit, () => this.undoMove(unit));
+      return;
+    }
     const canAttack = unit.weapons.some((w) => this.rules.targetsFor(unit, w, unit, this.moved, this.units).length);
     const canSpirit = this.rules.spiritMenu(unit, this.units).some((s) => s.usable);
     const canMove = !this.moved && this.reach!.stops.size > 1;
@@ -786,11 +808,64 @@ export class Game implements DrawState {
       { label: "精神", disabled: !canSpirit, detail: unit.maxSp ? `SP ${unit.sp}` : "", run: () => this.openSpiritMenu(unit) },
       // 原版只在移动前的单位菜单里有「变形」，变形不消耗行动
       ...(!this.moved && formsOf(unit.unitId).length > 1 ? [{ label: "变形", run: () => this.openTransformMenu(unit) }] : []),
+      // 母舰：舱里有这回合还没行动的机体就能「起飞」（原版只在母舰移动前的菜单里有）
+      ...(!this.moved && isCarrier(unit) && this.aboard().length ? [{ label: "起飞", detail: `舱内 ${this.aboard().length}`, disabled: !this.aboard().some((u) => !u.acted), run: () => this.openLaunchMenu(unit) }] : []),
       { label: "资料", run: () => this.openStatus(unit, back) },
       { label: "待机", run: () => this.finishAction(unit) },
     ];
     if (this.moved) this.openMenu(items, unit, () => this.undoMove(unit));
     else this.openMenu(items, unit, () => { this.setCursor(unit.x, unit.y); this.deselect(); }, true);
+  }
+
+  // ---------- 母舰：搭载、起飞（docs/notes-rules.md「母舰」）----------
+  private aboard() {
+    return this.units.filter((u) => u.aboard && u.hp > 0);
+  }
+
+  // 搭载：进舱、行动结束
+  private async board(unit: Unit, ship: Unit) {
+    this.setMode("busy");
+    unit.aboard = true;
+    this.origin = null;
+    this.dangerCache = null;
+    this.sfx.ui("ok");
+    this.renderer.float(ship, "搭载", "player");
+    await this.finishAction(unit);
+  }
+
+  // 起飞：先选舱里的哪一台（原版「部队表」：名字、等级、HP）
+  private openLaunchMenu(ship: Unit) {
+    const items: MenuItem[] = this.aboard().map((u) => ({
+      label: u.name,
+      detail: `Lv ${u.level}　HP ${u.hp}/${u.maxHp}`,
+      hint: u.pilotName,
+      disabled: u.acted,
+      run: () => this.launch(u, ship),
+    }));
+    this.openMenu(items, ship, () => this.openActionMenu(ship));
+  }
+
+  // 选好的机体放到母舰的格子上，从那里选目的地；取消就回舱
+  private launch(unit: Unit, ship: Unit) {
+    unit.aboard = false;
+    unit.x = ship.x;
+    unit.y = ship.y;
+    this.launching = unit;
+    this.selected = unit;
+    this.origin = null;
+    this.moved = false;
+    this.reach = this.unitReach(unit);
+    this.dangerCache = null;
+    this.startMove(unit);
+  }
+
+  private cancelLaunch() {
+    const unit = this.launching!, ship = this.carrier();
+    this.launching = null;
+    unit.aboard = true;
+    this.dangerCache = null;
+    if (ship) { this.selected = ship; this.reach = this.unitReach(ship); this.openLaunchMenu(ship); }
+    else this.deselect();
   }
 
   // ---------- 变形 ----------
@@ -1007,6 +1082,7 @@ export class Game implements DrawState {
   // 我方单位行动结束：跑检查脚本（胜负、过关、行动触发的事件），再跳到下一个没行动的单位
   private async finishAction(unit: Unit) {
     unit.acted = true;
+    if (this.launching === unit) this.launching = null;
     this.deselect();
     this.setMode("busy");
     await this.events.runTile(unit);
@@ -1070,6 +1146,8 @@ export class Game implements DrawState {
     // 击破、经验、升级
     for (const [victim, killer] of [[defender, attacker], [attacker, defender]] as const) {
       if (victim.hp > 0) continue;
+      // 母舰被击坠：舱里的一起被击坠（原版实测）
+      if (isCarrier(victim)) for (const u of this.aboard()) u.hp = 0;
       // 原版回到地图后在被击破单位的格子上再炸一次（音效 02，约 50 帧），然后才出经验（模拟器实测），
       // 完整战斗画面里已经炸过的也一样
       this.sfx.explode();
@@ -1342,19 +1420,32 @@ export class Game implements DrawState {
       reach: (u) => this.unitReach(u), threat: (u, r) => this.threat(u, r),
     });
     try {
+      // 舱里回到八成血的先起飞（母舰还没动的话），和地图上的一起行动
+      const ship = this.carrier();
+      const launch = ship ? this.aboard().filter((u) => !u.acted && u.hp >= u.maxHp * 0.8) : [];
       // 会修理的最后动（先让别人打完、受伤的撤回来）
-      const order = this.players().filter((u) => !u.npc).sort((a, b) => Number(a.weapons.some(isRepair)) - Number(b.weapons.some(isRepair)));
+      const order = [...launch, ...this.players().filter((u) => !u.npc).sort((a, b) => Number(a.weapons.some(isRepair)) - Number(b.weapons.some(isRepair)))];
       for (const u of order) {
         if (u.acted || u.hp <= 0 || u.npc) continue;
+        if (u.aboard) {
+          if (!ship || ship.acted || !onMap(ship)) continue;
+          u.aboard = false; u.x = ship.x; u.y = ship.y;
+          this.launching = u;
+          pilot.invalidate();
+        }
         this.autoSpirit(u, pilot.hurry);
         const plan = pilot.plan(u);
+        // 起飞的必须离开母舰的格子
+        if (this.launching === u && (!plan || (plan.to.x === u.x && plan.to.y === u.y))) { u.aboard = true; this.launching = null; continue; }
         if (plan) {
           const moved = plan.to.x !== u.x || plan.to.y !== u.y;
           await this.focus(u);
           if (moved) await this.moveUnit(u, plan.to);
           if (plan.kind === "attack") await this.battle(u, plan.weapon, plan.target, moved);
           else if (plan.kind === "repair") await this.repairOnMap(u, plan.target);
+          else if (plan.kind === "board") { u.aboard = true; this.renderer.float(ship ?? u, "搭载", "player"); }
         }
+        this.launching = null;
         pilot.invalidate();
         u.acted = true;
         await this.events.runTile(u);
@@ -1454,7 +1545,10 @@ export class Game implements DrawState {
   }
 
   private repairOnBases(side: Unit["side"]) {
+    // 母舰里的：回合开始回复最大 HP 的 30%（原版实测，同补给基地）
+    for (const u of this.units) if (u.side === side && u.aboard && u.hp > 0) u.hp = Math.min(u.maxHp, u.hp + Math.floor(u.maxHp * 0.3));
     for (const u of this.units) {
+      if (u.aboard) continue;
       if (u.side !== side || u.hp <= 0 || u.hp >= u.maxHp) continue;
       if (this.stage.map.terrain[u.y][u.x] !== REPAIR_TERRAIN) continue;
       const before = u.hp;
@@ -1779,20 +1873,33 @@ export class Game implements DrawState {
   }
 
   private unitAt(p: Point) {
-    return this.units.find((u) => u.x === p.x && u.y === p.y && u.hp > 0);
+    return this.units.find((u) => u.x === p.x && u.y === p.y && onMap(u));
   }
 
+  // 地图上的我方（母舰里的不算）
   private players() {
-    return this.units.filter((u) => u.side === "player" && u.hp > 0);
+    return this.units.filter((u) => u.side === "player" && onMap(u));
   }
 
   private enemies() {
-    return this.units.filter((u) => u.side === "enemy" && u.hp > 0);
+    return this.units.filter((u) => u.side === "enemy" && onMap(u));
   }
 
+  private carrier() {
+    return this.units.find((u) => isCarrier(u) && onMap(u)) ?? null;
+  }
+
+  // 移动范围。我方机体还可以停到母舰的格子上（搭载）；从母舰起飞时不能停回原地
   private unitReach(unit: Unit) {
-    const others = this.units.filter((u) => u !== unit && u.hp > 0);
-    return reachable(this.stage.map, unit, this.rules.mobility(unit), unit.moveType, unit.side, others);
+    const others = this.units.filter((u) => u !== unit && onMap(u));
+    const reach = reachable(this.stage.map, unit, this.rules.mobility(unit), unit.moveType, unit.side, others);
+    const ship = this.carrier();
+    if (ship && ship !== unit && unit.side === "player" && !unit.npc) {
+      const k = key(this.stage.map, ship.x, ship.y);
+      if (this.launching === unit) reach.stops.delete(k);
+      else if (reach.cost.has(k)) reach.stops.add(k);
+    }
+    return reach;
   }
 
   // 威胁范围：移动后能用的武器从所有可停留的格子算射程；其他远程武器只能原地用，且打不到相邻格

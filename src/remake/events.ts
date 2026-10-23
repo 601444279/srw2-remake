@@ -3,7 +3,7 @@
 //   start       进关时，以及每个我方回合开始
 //   enemyPhase  每个敌方回合开始（敌人行动之前）
 //   check       每个单位行动结束后、每个我方回合开始（胜负判定、过关都在这里）
-import { AI_SCRIPTS, createUnit, type Stage, type Unit, type Weapon } from "./data.ts";
+import { AI_SCRIPTS, createUnit, onMap, type Stage, type Unit, type Weapon } from "./data.ts";
 import { ScriptRunner, type ScriptHost, type RunnerState } from "./script.ts";
 import { samePilot, type AiPlan, type Rules } from "./rules.ts";
 import type { Point } from "./grid.ts";
@@ -128,7 +128,7 @@ export class StageEvents implements ScriptHost {
   // 移动时不触发，选「待命」结束行动时才跑格子脚本（撤离 → 最后一个撤离的置关卡标志 10 → 检查脚本过关）。
   // 按表的顺序找第一条坐标相同、驾驶员对得上的：值是商店的就开店（第 2、5 关同一格乔是另一家店，tools/shop-probe.js）
   async runTile(unit: Unit) {
-    if (this.finished || unit.hp <= 0) return;
+    if (this.finished || !onMap(unit)) return;
     const tile = this.api.stage.events.tiles?.find((t) => t.x === unit.x && t.y === unit.y && (t.pilot === null || samePilot(unit.pilotId, t.pilot)));
     if (tile?.shop !== undefined) { await this.api.openShop(tile.shop, unit); return; }
     if (!tile?.script) return;
@@ -173,7 +173,7 @@ export class StageEvents implements ScriptHost {
   }
   inRoster(pilot: number) { return this.api.stage.roster.some((m) => samePilot(m.pilot, pilot)); }
   exists(pilot: number) { return !!this.find(pilot); }
-  onMap(pilot: number) { return !!this.find(pilot); }
+  onMap(pilot: number) { const u = this.find(pilot); return !!u && onMap(u); }
   enemyCount() { return this.units.filter((u) => u.hp > 0 && u.side === "enemy").length; }
   allyCount() { return this.units.filter((u) => u.hp > 0 && u.side === "player" && !u.npc).length; }
   hpAtLeast(pilot: number, hp: number) {
@@ -182,10 +182,10 @@ export class StageEvents implements ScriptHost {
     return hp === 0 ? u.hp >= u.maxHp : u.hp >= hp;
   }
   sideInRect(side: "player" | "enemy", x1: number, y1: number, x2: number, y2: number) {
-    return this.units.some((u) => u.hp > 0 && u.side === side && u.x >= x1 && u.x <= x2 && u.y >= y1 && u.y <= y2);
+    return this.units.some((u) => onMap(u) && u.side === side && u.x >= x1 && u.x <= x2 && u.y >= y1 && u.y <= y2);
   }
   unitAtIs(x: number, y: number, who: number) {
-    return this.matches(this.units.find((u) => u.hp > 0 && u.x === x && u.y === y), who);
+    return this.matches(this.units.find((u) => onMap(u) && u.x === x && u.y === y), who);
   }
   selfBit(bit: number) { return !!this.self && !!(this.self.bits & (1 << bit)); }
   setSelfBit(bit: number, on: boolean) {
@@ -203,7 +203,7 @@ export class StageEvents implements ScriptHost {
   }
   foeWithin(d: number) {
     const s = this.self;
-    return !!s && this.units.some((u) => u.hp > 0 && u.side !== s.side && Math.abs(u.x - s.x) + Math.abs(u.y - s.y) <= d);
+    return !!s && this.units.some((u) => onMap(u) && u.side !== s.side && Math.abs(u.x - s.x) + Math.abs(u.y - s.y) <= d);
   }
   selfHpAtLeast(hp: number) { return !!this.self && (hp === 0 ? this.self.hp >= this.self.maxHp : this.self.hp >= hp); }
   select(pilot: number) {
@@ -259,7 +259,7 @@ export class StageEvents implements ScriptHost {
   // 格子被占时放到附近的空格（原版行为）
   private freeSpot(p: Point): Point {
     const map = this.api.stage.map;
-    const taken = (x: number, y: number) => this.units.some((u) => u.hp > 0 && u.x === x && u.y === y);
+    const taken = (x: number, y: number) => this.units.some((u) => onMap(u) && u.x === x && u.y === y);
     for (let r = 0; r < 8; r++) {
       for (let dy = -r; dy <= r; dy++) {
         for (let dx = -r; dx <= r; dx++) {

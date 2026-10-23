@@ -414,6 +414,8 @@ export class Renderer {
         if (f.fade >= 0) f.fade = Math.max(0, f.fade - dt * 1.6);
       }
       if (u.hp <= 0 && (!f || f.fade <= 0)) continue;
+      // 在母舰里的不画
+      if (u.aboard && u.hp > 0) continue;
       const pos = state.unitPos(u);
       const sprite = this.sprites.get(spriteKey(u))!;
       const shake = f && f.shake > 0 ? Math.sin(this.time * 90) * this.zoom * 1.5 : 0;
