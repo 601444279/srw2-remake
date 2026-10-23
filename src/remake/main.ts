@@ -32,6 +32,8 @@ async function boot() {
   const devRoster = devLevel || devBase !== INITIAL_ROSTER ? devBase.map((m) => ({ ...m, level: Math.max(m.level, devLevel - 1) })) : undefined;
   const stage = loadStage(save?.stage ?? next?.stage ?? devStage ?? 1, save?.roster ?? next?.roster ?? devRoster, next?.benched);
   if (save) stage.units.splice(0, stage.units.length, ...save.units);
+  // 全程标志：存档里的在读档时随事件状态恢复，过关带过来的在这里交给关卡事件
+  if (next?.flags) stage.flags = next.flags;
   if (save) refreshSpiritText(stage.units);
   const renderer = new Renderer(canvas);
   await renderer.setStage(stage);

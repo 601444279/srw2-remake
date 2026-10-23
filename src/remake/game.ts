@@ -1,7 +1,7 @@
 // 游戏流程：我方回合（移动、攻击、精神、待机）、敌方回合、剧情。
 // 战斗、命中、伤害、经验等规则在 rules.ts 里调用原版规则代码；
 // 关卡事件（对话、援军、胜负、过关）和敌人 AI 由原版脚本驱动，见 events.ts。
-import { applyLevel, expProgress, hasStage, expToNext, formIndexOf, formsOf, isCarrier, launchShout, mechName, onMap, pilotForForm, transformUnit, type Stage, type Unit, type Weapon } from "./data.ts";
+import { applyLevel, expProgress, hasStage, expToNext, formIndexOf, formsOf, isCarrier, launchShout, mechName, onMap, pilotForForm, transformUnit, type PersuadeEntry, type Stage, type Unit, type Weapon } from "./data.ts";
 import { StageEvents } from "./events.ts";
 import { key, pathTo, rangeFrom, reachable, inBounds, MOVE_TYPE_ROW, type Point, type Reach } from "./grid.ts";
 import type { Action } from "./input.ts";
@@ -145,6 +145,7 @@ export class Game implements DrawState {
       music: (kind, song) => this.scriptMusic(kind, song),
       finish: (r) => this.finishStage(r),
       openShop: (n) => this.openShop(n),
+      refreshUnit: (u) => this.refreshUnit(u),
     });
   }
 
@@ -153,6 +154,13 @@ export class Game implements DrawState {
   private async focus(p: Point) {
     this.setCursor(p.x, p.y);
     await wait(0.2 / this.speed());
+  }
+
+  private async refreshUnit(u: Unit) {
+    this.syncTrait(u);
+    await this.renderer.loadUnit(u);
+    this.dangerCache = null;
+    this.refreshInfo();
   }
 
   // 援军登场：原版第 1 关三个援军 0.6 秒一个，都挤在援军曲开头那串「噔噔噔噔噔噔」里（模拟器实测）。
@@ -815,6 +823,7 @@ export class Game implements DrawState {
     const canSpirit = this.rules.spiritMenu(unit, this.units).some((s) => s.usable);
     const canMove = !this.moved && this.reach!.stops.size > 1;
     const back = () => this.openActionMenu(unit);
+    const persuade = this.events.persuadeFor(unit);
     const items: MenuItem[] = [
       ...(!this.moved ? [{ label: "移动", disabled: !canMove, detail: `机动 ${this.rules.mobility(unit)}`, run: () => this.startMove(unit) }] : []),
       { label: "攻击", disabled: !canAttack, detail: canAttack ? "" : "无目标", run: () => this.chooseWeapon(unit) },
@@ -823,6 +832,7 @@ export class Game implements DrawState {
       ...(!this.moved && formsOf(unit.unitId).length > 1 ? [{ label: "变形", run: () => this.openTransformMenu(unit) }] : []),
       // 母舰：舱里有这回合还没行动的机体就能「起飞」（原版只在母舰移动前的菜单里有）
       ...(!this.moved && isCarrier(unit) && this.aboard().length ? [{ label: "起飞", detail: `舱内 ${this.aboard().length}`, disabled: !this.aboard().some((u) => !u.acted), run: () => this.openLaunchMenu(unit) }] : []),
+      ...(persuade ? [{ label: "劝降", run: () => void this.persuade(unit, persuade) }] : []),
       { label: "资料", run: () => this.openStatus(unit, back) },
       { label: "待机", run: () => this.finishAction(unit) },
     ];
@@ -1122,10 +1132,27 @@ export class Game implements DrawState {
   // 我方单位行动结束：跑检查脚本（胜负、过关、行动触发的事件），再跳到下一个没行动的单位
   private async finishAction(unit: Unit) {
     unit.acted = true;
-    if (this.launching === unit) this.launching = null;
     this.deselect();
     this.setMode("busy");
     await this.events.runTile(unit);
+    await this.afterAction(unit);
+  }
+
+  // 劝降：脚本里放对话、转阵营；成不成功都由脚本让劝降的单位行动结束（第 17 关头一次只说话不结束，回到单位菜单）
+  private async persuade(unit: Unit, entry: PersuadeEntry) {
+    this.setMode("busy");
+    await this.events.runPersuade(unit, entry);
+    this.dangerCache = null;
+    this.refreshInfo();
+    if (unit.hp > 0 && !unit.acted) { this.openActionMenu(unit); return; }
+    this.deselect();
+    await this.afterAction(unit);
+  }
+
+  // 一个我方单位行动结束后：检查脚本（胜负、事件），然后光标移到下一个没行动的单位，都行动完就结束回合
+  private async afterAction(unit: Unit) {
+    if (this.launching === unit) this.launching = null;
+    this.setMode("busy");
     await this.events.runCheck();
     if (this.mode === "over") return;
     this.setMode("browse");
@@ -1633,7 +1660,7 @@ export class Game implements DrawState {
         const m = roster.find((r) => r.member === u.roster);
         if (m) Object.assign(m, { unit: u.unitId, pilot: u.pilotId, level: u.levelIndex, exp: u.exp, kills: u.kills ?? 0, parts: u.parts });
       }
-      const go = (benched?: number[]) => requestNextStage({ stage: nextStage, roster, money: this.money.value, items: this.items, benched });
+      const go = (benched?: number[]) => requestNextStage({ stage: nextStage, roster, money: this.money.value, items: this.items, benched, flags: this.events.globalFlags() });
       // 自动测试带 &chain：不进间章，自己接着打下一关
       if (chain) { this.ui.showResult(true, lines, () => go(), `进入第 ${nextStage} 关`); setTimeout(go, 800); return; }
       // 过关 → 间章（改造）→ 出击选择 → 出击下一关

@@ -3,7 +3,7 @@
 //   start       进关时，以及每个我方回合开始
 //   enemyPhase  每个敌方回合开始（敌人行动之前）
 //   check       每个单位行动结束后、每个我方回合开始（胜负判定、过关都在这里）
-import { AI_SCRIPTS, createUnit, onMap, type Stage, type Unit, type Weapon } from "./data.ts";
+import { AI_SCRIPTS, createUnit, onMap, transformUnit, type PersuadeEntry, type Stage, type Unit, type Weapon } from "./data.ts";
 import { ScriptRunner, type ScriptHost, type RunnerState } from "./script.ts";
 import { samePilot, type AiPlan, type Rules } from "./rules.ts";
 import type { Point } from "./grid.ts";
@@ -25,6 +25,8 @@ export interface EventApi {
   finish(result: "clear" | "gameover" | "ending"): Promise<void>;
   // 地图商店（data/parts.json 的 shops 第 n 项），关店后返回
   openShop(shop: number, unit: Unit): Promise<void>;
+  // 单位被脚本换了机体 / 阵营：重载图标、特性
+  refreshUnit(unit: Unit): Promise<void>;
 }
 
 // 存档用：三段关卡脚本、每个单位的 AI / NPC 脚本的进度（按单位 id），标志位，上一场战斗
@@ -71,6 +73,12 @@ export class StageEvents implements ScriptHost {
     this.start = new ScriptRunner(s.start, this);
     this.enemyPhase = new ScriptRunner(s.enemyPhase, this);
     this.check = new ScriptRunner(s.check, this);
+    for (const f of api.stage.flags ?? []) this.flags.add(f);
+  }
+
+  // 全程标志（≥ 0x80）跨关保留，过关时带到下一关
+  globalFlags() {
+    return [...this.flags].filter((f) => f >= 0x80);
   }
 
   private get units() {
@@ -134,6 +142,22 @@ export class StageEvents implements ScriptHost {
     if (!tile?.script) return;
     this.self = unit;
     await new ScriptRunner(tile.script, this).resume();
+    this.self = null;
+  }
+
+  // 劝降（原版 bank 28 $9D94）：按表的顺序找第一条关卡对得上、驾驶员是这个单位（直接比编号）、
+  // 敌方单位里有 target 且距离 1 的。原版移动前、移动后的单位菜单都会查
+  persuadeFor(unit: Unit): PersuadeEntry | null {
+    return this.api.stage.events.persuade.find((e) => e.pilot === unit.pilotId
+      && this.units.some((u) => u.side === "enemy" && onMap(u) && u.pilotId === e.target && Math.abs(u.x - unit.x) + Math.abs(u.y - unit.y) === 1)) ?? null;
+  }
+
+  // 选了「劝降」：当前单位是劝降的我方单位，脚本自己决定成不成功、谁行动结束
+  async runPersuade(unit: Unit, entry: PersuadeEntry) {
+    this.self = unit;
+    this.plan = {};
+    this.movedThisAction = false;
+    await new ScriptRunner(entry.script, this).resume();
     this.self = null;
   }
 
@@ -272,13 +296,21 @@ export class StageEvents implements ScriptHost {
     return p;
   }
 
-  changeMech(pilot: number, mech: number, newPilot?: number) {
+  // 原版 4E（bank 26 $8DA9）：p 有单位就改单位的机体（盖塔三人加形态偏移），我方的同时改名册；
+  // 没有单位才只改名册。单位按新机体重建（数值、武器、图标），HP 保留（不超过新的上限）
+  async changeMech(pilot: number, mech: number, newPilot?: number) {
+    const u = this.find(pilot);
+    if (u) {
+      const id = mech + (u.pilotId >= 8 && u.pilotId <= 10 ? u.pilotId - 8 : 0);
+      transformUnit(this.api.stage, u, id, newPilot);
+      await this.api.refreshUnit(u);
+      return;
+    }
     const m = this.api.stage.roster.find((r) => samePilot(r.pilot, pilot));
     if (m) {
       m.unit = mech;
       if (newPilot !== undefined) m.pilot = newPilot;
     }
-    // 地图上的单位换乘要重建（数值、武器、图标都变），等需要时再做
   }
   money(amount: number) { this.api.money.value += amount; }
 
@@ -306,13 +338,28 @@ export class StageEvents implements ScriptHost {
   }
   endAction() { if (this.self) this.self.acted = true; }
   async removeSelf() { if (this.self) await this.api.removeUnit(this.self); }
-  switchSide(to: "npc" | "enemy" | "player", roster?: number) {
+  // 原版 67 / 68 / 69（bank 26 $9008 起）：当前单位搬进对方阵营的空槽（我方 1–10、友军 11–13、敌方 14–31），
+  // 没有空槽就什么都不做。脚本进度跟着搬过去；进我方的名册第 r 号记下它（紧接着的 changeMech 写入机体），精神点数补满
+  async switchSide(to: "npc" | "enemy" | "player", roster?: number) {
     const u = this.self;
     if (!u) return;
+    const [from, last] = to === "player" ? [1, 10] : to === "npc" ? [11, 13] : [14, 31];
+    let index = -1;
+    for (let i = from; i <= last && index < 0; i++) if (!this.units.some((x) => x !== u && x.hp > 0 && x.index === i)) index = i;
+    if (index < 0) return;
     u.side = to === "enemy" ? "enemy" : "player";
     u.npc = to === "npc";
-    if (to === "player") u.roster = roster ?? null;
-    this.unitScripts.delete(u);
+    u.index = index;
+    u.roster = to === "player" ? roster ?? null : null;
+    if (to === "player") {
+      this.unitScripts.delete(u);
+      if (roster !== undefined) this.rosterAdd(roster, u.pilotId, u.unitId, u.levelIndex);
+      const m = this.api.stage.roster.find((r) => r.member === roster);
+      if (m) m.exp = u.exp;
+    }
+    transformUnit(this.api.stage, u, u.unitId, u.pilotId);
+    if (to === "player") u.sp = u.maxSp;
+    await this.api.refreshUnit(u);
   }
   async stageClear() { this.finished = true; await this.api.finish("clear"); }
   async gameOver() { this.finished = true; await this.api.finish("gameover"); }

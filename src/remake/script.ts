@@ -54,7 +54,7 @@ export interface ScriptHost {
   focusUnit(pilot: number, moveCursor: boolean): Promise<void>;
   spawn(side: "enemy" | "npc", x: number, y: number, pilot: number, mech: number, level: number, script: number): Promise<void>;
   deployAlly(x: number, y: number, roster: number): Promise<void>;
-  changeMech(pilot: number, mech: number, newPilot?: number): void;
+  changeMech(pilot: number, mech: number, newPilot?: number): Promise<void>;
   money(amount: number): void;
   bgm(kind: "player" | "enemy" | "now", track: number): void;
   wait(frames: number): Promise<void>;
@@ -63,7 +63,7 @@ export interface ScriptHost {
   selectCamera(pilot: number): Promise<void>;
   endAction(): void;
   removeSelf(): Promise<void>;
-  switchSide(to: "npc" | "enemy" | "player", roster?: number): void;
+  switchSide(to: "npc" | "enemy" | "player", roster?: number): Promise<void>;
   stageClear(): Promise<void>;
   gameOver(): Promise<void>;
   ending(): Promise<void>;
@@ -194,8 +194,8 @@ export class ScriptRunner {
       case "spawnEnemy": await h.spawn("enemy", n("x"), n("y"), n("pilot"), n("mech"), n("level"), n("ai")); break;
       case "spawnNpc": await h.spawn("npc", n("x"), n("y"), n("pilot"), n("mech"), n("level"), n("script")); break;
       case "deployAlly": await h.deployAlly(n("x"), n("y"), n("roster")); break;
-      case "changeMech": h.changeMech(n("pilot"), n("mech")); break;
-      case "changePilotMech": h.changeMech(n("pilot"), n("mech"), n("newPilot")); break;
+      case "changeMech": await h.changeMech(n("pilot"), n("mech")); break;
+      case "changePilotMech": await h.changeMech(n("pilot"), n("mech"), n("newPilot")); break;
       case "rosterAdd": h.rosterAdd(n("roster"), n("pilot"), n("mech"), n("level")); break;
       case "rosterRemove": h.rosterRemove(n("roster")); break;
       case "setUnitBit": h.setUnitBit(n("pilot"), n("bit"), true); break;
@@ -207,9 +207,9 @@ export class ScriptRunner {
       case "money": h.money(n("amount")); break;
       case "endAction": h.endAction(); break;
       case "removeSelf": await h.removeSelf(); break;
-      case "toNpc": h.switchSide("npc"); break;
-      case "toEnemy": h.switchSide("enemy"); break;
-      case "toAlly": h.switchSide("player", n("roster")); break;
+      case "toNpc": await h.switchSide("npc"); break;
+      case "toEnemy": await h.switchSide("enemy"); break;
+      case "toAlly": await h.switchSide("player", n("roster")); break;
 
       // ---------- 音乐 ----------
       case "playerBgm": h.bgm("player", n("track")); break;
