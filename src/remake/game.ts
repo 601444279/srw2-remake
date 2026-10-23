@@ -616,6 +616,7 @@ export class Game implements DrawState {
       case "confirm":
         this.sfx.ui("ok");
         if (here?.side === "player" && !here.acted) return this.select(here);
+        if (here && here === this.launchShip()) return this.openActedCarrierMenu(here);
         if (here) return this.openInfoMenu(here);
         if (this.inspected) { this.inspected = null; return; }
         return this.openMapMenu();
@@ -815,6 +816,24 @@ export class Game implements DrawState {
     return this.units.filter((u) => u.aboard && u.hp > 0);
   }
 
+  // 母舰自己已经行动完、舱里还有这回合没行动的机体：原版再点母舰出「起飞 / 状态」菜单，照样能起飞（模拟器实测）。
+  // 返回这样的母舰，没有就 null
+  private launchShip() {
+    const ship = this.carrier();
+    return ship && ship.side === "player" && ship.acted && this.aboard().some((u) => !u.acted) ? ship : null;
+  }
+
+  private openActedCarrierMenu(ship: Unit) {
+    const back = () => this.setMode("browse");
+    this.selected = ship;
+    this.moved = false;
+    this.reach = this.unitReach(ship);
+    this.openMenu([
+      { label: "起飞", detail: `舱内 ${this.aboard().length}`, run: () => this.openLaunchMenu(ship) },
+      { label: "资料", run: () => this.openStatus(ship, () => this.openActedCarrierMenu(ship)) },
+    ], ship, () => { this.deselect(); back(); });
+  }
+
   // 搭载：进舱、行动结束
   private async board(unit: Unit, ship: Unit) {
     this.setMode("busy");
@@ -835,7 +854,7 @@ export class Game implements DrawState {
       disabled: u.acted,
       run: () => this.launch(u, ship),
     }));
-    this.openMenu(items, ship, () => this.openActionMenu(ship));
+    this.openMenu(items, ship, () => (ship.acted ? this.openActedCarrierMenu(ship) : this.openActionMenu(ship)));
   }
 
   // 选好的机体放到母舰的格子上，从那里选目的地；取消就回舱
@@ -1094,6 +1113,9 @@ export class Game implements DrawState {
     this.setMode("browse");
     const next = this.players().find((u) => !u.acted);
     if (next) { this.setCursor(next.x, next.y); return; }
+    // 地图上的都行动完了，但母舰里还有能起飞的：不自动结束回合，光标移到母舰
+    const ship = this.launchShip();
+    if (ship) { this.setCursor(ship.x, ship.y); this.ui.toast("母舰里还有机体可以起飞"); return; }
     this.endTurn();
   }
 
@@ -1702,7 +1724,8 @@ export class Game implements DrawState {
   }
 
   private cycleUnit(dir: number) {
-    const list = this.players().filter((u) => !u.acted);
+    const ship = this.launchShip();
+    const list = [...this.players().filter((u) => !u.acted), ...(ship ? [ship] : [])];
     if (!list.length) return;
     const current = list.findIndex((u) => u.x === this.cursor.x && u.y === this.cursor.y);
     const next = list[(current + dir + list.length) % list.length];
